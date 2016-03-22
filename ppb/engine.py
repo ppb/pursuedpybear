@@ -21,10 +21,10 @@ def run(first_scene):
     while running:
         try:
             cur_event = event_queue.pop()
-            publisher.publish(cur_event)
-            scenes[-1].publish(cur_event)
         except IndexError:
             tick()
+        publisher.publish(cur_event)
+        scenes[-1].publish(cur_event)
     return 0
 
 
