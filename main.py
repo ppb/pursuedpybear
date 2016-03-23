@@ -60,7 +60,7 @@ class TestController(object):
         # Advance countdown. Use -1 * time to be compatible with Python2
 
         if self.countdown <= 0:
-            engine.event_queue.push(Quit())
+            engine.message(Quit())
             # Raise the quit event.
 
 
@@ -101,7 +101,7 @@ class TestView(object):
             # Reset the countdown.
             self.count += 1
             # Advance frame count.
-            print("Frame {} rendered at {}".format(self.count, time.time()))
+            print("Frame {} rendered at {}".format(self.count, event.run_time))
             # Render information
 
 

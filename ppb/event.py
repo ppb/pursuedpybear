@@ -1,5 +1,5 @@
 class Event(object):
-
+    "A generic event."
     def __repr__(self):
         return "{}()".format(self.__class__.__name__)
 
@@ -9,11 +9,12 @@ class Tick(Event):
     An event representing a loop through the system.
     """
 
-    def __init__(self, sec=0):
+    def __init__(self, sec=0, run_time=0):
         self.sec = sec
+        self.run_time = run_time
 
     def __repr__(self):
-        return "{}({})".format(self.__class__.__name__, self.sec)
+        return "{}({}, {})".format(self.__class__.__name__, self.sec, self.run_time)
 
 
 class Quit(Event):

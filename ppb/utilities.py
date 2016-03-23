@@ -8,12 +8,12 @@ from ppb.vmath import Vector2 as Vector
 
 class FollowCam(object):
 
-    def __init__(self, pos, target, config, max_dist=50, max_speed=10.0):
-        self.pos = pos
+    def __init__(self, target, resolution, max_dist=50, max_speed=10.0):
+        self.pos = Vector(*target.pos)
         self.target = target
         self.max_distance = max_dist
         self.speed = max_speed
-        self.offset = Vector(config.RESOLUTION[0] / 2, config.RESOLUTION[1] / 2)
+        self.offset = Vector(*resolution) * .5
 
     def update(self, td):
         direction = self.target.pos - self.pos
