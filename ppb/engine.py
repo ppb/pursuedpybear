@@ -1,10 +1,9 @@
 import logging
 import time
 
-from ppb.utilities import Queue, Publisher
+from ppb.utilities import Queue
 import ppb.event as event
 
-publisher = Publisher()
 event_queue = Queue()
 scenes = []
 last_tick = time.time()
@@ -12,18 +11,13 @@ running = True
 
 
 def run(first_scene):
-    scenes.append(first_scene)
-    publisher.subscribe(event.Tick, "engine", tick)
-    publisher.subscribe(event.Quit, "engine", game_quit)
-    publisher.subscribe(event.PushScene, "engine", push)
-    publisher.subscribe(event.PopScene, "engine", pop)
-    publisher.subscribe(event.ReplaceScene, "engine", replace)
+    push(first_scene)
     while running:
         try:
             cur_event = event_queue.pop()
         except IndexError:
             tick()
-        publisher.publish(cur_event)
+            cur_event = None
         scenes[-1].publish(cur_event)
     return 0
 
@@ -33,7 +27,6 @@ def tick(*_):
 
     current_tick = time.time()
     value = current_tick - last_tick
-    logging.debug("Current time delta: {}".format(value))
     event_queue.push(event.Tick(value))
     last_tick = current_tick
 
@@ -44,7 +37,16 @@ def game_quit(*_):
 
 
 def push(e):
-    scenes.append(e.scene)
+    try:
+        scene = e.scene
+    except AttributeError:
+        scene = e
+    scene.subscribe(event.Tick, "engine", tick)
+    scene.subscribe(event.Quit, "engine", game_quit)
+    scene.subscribe(event.PushScene, "engine", push)
+    scene.subscribe(event.PopScene, "engine", pop)
+    scene.subscribe(event.ReplaceScene, "engine", replace)
+    scenes.append(scene)
 
 
 def pop(*_):
@@ -52,5 +54,5 @@ def pop(*_):
 
 
 def replace(e):
-    scenes.pop()
-    scenes.append(e.scene)
+    pop()
+    push(e)

@@ -8,14 +8,14 @@ from ppb.event import Tick, Quit
 from ppb.utilities import Publisher
 
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 
 class TestController(object):
 
-    def __init__(self, time):
+    def __init__(self, scene, time):
         self.countdown = time
-        engine.publisher.subscribe(Tick, id(self), self.tick)
+        scene.subscribe(Tick, id(self), self.tick)
 
     def tick(self, event):
         self.countdown += -1 * event.sec
@@ -25,11 +25,11 @@ class TestController(object):
 
 class TestView(object):
 
-    def __init__(self, target_fps):
+    def __init__(self, scene, target_fps):
         self.target_render_time = 1/target_fps
         self.countdown = self.target_render_time
         self.count = 0
-        engine.publisher.subscribe(Tick, id(self), self.tick)
+        scene.subscribe(Tick, id(self), self.tick)
 
     def tick(self, event):
         self.countdown += -1 * event.sec
@@ -44,8 +44,9 @@ class Scene(Publisher):
 
 
 if __name__ == "__main__":
-    controller = TestController(1)
+    scene = Publisher()
+    controller = TestController(scene, 1)
     print("Controller created.")
-    view = TestView(60)
+    view = TestView(scene, 60)
     print("View created.")
-    engine.run(Scene())
+    engine.run(scene)
