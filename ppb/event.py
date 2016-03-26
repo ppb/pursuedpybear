@@ -51,3 +51,39 @@ class ReplaceScene(PushScene):
     """
 
     pass
+
+
+class Key(Event):
+    """
+    Events related to keys.
+    """
+
+    def __init__(self, identifier, name):
+        """
+
+        :param identifier: Key ID
+        :param name: A human readable keyname.
+        :return:
+        """
+        super().__init__()
+        self.key = identifier
+        self.name = name
+
+    def __repr__(self):
+        return "{}({}, {})".format(self.__class__.__name__, self.key, self.name)
+
+
+class KeyUp(Key):
+    pass
+
+
+class KeyDown(Key):
+    pass
+
+
+class MouseButtonUp(Key):
+    pass
+
+
+class MouseButtonDown(Key):
+    pass

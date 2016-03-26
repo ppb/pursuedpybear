@@ -38,7 +38,7 @@ class Publisher(object):
         :param dispatcher: Publisher
         :return: Publisher
         """
-        self.subscribers = defaultdict(dict)
+        self.subscribers = defaultdict(set)
         self.dispatcher = dispatcher
 
     def publish(self, event):
@@ -49,12 +49,12 @@ class Publisher(object):
         :return: None
         """
 
-        callbacks = self.subscribers[type(event)].values()
+        callbacks = self.subscribers[type(event)]
         logging.debug("Processing {event} on {num} callbacks.".format(event=event, num=len(callbacks)))
         for callback in callbacks:
             callback(event)
 
-    def subscribe(self, event_type, identity, callback):
+    def subscribe(self, event_type, callback):
         """
         Subscribe to an event.
 
@@ -64,11 +64,11 @@ class Publisher(object):
         :return: None
         """
 
-        self.subscribers[event_type][identity] = callback
+        self.subscribers[event_type].add(callback)
         if self.dispatcher:
-            self.dispatcher.subscribe(event_type, id(self), self.publish)
+            self.dispatcher.subscribe(event_type, self.publish)
 
-    def unsubscribe(self, event_type, identity):
+    def unsubscribe(self, event_type, callback):
         """
         Unsubscribe from an event.
 
@@ -77,9 +77,12 @@ class Publisher(object):
         :return: None
         """
 
-        self.subscribers[event_type].pop(identity, None)
+        try:
+            self.subscribers[event_type].remove(callback)
+        except KeyError:
+            pass
         if self.dispatcher and not self.subscribers[event_type]:
-            self.dispatcher.unsubscribe(event_type, id(self))
+            self.dispatcher.unsubscribe(event_type, self.publish)
 
 
 class Queue(object):

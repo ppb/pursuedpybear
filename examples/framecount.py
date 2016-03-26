@@ -46,7 +46,7 @@ class TestController(object):
         # need to keep track of how much time is left.
         # Alternatively could keep the time to run and accumulate.
 
-        scene.subscribe(Tick, id(self), self.tick)
+        scene.subscribe(Tick, self.tick)
         # subscribe to Tick events with the scene.
 
     def tick(self, event):
@@ -83,7 +83,7 @@ class TestView(object):
         # A countdown to control render speed.
         self.count = 0
         # A simple accumulator to count frames.
-        scene.subscribe(Tick, id(self), self.tick)
+        scene.subscribe(Tick, self.tick)
         # Subscribe to the scene.
 
     def tick(self, event):
