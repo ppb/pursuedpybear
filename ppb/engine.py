@@ -72,11 +72,11 @@ def push(e):
         scene = e.scene
     except AttributeError:
         scene = e
-    scene.subscribe(event.Tick, "engine", tick)
-    scene.subscribe(event.Quit, "engine", game_quit)
-    scene.subscribe(event.PushScene, "engine", push)
-    scene.subscribe(event.PopScene, "engine", pop)
-    scene.subscribe(event.ReplaceScene, "engine", replace)
+    scene.subscribe(event.Tick, tick)
+    scene.subscribe(event.Quit, game_quit)
+    scene.subscribe(event.PushScene, push)
+    scene.subscribe(event.PopScene, pop)
+    scene.subscribe(event.ReplaceScene, replace)
     scenes.append(scene)
 
 
