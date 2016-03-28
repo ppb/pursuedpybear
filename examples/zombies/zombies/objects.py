@@ -1,4 +1,3 @@
-from ppb import engine
 from ppb.event import Tick
 from ppb.view import Sprite
 from ppb.vmath import Vector2 as Vector
@@ -7,6 +6,8 @@ from ppb.vmath import Vector2 as Vector
 class Mob(object):
 
     def __init__(self, pos, scene, velocity=(0, 0), *args, **kwargs):
+        _ = args
+        _ = kwargs
         self.pos = Vector(*pos)
         self.velocity = Vector(*velocity)
         scene.subscribe(Tick, self.tick)
@@ -18,6 +19,8 @@ class Mob(object):
 class Renderable(object):
 
     def __init__(self, image, size, *args, **kwargs):
+        _ = args
+        _ = kwargs
         self.sprite = Sprite(image, size, self)
 
     def remove(self):
@@ -43,8 +46,10 @@ class Zombie(Mob, Renderable):
 
 class Player(Mob, Renderable):
 
-    def __init__(self, pos, scene, controller, controls, velocity=(0, 0)):
-        super(Player, self).__init__(pos, scene, velocity)
+    size = 1
+
+    def __init__(self, pos, scene, controller, controls, image, velocity=(0, 0)):
+        super(Player, self).__init__(pos=pos, scene=scene, velocity=velocity, image=image, size=self.size)
         self.life = 10
         self.speed = 1
         self.controller = controller
