@@ -1,34 +1,36 @@
+import logging
+
 from ppb.event import Tick
-from ppb.view import Sprite
+from ppb.ext.hw_pygame import Sprite
 from ppb.vmath import Vector2 as Vector
 
 
 class Mob(object):
 
     def __init__(self, pos, scene, velocity=(0, 0), *args, **kwargs):
-        _ = args
-        _ = kwargs
         self.pos = Vector(*pos)
         self.velocity = Vector(*velocity)
+        logging.debug("Mob initialized.")
         scene.subscribe(Tick, self.tick)
 
     def tick(self, event):
         self.pos += self.velocity * event.sec
 
 
-class Renderable(object):
+class Renderable(Mob):
 
-    def __init__(self, image, size, *args, **kwargs):
-        _ = args
-        _ = kwargs
-        self.sprite = Sprite(image, size, self)
+    def __init__(self, pos, scene, velocity=(0, 0), image=None, view=None, *args, **kwargs):
+        super(Renderable, self).__init__(pos, scene, velocity, image, view, *args, **kwargs)
+        self.sprite = Sprite(image, self)
+        self.view = view
+        view.add(self.sprite)
 
     def remove(self):
-        self.sprite.remove()
+        self.view.remove()
         self.sprite = None
 
 
-class Zombie(Mob, Renderable):
+class Zombie(Renderable):
 
     size = 1
     acceleration = 1
@@ -44,14 +46,15 @@ class Zombie(Mob, Renderable):
         super(Zombie, self).tick(event)
 
 
-class Player(Mob, Renderable):
+class Player(Renderable):
 
     size = 1
 
-    def __init__(self, pos, scene, controller, controls, image, velocity=(0, 0)):
-        super(Player, self).__init__(pos=pos, scene=scene, velocity=velocity, image=image, size=self.size)
+    def __init__(self, pos, scene, controller, controls, image, view):
+
+        super(Player, self).__init__(pos, scene, (0, 0), image, view)
         self.life = 10
-        self.speed = 1
+        self.speed = 100
         self.controller = controller
         self.up = controls["up"]
         self.down = controls["down"]
@@ -59,7 +62,8 @@ class Player(Mob, Renderable):
         self.right = controls["right"]
 
     def tick(self, event):
-        direction = Vector(self.controller.keys[self.down] - self.controller.keys[self.up],
-                           self.controller.keys[self.right] - self.controller.keys[self.left]).normalize()
+        logging.debug(self.controller.mouse)
+        direction = Vector(self.controller.key(self.right) - self.controller.key(self.left),
+                           self.controller.key(self.down) - self.controller.key(self.up)).normalize()
         self.velocity = direction * self.speed
         super(Player, self).tick(event)

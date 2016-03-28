@@ -58,9 +58,9 @@ class View(object):
 
 class Sprite(object):
 
-    def __init__(self, image, size, model):
+    def __init__(self, image, model):
         self.image = image
-        self.size = size
+        self.size = image.size
         self.pos = Vector(0, 0)
         self.model = model
 

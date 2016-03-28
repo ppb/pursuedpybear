@@ -1,6 +1,9 @@
+from __future__ import division
+
 import logging
 
 import pygame
+from pygame.sprite import DirtySprite
 
 from ppb.event import KeyDown, KeyUp, MouseButtonDown, MouseButtonUp, Quit
 import ppb.view
@@ -10,7 +13,7 @@ from ppb.vmath import Vector2 as Vector
 display = None
 
 
-def init(resolution):
+def init(resolution, title):
     """
     Initialize pygame modules
 
@@ -21,6 +24,7 @@ def init(resolution):
 
     pygame.init()
     display = pygame.display.set_mode(resolution)
+    pygame.display.set_caption(title)
 
 
 def quit(*_):
@@ -100,16 +104,20 @@ def draw_screen():
 
 class View(ppb.view.View):
 
-    def __init__(self, scene, display, fps, hardware):
+    def __init__(self, scene, display, fps, hardware, background):
         super(View, self).__init__(scene, display, fps, hardware)
         self.layers = pygame.sprite.LayeredDirty()
+        self.background = background
 
     def render(self):
+        logging.debug("Sprites: {}".format(self.layers.sprites()))
         self.layers.update()
-        updates = self.layers.draw(display)
+        updates = self.layers.draw(display, self.background)
+        logging.debug("Updates: {}".format(updates))
         pygame.display.update(updates)
 
     def add(self, sprite, layer=0):
+        logging.debug("Add sprite {} to layer {}".format(sprite, layer))
         self.layers.add(sprite, layer=layer)
 
     def remove(self, sprite):
@@ -117,3 +125,25 @@ class View(ppb.view.View):
 
     def change_layer(self, sprite, layer):
         self.layers.change_layer(sprite, layer)
+
+
+class Sprite(DirtySprite):
+
+    def __init__(self, image, model, *groups):
+        super(Sprite, self).__init__(*groups)
+        self.image = image
+        self.rect = image.get_rect()
+        x_offset = self.rect.width / 2
+        y_offset = self.rect.height / 2
+        self.offset = Vector(x_offset, y_offset)
+        self.model = model
+        self.update()
+
+    def update(self):
+        offset_position = self.model.pos - self.offset
+        logging.debug("offset position: {}".format(offset_position))
+        new_pos = tuple(int(x) for x in offset_position)
+        logging.debug("New pos: {}, Topleft: {}".format(new_pos, self.rect.topleft))
+        if new_pos != self.rect.topleft:
+            self.rect.topleft = new_pos
+            self.dirty = 1

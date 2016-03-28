@@ -43,3 +43,11 @@ class Controller(object):
         self.keys = self.hardware.keys()
         self.mouse = self.hardware.mouse()
 
+    def key(self, key_id):
+        try:
+            return self.keys[key_id]
+        except TypeError:
+            return False
+
+    def __repr__(self):
+        return "Controller[keys: {}, mouse: {}]".format(self.keys, self.mouse)
