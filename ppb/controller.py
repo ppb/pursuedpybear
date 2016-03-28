@@ -1,3 +1,5 @@
+import logging
+
 import ppb.engine as engine
 from ppb.event import Tick
 
@@ -22,7 +24,7 @@ class Controller(object):
                          events should return hardware events translated into ppb events.
         :return:
         """
-        scene.subscribe(Tick, id(self), self.tick)
+        scene.subscribe(Tick, self.tick)
         self.keys = None
         self.mouse = None
         self.hardware = hardware
@@ -34,9 +36,18 @@ class Controller(object):
         :param event: ppb.Event
         :return:
         """
-
-        self.keys = self.hardware.keys()
-        self.mouse = self.hardware.mouse()
+        # Due to a pygame problem, must get the events before key and button states.
         events = self.hardware.events()
         for e in events:
             engine.message(e)
+        self.keys = self.hardware.keys()
+        self.mouse = self.hardware.mouse()
+
+    def key(self, key_id):
+        try:
+            return self.keys[key_id]
+        except TypeError:
+            return False
+
+    def __repr__(self):
+        return "Controller[keys: {}, mouse: {}]".format(self.keys, self.mouse)

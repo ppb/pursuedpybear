@@ -65,7 +65,6 @@ class Key(Event):
         :param name: A human readable keyname.
         :return:
         """
-        super().__init__()
         self.key = identifier
         self.name = name
 

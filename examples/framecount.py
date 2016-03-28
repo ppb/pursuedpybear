@@ -10,7 +10,6 @@ from __future__ import division
 # float division is the expected.
 
 import logging
-import time
 # logging is primarily to set the logging level. Can also be inserted into
 # the sample model and view.
 # time is used by the view to print the unix time stamp.
