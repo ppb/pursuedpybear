@@ -40,6 +40,7 @@ class Publisher(object):
         """
         self.subscribers = defaultdict(set)
         self.dispatcher = dispatcher
+        self.unsubscribe_requests = []
 
     def publish(self, event):
         """
@@ -48,7 +49,8 @@ class Publisher(object):
         :param event: An Event to publish
         :return: None
         """
-
+        if self.unsubscribe_requests:
+            self.remove()
         callbacks = self.subscribers[type(event)]
         logging.debug("Processing {event} on {num} callbacks.".format(event=event, num=len(callbacks)))
         for callback in callbacks:
@@ -76,13 +78,19 @@ class Publisher(object):
         :param identity: a unique hashable identifier
         :return: None
         """
+        self.unsubscribe_requests.append((event_type, callback))
 
-        try:
-            self.subscribers[event_type].remove(callback)
-        except KeyError:
-            pass
-        if self.dispatcher and not self.subscribers[event_type]:
-            self.dispatcher.unsubscribe(event_type, self.publish)
+    def remove(self, *_):
+        for r in self.unsubscribe_requests:
+            event_type, callback = r
+            try:
+                self.subscribers[event_type].remove(callback)
+            except KeyError:
+                pass
+            if self.dispatcher and not self.subscribers[event_type]:
+                self.dispatcher.unsubscribe(event_type, self.publish)
+        self.unsubscribe_requests = []
+
 
 
 class Queue(object):
@@ -111,3 +119,6 @@ class Queue(object):
             self.out_stack = list(reversed(self.in_stack))
             self.in_stack = []
         return self.out_stack.pop()
+
+    def extend(self, _iter):
+        self.in_stack.extend(_iter)

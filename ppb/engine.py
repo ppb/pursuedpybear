@@ -2,6 +2,7 @@
 An event driven application engine.
 """
 
+from collections import Iterable
 import logging
 import time
 
@@ -108,4 +109,7 @@ def message(e):
     :param e: Event
     :return:
     """
-    event_queue.push(e)
+    if isinstance(e, Iterable):
+        event_queue.extend(e)
+    else:
+        event_queue.push(e)

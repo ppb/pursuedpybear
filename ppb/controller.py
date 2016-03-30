@@ -38,8 +38,7 @@ class Controller(object):
         """
         # Due to a pygame problem, must get the events before key and button states.
         events = self.hardware.events()
-        for e in events:
-            engine.message(e)
+        engine.message(events)
         self.keys = self.hardware.keys()
         self.mouse = self.hardware.mouse()
 

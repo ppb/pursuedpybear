@@ -28,7 +28,10 @@ def main():
                 "left": pygame.K_a,
                 "right": pygame.K_d}
     player = zombies.objects.Player((300, 200), scene, controller, controls, image, view)
-    logging.debug("Player Sprite: {}".format(player.sprite))
+    image = pygame.Surface((4, 4))
+    image.fill((255, 255, 255))
+    zombies.objects.Particle(scene=scene, pos=(0, 0), view=view,
+                             velocity=(5, 5), image=image, life_time=5)
     engine.run(scene)
 
 if __name__ == "__main__":
