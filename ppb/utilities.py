@@ -39,6 +39,7 @@ class Publisher(object):
         :return: Publisher
         """
         self.subscribers = defaultdict(set)
+        self.subscribe_requests = []
         self.dispatcher = dispatcher
         self.unsubscribe_requests = []
 
@@ -51,6 +52,8 @@ class Publisher(object):
         """
         if self.unsubscribe_requests:
             self.remove()
+        if self.subscribe_requests:
+            self.add()
         callbacks = self.subscribers[type(event)]
         logging.debug("Processing {event} on {num} callbacks.".format(event=event, num=len(callbacks)))
         for callback in callbacks:
@@ -60,27 +63,23 @@ class Publisher(object):
         """
         Subscribe to an event.
 
-        :param event_type: Any hashable object. Intended use is with Event subtypes.
-        :param identity: A unique hashable identifier of the callback.
+        :param event_type: Any hashable object. Intended use is with Event
+                           subtypes.
         :param callback: A function that takes a single argument.
         :return: None
         """
-
-        self.subscribers[event_type].add(callback)
-        if self.dispatcher:
-            self.dispatcher.subscribe(event_type, self.publish)
+        self.subscribe_requests.append((event_type, callback))
 
     def unsubscribe(self, event_type, callback):
         """
         Unsubscribe from an event.
 
         :param event_type: The event to unsubscribe from.
-        :param identity: a unique hashable identifier
         :return: None
         """
         self.unsubscribe_requests.append((event_type, callback))
 
-    def remove(self, *_):
+    def remove(self):
         for r in self.unsubscribe_requests:
             event_type, callback = r
             try:
@@ -90,6 +89,14 @@ class Publisher(object):
             if self.dispatcher and not self.subscribers[event_type]:
                 self.dispatcher.unsubscribe(event_type, self.publish)
         self.unsubscribe_requests = []
+
+    def add(self):
+        for r in self.subscribe_requests:
+            event_type, callback = r
+            self.subscribers[event_type].add(callback)
+            if self.dispatcher:
+                self.dispatcher.subscribe(event_type, self.publish)
+        self.subscribe_requests = []
 
 
 

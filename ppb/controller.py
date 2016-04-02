@@ -20,8 +20,10 @@ class Controller(object):
         :param scene: Publisher
         :param hardware: An object with a keys, mouse and events functions.
                          keys should return a dictionary of the key state.
-                         mouse should return an object representation of the mouse.
-                         events should return hardware events translated into ppb events.
+                         mouse should return an object representation of the
+                             mouse.
+                         events should return hardware events translated into
+                             ppb events.
         :return:
         """
         scene.subscribe(Tick, self.tick)
@@ -36,7 +38,8 @@ class Controller(object):
         :param event: ppb.Event
         :return:
         """
-        # Due to a pygame problem, must get the events before key and button states.
+        # Due to a pygame problem, must get the events before key and button
+        # states.
         events = self.hardware.events()
         engine.message(events)
         self.keys = self.hardware.keys()

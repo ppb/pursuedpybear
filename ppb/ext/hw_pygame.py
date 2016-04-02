@@ -110,10 +110,8 @@ class View(ppb.view.View):
         self.background = background
 
     def render(self):
-        logging.debug("Sprites: {}".format(self.layers.sprites()))
         self.layers.update()
         updates = self.layers.draw(display, self.background)
-        logging.debug("Updates: {}".format(updates))
         pygame.display.update(updates)
 
     def add(self, sprite, layer=0):
@@ -141,9 +139,7 @@ class Sprite(DirtySprite):
 
     def update(self):
         offset_position = self.model.pos - self.offset
-        logging.debug("offset position: {}".format(offset_position))
         new_pos = tuple(int(x) for x in offset_position)
-        logging.debug("New pos: {}, Topleft: {}".format(new_pos, self.rect.topleft))
         if new_pos != self.rect.topleft:
             self.rect.topleft = new_pos
             self.dirty = 1
