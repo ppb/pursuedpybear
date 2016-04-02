@@ -3,11 +3,10 @@ import logging
 import pygame
 from pygame.surface import Surface
 
-from ppb import engine
-from ppb.controller import Controller
+from ppb import engine, Controller
 from ppb.ext import hw_pygame as hardware
 from ppb.utilities import Publisher
-from ppb.event import Quit
+from ppb.event import Quit, Tick
 import zombies.objects
 
 
@@ -30,9 +29,12 @@ def main():
     player = zombies.objects.Player((300, 200), scene, controller, controls, image, view)
     image = pygame.Surface((4, 4))
     image.fill((255, 255, 255))
-    zombies.objects.Particle(scene=scene, pos=(0, 0), view=view,
-                             velocity=(5, 5), image=image, life_time=5)
+    zombies.objects.Emitter(zombies.objects.Particle, image, (0, 0), scene, view)
+    # scene.subscribe(Tick, raise_quit)
     engine.run(scene)
+
+def raise_quit(_):
+    engine.message(Quit())
 
 if __name__ == "__main__":
     main()

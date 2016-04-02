@@ -6,7 +6,7 @@ Name not final.
 
 import logging
 
-from ppb.event import Tick
+from ppb.event import Tick, MouseButtonDown
 from ppb.ext.hw_pygame import Sprite
 from ppb.vmath import Vector2 as Vector
 
@@ -29,7 +29,6 @@ class Mob(object):
 class Renderable(Mob):
 
     def __init__(self, pos, scene, image=None, view=None, *args, **kwargs):
-        print kwargs
         super(Renderable, self).__init__(pos=pos, scene=scene, image=image,
                                          view=view, *args, **kwargs)
         self.sprite = Sprite(image, self)
@@ -101,7 +100,6 @@ class Particle(Renderable):
                        life_time: Amount of time to persist
         :return:
         """
-        print image
         super(Particle, self).__init__(pos=pos, scene=scene,
                                        image=image, view=view, *args, **kwargs)
         self.life_time = kwargs.get('life_time', float('inf'))
@@ -111,3 +109,27 @@ class Particle(Renderable):
         if self.life_time <= 0.0:
             self.kill()
         super(Particle, self).tick(event)
+
+
+class Emitter(object):
+
+    def __init__(self, particle, image, pos, scene, view):
+        self.active = False
+        self.particle = particle
+        self.pos = Vector(*pos)
+        self.scene = scene
+        self.scene.subscribe(Tick, self.tick)
+        self.scene.subscribe(MouseButtonDown, self.emit)
+        self.particle_image = image
+        self.view = view
+
+    def emit(self, _):
+        self.active = True
+
+    def tick(self, tick):
+        if self.active:
+            self.particle(self.pos, self.scene, image=self.particle_image,
+                          view=self.view, velocity=self.particle_velocity())
+
+    def particle_velocity(self):
+        return Vector(60, 60)
