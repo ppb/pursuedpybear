@@ -6,7 +6,8 @@ Name not final.
 
 import logging
 
-from ppb.event import Tick, MouseButtonDown
+from ppb import engine
+from ppb.event import Tick, Message
 from ppb.ext.hw_pygame import Sprite
 from ppb.vmath import Vector2 as Vector
 
@@ -61,24 +62,35 @@ class Player(Renderable):
 
     size = 1
 
-    def __init__(self, pos, scene, controller, controls, image, view):
+    def __init__(self, pos, scene, controller, controls, image, view, particle_image):
 
         super(Player, self).__init__(pos=pos, scene=scene,
                                      image=image, view=view)
         self.life = 10
         self.speed = 100
         self.controller = controller
-        self.up = controls["up"]
-        self.down = controls["down"]
-        self.left = controls["left"]
-        self.right = controls["right"]
+        self.emitter = Emitter(Particle, particle_image, self.pos, self.scene, self.view)
+        self.up = controls.get("up")
+        self.down = controls.get("down")
+        self.left = controls.get("left")
+        self.right = controls.get("right")
+        self.fire = controls.get("fire")
 
     def tick(self, event):
-        logging.debug(self.controller.mouse)
-        direction = Vector(self.controller.key(self.right) - self.controller.key(self.left),
-                           self.controller.key(self.down) - self.controller.key(self.up)).normalize()
+        up = self.controller[self.up[0]][self.up[1]]
+        down = self.controller[self.down[0]][self.down[1]]
+        left = self.controller[self.left[0]][self.left[1]]
+        right = self.controller[self.right[0]][self.right[1]]
+        direction = Vector(right - left, down - up).normalize()
+
+        if self.controller[self.fire[0]][self.fire[1]]:
+            engine.message(Message(self,
+                                   self.emitter,
+                                   {'command': "activate",
+                                    'target': self.controller.mouse['pos']}))
         self.velocity = direction * self.speed
         super(Player, self).tick(event)
+        self.emitter.pos = self.pos
 
 
 class Particle(Renderable):
@@ -113,23 +125,51 @@ class Particle(Renderable):
 
 class Emitter(object):
 
-    def __init__(self, particle, image, pos, scene, view):
+    def __init__(self, particle, image, pos, scene, view, **kwargs):
         self.active = False
         self.particle = particle
         self.pos = Vector(*pos)
         self.scene = scene
         self.scene.subscribe(Tick, self.tick)
-        self.scene.subscribe(MouseButtonDown, self.emit)
+        self.scene.subscribe(Message, self.activate)
         self.particle_image = image
         self.view = view
+        self.run_length = float(kwargs.get("run_time", 0.0))
+        self.run_time = self.run_length
+        self.interval = float(kwargs.get('interval', 0.001))
+        self.interval_count = self.interval
+        self.target = Vector(0, 0)
+        self.speed = kwargs.get('particle_speed', 60)
 
-    def emit(self, _):
-        self.active = True
+    def activate(self, message):
+        if message.receiver == self and message.payload['command'] == "activate":
+            self.active = True
+            self.target = message.payload['target']
 
     def tick(self, tick):
         if self.active:
-            self.particle(self.pos, self.scene, image=self.particle_image,
-                          view=self.view, velocity=self.particle_velocity())
+            self.run_time += -1 * tick.sec
+            if self.run_time <= 0.0:
+                self.active = False
+                self.run_time = self.run_length
+            self.interval_count += -1 * tick.sec
+            if self.interval_count <= 0:
+                self.emit()
+                self.interval_count += self.interval
+            self.emit()
 
-    def particle_velocity(self):
-        return Vector(60, 60)
+    def particle_velocity(self, *args, **kwargs):
+        """
+        Overwrite in subclass to determine behavior of emitter.
+
+        :param args:
+        :param kwargs:
+        :return:
+        """
+
+        return (self.target - self.pos).normalize() * self.speed
+
+    def emit(self):
+        self.particle(self.pos, self.scene, image=self.particle_image,
+                      view=self.view, velocity=self.particle_velocity(),
+                      life_time=3.0)

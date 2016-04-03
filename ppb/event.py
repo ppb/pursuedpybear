@@ -86,3 +86,27 @@ class MouseButtonUp(Key):
 
 class MouseButtonDown(Key):
     pass
+
+
+class Message(Event):
+    """
+    A generic event for sending messages between objects.
+    """
+    def __init__(self, sender, receiver, payload=None):
+        """
+
+        :param sender: object that sent the message
+        :param receiver: object that should listen for the message
+        :param payload: object expected by the receiver
+        :return:
+        """
+
+        self.sender = sender
+        self.receiver = receiver
+        self.payload = payload
+
+    def __repr__(self):
+        return "{}({}, {}, {})".format(self.__class__.__name__,
+                                       self.sender,
+                                       self.receiver,
+                                       self.payload)

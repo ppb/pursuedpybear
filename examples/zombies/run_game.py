@@ -22,19 +22,21 @@ def main():
 
     image = pygame.Surface((20, 20))
     image.fill((128, 15, 15))
-    controls = {"up": pygame.K_w,
-                "down": pygame.K_s,
-                "left": pygame.K_a,
-                "right": pygame.K_d}
-    player = zombies.objects.Player((300, 200), scene, controller, controls, image, view)
-    image = pygame.Surface((4, 4))
-    image.fill((255, 255, 255))
-    zombies.objects.Emitter(zombies.objects.Particle, image, (0, 0), scene, view)
-    # scene.subscribe(Tick, raise_quit)
+    controls = {"up": ('key', pygame.K_w),
+                "down": ('key', pygame.K_s),
+                "left": ('key', pygame.K_a),
+                "right": ('key', pygame.K_d),
+                "fire": ("mouse", 0)}
+    particle_image = pygame.Surface((4, 4))
+    particle_image.fill((255, 255, 255))
+    zombies.objects.Player((300, 200), scene, controller, controls,
+                           image, view, particle_image)
     engine.run(scene)
+
 
 def raise_quit(_):
     engine.message(Quit())
+
 
 if __name__ == "__main__":
     main()

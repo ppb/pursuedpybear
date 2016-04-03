@@ -27,9 +27,26 @@ class Controller(object):
         :return:
         """
         scene.subscribe(Tick, self.tick)
-        self.keys = None
-        self.mouse = None
+        self.keys = hardware.keys()
+        self.mouse = hardware.mouse()
         self.hardware = hardware
+
+    def __getitem__(self, item):
+        if item in ['key', 'keys']:
+            return self.keys
+        if item in ['mouse']:
+            return self.mouse['pressed']
+        if item in ['mouse_pos']:
+            return self.mouse['pos']
+        if item in ['delta', 'move']:
+            return self.mouse['move']
+        raise KeyError
+
+    def get(self, value, default=None):
+        try:
+            return self[value]
+        except KeyError:
+            return default
 
     def tick(self, event):
         """
