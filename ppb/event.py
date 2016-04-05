@@ -14,7 +14,8 @@ class Tick(Event):
         self.run_time = run_time
 
     def __repr__(self):
-        return "{}({}, {})".format(self.__class__.__name__, self.sec, self.run_time)
+        return "{}({}, {})".format(self.__class__.__name__,
+                                   self.sec, self.run_time)
 
 
 class Quit(Event):
