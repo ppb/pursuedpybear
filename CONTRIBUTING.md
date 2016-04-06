@@ -14,7 +14,7 @@ for, it's target audience is new developers not used to contribution.
     * All contributors must abide by the current code of conduct.
     * The current code of conduct is the [Contributor Covenant](http://contributor-covenant.org/)
 * Familiarize yourself with this guide!
-* Fork ppb.
+* [Fork](https://help.github.com/articles/fork-a-repo/) ppb.
 
 ## Tasks
 
@@ -25,7 +25,7 @@ If you'd like to work on the engine itself, you can contribute to tasks.
 1. Choose a task.
 2. Comment on the Github issue.
 3. OPTIONAL: A maintainer can assign the issue to one team member.
-4. Make a branch.
+4. Make a new branch.
 5. Code
 6. Merge
 7. Pull request
@@ -36,8 +36,8 @@ If you'd like to work on the engine itself, you can contribute to tasks.
 
 Items will be kept in two places:
 
-* Github Issue Tracker
-* Project TODO file
+* [Github Issue Tracker](https://github.com/pathunstrom/pursuedpybear/issues)
+* [Project TODO file](https://github.com/pathunstrom/pursuedpybear/blob/master/TODO.md)
 
 Any task in the TODO file should have a related item in the issue tracker. 
 Items in the issue tracker may not have a related item in the TODO file. When 
@@ -69,7 +69,7 @@ Python's PEP 8 is strongly encouraged.
 
 Before you finish, add your information to CONTRIBUTORS.md.
 
-Form: \[NAME](github profile) email Twitter
+Form: \[NAME](github profile) | email | Twitter
 
 Name does not have to be your legal name. It can be any identifier you are 
 comfortable with as long as it does not break the code of conduct.
@@ -78,7 +78,7 @@ Both email and Twitter are optional field. You may also make them hyperlinks.
 
 ### Merge into Local Master
 
-Make sure to update your local master to match ppb/master. Then merge your 
+Make sure to [update your local master to match](https://help.github.com/articles/fork-a-repo/#keep-your-fork-synced) ppb/master. Then merge your 
 working branch into local master. Resolve conflicts and make sure all the 
 examples and available tests still work. Then push to your fork.
 
@@ -101,9 +101,9 @@ merged into master and the task closed.
 
 Due to PPB's aim as a learning library, documentation standard will be higher 
 than most projects. All modules, classes, functions and methods should include 
-docstrings. 
+[docstrings](https://en.wikipedia.org/wiki/Docstring#Python). 
 
-Currently we are using reStructuredText style.
+Currently we are using [reStructuredText](https://en.wikipedia.org/wiki/ReStructuredText#Examples_of_reST_markup) style.
 
 All examples will include section by section explanation of the code.
 
