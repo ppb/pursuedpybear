@@ -115,7 +115,6 @@ class View(ppb.view.View):
         pygame.display.update(updates)
 
     def add(self, sprite, layer=0):
-        logging.debug("Add sprite {} to layer {}".format(sprite, layer))
         self.layers.add(sprite, layer=layer)
 
     def remove(self, sprite):
