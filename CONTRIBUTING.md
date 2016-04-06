@@ -69,7 +69,7 @@ Python's PEP 8 is strongly encouraged.
 
 Before you finish, add your information to CONTRIBUTORS.md.
 
-Form: \[NAME](github profile) email Twitter
+Form: \[NAME](github profile) | email | Twitter
 
 Name does not have to be your legal name. It can be any identifier you are 
 comfortable with as long as it does not break the code of conduct.
