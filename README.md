@@ -19,7 +19,7 @@ and the current runtime to the terminal at a rate of 60 per second.
 
 ## Compatibility
 
-PPB uses Python, but is currently backwards compatible to Pyton2.7. 
+PPB uses Python 3, but is currently backwards compatible to Python 2.7. 
 Backwards compatibility is not guaranteed.
 
 The API is not currently fixed. Do not count on the API to remain consistent 
