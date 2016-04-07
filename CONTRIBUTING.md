@@ -48,14 +48,14 @@ a task and which remotes to track.
 ### Task Assignment
 
 In some cases, a maintainer will choose a contributor to assign the task to.
-The assignee will come from people working on the task, and that person will  
+The assignee will come from people working on the task, and that person will 
 be the arbiter of work on the task. If a person is assigned, only pull requests
 from that user will be accepted into master.
 
 ### Make a Branch
 
 Make a working branch off of ppb/master. ppb/dev is [pathunstrom](https://github.com/pathunstrom)'s 
-working branch. Do not base work off of this branch.
+working branch. ppb/luna-dev is [lunacodes](https://github.com/lunacodes)' working branch. Do not base work off of either of these branches.
 
 ### Do the Work
 
