@@ -11,7 +11,6 @@ goal.
 
 * Physics Engine
     * Collisions
-* **Contribution Guide**
 
 ## Other
 
@@ -21,14 +20,11 @@ General tasks. Includes ideas and reasoning for planned future development.
 to clean up parameters in the project.
     * Also the controller
 * Formalize objects from zombies into ppb
-    * Mob
-    * Renderable
-    * 4-Direction Movement (Player)
     * Emitter
     * Particle
-* Bug: Key \__repr\__ does not wrap second parameter in quotation marks.
 * Animation
-* Components package
 * Instead of subclassing View, abstract the layering system like with 
     Controller.
 * Style guide.
+    * Setting
+* Mouse

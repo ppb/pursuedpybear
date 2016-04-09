@@ -1,8 +1,16 @@
 # PursuedPyBear Contributors
 
+
+## Maintainers
+
+Name | Email | Twitter |
+-----|-------|---------|
+[Piper Thunstrom](https://github.com/pathunstrom) | [pathunstrom@gmail.com](mailto:pathunstrom@gmail.com) | [pathunstrom](https://twitter.com/pathunstrom)
+[Luna Lunapiena](https://github.com/lunacodes) | [lunacodes@gmail.com](lunacodes@gmail.com) | [lunacodess](https://twitter.com/lunacodess)
+
 Thank you to everyone below for your contributions **(No matter how big or small)!**
 
-## Contributors:
+## Contributors
+
 Name | Email | Twitter |
 ---- | ----- | ------- |
-[Luna Lunapiena](https://github.com/lunacodes) | [lunacodes@gmail.com](lunacodes@gmail.com) | [lunacodess](https://twitter.com/lunacodess)
