@@ -5,8 +5,8 @@ import logging
 import pygame
 from pygame.sprite import DirtySprite
 
+import ppb.components.view
 from ppb.event import KeyDown, KeyUp, MouseButtonDown, MouseButtonUp, Quit
-import ppb.view
 from ppb.vmath import Vector2 as Vector
 
 
@@ -102,7 +102,7 @@ def draw_screen():
     pygame.display.flip()
 
 
-class View(ppb.view.View):
+class View(ppb.components.view.View):
 
     def __init__(self, scene, display, fps, hardware, background):
         super(View, self).__init__(scene, display, fps, hardware)
@@ -126,7 +126,7 @@ class View(ppb.view.View):
 
 class Sprite(DirtySprite):
 
-    def __init__(self, image, model, *groups):
+    def __init__(self, image, model, *groups, **kwargs):
         super(Sprite, self).__init__(*groups)
         self.image = image
         self.rect = image.get_rect()

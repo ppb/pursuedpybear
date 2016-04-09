@@ -74,11 +74,12 @@ class View(object):
 
 class Sprite(object):
 
-    def __init__(self, image, model):
+    def __init__(self, image, model, size=0):
         self.image = image
-        self.size = image.size
+        self.size = size
         self.pos = Vector(0, 0)
         self.model = model
 
     def update(self):
-        self.pos = Vector(self.model.pos.x - self.size, self.model.pos.y - self.size)
+        self.pos = Vector(self.model.pos.x - self.size,
+                          self.model.pos.y - self.size)

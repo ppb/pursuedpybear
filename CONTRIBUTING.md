@@ -48,7 +48,7 @@ a task and which remotes to track.
 ### Task Assignment
 
 In some cases, a maintainer will choose a contributor to assign the task to.
-The assignee will come from people working on the task, and that person will 
+The assignee will come from people working on the task, and that person will
 be the arbiter of work on the task. If a person is assigned, only pull requests
 from that user will be accepted into master.
 

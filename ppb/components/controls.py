@@ -2,6 +2,7 @@ import logging
 
 import ppb.engine as engine
 from ppb.event import Tick
+from ppb.vmath import Vector2 as Vec
 
 
 class Controller(object):
@@ -70,3 +71,16 @@ class Controller(object):
 
     def __repr__(self):
         return "Controller[keys: {}, mouse: {}]".format(self.keys, self.mouse)
+
+
+def control_move(controller, up=0, down=1, right=2, left=3, speed=None):
+
+    def callback(self, _):
+        direction = Vec(controller.key(right) - controller.key(left),
+                        controller.key(down) - controller.key(up))
+        if speed is not None:
+            result = direction * speed
+        else:
+            result = direction * self.speed
+        self.velocity = result
+    return callback
