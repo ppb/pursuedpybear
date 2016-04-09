@@ -55,7 +55,7 @@ from that user will be accepted into master.
 ### Make a Branch
 
 Make a working branch off of ppb/master. ppb/dev is [pathunstrom](https://github.com/pathunstrom)'s 
-working branch. Do not base work off of this branch.
+working branch. ppb/luna-dev is [lunacodes](https://github.com/lunacodes)' working branch. Do not base work off of those branches.
 
 ### Do the Work
 
