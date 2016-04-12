@@ -6,13 +6,17 @@ from pygame.surface import Surface
 from ppb import engine
 from ppb.ext import hw_pygame as hardware
 from ppb.utilities import Publisher
-from ppb.event import Quit, Tick
+from ppb.event import Quit, Tick, MouseButtonDown
 from ppb.components import Controller, models
-from ppb.components.controls import control_move
+from ppb.components.controls import control_move, emit_object
 from ppb.vmath import Vector2 as Vector
 
 
 class Player(models.Controllable, models.Renderable):
+    pass
+
+
+class Bullet(models.Mobile, models.Renderable):
     pass
 
 
@@ -32,7 +36,15 @@ def main():
                 "left": pygame.K_a,
                 "right": pygame.K_d,
                 "speed": 60}
-    controls = [(Tick, control_move(controller, **controls))]
+    sprite_image = pygame.Surface((4, 4))
+    sprite_image.fill((255, 255, 255))
+    bullet_params = {"scene": scene,
+                     "image": sprite_image,
+                     "image_size": 4,
+                     "hardware": hardware,
+                     "view": view}
+    controls = [(Tick, control_move(controller, **controls)),
+                (MouseButtonDown, emit_object(Bullet, bullet_params, 1, 60))]
     Player(scene=scene,
            view=view,
            image=image,

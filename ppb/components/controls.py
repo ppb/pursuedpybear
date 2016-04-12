@@ -74,7 +74,19 @@ class Controller(object):
 
 
 def control_move(controller, up=0, down=1, right=2, left=3, speed=None):
+    """
+    Bind to an object as a Tick event callback to update player velocity
+    based on key presses.
 
+    :param controller: Controller
+    :param up: integer key_id
+    :param down: integer key_id
+    :param right: integer key_id
+    :param left: integer key_id
+    :param speed: Optional magnitude. If the object manages its own simulation
+                  speed, this is unnecessary.
+    :return func
+    """
     def callback(self, _):
         direction = Vec(controller.key(right) - controller.key(left),
                         controller.key(down) - controller.key(up))
@@ -83,4 +95,37 @@ def control_move(controller, up=0, down=1, right=2, left=3, speed=None):
         else:
             result = direction * self.speed
         self.velocity = result
+    return callback
+
+
+def emit_object(game_object, parameters, button=None, initial_speed=1.):
+    """
+    Create an emitter callback function.
+
+    Bind to a game object as a callback for a MouseButtonDown event to emit
+    other game objects.
+
+    :param game_object: Type
+    :param parameters: dict to be passed to game_object
+    :param button: int A specific mouse button to respond to.
+    :param initial_speed: float game unit magnitude. Cannot be zero.
+    """
+    if initial_speed == 0:
+        raise ValueError("Initial speed must not be 0.")
+
+    def callback(self, event):
+        if button is not None and event.key != button:
+                return
+
+        try:
+            start_offset = self.size
+        except AttributeError:
+            start_offset = 0
+
+        direction = Vec(event.pos.x - self.pos.x,
+                        event.pos.y - self.pos.y).normalize()
+        offset = direction.scale(start_offset)
+        direction *= initial_speed
+        position = self.pos + offset
+        game_object(pos=position, velocity=direction, **parameters)
     return callback

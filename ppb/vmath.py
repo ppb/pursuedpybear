@@ -85,10 +85,10 @@ class Vector2(object):
 
     def rotate(self, degrees):
         r = radians(degrees)
-        rcos = cos(r)
-        rsin = sin(r)
-        x = round(self.x * rcos - self.y * rsin, 5)
-        y = round(self.x * rsin + self.y * rcos, 5)
+        r_cos = cos(r)
+        r_sin = sin(r)
+        x = round(self.x * r_cos - self.y * r_sin, 5)
+        y = round(self.x * r_sin + self.y * r_cos, 5)
         return Vector2(x, y)
 
     def normalize(self):
