@@ -1,6 +1,7 @@
 from __future__ import division
 
 from collections import defaultdict
+from event import Tick
 import logging
 
 from ppb.vmath import Vector2 as Vector
@@ -55,7 +56,8 @@ class Publisher(object):
         if self.subscribe_requests:
             self.add()
         callbacks = self.subscribers[type(event)]
-        logging.debug("Processing {event} on {num} callbacks.".format(event=event, num=len(callbacks)))
+        if type(event) != Tick:
+            logging.debug("Processing {event} on {num} callbacks.".format(event=event, num=len(callbacks)))
         for callback in callbacks:
             callback(event)
 

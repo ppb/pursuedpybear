@@ -28,3 +28,5 @@ to clean up parameters in the project.
 * Style guide.
     * Setting
 * Mouse
+* Create event type that the publisher can listen for to automatically subscribe
+  necessary callbacks when an object is created.

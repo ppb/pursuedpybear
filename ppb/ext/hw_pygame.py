@@ -71,19 +71,18 @@ def events():
     """
     rv = []
 
-    classes = {pygame.KEYDOWN: KeyDown,
-               pygame.KEYUP: KeyUp,
-               pygame.MOUSEBUTTONDOWN: MouseButtonDown,
-               pygame.MOUSEBUTTONUP: MouseButtonUp}
+    key_events = {pygame.KEYDOWN: KeyDown,
+                  pygame.KEYUP: KeyUp}
+
+    mouse_events = {pygame.MOUSEBUTTONDOWN: MouseButtonDown,
+                    pygame.MOUSEBUTTONUP: MouseButtonUp}
 
     for e in pygame.event.get():
         new_event = None
-        if e.type in classes.keys():
-            try:
-                e.key = e.button
-            except AttributeError:
-                pass
-            new_event = classes[e.type](e.key, "")
+        if e.type in key_events.keys():
+            new_event = key_events[e.type](e.key, "")
+        elif e.type in mouse_events.keys():
+            new_event = mouse_events[e.type](e.button, "", Vector(*e.pos))
         elif e.type == pygame.QUIT:
             new_event = Quit()
         if new_event:

@@ -82,11 +82,23 @@ class KeyDown(Key):
     pass
 
 
-class MouseButtonUp(Key):
+class Mouse(Key):
+    def __init__(self, identifier, name, pos):
+        super(Mouse, self).__init__(identifier, name)
+        self.pos = pos
+
+    def __repr__(self):
+        return "{}({}, {}, {})".format(self.__class__.__name__,
+                                       self.key,
+                                       self.name,
+                                       self.pos)
+
+
+class MouseButtonUp(Mouse):
     pass
 
 
-class MouseButtonDown(Key):
+class MouseButtonDown(Mouse):
     pass
 
 
