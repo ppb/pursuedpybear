@@ -56,7 +56,7 @@ class Publisher(object):
         if self.subscribe_requests:
             self.add()
         callbacks = self.subscribers[type(event)]
-        if type(event) != Tick:
+        if not isinstance(event, Tick):
             logging.debug("Processing {event} on {num} callbacks.".format(event=event, num=len(callbacks)))
         for callback in callbacks:
             callback(event)
@@ -99,7 +99,6 @@ class Publisher(object):
             if self.dispatcher:
                 self.dispatcher.subscribe(event_type, self.publish)
         self.subscribe_requests = []
-
 
 
 class Queue(object):

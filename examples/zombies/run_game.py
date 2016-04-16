@@ -6,31 +6,63 @@ from pygame.surface import Surface
 from ppb import engine
 from ppb.ext import hw_pygame as hardware
 from ppb.utilities import Publisher
-from ppb.event import Quit, Tick, MouseButtonDown
+from ppb.event import Start, Quit, Tick, MouseButtonDown, ObjectCreated, ObjectDestroyed, Collision
 from ppb.components import Controller, models
 from ppb.components.controls import control_move, emit_object
+from ppb.physics import Physics
 from ppb.vmath import Vector2 as Vector
 
 
-class Player(models.Controllable, models.Renderable):
+publisher = Publisher()
+
+
+class Player(models.GameObject, models.Controllable, models.Renderable, models.Collider):
     pass
 
 
-class Bullet(models.Mobile, models.Renderable):
+class Bullet(models.GameObject, models.Mobile, models.Renderable, models.Collider):
     pass
 
 
-def main():
-    logging.basicConfig(level=logging.DEBUG)
+class Target(models.GameObject, models.Controllable, models.Renderable, models.Collider):
+    pass
+
+
+def hit(self, collision):
+    is_hit = False
+    other = None
+    for item in collision.members:
+        if item == self:
+            is_hit = True
+        else:
+            other = item
+    if is_hit:
+        if isinstance(other, Bullet):
+            self.kill()
+
+
+def subscribe(event):
+    for command in event.commands:
+        publisher.subscribe(*command)
+
+
+def unsubscribe(event):
+    for command in event.commands:
+        publisher.unsubscribe(*command)
+
+
+def main(_):
     hardware.init((600, 400), "Zombies!")
 
-    scene = Publisher()
-    scene.subscribe(Quit, hardware.quit)
-    controller = Controller(scene, hardware)
-    view = hardware.View(scene, hardware.display, 30, hardware, Surface((600, 400)))
+    publisher.subscribe(Quit, hardware.quit)
+    publisher.subscribe(ObjectCreated, subscribe)
+    publisher.subscribe(ObjectDestroyed, unsubscribe)
+    controller = Controller(publisher, hardware)
+    view = hardware.View(publisher, hardware.display, 30, hardware, Surface((600, 400)))
+    Physics(scene=publisher)
 
     image = pygame.Surface((20, 20))
-    image.fill((128, 15, 15))
+    image.fill((128, 65, 40))
     controls = {"up": pygame.K_w,
                 "down": pygame.K_s,
                 "left": pygame.K_a,
@@ -38,22 +70,32 @@ def main():
                 "speed": 60}
     sprite_image = pygame.Surface((4, 4))
     sprite_image.fill((255, 255, 255))
-    bullet_params = {"scene": scene,
-                     "image": sprite_image,
+    bullet_params = {"image": sprite_image,
                      "image_size": 4,
                      "hardware": hardware,
                      "view": view}
     controls = [(Tick, control_move(controller, **controls)),
-                (MouseButtonDown, emit_object(Bullet, bullet_params, 1, 60))]
-    Player(scene=scene,
-           view=view,
+                (MouseButtonDown, emit_object(Bullet, bullet_params, 1, 120))]
+    Player(view=view,
            image=image,
            image_size=20,
            hardware=hardware,
            pos=Vector(300, 200),
-           commands=controls)
-    engine.run(scene)
-
+           commands=controls,
+           radius=10)
+    target_image = pygame.Surface((20, 20))
+    target_image.fill((0, 255, 0))
+    step = 600 / 6
+    for x in range(5):
+        Target(view=view,
+               image=target_image,
+               image_size=20,
+               hardware=hardware,
+               pos=Vector(step * (x + 1), 50),
+               radius=10,
+               commands=[(Collision, hit)])
 
 if __name__ == "__main__":
-    main()
+    logging.basicConfig(level=logging.DEBUG)
+    publisher.subscribe(Start, main)
+    engine.run(publisher)

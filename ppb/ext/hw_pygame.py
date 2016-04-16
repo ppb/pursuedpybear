@@ -117,13 +117,17 @@ class View(ppb.components.view.View):
         self.layers.add(sprite, layer=layer)
 
     def remove(self, sprite):
-        self.remove(sprite)
+        self.layers.remove(sprite)
 
     def change_layer(self, sprite, layer):
         self.layers.change_layer(sprite, layer)
 
+    @property
+    def sprites(self):
+        return self.layers.sprites()
 
-class Sprite(DirtySprite):
+
+class Sprite(DirtySprite, ppb.components.view.Sprite):
 
     def __init__(self, image, model, *groups, **kwargs):
         super(Sprite, self).__init__(*groups)

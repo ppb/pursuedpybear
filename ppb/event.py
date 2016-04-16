@@ -26,6 +26,11 @@ class Quit(Event):
     pass
 
 
+class Start(Event):
+
+    pass
+
+
 class PushScene(Event):
     """
     Add a new scene to the stack.
@@ -66,12 +71,12 @@ class Key(Event):
         :param name: A human readable keyname.
         :return:
         """
-        self.key = identifier
+        self.id = identifier
         self.name = name
 
     def __repr__(self):
         return '{}({}, "{}")'.format(self.__class__.__name__,
-                                     self.key, self.name)
+                                     self.id, self.name)
 
 
 class KeyUp(Key):
@@ -89,7 +94,7 @@ class Mouse(Key):
 
     def __repr__(self):
         return "{}({}, {}, {})".format(self.__class__.__name__,
-                                       self.key,
+                                       self.id,
                                        self.name,
                                        self.pos)
 
@@ -124,3 +129,35 @@ class Message(Event):
                                        self.sender,
                                        self.receiver,
                                        self.payload)
+
+
+class Collision(Event):
+
+    def __init__(self, *args):
+        self.members = set(args)
+
+    def __repr__(self):
+        return "{}({})".format(self.__class__.__name__,
+                               ', '.join(str(x) for x in self.members))
+
+
+class GameObject(Event):
+
+    def __init__(self, obj, *commands):
+        self.obj = obj
+        self.commands = []
+        for command in commands:
+            self.commands.extend(list(command))
+
+    def __repr__(self):
+        return "{}({}, {})".format(self.__class__.__name__,
+                                   self.obj,
+                                   self.commands)
+
+
+class ObjectCreated(GameObject):
+    pass
+
+
+class ObjectDestroyed(GameObject):
+    pass
