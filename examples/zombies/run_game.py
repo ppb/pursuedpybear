@@ -16,7 +16,7 @@ from ppb.vmath import Vector2 as Vector
 publisher = Publisher()
 
 
-class Player(models.GameObject, models.Controllable, models.Renderable, models.Collider):
+class Player(models.GameObject, models.Mobile, models.Renderable, models.Collider):
     pass
 
 
@@ -24,7 +24,7 @@ class Bullet(models.GameObject, models.Mobile, models.Renderable, models.Collide
     pass
 
 
-class Target(models.GameObject, models.Controllable, models.Renderable, models.Collider):
+class Target(models.GameObject, models.Renderable, models.Collider):
     pass
 
 
@@ -37,7 +37,7 @@ def hit(self, collision):
         else:
             other = item
     if is_hit:
-        if isinstance(other, Bullet):
+        if isinstance(other, Bullet) or isinstance(other, Target):
             self.kill()
 
 
@@ -59,7 +59,7 @@ def main(_):
     publisher.subscribe(ObjectDestroyed, unsubscribe)
     controller = Controller(publisher, hardware)
     view = hardware.View(publisher, hardware.display, 30, hardware, Surface((600, 400)))
-    Physics(scene=publisher)
+    Physics()
 
     image = pygame.Surface((20, 20))
     image.fill((128, 65, 40))
@@ -73,7 +73,8 @@ def main(_):
     bullet_params = {"image": sprite_image,
                      "image_size": 4,
                      "hardware": hardware,
-                     "view": view}
+                     "view": view,
+                     "behaviors": [(Collision, hit)]}
     controls = [(Tick, control_move(controller, **controls)),
                 (MouseButtonDown, emit_object(Bullet, bullet_params, 1, 120))]
     Player(view=view,
@@ -81,7 +82,7 @@ def main(_):
            image_size=20,
            hardware=hardware,
            pos=Vector(300, 200),
-           commands=controls,
+           behaviors=controls,
            radius=10)
     target_image = pygame.Surface((20, 20))
     target_image.fill((0, 255, 0))
@@ -93,7 +94,7 @@ def main(_):
                hardware=hardware,
                pos=Vector(step * (x + 1), 50),
                radius=10,
-               commands=[(Collision, hit)])
+               behaviors=[(Collision, hit)])
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
