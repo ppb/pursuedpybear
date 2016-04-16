@@ -1,7 +1,7 @@
 from collections import namedtuple
 
 from ppb import engine
-from ppb.event import Tick, Message
+from ppb.event import Tick, Message, ObjectCreated, ObjectDestroyed
 from ppb.vmath import Vector2 as Vec
 
 Command = namedtuple("Command", ["event", "callback"])
@@ -9,16 +9,19 @@ Command = namedtuple("Command", ["event", "callback"])
 
 class Model(object):
 
-    def __init__(self, scene=None, pos=Vec(0, 0), *args, **kwargs):
-        scene.subscribe(Tick, self.tick)
+    def __init__(self, pos=Vec(0, 0), **kwargs):
         self.pos = pos
-        self.scene = scene
-
-    def tick(self, _):
-        pass
+        self.commands = []
 
     def kill(self):
-        self.scene.unsubscribe(Tick, self.tick)
+        engine.message(ObjectDestroyed(self, self.commands))
+
+
+class GameObject(Model):
+
+    def __init__(self, *args, **kwargs):
+        super(GameObject, self).__init__(*args, **kwargs)
+        engine.message(ObjectCreated(self, self.commands))
 
 
 class Mobile(Model):
@@ -28,9 +31,9 @@ class Mobile(Model):
                                      *args,
                                      **kwargs)
         self.velocity = velocity
+        self.commands.append((Tick, self.tick))
 
     def tick(self, tick):
-        super(Mobile, self).tick(tick)
         self.pos += self.velocity * tick.sec
 
 
@@ -56,7 +59,6 @@ class Controllable(Mobile):
         super(Controllable, self).__init__(commands=commands,
                                            *args,
                                            **kwargs)
-        self.registered_controls = []
         if commands is not None:
             for command in commands:
                 self.register_command(command)
@@ -76,12 +78,11 @@ class Controllable(Mobile):
         :param scene: Publisher
         :param command: iterable of length 2
                         The first element should be an Event class.
-                        The second element should be a function of the signature
-                        func(self, event) and return None.
+                        The second element should be a function of the
+                        signature func(self, event) and return None.
         """
         command = Command(command[0], self.bind(command[1]))
-        self.scene.subscribe(*command)
-        self.registered_controls.append(command)
+        self.commands.append(command)
 
     def bind(self, function):
         """
@@ -94,9 +95,9 @@ class Controllable(Mobile):
             return function(self, event)
         return callback
 
-    def kill(self):
-        """
-        Unsubscribe controls.
-        """
-        for command in self.registered_controls:
-            self.scene.unsubscribe(*command)
+
+class Collider(Model):
+
+    def __init__(self, radius=0, *args, **kwargs):
+        super(Collider, self).__init__(radius=radius, *args, **kwargs)
+        self.radius = radius

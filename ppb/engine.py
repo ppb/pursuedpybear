@@ -26,6 +26,7 @@ def run(first_scene):
     :return:
     """
     push(first_scene)
+    first_scene.publish(event.Start())
     while running:
         try:
             cur_event = event_queue.pop()

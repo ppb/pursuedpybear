@@ -1,6 +1,6 @@
-from ppb.event import Tick, Quit
+from ppb.event import Tick, Quit, ObjectDestroyed
 from ppb.vmath import Vector2 as Vector
-
+from ppb import engine
 
 class View(object):
 
@@ -9,6 +9,7 @@ class View(object):
         self.countdown = self.render_wait
         scene.subscribe(Tick, self.tick)
         scene.subscribe(Quit, self.quit)
+        scene.subscribe(ObjectDestroyed, self.object_destroyed)
         self.display = display
         self.layers = [set()]
         self.hw = hardware
@@ -69,7 +70,22 @@ class View(object):
                     self.fps.append([average])
 
     def quit(self, _):
-        print("FPS: {}".format(1 / (sum(self.fps[-1]) / len(self.fps[-1]))))
+        try:
+            print("FPS: {}".format(1 / (sum(self.fps[-1]) / len(self.fps[-1]))))
+        except ZeroDivisionError:
+            print("FPS: N/A")
+
+    def object_destroyed(self, obj):
+        self.remove(obj.obj)
+        for sprite in self.sprites:
+            sprite.object_destroyed(obj)
+
+    @property
+    def sprites(self):
+        sprites = []
+        for layer in self.layers:
+            sprites.extend(list(layer))
+        return sprites
 
 
 class Sprite(object):
@@ -83,3 +99,10 @@ class Sprite(object):
     def update(self):
         self.pos = Vector(self.model.pos.x - self.size,
                           self.model.pos.y - self.size)
+
+    def object_destroyed(self, event):
+        if event.obj == self.model:
+            self.kill()
+
+    def kill(self):
+        engine.message(ObjectDestroyed(self, []))

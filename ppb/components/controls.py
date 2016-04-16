@@ -114,11 +114,11 @@ def emit_object(game_object, parameters, button=None, initial_speed=1.):
         raise ValueError("Initial speed must not be 0.")
 
     def callback(self, event):
-        if button is not None and event.key != button:
+        if button is not None and event.id != button:
                 return
 
         try:
-            start_offset = self.size
+            start_offset = self.radius
         except AttributeError:
             start_offset = 0
 
