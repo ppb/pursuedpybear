@@ -1,7 +1,7 @@
 import logging
 
 import ppb.engine as engine
-from ppb.event import Tick
+from ppb.event import Tick, ObjectCreated
 from ppb.vmath import Vector2 as Vec
 
 
@@ -27,10 +27,10 @@ class Controller(object):
                              ppb events.
         :return:
         """
-        scene.subscribe(Tick, self.tick)
         self.keys = hardware.keys()
         self.mouse = hardware.mouse()
         self.hardware = hardware
+        engine.message(ObjectCreated(self, ((Tick, self.tick),)))
 
     def __getitem__(self, item):
         if item in ['key', 'keys']:

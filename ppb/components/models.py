@@ -59,18 +59,14 @@ class Mobile(Mixable):
 
 class Renderable(Mixable):
 
-    def __init__(self, image=None, view=None, image_size=0, hardware=None, *args, **kwargs):
+    def __init__(self, image=None, view=None, image_size=0, *args, **kwargs):
         super(Renderable, self).__init__(image=image,
                                          view=view,
                                          image_size=image_size,
                                          *args,
                                          **kwargs)
-
-        view.add(hardware.Sprite(image, self, size=image_size))
-
-    def kill(self):
-        super(Renderable, self).kill()
-        engine.message(Message(self, None, {"command": "kill"}))
+        self.image = image
+        self.image_size = image_size
 
 
 class Collider(Mixable):

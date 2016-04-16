@@ -1,5 +1,6 @@
-from ppb.event import Tick, Quit, ObjectDestroyed
+from ppb.event import Tick, Quit, ObjectDestroyed, ObjectCreated
 from ppb.vmath import Vector2 as Vector
+from ppb.components.models import Renderable
 from ppb import engine
 
 
@@ -8,13 +9,15 @@ class View(object):
     def __init__(self, scene, display, fps, hardware):
         self.render_wait = 1 / fps
         self.countdown = self.render_wait
-        scene.subscribe(Tick, self.tick)
-        scene.subscribe(Quit, self.quit)
-        scene.subscribe(ObjectDestroyed, self.object_destroyed)
+        self.behaviors = ((Tick, self.tick),
+                          (Quit, self.quit),
+                          (ObjectDestroyed, self.object_destroyed),
+                          (ObjectCreated, self.object_created))
         self.display = display
         self.layers = [set()]
         self.hw = hardware
         self.fps = [[]]
+        engine.message(ObjectCreated(self, self.behaviors))
 
     def render(self):
         for layer in self.layers:
@@ -81,6 +84,11 @@ class View(object):
         for sprite in self.sprites:
             sprite.object_destroyed(obj)
 
+    def object_created(self, obj):
+        obj = obj.obj
+        if isinstance(obj, Renderable):
+            self.add(Sprite(obj))
+
     @property
     def sprites(self):
         sprites = []
@@ -91,9 +99,9 @@ class View(object):
 
 class Sprite(object):
 
-    def __init__(self, image, model, size=0):
-        self.image = image
-        self.size = size
+    def __init__(self, model):
+        self.image = model.image
+        self.size = model.image_size
         self.pos = Vector(0, 0)
         self.model = model
 

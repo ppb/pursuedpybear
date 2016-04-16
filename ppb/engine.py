@@ -3,7 +3,6 @@ An event driven application engine.
 """
 
 from collections import Iterable
-import logging
 import time
 
 from ppb.utilities import Queue
@@ -26,18 +25,23 @@ def run(first_scene):
     :return:
     """
     push(first_scene)
-    first_scene.publish(event.Start())
+    callbacks = {event.PushScene: push,
+                 event.PopScene: pop,
+                 event.ReplaceScene: replace,
+                 event.Quit: game_quit}
     while running:
         try:
             cur_event = event_queue.pop()
         except IndexError:
-            tick()
-            cur_event = None
+            cur_event = tick()
+        event_type = type(cur_event)
+        if event_type in callbacks:
+            callbacks[event_type](cur_event)
         scenes[-1].publish(cur_event)
     return 0
 
 
-def tick(*_):
+def tick():
     """
     Raise a new Tick
     :param _: Tick
@@ -48,8 +52,8 @@ def tick(*_):
     current_tick = time.time()
     sec = current_tick - last_tick
     run_time += sec
-    message(event.Tick(sec, run_time))
     last_tick = current_tick
+    return event.Tick(sec, run_time)
 
 
 def game_quit(*_):
@@ -74,11 +78,6 @@ def push(e):
         scene = e.scene
     except AttributeError:
         scene = e
-    scene.subscribe(event.Tick, tick)
-    scene.subscribe(event.Quit, game_quit)
-    scene.subscribe(event.PushScene, push)
-    scene.subscribe(event.PopScene, pop)
-    scene.subscribe(event.ReplaceScene, replace)
     scenes.append(scene)
 
 
