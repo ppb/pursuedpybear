@@ -6,7 +6,7 @@ from pygame.surface import Surface
 from ppb import engine
 from ppb.ext import hw_pygame as hardware
 from ppb.utilities import Publisher
-from ppb.event import Start, Quit, Tick, MouseButtonDown, ObjectCreated, ObjectDestroyed, Collision
+from ppb.event import Quit, Tick, MouseButtonDown, ObjectCreated, ObjectDestroyed, Collision
 from ppb.components import Controller, models
 from ppb.components.controls import control_move, emit_object
 from ppb.physics import Physics
@@ -51,14 +51,14 @@ def unsubscribe(event):
         publisher.unsubscribe(*command)
 
 
-def main(_):
+def main():
+    logging.basicConfig(level=logging.DEBUG)
     hardware.init((600, 400), "Zombies!")
-
     publisher.subscribe(Quit, hardware.quit)
     publisher.subscribe(ObjectCreated, subscribe)
     publisher.subscribe(ObjectDestroyed, unsubscribe)
     controller = Controller(publisher, hardware)
-    view = hardware.View(publisher, hardware.display, 30, hardware, Surface((600, 400)))
+    hardware.View(publisher, hardware.display, 30, hardware, Surface((600, 400)))
     Physics()
 
     image = pygame.Surface((20, 20))
@@ -73,12 +73,10 @@ def main(_):
     bullet_params = {"image": sprite_image,
                      "image_size": 4,
                      "hardware": hardware,
-                     "view": view,
                      "behaviors": [(Collision, hit)]}
     controls = [(Tick, control_move(controller, **controls)),
                 (MouseButtonDown, emit_object(Bullet, bullet_params, 1, 120))]
-    Player(view=view,
-           image=image,
+    Player(image=image,
            image_size=20,
            hardware=hardware,
            pos=Vector(300, 200),
@@ -88,15 +86,13 @@ def main(_):
     target_image.fill((0, 255, 0))
     step = 600 / 6
     for x in range(5):
-        Target(view=view,
-               image=target_image,
+        Target(image=target_image,
                image_size=20,
                hardware=hardware,
                pos=Vector(step * (x + 1), 50),
                radius=10,
                behaviors=[(Collision, hit)])
+    engine.run(publisher)
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
-    publisher.subscribe(Start, main)
-    engine.run(publisher)
+    main()

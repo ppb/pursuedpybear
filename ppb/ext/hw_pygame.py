@@ -8,6 +8,7 @@ from pygame.sprite import DirtySprite
 import ppb.components.view
 from ppb.event import KeyDown, KeyUp, MouseButtonDown, MouseButtonUp, Quit
 from ppb.vmath import Vector2 as Vector
+from ppb.components.models import Renderable
 
 
 display = None
@@ -122,6 +123,11 @@ class View(ppb.components.view.View):
     def change_layer(self, sprite, layer):
         self.layers.change_layer(sprite, layer)
 
+    def object_created(self, obj):
+        obj = obj.obj
+        if isinstance(obj, Renderable):
+            self.add(Sprite(obj))
+
     @property
     def sprites(self):
         return self.layers.sprites()
@@ -129,10 +135,10 @@ class View(ppb.components.view.View):
 
 class Sprite(DirtySprite, ppb.components.view.Sprite):
 
-    def __init__(self, image, model, *groups, **kwargs):
+    def __init__(self, model, *groups):
         super(Sprite, self).__init__(*groups)
-        self.image = image
-        self.rect = image.get_rect()
+        self.image = model.image
+        self.rect = self.image.get_rect()
         x_offset = self.rect.width / 2
         y_offset = self.rect.height / 2
         self.offset = Vector(x_offset, y_offset)
