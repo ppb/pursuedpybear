@@ -2,6 +2,7 @@ from ppb.event import Tick, Quit, ObjectDestroyed
 from ppb.vmath import Vector2 as Vector
 from ppb import engine
 
+
 class View(object):
 
     def __init__(self, scene, display, fps, hardware):
