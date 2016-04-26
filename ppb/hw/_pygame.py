@@ -104,8 +104,8 @@ def draw_screen():
 
 class View(ppb.components.view.View):
 
-    def __init__(self, scene, display, fps, hardware, background):
-        super(View, self).__init__(scene, display, fps, hardware)
+    def __init__(self, scene, screen, fps, hardware, background):
+        super(View, self).__init__(scene, screen, fps, hardware)
         self.layers = pygame.sprite.LayeredDirty()
         self.background = background
 
@@ -151,3 +151,13 @@ class Sprite(DirtySprite, ppb.components.view.Sprite):
         if new_pos != self.rect.topleft:
             self.rect.topleft = new_pos
             self.dirty = 1
+
+
+def image_primitive(color, size):
+    try:
+        image = pygame.Surface(size)
+    except ValueError:
+        image = pygame.Surface((size, size))
+
+    image.fill(color)
+    return image

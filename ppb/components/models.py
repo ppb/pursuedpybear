@@ -1,7 +1,7 @@
 from collections import namedtuple
 
 from ppb import engine
-from ppb.event import Tick, Message, ObjectCreated, ObjectDestroyed
+from ppb.event import Tick, ObjectCreated, ObjectDestroyed
 from ppb.vmath import Vector2 as Vec
 
 Command = namedtuple("Command", ["event", "callback"])
@@ -59,14 +59,23 @@ class Mobile(Mixable):
 
 class Renderable(Mixable):
 
-    def __init__(self, image=None, view=None, image_size=0, *args, **kwargs):
+    def __init__(self, image=None, image_size=(20, 20), *args, **kwargs):
         super(Renderable, self).__init__(image=image,
-                                         view=view,
                                          image_size=image_size,
                                          *args,
                                          **kwargs)
         self.image = image
         self.image_size = image_size
+
+
+class HardwarePrimitive(Renderable):
+
+    def __init__(self, color=(255, 255, 255), hardware=None, *args, **kwargs):
+        super(HardwarePrimitive, self).__init__(color=color,
+                                                hardware=hardware,
+                                                *args,
+                                                **kwargs)
+        self.image = hardware.image_primitive(color, self.image_size)
 
 
 class Collider(Mixable):

@@ -38,6 +38,7 @@ def run(first_scene):
         if event_type in callbacks:
             callbacks[event_type](cur_event)
         scenes[-1].publish(cur_event)
+        time.sleep(.0001)
     return 0
 
 
