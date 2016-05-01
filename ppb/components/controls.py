@@ -1,8 +1,22 @@
 import logging
 
 import ppb.engine as engine
-from ppb.event import Tick, ObjectCreated
+from ppb import hw
+from ppb.event import Tick, ObjectCreated, Quit, Message
 from ppb.vmath import Vector2 as Vec
+import ppb.utilities
+
+
+class Publisher(ppb.utilities.Publisher):
+
+    def __init__(self, hardware, dispatcher=None):
+        super(Publisher, self).__init__(dispatcher)
+        self.subscribe(ObjectCreated, self.object_created)
+        self.subscribe(Quit, hardware.quit)
+
+    def object_created(self, object_event):
+        for command in object_event.commands:
+            self.subscribe(*command)
 
 
 class Controller(object):
@@ -73,12 +87,11 @@ class Controller(object):
         return "Controller[keys: {}, mouse: {}]".format(self.keys, self.mouse)
 
 
-def control_move(controller, up=0, down=1, right=2, left=3, speed=None):
+def control_move(up=0, down=1, right=2, left=3, speed=None):
     """
     Bind to an object as a Tick event callback to update player velocity
     based on key presses.
 
-    :param controller: Controller
     :param up: integer key_id
     :param down: integer key_id
     :param right: integer key_id
@@ -88,8 +101,8 @@ def control_move(controller, up=0, down=1, right=2, left=3, speed=None):
     :return func
     """
     def callback(self, _):
-        direction = Vec(controller.key(right) - controller.key(left),
-                        controller.key(down) - controller.key(up))
+        direction = Vec(hw.keys[right] - hw.keys[left],
+                        hw.keys[down] - hw.keys[up])
         if speed is not None:
             result = direction * speed
         else:

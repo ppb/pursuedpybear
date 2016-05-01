@@ -1,7 +1,7 @@
 import logging
 
 from ppb import engine
-from ppb.hw import pygame as hardware
+from ppb import hw as hardware
 from ppb.utilities import Publisher
 from ppb.event import (Quit,
                        Tick,
@@ -9,7 +9,7 @@ from ppb.event import (Quit,
                        ObjectCreated,
                        ObjectDestroyed,
                        Collision)
-from ppb.components import Controller, models
+from ppb.components import models
 from ppb.components.controls import control_move, emit_object
 from ppb.physics import Physics
 from ppb.vmath import Vector2 as Vector
@@ -61,13 +61,14 @@ def unsubscribe(event):
 
 def main():
     logging.basicConfig(level=logging.DEBUG)
-    hardware.init((600, 400), "Zombies!")
+    hardware.choose("pygame")
+    hardware.init((600, 400), "Targets")
     publisher.subscribe(Quit, hardware.quit)
     publisher.subscribe(ObjectCreated, subscribe)
     publisher.subscribe(ObjectDestroyed, unsubscribe)
-    controller = Controller(publisher, hardware)
+    publisher.subscribe(Tick, hardware.update_input)
     hardware.View(publisher,
-                  hardware.display,
+                  hardware.display(),
                   30,
                   hardware,
                   hardware.image_primitive((0, 0, 0), (600, 400)))
@@ -83,8 +84,7 @@ def main():
                      "image_size": 4,
                      "hardware": hardware,
                      "behaviors": [(Collision, hit)]}
-    controls = [(Tick, control_move(controller,
-                                    speed=player_speed,
+    controls = [(Tick, control_move(speed=player_speed,
                                     **key_bindings)),
                 (MouseButtonDown, emit_object(Bullet, bullet_params, 1, 120))]
     Player(color=player_color,

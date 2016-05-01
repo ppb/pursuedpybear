@@ -9,24 +9,18 @@ tucked into working code.
 Tasks that need to happen ASAP. Generally broken systems. Also the next project
 goal.
 
-* Physics Engine
-    * Collisions
+* Abstract Hardware using the hardware package to defer function calls. 
+    * This should allow differing input systems to be translated on a per
+      library basis.
 
 ## Other
 
 General tasks. Includes ideas and reasoning for planned future development.
 
-* Make a scene class that inherits from Publisher and includes a view. Intended 
-to clean up parameters in the project.
-    * Also the controller
-* Formalize objects from zombies into ppb
-    * Emitter
-    * Particle
+* Because objects no longer need to know about the view, abstract input 
+  into the hardware library.
 * Animation
 * Instead of subclassing View, abstract the layering system like with 
     Controller.
 * Style guide.
-    * Setting
-* Mouse
-* Create event type that the publisher can listen for to automatically subscribe
-  necessary callbacks when an object is created.
+* Improve logging

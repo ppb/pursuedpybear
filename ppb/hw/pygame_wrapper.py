@@ -98,7 +98,7 @@ def render(group):
         logging.exception("Incompatible drawing group.")
 
 
-def draw_screen():
+def update_screen(*_):
     pygame.display.flip()
 
 
