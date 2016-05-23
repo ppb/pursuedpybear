@@ -19,7 +19,7 @@ from ppb.components.models import GameObject
 from ppb.components.controls import Publisher
 import ppb.hw as hardware
 
-hardware.choose("sdl2")
+hardware.choose("pygame")
 logging.basicConfig(level=logging.INFO)
 hardware.init((200, 200), "Test")
 

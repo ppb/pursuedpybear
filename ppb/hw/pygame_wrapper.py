@@ -81,7 +81,12 @@ def events():
     for e in pygame.event.get():
         new_event = None
         if e.type in key_events.keys():
-            new_event = key_events[e.type](e.key, "")
+            try:
+                name = chr(e.key)
+            except ValueError:
+                name = ""
+
+            new_event = key_events[e.type](e.key, name)
         elif e.type in mouse_events.keys():
             new_event = mouse_events[e.type](e.button, "", Vector(*e.pos))
         elif e.type == pygame.QUIT:

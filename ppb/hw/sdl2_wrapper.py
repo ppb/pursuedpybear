@@ -6,9 +6,12 @@ import ctypes
 import sdl2
 
 import ppb.components.view
-from ppb.event import Quit
+from ppb.event import Quit, KeyDown, KeyUp
 from ppb.vmath import Vector2 as Vector
 from ppb.components.models import Renderable
+
+key_events = {sdl2.SDL_KEYUP: KeyUp,
+              sdl2.SDL_KEYDOWN: KeyDown}
 
 window = None
 display = None
@@ -53,14 +56,17 @@ class Keys(object):
 
 
 def keys():
+    global key_struct
     if key_struct is None:
-        global key_struct
         key_struct = Keys()
     return key_struct
 
 
 def mouse():
-    return {}
+    return {"pos": Vector(0, 0),
+            "pressed": (0, 0, 0),
+            "move": Vector(0, 0)
+            }
 
 
 def events():
@@ -69,6 +75,15 @@ def events():
     while sdl2.SDL_PollEvent(ctypes.byref(event)):
         if event.type == sdl2.SDL_QUIT:
             rv.append(Quit())
+        elif event.type in (sdl2.SDL_KEYDOWN, sdl2.SDL_KEYUP):
+            if not event.key.repeat:
+                key_code = event.key.keysym.sym
+                try:
+                    key_name = chr(key_code)
+                except ValueError:
+                    key_name = ""
+                rv.append(key_events[event.type](key_code, key_name))
+
     return rv
 
 
