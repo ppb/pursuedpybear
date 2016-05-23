@@ -2,21 +2,25 @@ import logging
 
 import ppb.engine as engine
 from ppb import hw
-from ppb.event import Tick, ObjectCreated, Quit, Message
+from ppb.event import Tick, ObjectCreated, Quit
 from ppb.vmath import Vector2 as Vec
 import ppb.utilities
 
 
 class Publisher(ppb.utilities.Publisher):
 
-    def __init__(self, hardware, dispatcher=None):
+    def __init__(self, dispatcher=None):
         super(Publisher, self).__init__(dispatcher)
         self.subscribe(ObjectCreated, self.object_created)
-        self.subscribe(Quit, hardware.quit)
+        self.subscribe(Quit, hw.quit)
+        self.subscribe(Tick, self.update_input)
 
     def object_created(self, object_event):
         for command in object_event.commands:
             self.subscribe(*command)
+
+    def update_input(self, _):
+        hw.update_input()
 
 
 class Controller(object):

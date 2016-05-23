@@ -8,38 +8,22 @@ window.
 """
 
 
-# TODO: Turn into function to be used inside a test suite.
-# TODO: Figure out how to make this test automated in a general way.
-
 import logging
 
-import ppb.engine
+from ppb.engine import message
 from ppb.event import Quit, Tick
-from ppb.components.models import GameObject
-from ppb.components.controls import Publisher
-import ppb.hw as hardware
+from ppb.tests.visual import Runner
 
-hardware.choose("pygame")
 logging.basicConfig(level=logging.INFO)
-hardware.init((200, 200), "Test")
-
-publisher = Publisher(hardware)
-
-
-def get_events(*_):
-    hardware.update_input()
-
-
-publisher.subscribe(Tick, get_events)
 
 
 def quit_timer(time):
-    def callback(_, event, count=[time]):
-        count[0] += -1 * event.sec
+    def callback(tick_event, count=[time]):
+        count[0] += -1 * tick_event.sec
         if count[0] <= 0:
-            ppb.engine.message(Quit())
+            message(Quit())
     return callback
 
-clock = GameObject(behaviors=[(Tick, quit_timer(5))])
-
-ppb.engine.run(publisher)
+test_runner = Runner("sdl2")
+test_runner.set_events([(Tick, quit_timer(5))])
+test_runner.run()
