@@ -54,7 +54,7 @@ def mouse():
              pos and move are vectors.
              pressed is an iterable of booleans
     """
-    pressed = pygame.mouse.get_pressed()
+    pressed = tuple([0] + list(pygame.mouse.get_pressed()))
     pos = Vector(*pygame.mouse.get_pos())
     move = Vector(*pygame.mouse.get_rel())
     return {"pos": pos,

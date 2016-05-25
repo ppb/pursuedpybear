@@ -45,7 +45,6 @@ def run(first_scene):
 def tick():
     """
     Raise a new Tick
-    :param _: Tick
     :return:
     """
     global last_tick

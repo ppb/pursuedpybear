@@ -7,14 +7,9 @@ response to a quit event handled by hitting the close button on the
 window.
 """
 
-
-import logging
-
 from ppb.engine import message
 from ppb.event import Quit, Tick
 from ppb.tests.visual import Runner
-
-logging.basicConfig(level=logging.INFO)
 
 
 def quit_timer(time):

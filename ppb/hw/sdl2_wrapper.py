@@ -6,17 +6,31 @@ import ctypes
 import sdl2
 
 import ppb.components.view
-from ppb.event import Quit, KeyDown, KeyUp
+from ppb.event import Quit, KeyDown, KeyUp, MouseButtonUp, MouseButtonDown
 from ppb.vmath import Vector2 as Vector
 from ppb.components.models import Renderable
 
 key_events = {sdl2.SDL_KEYUP: KeyUp,
               sdl2.SDL_KEYDOWN: KeyDown}
 
+button_events = {sdl2.SDL_MOUSEBUTTONUP: MouseButtonUp,
+                 sdl2.SDL_MOUSEBUTTONDOWN: MouseButtonDown}
+
+button_names = {sdl2.SDL_BUTTON_LEFT: "left",
+                sdl2.SDL_BUTTON_RIGHT: "right",
+                sdl2.SDL_BUTTON_MIDDLE: "center"}
+
 window = None
 display = None
 
 key_struct = None
+
+# C Arguments
+mouse_pos_x = ctypes.c_int()
+mouse_pos_y = ctypes.c_int()
+mouse_delta_x = ctypes.c_int()
+mouse_delta_y = ctypes.c_int()
+
 
 def init(resolution, title):
     """
@@ -63,9 +77,16 @@ def keys():
 
 
 def mouse():
-    return {"pos": Vector(0, 0),
-            "pressed": (0, 0, 0),
-            "move": Vector(0, 0)
+    bitmask = sdl2.SDL_GetMouseState(ctypes.byref(mouse_pos_x),
+                                     ctypes.byref(mouse_pos_y))
+    pressed = [0]
+    pressed += [1 if sdl2.SDL_BUTTON(x) & bitmask else 0 for x in range(1, 4)]
+
+    sdl2.SDL_GetRelativeMouseState(ctypes.byref(mouse_delta_x),
+                                   ctypes.byref(mouse_delta_y))
+    return {"pos": Vector(mouse_pos_x.value, mouse_pos_y.value),
+            "pressed": tuple(pressed),
+            "move": Vector(mouse_delta_x.value, mouse_delta_y.value)
             }
 
 
@@ -75,7 +96,7 @@ def events():
     while sdl2.SDL_PollEvent(ctypes.byref(event)):
         if event.type == sdl2.SDL_QUIT:
             rv.append(Quit())
-        elif event.type in (sdl2.SDL_KEYDOWN, sdl2.SDL_KEYUP):
+        elif event.type in key_events:
             if not event.key.repeat:
                 key_code = event.key.keysym.sym
                 try:
@@ -83,7 +104,11 @@ def events():
                 except ValueError:
                     key_name = ""
                 rv.append(key_events[event.type](key_code, key_name))
-
+        elif event.type in button_events:
+            button = event.button.button
+            name = button_names[button]
+            pos = Vector(event.button.x, event.button.y)
+            rv.append(button_events[event.type](button, name, pos))
     return rv
 
 

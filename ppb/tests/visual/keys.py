@@ -11,14 +11,11 @@ On Tick:
     Print ""Key {name} held."
 """
 
-import logging
 import string
 
 from ppb.event import KeyDown, KeyUp, Tick
 import ppb.hw as hardware
 from ppb.tests.visual import Runner
-
-logging.basicConfig(level=logging.INFO)
 
 
 def key_down(key_event):

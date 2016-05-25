@@ -1,7 +1,12 @@
+import logging
+
 import ppb.engine as engine
 import ppb.hw as hardware
 
 from ppb.components.controls import Publisher
+
+
+logging.basicConfig(level=logging.INFO)
 
 
 class Runner(Publisher):
