@@ -1,6 +1,8 @@
 """
 Mouse visual test module.
 
+Depends on functions tested in window.py.
+
 On Tick:
     Print "Mouse position {vector}"
     Print "Mouse movement delta {vector}"

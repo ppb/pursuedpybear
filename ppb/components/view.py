@@ -4,6 +4,11 @@ from ppb.components.models import Renderable
 from ppb import engine
 
 
+#TODO: Sprite listening for changes in model
+# What defines frames and display states?
+# Is there a way to do this in an abstract way?
+# How does the sprite know to advance frames?
+
 class View(object):
 
     def __init__(self, scene, display, fps, hardware):
