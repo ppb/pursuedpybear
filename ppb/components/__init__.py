@@ -1,2 +1,2 @@
-from controls import Controller
-from view import View
+from ppb.components.controls import Controller
+from ppb.components.view import View

@@ -20,6 +20,7 @@ import ppb.engine as engine
 import ppb.hw as hardware
 
 from ppb.components.controls import Publisher
+from ppb.components.view import View
 
 
 logging.basicConfig(level=logging.INFO)
@@ -31,6 +32,7 @@ class Runner(Publisher):
         super(Runner, self).__init__()
         hardware.choose(lib)
         hardware.init((200, 200), "Test")
+#         self.view = View() # TODO
 
     def set_events(self, commands):
         for command in commands:

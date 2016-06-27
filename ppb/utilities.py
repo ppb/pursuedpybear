@@ -1,7 +1,7 @@
 from __future__ import division
 
 from collections import defaultdict
-from event import Tick
+from ppb.event import Tick
 import logging
 
 from ppb.vmath import Vector2 as Vector
@@ -77,6 +77,7 @@ class Publisher(object):
         Unsubscribe from an event.
 
         :param event_type: The event to unsubscribe from.
+        :param callback: The function to unsubscribe
         :return: None
         """
         self.unsubscribe_requests.append((event_type, callback))

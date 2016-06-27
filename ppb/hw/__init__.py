@@ -10,12 +10,12 @@ mouse = None
 
 
 def import_pygame():
-    import pygame_wrapper
+    import ppb.hw.pygame_wrapper as pygame_wrapper
     return pygame_wrapper
 
 
 def import_sdl2():
-    import sdl2_wrapper
+    import ppb.hw.sdl2_wrapper as sdl2_wrapper
     return sdl2_wrapper
 
 hardware_options = {"pygame": import_pygame,
