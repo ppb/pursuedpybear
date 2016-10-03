@@ -13,7 +13,8 @@ def check_circle_collision(sprite1, sprite2):
     :param sprite2: Sprite must have a pos and radius.
     :return: bool: True if colliding.
     """
-    return len(sprite1.pos - sprite2.pos) <= sprite1.radius + sprite2.radius
+    vector = sprite1.pos - sprite2.pos
+    return vector.length <= sprite1.radius + sprite2.radius
 
 
 def colliding(sprite1, sprite2, check=check_circle_collision):
