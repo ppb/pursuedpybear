@@ -2,8 +2,8 @@ from distutils.core import setup
 
 setup(
     name='ppb',
-    version='0.1.0',
-    packages=['ppb', 'ppb.hw', 'ppb.components'],
+    version='0.2.0',
+    packages=['ppb'],
     url='https://github.com/pathunstrom/pursuedpybear',
     license='',
     author='Piper Thunstrom',
