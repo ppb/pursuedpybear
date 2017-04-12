@@ -1,115 +1,86 @@
-"""
-An event driven application engine.
-"""
-
-from collections import Iterable
+import logging
 import time
-
-from ppb.utilities import Queue
-import ppb.event as event
-
-event_queue = Queue()
-scenes = []
-
-last_tick = time.time()
-run_time = 0
-
-running = True
+from typing import Type
+import pygame
+from ppb.abc import Engine, Scene
 
 
-def run(first_scene):
-    """
-    Start and manage application.
+class GameEngine(Engine):
 
-    :param first_scene: Publisher
-    :return:
-    """
-    push(first_scene)
-    callbacks = {event.PushScene: push,
-                 event.PopScene: pop,
-                 event.ReplaceScene: replace,
-                 event.Quit: game_quit}
-    while running:
+    def __init__(self, first_scene: Type, **kwargs):
+        super(GameEngine, self).__init__()
+
+        # Engine Configuration
+        self.delta_time = kwargs.get("delta_time", 0.016)
+        self.resolution = kwargs.get("resolution", (600, 400))
+        self.flags = kwargs.get("flags", 0)
+        self.depth = kwargs.get("depth", 0)
+        self.log_level = kwargs.get("log_level", logging.WARNING)
+        self.first_scene = first_scene
+        logging.basicConfig(level=self.log_level)
+
+        # Engine State
+        self.scenes = []
+        self.unused_time = 0
+        self.last_tick = None
+        self.running = False
+        self.display = None
+
+    def __enter__(self):
+        logging.getLogger(self.__class__.__name__).info("Entering context.")
+        pygame.init()
+        self.display = pygame.display.set_mode(self.resolution,
+                                               self.flags,
+                                               self.depth)
+        self.update_input()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        logging.getLogger(self.__class__.__name__).info("Exiting context")
+        pygame.quit()
+
+    def run(self):
+        self.running = True
+        self.last_tick = time.time()
+        self.activate({"scene_class": self.first_scene})
+        self.scenes.append(self.first_scene(self))
+        while self.running:
+            time.sleep(.0000000001)
+            scene = self.current_scene  # type: Scene
+            if scene is None:
+                return
+            scene_stop, next_scene = scene.change()
+            if scene_stop:
+                self.scenes.pop()
+            if next_scene:
+                self.activate(next_scene)
+            scene.render()  # should return objects that the engine draws.
+            pygame.display.update()
+            tick = time.time()
+            self.unused_time += tick - self.last_tick
+            self.last_tick = tick
+            while self.unused_time >= self.delta_time:
+                for event in pygame.event.get():
+                    scene.handle_event(event)
+                    if event.type == pygame.QUIT:
+                        return
+                self.update_input()
+                scene.simulate(self.delta_time)
+                self.unused_time -= self.delta_time
+
+    @property
+    def current_scene(self):
         try:
-            cur_event = event_queue.pop()
+            return self.scenes[-1]
         except IndexError:
-            cur_event = tick()
-        event_type = type(cur_event)
-        if event_type in callbacks:
-            callbacks[event_type](cur_event)
-        scenes[-1].publish(cur_event)
-    return 0
+            return None
 
+    def activate(self, next_scene: dict):
+        scene = next_scene["scene_class"]
+        args = next_scene.get("arguments", [])
+        kwargs = next_scene.get("keyword_arguments", {})
+        self.scenes.append(scene(self, *args, **kwargs))
 
-def tick():
-    """
-    Raise a new Tick
-    :param _: Tick
-    :return:
-    """
-    global last_tick
-    global run_time
-    current_tick = time.time()
-    sec = current_tick - last_tick
-    run_time += sec
-    last_tick = current_tick
-    return event.Tick(sec, run_time)
-
-
-def game_quit(*_):
-    """
-    Stop running the engine.
-
-    :param _: Event
-    :return:
-    """
-    global running
-    running = False
-
-
-def push(e):
-    """
-    Push a scene to the stack.
-
-    :param e: Event or Publisher
-    :return:
-    """
-    try:
-        scene = e.scene
-    except AttributeError:
-        scene = e
-    scenes.append(scene)
-
-
-def pop(*_):
-    """
-    Pop a scene from the stack.
-
-    :param _: Event
-    :return:
-    """
-    scenes.pop()
-
-
-def replace(e):
-    """
-    Pop a scene from the stack then push a scene to the stack.
-
-    :param e: Event
-    :return:
-    """
-    pop()
-    push(e)
-
-
-def message(e):
-    """
-    Push an Event to the queue.
-
-    :param e: Event
-    :return:
-    """
-    if isinstance(e, Iterable):
-        event_queue.extend(e)
-    else:
-        event_queue.push(e)
+    def update_input(self):
+        self.mouse["x"], self.mouse["y"] = pygame.mouse.get_pos()
+        self.mouse[1], self.mouse[2], self.mouse[3] = pygame.mouse.get_pressed()

@@ -1,13 +1,15 @@
 import logging
 
-import pygame
-from pygame.surface import Surface
-
 from ppb import engine
-from ppb.ext import hw_pygame as hardware
+from ppb import hw as hardware
 from ppb.utilities import Publisher
-from ppb.event import Quit, Tick, MouseButtonDown, ObjectCreated, ObjectDestroyed, Collision
-from ppb.components import Controller, models
+from ppb.event import (Quit,
+                       Tick,
+                       MouseButtonDown,
+                       ObjectCreated,
+                       ObjectDestroyed,
+                       Collision)
+from ppb.components import models
 from ppb.components.controls import control_move, emit_object
 from ppb.physics import Physics
 from ppb.vmath import Vector2 as Vector
@@ -16,15 +18,21 @@ from ppb.vmath import Vector2 as Vector
 publisher = Publisher()
 
 
-class Player(models.GameObject, models.Mobile, models.Renderable, models.Collider):
+class Player(models.GameObject,
+             models.Mobile,
+             models.HardwarePrimitive,
+             models.Collider):
     pass
 
 
-class Bullet(models.GameObject, models.Mobile, models.Renderable, models.Collider):
+class Bullet(models.GameObject,
+             models.Mobile,
+             models.HardwarePrimitive,
+             models.Collider):
     pass
 
 
-class Target(models.GameObject, models.Renderable, models.Collider):
+class Target(models.GameObject, models.HardwarePrimitive, models.Collider):
     pass
 
 
@@ -53,40 +61,41 @@ def unsubscribe(event):
 
 def main():
     logging.basicConfig(level=logging.DEBUG)
-    hardware.init((600, 400), "Zombies!")
+    hardware.choose("pygame")
+    hardware.init((600, 400), "Targets")
     publisher.subscribe(Quit, hardware.quit)
     publisher.subscribe(ObjectCreated, subscribe)
     publisher.subscribe(ObjectDestroyed, unsubscribe)
-    controller = Controller(publisher, hardware)
-    hardware.View(publisher, hardware.display, 30, hardware, Surface((600, 400)))
+    publisher.subscribe(Tick, hardware.update_input)
+    hardware.View(publisher,
+                  hardware.display(),
+                  30,
+                  hardware,
+                  hardware.image_primitive((0, 0, 0), (600, 400)))
     Physics()
 
-    image = pygame.Surface((20, 20))
-    image.fill((128, 65, 40))
-    controls = {"up": pygame.K_w,
-                "down": pygame.K_s,
-                "left": pygame.K_a,
-                "right": pygame.K_d,
-                "speed": 60}
-    sprite_image = pygame.Surface((4, 4))
-    sprite_image.fill((255, 255, 255))
-    bullet_params = {"image": sprite_image,
+    player_color = (128, 65, 40)
+    key_bindings = {"up": ord("w"),
+                    "down": ord("s"),
+                    "left": ord("a"),
+                    "right": ord("d")}
+    player_speed = 60
+    bullet_params = {"color": (255, 255, 255),
                      "image_size": 4,
                      "hardware": hardware,
                      "behaviors": [(Collision, hit)]}
-    controls = [(Tick, control_move(controller, **controls)),
+    controls = [(Tick, control_move(speed=player_speed,
+                                    **key_bindings)),
                 (MouseButtonDown, emit_object(Bullet, bullet_params, 1, 120))]
-    Player(image=image,
-           image_size=20,
+    Player(color=player_color,
            hardware=hardware,
            pos=Vector(300, 200),
            behaviors=controls,
            radius=10)
-    target_image = pygame.Surface((20, 20))
-    target_image.fill((0, 255, 0))
+    target_color = (0, 123, 0)
     step = 600 / 6
     for x in range(5):
-        Target(image=target_image,
+        Target(color=target_color,
                image_size=20,
                hardware=hardware,
                pos=Vector(step * (x + 1), 50),
