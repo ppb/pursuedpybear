@@ -14,6 +14,8 @@ learned from trying to build small games in python.
 
 ## Try it
 
+_Note: Version 0.2.0 is currently not supported with the examples._
+
 The current example framecount.py uses the terminal as your view. It outputs
 and the current runtime to the terminal at a rate of 60 per second.
 
