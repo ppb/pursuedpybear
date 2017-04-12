@@ -65,7 +65,6 @@ class Scene(object):
         self.engine = engine  # type: Engine
 
         # State
-        self.quit = False  # type: bool
         self.running = True  # type: bool
         self.next = None  # type: Type
         self.groups = None  # type: dict

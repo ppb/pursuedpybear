@@ -31,10 +31,17 @@ class BaseScene(Scene):
         for group in self.groups.values():
             group.update(time_delta)
 
+    def change(self):
+        """
+        Default case, override in subclass as necessary.
+        """
+        return self.running, {"scene_class": self.next}
+
     def __null__(self, event):
         pass
 
     def __quit__(self, event):
+        _ = event
         self.running = False
         self.quit = True
 

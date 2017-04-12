@@ -2,8 +2,8 @@ from setuptools import setup
 
 
 def readme():
-    with open('README.md') as f:
-        return f.read()
+    with open('README.md') as file:
+        return file.read()
 
 setup(
     name='ppb',
