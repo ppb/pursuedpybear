@@ -39,21 +39,25 @@ class GameEngine(Engine):
         logging.getLogger(self.__class__.__name__).info("Exiting context")
         pygame.quit()
 
-    def run(self):
+    def start(self):
         self.running = True
         self.last_tick = time.time()
         self.activate({"scene_class": self.first_scene})
-        self.scenes.append(self.first_scene(self))
+
+    def manage_scene(self, scene_stop, next_scene):
+        if scene_stop:
+            self.scenes.pop()
+        if next_scene:
+            self.activate(next_scene)
+
+    def run(self):
+        self.start()
         while self.running:
             time.sleep(.0000000001)
             scene = self.current_scene  # type: Scene
             if scene is None:
                 return
-            scene_stop, next_scene = scene.change()
-            if scene_stop:
-                self.scenes.pop()
-            if next_scene:
-                self.activate(next_scene)
+            self.manage_scene(*scene.change())
             scene.render()  # should return objects that the engine draws.
             pygame.display.update()
             tick = time.time()
