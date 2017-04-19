@@ -81,6 +81,8 @@ class GameEngine(Engine):
 
     def activate(self, next_scene: dict):
         scene = next_scene["scene_class"]
+        if scene is None:
+            return
         args = next_scene.get("arguments", [])
         kwargs = next_scene.get("keyword_arguments", {})
         self.scenes.append(scene(self, *args, **kwargs))

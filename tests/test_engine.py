@@ -42,3 +42,11 @@ class TestEngineSceneActivate(unittest.TestCase):
         self.mock_scene.change = mock.Mock(return_value=(True, {}))
         self.engine.manage_scene(*self.engine.current_scene.change())
         self.assertIsNone(self.engine.current_scene)
+
+    def test_next_scene_none(self):
+        self.mock_scene.change = mock.Mock(return_value=(False,
+                                                         {"scene_class": None}
+                                                         )
+                                           )
+        self.engine.manage_scene(*self.engine.current_scene.change())
+        self.assertIs(self.engine.current_scene, self.mock_scene)
