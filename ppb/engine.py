@@ -44,8 +44,8 @@ class GameEngine(Engine):
         self.last_tick = time.time()
         self.activate({"scene_class": self.first_scene})
 
-    def manage_scene(self, scene_stop, next_scene):
-        if scene_stop:
+    def manage_scene(self, scene_running, next_scene):
+        if not scene_running:
             self.scenes.pop()
         if next_scene:
             self.activate(next_scene)
