@@ -3,6 +3,9 @@ from unittest import mock
 
 from ppb import GameEngine, BaseScene
 
+CONTINUE = True
+STOP = False
+
 
 class TestEngine(unittest.TestCase):
 
@@ -30,7 +33,7 @@ class TestEngineSceneActivate(unittest.TestCase):
         Test that a Scene.change that returns (False, {}) doesn't change
         state.
         """
-        self.mock_scene.change = mock.Mock(return_value=(True, {}))
+        self.mock_scene.change = mock.Mock(return_value=(CONTINUE, {}))
         self.engine.manage_scene(*self.engine.current_scene.change())
         self.assertIs(self.engine.current_scene, self.mock_scene)
 
@@ -39,12 +42,12 @@ class TestEngineSceneActivate(unittest.TestCase):
         Test a Scene.change that returns (True, {}) leaves the scene
         stack empty.
         """
-        self.mock_scene.change = mock.Mock(return_value=(False, {}))
+        self.mock_scene.change = mock.Mock(return_value=(STOP, {}))
         self.engine.manage_scene(*self.engine.current_scene.change())
         self.assertIsNone(self.engine.current_scene)
 
     def test_next_scene_none(self):
-        self.mock_scene.change = mock.Mock(return_value=(False,
+        self.mock_scene.change = mock.Mock(return_value=(CONTINUE,
                                                          {"scene_class": None}
                                                          )
                                            )
