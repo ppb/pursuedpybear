@@ -1,12 +1,20 @@
 from ppb import Vector
 
+TOP = "top"
+BOTTOM = "bottom"
+LEFT = "left"
+RIGHT = "right"
+
+error_message = "'{klass}' object does not have attribute '{attribute}'"
+side_attribute_error_message = error_message.format
+
 
 class Side(object):
     sides = {
-        "left": ('x', -1),
-        "right": ('x', 1),
-        "top": ('y', -1),
-        "bottom": ('y', 1)
+        LEFT: ('x', -1),
+        RIGHT: ('x', 1),
+        TOP: ('y', -1),
+        BOTTOM: ('y', 1)
     }
 
     def __init__(self, parent, side):
@@ -36,33 +44,70 @@ class Side(object):
 
     @property
     def top(self):
-        return Vector(self.value, self.parent.top)
+        self._attribute_gate(TOP, [TOP, BOTTOM])
+        return Vector(self.value, self.parent.top.value)
 
     @top.setter
     def top(self, value):
-        if self.side in ["left", "right"]:
-            setattr(self.parent, self.side, value[0])
-            self.parent.top = value[1]
-        else:
-            raise AttributeError()
+        self._attribute_gate(TOP, [TOP, BOTTOM])
+        setattr(self.parent, self.side, value[0])
+        self.parent.top = value[1]
 
     @property
     def bottom(self):
+        self._attribute_gate(BOTTOM, [TOP, BOTTOM])
         return Vector(self.value, self.parent.bottom)
 
     @bottom.setter
     def bottom(self, value):
+        self._attribute_gate(BOTTOM, [TOP, BOTTOM])
         setattr(self.parent, self.side, value[0])
         self.parent.bottom = value[1]
 
     @property
+    def left(self):
+        self._attribute_gate(LEFT, [LEFT, RIGHT])
+        return Vector(self.parent.left.value, self.value)
+
+    @left.setter
+    def left(self, value):
+        self._attribute_gate(LEFT, [LEFT, RIGHT])
+        setattr(self.parent, self.side, value[1])
+        self.parent.left = value[0]
+
+    @property
+    def right(self):
+        self._attribute_gate(RIGHT, [LEFT, RIGHT])
+        return Vector(self.parent.right.value, self.value)
+
+    @right.setter
+    def right(self, value):
+        self._attribute_gate(RIGHT, [LEFT, RIGHT])
+        setattr(self.parent, self.side, value[1])
+        self.parent.right = value[0]
+
+    @property
     def center(self):
-        return Vector(self.value, self.parent.pos.y)
+        if self.side == TOP:
+            return Vector(self.parent.center.x, self.value)
+        else:
+            return Vector(self.value, self.parent.center.y)
 
     @center.setter
     def center(self, value):
-        setattr(self.parent, self.side, value[0])
-        self.parent.pos.y = value[1]
+        if self.side == TOP:
+            setattr(self.parent, self.side, value[1])
+            self.parent.center.x = value[0]
+        else:
+            setattr(self.parent, self.side, value[0])
+            self.parent.pos.y = value[1]
+
+    def _attribute_gate(self, attribute, bad_sides):
+        if self.side in bad_sides:
+            name = type(self).__name__
+            message = side_attribute_error_message(klass=name,
+                                                   attribute=attribute)
+            raise AttributeError(message)
 
 
 class BaseSprite(object):
@@ -86,7 +131,7 @@ class BaseSprite(object):
 
     @property
     def left(self):
-        return Side(self, "left")
+        return Side(self, LEFT)
 
     @left.setter
     def left(self, value):
@@ -94,7 +139,7 @@ class BaseSprite(object):
 
     @property
     def right(self):
-        return Side(self, "right")
+        return Side(self, RIGHT)
 
     @right.setter
     def right(self, value):
@@ -102,7 +147,7 @@ class BaseSprite(object):
 
     @property
     def top(self):
-        return self.pos.y - self.offset_value
+        return Side(self, TOP)
 
     @top.setter
     def top(self, value):

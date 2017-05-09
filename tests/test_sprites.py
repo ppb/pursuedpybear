@@ -174,11 +174,75 @@ class TestBaseSprite(TestCase):
 
         self.assertEqual(self.sprite.pos, Vector(2.5, 2))
 
+    def test_left_left(self):
+        self.assertRaises(AttributeError, getattr, self.sprite.left, "left")
+        self.assertRaises(AttributeError, setattr, self.sprite.left, "left", Vector(1, 1))
+
+    def test_left_right(self):
+        self.assertRaises(AttributeError, getattr, self.sprite.left, "right")
+        self.assertRaises(AttributeError, setattr, self.sprite.left, "right", Vector(1, 1))
+
+    def test_right_right(self):
+        self.assertRaises(AttributeError, getattr, self.sprite.right, "right")
+        self.assertRaises(AttributeError, setattr, self.sprite.right, "right", Vector(1, 1))
+
+    def test_right_left(self):
+        self.assertRaises(AttributeError, getattr, self.sprite.right, "left")
+        self.assertRaises(AttributeError, setattr, self.sprite.right, "left", Vector(1, 1))
+
     def test_top_left(self):
-        pass
+        self.assertEqual(self.sprite.top.left, Vector(-0.5, -0.5))
+
+        self.sprite.top.left = (2, 2)
+        self.assertEqual(self.sprite.top.left, Vector(2, 2))
+
+        self.sprite.top.left += (2, 2)
+        self.assertEqual(self.sprite.top.left, Vector(4, 4))
+
+        result = self.sprite.top.left + (3, 3)
+        self.assertEqual(result, Vector(7, 7))
+
+        self.assertEqual(self.sprite.pos, Vector(4.5, 4.5))
 
     def test_top_right(self):
-        pass
+        self.assertEqual(self.sprite.top.right, Vector(0.5, -0.5))
+
+        self.sprite.top.right = (1, 1)
+        self.assertEqual(self.sprite.top.right, Vector(1, 1))
+
+        self.sprite.top.right += (2, 1)
+        self.assertEqual(self.sprite.top.right, Vector(3, 2))
+
+        result = self.sprite.top.right + (2, 3)
+        self.assertEqual(result, Vector(5, 5))
+
+        self.assertEqual(self.sprite.pos, Vector(2.5, 2.5))
 
     def test_top_center(self):
+        self.assertEqual(self.sprite.top.center, Vector(0, -0.5))
+
+        self.sprite.top.center = (1, 1)
+        self.assertEqual(self.sprite.top.center, Vector(1, 1))
+
+    def test_top_top(self):
+        self.assertRaises(AttributeError, getattr, self.sprite.top, "top")
+        self.assertRaises(AttributeError, setattr, self.sprite.top, "top", Vector(1, 1))
+
+    def test_top_bottom(self):
+        self.assertRaises(AttributeError, getattr, self.sprite.top, "bottom")
+        self.assertRaises(AttributeError, setattr, self.sprite.top, "bottom", Vector(1, 1))
+
+    def test_bottom_left(self):
+        pass
+
+    def test_bottom_right(self):
+        pass
+
+    def test_bottom_center(self):
+        pass
+
+    def test_bottom_top(self):
+        pass
+
+    def test_bottom_bottom(self):
         pass
