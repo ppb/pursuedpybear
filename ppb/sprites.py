@@ -1,3 +1,6 @@
+from numbers import Number
+from typing import Dict, Iterable, AnyStr, Sequence
+
 from ppb import Vector
 
 TOP = "top"
@@ -17,7 +20,7 @@ class Side(object):
         BOTTOM: ('y', 1)
     }
 
-    def __init__(self, parent, side):
+    def __init__(self, parent: 'BaseSprite', side: AnyStr):
         self.side = side
         self.parent = parent
 
@@ -40,7 +43,7 @@ class Side(object):
     def value(self):
         coordinate, multiplier = self.sides[self.side]
         offset = self.parent.offset_value
-        return self.parent.pos[coordinate] + (offset * multiplier)
+        return self.parent.position[coordinate] + (offset * multiplier)
 
     @property
     def top(self):
@@ -56,7 +59,7 @@ class Side(object):
     @property
     def bottom(self):
         self._attribute_gate(BOTTOM, [TOP, BOTTOM])
-        return Vector(self.value, self.parent.bottom)
+        return Vector(self.value, self.parent.bottom.value)
 
     @bottom.setter
     def bottom(self, value):
@@ -88,19 +91,19 @@ class Side(object):
 
     @property
     def center(self):
-        if self.side == TOP:
+        if self.side in (TOP, BOTTOM):
             return Vector(self.parent.center.x, self.value)
         else:
             return Vector(self.value, self.parent.center.y)
 
     @center.setter
     def center(self, value):
-        if self.side == TOP:
+        if self.side in (TOP, BOTTOM):
             setattr(self.parent, self.side, value[1])
             self.parent.center.x = value[0]
         else:
             setattr(self.parent, self.side, value[0])
-            self.parent.pos.y = value[1]
+            self.parent.position.y = value[1]
 
     def _attribute_gate(self, attribute, bad_sides):
         if self.side in bad_sides:
@@ -112,38 +115,40 @@ class Side(object):
 
 class BaseSprite(object):
 
-    def __init__(self, size=1, pos=(0, 0)):
+    def __init__(self, size: int=1, pos: Iterable=(0, 0), blackboard: Dict=None, facing: Vector=Vector(0, -1)):
         super().__init__()
-        self.pos = Vector(*pos)
+        self.position = Vector(*pos)
         self.offset_value = size / 2
         self.game_unit_size = size
+        self.facing = facing
+        self.blackboard = blackboard or {}
 
     @property
-    def center(self):
-        return self.pos
+    def center(self) -> Vector:
+        return self.position
 
     @center.setter
-    def center(self, value):
+    def center(self, value: Sequence[float]):
         x = value[0]
         y = value[1]
-        self.pos.x = x
-        self.pos.y = y
+        self.position.x = x
+        self.position.y = y
 
     @property
-    def left(self):
+    def left(self) -> Side:
         return Side(self, LEFT)
 
     @left.setter
-    def left(self, value):
-        self.pos.x = value + self.offset_value
+    def left(self, value: float):
+        self.position.x = value + self.offset_value
 
     @property
-    def right(self):
+    def right(self) -> Side:
         return Side(self, RIGHT)
 
     @right.setter
     def right(self, value):
-        self.pos.x = value - self.offset_value
+        self.position.x = value - self.offset_value
 
     @property
     def top(self):
@@ -151,12 +156,15 @@ class BaseSprite(object):
 
     @top.setter
     def top(self, value):
-        self.pos.y = value + self.offset_value
+        self.position.y = value + self.offset_value
 
     @property
     def bottom(self):
-        return self.pos.y + self.offset_value
+        return Side(self, BOTTOM)
 
     @bottom.setter
     def bottom(self, value):
-        self.pos.y = value - self.offset_value
+        self.position.y = value - self.offset_value
+
+    def rotate(self, degrees: Number):
+        self.facing.rotate(degrees)
