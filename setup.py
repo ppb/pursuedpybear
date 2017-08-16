@@ -11,6 +11,7 @@ setup(
     packages=['ppb'],
     install_requires=[
         'pygame',
+        'ppb-vector',
     ],
     url='https://github.com/pathunstrom/pursuedpybear',
     license='',
