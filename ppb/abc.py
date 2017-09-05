@@ -1,4 +1,4 @@
-from typing import Type, Container, Tuple
+from typing import Type, Container, Tuple, Iterable
 
 
 class Canvas(object):
@@ -69,7 +69,7 @@ class Scene(object):
         self.next = None  # type: Type
         self.groups = None  # type: dict
 
-    def render(self):
+    def render(self) -> Iterable:
         raise NotImplementedError
 
     def handle_event(self, event):
