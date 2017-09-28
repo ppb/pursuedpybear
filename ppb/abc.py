@@ -1,4 +1,5 @@
-from typing import Type, Container, Tuple, Iterable
+import abc
+from typing import Type, Container, Tuple, Iterable, Sequence
 
 
 class Canvas(object):
@@ -39,18 +40,20 @@ class Engine(object):
         raise NotImplementedError
 
 
-class GameObject(object):
+class GameObjectABC(object, metaclass=abc.ABCMeta):
 
     @property
-    def rect(self) -> 'Rectangle':
+    @abc.abstractmethod
+    def position(self) -> Sequence[float]:
         raise NotImplementedError
 
-    @property
-    def image(self) -> 'Canvas':
+    @position.setter
+    @abc.abstractmethod
+    def position(self, value):
         raise NotImplementedError
 
-    @property
-    def scene(self) -> 'Scene':
+    @abc.abstractmethod
+    def __contains__(self, item):
         raise NotImplementedError
 
 
@@ -58,7 +61,7 @@ class Rectangle(object):
     pass
 
 
-class Scene(object):
+class Scene(object, metaclass=abc.ABCMeta):
 
     def __init__(self, engine: Engine):
         # Handle to parent
@@ -69,7 +72,9 @@ class Scene(object):
         self.next = None  # type: Type
         self.groups = None  # type: dict
 
-    def render(self) -> Iterable:
+    @property
+    @abc.abstractmethod
+    def game_objects(self) -> Iterable[GameObjectABC]:
         raise NotImplementedError
 
     def handle_event(self, event):

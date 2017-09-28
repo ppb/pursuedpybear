@@ -20,7 +20,7 @@ class Side(object):
         BOTTOM: ('y', 1)
     }
 
-    def __init__(self, parent: 'BaseSprite', side: AnyStr):
+    def __init__(self, parent: 'BaseGameObject', side: AnyStr):
         self.side = side
         self.parent = parent
 
@@ -42,7 +42,10 @@ class Side(object):
     @property
     def value(self):
         coordinate, multiplier = self.sides[self.side]
-        offset = self.parent.offset_value
+        if self.side in [TOP, BOTTOM]:
+            offset = self.parent.vertical_offset_value
+        else:
+            offset = self.parent.horizontal_offset_value
         return self.parent.position[coordinate] + (offset * multiplier)
 
     @property
@@ -113,12 +116,13 @@ class Side(object):
             raise AttributeError(message)
 
 
-class BaseSprite(object):
+class BaseGameObject(object):
 
-    def __init__(self, size: int=1, pos: Iterable=(0, 0), blackboard: Dict=None, facing: Vector=Vector(0, -1)):
+    def __init__(self, size: Sequence[int]=(1, 1), pos: Iterable=(0, 0), blackboard: Dict=None, facing: Vector=Vector(0, -1)):
         super().__init__()
         self.position = Vector(*pos)
-        self.offset_value = size / 2
+        self.vertical_offset_value = size[1] / 2
+        self.horizontal_offset_value = size[0] / 2
         self.game_unit_size = size
         self.facing = facing
         self.blackboard = blackboard or {}
@@ -140,7 +144,7 @@ class BaseSprite(object):
 
     @left.setter
     def left(self, value: float):
-        self.position.x = value + self.offset_value
+        self.position.x = value + self.horizontal_offset_value
 
     @property
     def right(self) -> Side:
@@ -148,7 +152,7 @@ class BaseSprite(object):
 
     @right.setter
     def right(self, value):
-        self.position.x = value - self.offset_value
+        self.position.x = value - self.horizontal_offset_value
 
     @property
     def top(self):
@@ -156,7 +160,7 @@ class BaseSprite(object):
 
     @top.setter
     def top(self, value):
-        self.position.y = value + self.offset_value
+        self.position.y = value + self.vertical_offset_value
 
     @property
     def bottom(self):
@@ -164,7 +168,7 @@ class BaseSprite(object):
 
     @bottom.setter
     def bottom(self, value):
-        self.position.y = value - self.offset_value
+        self.position.y = value - self.vertical_offset_value
 
     def rotate(self, degrees: Number):
         self.facing.rotate(degrees)

@@ -1,13 +1,13 @@
 from unittest import TestCase
 
-from ppb import BaseSprite, Vector
+from ppb import BaseGameObject, Vector
 
 
 class TestBaseSprite(TestCase):
 
     def setUp(self):
-        self.sprite = BaseSprite()
-        self.wide_sprite = BaseSprite(size=2, pos=(2, 2))
+        self.sprite = BaseGameObject()
+        self.wide_sprite = BaseGameObject(size=(2, 2), pos=(2, 2))
 
     def test_pos(self):
         self.assertEqual(self.sprite.position, Vector(0, 0))
