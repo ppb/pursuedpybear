@@ -8,6 +8,19 @@ from ppb.abc import Engine, Scene
 class GameEngine(Engine):
 
     def __init__(self, first_scene: Type, **kwargs):
+        """
+        Game Engine
+
+        first_scene -- the scene to be activated first
+
+        delta_time -- time between frames
+
+        resolution -- window (w, h) tuple
+
+        log_level -- log level for all messages
+
+        flags and depth are unused
+        """
         super(GameEngine, self).__init__()
 
         # Engine Configuration
@@ -51,6 +64,9 @@ class GameEngine(Engine):
             self.activate(next_scene)
 
     def run(self):
+        """
+        Starts main loop
+        """
         self.start()
         while self.running:
             time.sleep(.0000000001)
@@ -73,12 +89,20 @@ class GameEngine(Engine):
 
     @property
     def current_scene(self):
+        """
+        Get current scene
+        """
         try:
             return self.scenes[-1]
         except IndexError:
             return None
 
     def activate(self, next_scene: dict):
+        """
+        Activates a specific scene
+
+        next_scene -- scene to be activated
+        """
         scene = next_scene["scene_class"]
         if scene is None:
             return
@@ -87,5 +111,8 @@ class GameEngine(Engine):
         self.scenes.append(scene(self, *args, **kwargs))
 
     def update_input(self):
+        """
+        Updates mouse state
+        """
         self.mouse["x"], self.mouse["y"] = pygame.mouse.get_pos()
         self.mouse[1], self.mouse[2], self.mouse[3] = pygame.mouse.get_pressed()
