@@ -3,7 +3,7 @@ from typing import Type, Container, Tuple, Iterable
 
 class Canvas(object):
 
-    def __init__(self, width: int, height: int, **kwargs):
+    def __init__(self, width: int, height: int):
         self.width = width  # type: int
         self.height = height  # type: int
 
