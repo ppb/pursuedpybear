@@ -114,8 +114,22 @@ class Side(object):
 
 
 class BaseSprite(object):
+    """
+    The base object for sprites.
+    Tracks the size, position, and direction of the sprite.
+    """
 
     def __init__(self, size: int=1, pos: Iterable=(0, 0), blackboard: Dict=None, facing: Vector=Vector(0, -1)):
+        """
+        Pass in the size of the sprite, the position of the sprite, the
+        blackboard, and the facing direction of the sprite.
+
+        :param size: the size of the sprite
+        :param pos: the position of the sprite
+        :param blackboard: the sprite's blackboard dictionary
+        :param facing: the direction the sprite is facing as a Vector
+        :return: BaseSprite
+        """
         super().__init__()
         self.position = Vector(*pos)
         self.offset_value = size / 2
@@ -125,10 +139,20 @@ class BaseSprite(object):
 
     @property
     def center(self) -> Vector:
+        """
+
+        :return: a Vector position of the sprite's center
+        """
         return self.position
 
     @center.setter
     def center(self, value: Sequence[float]):
+        """
+
+        :param value: a 2-value (x,y) float sequence for the sprite's new
+        center position
+        :return:
+        """
         x = value[0]
         y = value[1]
         self.position.x = x
@@ -136,35 +160,77 @@ class BaseSprite(object):
 
     @property
     def left(self) -> Side:
+        """
+
+        :return: the left Side of this sprite
+        """
         return Side(self, LEFT)
 
     @left.setter
     def left(self, value: float):
+        """
+
+        :param value: a value for the new left Side position of this sprite
+        :return:
+        """
         self.position.x = value + self.offset_value
 
     @property
     def right(self) -> Side:
+        """
+
+        :return: the right Side of this sprite
+        """
         return Side(self, RIGHT)
 
     @right.setter
     def right(self, value):
+        """
+
+        :param value: a value for the new right Side position of this sprite
+        :return:
+        """
         self.position.x = value - self.offset_value
 
     @property
     def top(self):
+        """
+
+        :return: the top Side of this sprite
+        """
         return Side(self, TOP)
 
     @top.setter
     def top(self, value):
+        """
+
+        :param value: a value for the new top Side position of this sprite
+        :return:
+        """
         self.position.y = value + self.offset_value
 
     @property
     def bottom(self):
+        """
+
+        :return: the bottom Side of this sprite
+        """
         return Side(self, BOTTOM)
 
     @bottom.setter
     def bottom(self, value):
+        """
+
+        :param value: a value for the new bottom position Side of this sprite
+        :return:
+        """
         self.position.y = value - self.offset_value
 
     def rotate(self, degrees: Number):
+        """
+        Rotates the sprite a certain amount of degrees
+
+        :param degrees: a number of degrees to rotate the sprite's direction
+        :return:
+        """
         self.facing.rotate(degrees)
