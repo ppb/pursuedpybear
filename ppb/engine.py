@@ -7,15 +7,15 @@ from ppb.abc import Engine, Scene
 
 class GameEngine(Engine):
 
-    def __init__(self, first_scene: Type, **kwargs):
+    def __init__(self, first_scene: Type, *, delta_time=None, resolution=None, flags=None, depth=None, log_level=None):
         super(GameEngine, self).__init__()
 
         # Engine Configuration
-        self.delta_time = kwargs.get("delta_time", 0.016)
-        self.resolution = kwargs.get("resolution", (600, 400))
-        self.flags = kwargs.get("flags", 0)
-        self.depth = kwargs.get("depth", 0)
-        self.log_level = kwargs.get("log_level", logging.WARNING)
+        self.delta_time = delta_time or 0.016
+        self.resolution = resolution or (600, 400)
+        self.flags = flags or 0
+        self.depth = depth or 0
+        self.log_level = log_level or logging.WARNING
         self.first_scene = first_scene
         logging.basicConfig(level=self.log_level)
 
