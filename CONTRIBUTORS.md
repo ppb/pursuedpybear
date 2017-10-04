@@ -15,3 +15,4 @@ Thank you to everyone below for your contributions **(No matter how big or small
 Name | Email | Twitter |
 ---- | ----- | ------- |
 [Laura Hampton](https://github.com/lgh2) | [laura@laura-hampton.com](laura@laura-hampton.com) | [incunabulista](https://twitter.com/incunabulista)
+[Jenny Li](https://github.com/imjennyli) | |
