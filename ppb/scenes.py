@@ -9,10 +9,10 @@ from pygame.sprite import LayeredDirty
 class BaseScene(Scene):
 
     def __init__(self, engine, **kwargs):
-        r"""
-        Initializes the BaseScene
+        """
+        Initialize a BaseScene
 
-        :param engine: The base engine which is to be used to render this scene
+        :param engine: The containing engine
         :keyword kwargs:
             * *background_color* -- RGB Tuple specifying the background color for the scene
         """
@@ -51,7 +51,7 @@ class BaseScene(Scene):
         """
         Update all objects in the group calling their update function
 
-        :param time_delta: Time that has passed since the last update
+        :param time_delta: Time in seconds that has passed since the last update
         """
         for group in self.groups.values():
             group.update(time_delta)
@@ -66,7 +66,7 @@ class BaseScene(Scene):
 
     def __null__(self, event):
         """
-        Does nothing
+        Do nothing
 
         :param event: unused
         """
@@ -74,7 +74,7 @@ class BaseScene(Scene):
 
     def __quit__(self, event):
         """
-        Quits the current scene
+        Sets running to False and quit to True 
 
         :param event: unused
         """
@@ -84,7 +84,7 @@ class BaseScene(Scene):
 
     def __mouse_up__(self, event):
         """
-        Does nothing
+        Do nothing
 
         :param event: unused
         """
