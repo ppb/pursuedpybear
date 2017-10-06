@@ -8,9 +8,9 @@ from pygame.sprite import LayeredDirty
 
 class BaseScene(Scene):
 
-    def __init__(self, engine, **kwargs):
+    def __init__(self, engine, *, background_color=(0, 0, 55), **kwargs):
         super().__init__(engine)
-        self.background_color = kwargs.get('background_color', (0, 0, 55))
+        self.background_color = background_color
         engine.display.fill(self.background_color)
         self.background = engine.display.copy()
         self.groups = defaultdict(LayeredDirty)
