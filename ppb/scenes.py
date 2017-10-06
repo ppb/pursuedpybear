@@ -28,7 +28,7 @@ class BaseScene(Scene):
 
     def render(self):
         """
-        Renders all the objects in the groups
+        Render all the objects in the groups
 
         :return: Iterable representing all the drawn rectangles
         """
@@ -38,7 +38,7 @@ class BaseScene(Scene):
 
     def handle_event(self, event):
         """
-        Calls the specified callback function from the callback map
+        Call the specified callback function from the callback map
 
         :param event: The event that is supposed to be handled
         """
@@ -74,7 +74,7 @@ class BaseScene(Scene):
 
     def __quit__(self, event):
         """
-        Sets running to False and quit to True 
+        Set running to False and quit to True 
 
         :param event: unused
         """

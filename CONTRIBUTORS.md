@@ -16,3 +16,4 @@ Name | Email | Twitter |
 ---- | ----- | ------- |
 [Laura Hampton](https://github.com/lgh2) | [laura@laura-hampton.com](laura@laura-hampton.com) | [incunabulista](https://twitter.com/incunabulista)
 [Jenny Li](https://github.com/imjennyli) | |
+[Pascal Roessner](https://github.com/Cnidarias) | [roessner.pascal@gmail.com](roessner.pascal@gmail.com) | 
