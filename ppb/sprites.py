@@ -25,7 +25,7 @@ class Side(object):
         self.parent = parent
 
     def __repr__(self):
-        return "Side({}, {})".format(self.value, self.parent)
+        return "Side({}, {})".format(self.parent, self.side)
 
     def __str__(self):
         return str(self.value)
