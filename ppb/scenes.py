@@ -14,6 +14,7 @@ class BaseScene(Scene):
         engine.display.fill(self.background_color)
         self.background = engine.display.copy()
         self.groups = defaultdict(LayeredDirty)
+        self.render_group = LayeredDirty()
         self.callback_map = {
             QUIT: self.__quit__,
             MOUSEBUTTONUP: self.__mouse_up__
@@ -21,8 +22,8 @@ class BaseScene(Scene):
 
     def render(self):
         window = self.engine.display
-        rects = [g.draw(window, self.background) for g in self.groups.values()]
-        return chain(*rects)
+        self.render_group.add(chain(g.sprites() for g in self.groups.values()))
+        return self.render_group.draw(window, self.background)
 
     def handle_event(self, event):
         self.callback_map.get(event.type, self.__null__)(event)
