@@ -11,8 +11,8 @@ class BaseScene(Scene):
     def __init__(self, engine, *, background_color=(0, 0, 55), **kwargs):
         super().__init__(engine)
         self.background_color = background_color
-        engine.display.fill(self.background_color)
         self.background = engine.display.copy()
+        self.background.fill(self.background_color)
         self.groups = defaultdict(LayeredDirty)
         self.callback_map = {
             QUIT: self.__quit__,
