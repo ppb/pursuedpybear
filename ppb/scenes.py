@@ -31,7 +31,7 @@ class BaseScene(Scene):
         pass
 
     def simulate(self, time_delta: float):
-        for group in self.groups.values():
+        for group in list(self.groups.values()):
             group.update(time_delta)
 
     def change(self):
