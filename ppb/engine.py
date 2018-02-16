@@ -43,6 +43,11 @@ class GameEngine(Engine):
         self.running = True
         self.last_tick = time.time()
         self.activate({"scene_class": self.first_scene})
+        if hasattr(self.current_scene, "background") and self.current_scene is not None:
+            self.display.blit(self.current_scene.background, (0, 0, 0, 0))
+        else:
+            self.display.fill(self.current_scene.background_color)
+        pygame.display.update()
 
     def manage_scene(self, scene_running, next_scene):
         if not scene_running:
