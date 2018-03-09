@@ -47,7 +47,6 @@ class GameEngine(Engine):
             self.display.blit(self.current_scene.background, (0, 0, 0, 0))
         else:
             self.display.fill(self.current_scene.background_color)
-        pygame.display.update()
 
     def manage_scene(self, scene_running, next_scene):
         if not scene_running:
