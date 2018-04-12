@@ -5,19 +5,22 @@ from typing import Iterable
 from typing import Iterator
 
 from ppb.abc import Scene
-from pygame import MOUSEBUTTONUP, QUIT
-from pygame.sprite import LayeredDirty
 
 
 class BaseScene(Scene):
 
-    def __init__(self, engine, *, background_color=(0, 0, 55), **kwargs):
+    def __init__(self, engine, *, background_color=(0, 0, 55),
+                 container_class=None, **kwargs):
         super().__init__(engine)
         self.background_color = background_color
         self.background = engine.display.copy()
         self.background.fill(self.background_color)
-        self.groups = defaultdict(LayeredDirty)
-        self.render_group = LayeredDirty()
+        if container_class is None:
+            container_class = GameObjectContainer
+        self.game_objects = container_class()
+
+    def __contains__(self, item):
+        return item in self.game_objects
 
     def render(self):
         window = self.engine.display
@@ -34,8 +37,14 @@ class BaseScene(Scene):
         """
         return self.running, {"scene_class": self.next}
 
-    def add(self, game_object):
-        pass
+    def add(self, game_object: Any, tags: Iterable=()):
+        self.game_objects.add(game_object, tags)
+
+    def get(self, **kwargs):
+        return self.game_objects.get(**kwargs)
+
+    def remove(self, game_object):
+        self.game_objects.remove(game_object)
 
 
 class GameObjectContainer:
@@ -54,9 +63,15 @@ class GameObjectContainer:
         for tag in tags:
             self.tags[tag].add(game_object)
 
-    def get(self, *, kind=None, tag=None) -> Iterator:
+    def get(self, *, kind=None, tag=None, **kwargs) -> Iterator:
         if kind is None and tag is None:
             raise TypeError("get() takes at least one keyword-only argument. 'kind' or 'tag'.")
         kinds = self.kinds[kind] or self.all
         tags = self.tags[tag] or self.all
         return (x for x in kinds.intersection(tags))
+
+    def remove(self, game_object):
+        self.all.remove(game_object)
+        self.kinds[type(game_object)].remove(game_object)
+        for s in self.tags.values():
+            s.remove(game_object)
