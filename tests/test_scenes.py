@@ -41,20 +41,20 @@ def test_game_object_container__get(container):
     container.add(enemies[1], ["red"])
     container.add(sprite)
 
-    enemy_set = set(container.get(type=TestEnemy))
+    enemy_set = set(container.get(kind=TestEnemy))
     assert len(enemy_set) == 2
     for enemy in enemies:
         assert enemy in enemy_set
 
-    player_set = set(container.get(type=TestPlayer))
+    player_set = set(container.get(kind=TestPlayer))
     assert len(player_set) == 1
     assert player in player_set
 
-    sprite_set = set(container.get(type=TestSprite))
+    sprite_set = set(container.get(kind=TestSprite))
     assert len(sprite_set) == 1
     assert sprite in sprite_set
 
-    red_set = set(container.get(group="red"))
+    red_set = set(container.get(tag="red"))
     assert len(red_set) == 2
     assert player in red_set
     assert enemies[1] in red_set
