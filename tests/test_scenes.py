@@ -20,6 +20,11 @@ class TestSprite:
     pass
 
 
+def containers():
+    yield GameObjectContainer()
+    yield BaseScene(Mock())
+
+
 @fixture()
 def player():
     return TestPlayer()
@@ -30,7 +35,7 @@ def enemies():
     return TestEnemy(), TestEnemy()
 
 
-@mark.parametrize("container", (GameObjectContainer(), BaseScene(Mock())))
+@mark.parametrize("container", containers())
 def test_add_methods(container, player, enemies):
     container.add(player)
     for group, sprite in zip(("red", "blue"), enemies):
@@ -40,7 +45,7 @@ def test_add_methods(container, player, enemies):
         assert enemy in container
 
 
-@mark.parametrize("container", (GameObjectContainer(), BaseScene(Mock())))
+@mark.parametrize("container", containers())
 def test_get_methods(container, player, enemies):
 
     sprite = TestSprite()
@@ -71,11 +76,20 @@ def test_get_methods(container, player, enemies):
         container.get()
 
 
-@mark.parametrize("container", (GameObjectContainer(), BaseScene(Mock())))
-def test_remove_methods(container, player):
+@mark.parametrize("container", containers())
+def test_remove_methods(container, player, enemies):
     container.add(player, "test")
+    container.add(enemies[0], "test")
+    container.add(enemies[1], "blue")
     assert player in container
+    assert enemies[0] in container
+    assert enemies[1] in container
+
     container.remove(player)
+
     assert player not in container
     assert player not in container.get(kind=TestPlayer)
     assert player not in container.get(tag="test")
+    assert enemies[0] in container
+    assert enemies[0] in container.get(tag="test")
+    assert enemies[1] in container

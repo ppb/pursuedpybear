@@ -152,4 +152,4 @@ class GameObjectContainer:
         self.all.remove(game_object)
         self.kinds[type(game_object)].remove(game_object)
         for s in self.tags.values():
-            s.remove(game_object)
+            s.discard(game_object)
