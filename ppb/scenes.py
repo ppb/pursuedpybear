@@ -1,8 +1,9 @@
 from collections import defaultdict
 from itertools import chain
-from typing import Any
+from typing import Hashable
 from typing import Iterable
 from typing import Iterator
+from typing import Type
 
 from ppb.abc import Scene
 
@@ -19,7 +20,7 @@ class BaseScene(Scene):
             container_class = GameObjectContainer
         self.game_objects = container_class()
 
-    def __contains__(self, item):
+    def __contains__(self, item: Hashable) -> bool:
         return item in self.game_objects
 
     def render(self):
@@ -37,13 +38,13 @@ class BaseScene(Scene):
         """
         return self.running, {"scene_class": self.next}
 
-    def add(self, game_object: Any, tags: Iterable=()):
+    def add(self, game_object: Hashable, tags: Iterable=())-> None:
         self.game_objects.add(game_object, tags)
 
-    def get(self, **kwargs):
-        return self.game_objects.get(**kwargs)
+    def get(self, *, kind: Type=None, tag: Hashable=None, **kwargs) -> Iterator:
+        return self.game_objects.get(kind=kind, tag=tag, **kwargs)
 
-    def remove(self, game_object):
+    def remove(self, game_object: Hashable) -> None:
         self.game_objects.remove(game_object)
 
 
@@ -54,23 +55,23 @@ class GameObjectContainer:
         self.kinds = defaultdict(set)
         self.tags = defaultdict(set)
 
-    def __contains__(self, item):
+    def __contains__(self, item: Hashable) -> bool:
         return item in self.all
 
-    def add(self, game_object: Any, tags: Iterable=()):
+    def add(self, game_object: Hashable, tags: Iterable[Hashable]=()) -> None:
         self.all.add(game_object)
         self.kinds[type(game_object)].add(game_object)
         for tag in tags:
             self.tags[tag].add(game_object)
 
-    def get(self, *, kind=None, tag=None, **kwargs) -> Iterator:
+    def get(self, *, kind: Type=None, tag: Hashable=None, **_) -> Iterator:
         if kind is None and tag is None:
             raise TypeError("get() takes at least one keyword-only argument. 'kind' or 'tag'.")
         kinds = self.kinds[kind] or self.all
         tags = self.tags[tag] or self.all
         return (x for x in kinds.intersection(tags))
 
-    def remove(self, game_object):
+    def remove(self, game_object: Hashable) -> None:
         self.all.remove(game_object)
         self.kinds[type(game_object)].remove(game_object)
         for s in self.tags.values():
