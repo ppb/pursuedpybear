@@ -1,3 +1,5 @@
+from unittest.mock import Mock
+
 from pytest import fixture
 from pytest import mark
 from pytest import raises
@@ -18,24 +20,6 @@ class TestSprite:
     pass
 
 
-# TODO: Make this mocking unnecessary
-class NullEngine:
-    def __init__(self):
-        self.display = Copyable()
-
-
-class Copyable:
-
-    def copy(self):
-        return Fillable()
-
-
-class Fillable:
-
-    def fill(self, *args):
-        pass
-
-
 @fixture()
 def player():
     return TestPlayer()
@@ -46,7 +30,7 @@ def enemies():
     return TestEnemy(), TestEnemy()
 
 
-@mark.parametrize("container", (GameObjectContainer(), BaseScene(NullEngine())))
+@mark.parametrize("container", (GameObjectContainer(), BaseScene(Mock())))
 def test_add_methods(container, player, enemies):
     container.add(player)
     for group, sprite in zip(("red", "blue"), enemies):
@@ -56,7 +40,7 @@ def test_add_methods(container, player, enemies):
         assert enemy in container
 
 
-@mark.parametrize("container", (GameObjectContainer(), BaseScene(NullEngine())))
+@mark.parametrize("container", (GameObjectContainer(), BaseScene(Mock())))
 def test_get_methods(container, player, enemies):
 
     sprite = TestSprite()
@@ -87,8 +71,8 @@ def test_get_methods(container, player, enemies):
         container.get()
 
 
-@mark.parametrize("container", (GameObjectContainer(), BaseScene(NullEngine())))
-def test_game_object_container__remove(container, player):
+@mark.parametrize("container", (GameObjectContainer(), BaseScene(Mock())))
+def test_remove_methods(container, player):
     container.add(player, "test")
     assert player in container
     container.remove(player)
