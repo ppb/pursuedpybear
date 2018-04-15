@@ -1,39 +1,36 @@
 from collections import defaultdict
 from itertools import chain
+from typing import Hashable
+from typing import Iterable
+from typing import Iterator
+from typing import Type
 
 from ppb.abc import Scene
-from pygame import MOUSEBUTTONUP, QUIT
-from pygame.sprite import LayeredDirty
 
 
 class BaseScene(Scene):
 
-    def __init__(self, engine, *, background_color=(0, 0, 55), **kwargs):
+    def __init__(self, engine, *, background_color=(0, 0, 55),
+                 container_class=None, **kwargs):
         super().__init__(engine)
         self.background_color = background_color
         self.background = engine.display.copy()
         self.background.fill(self.background_color)
-        self.groups = defaultdict(LayeredDirty)
-        self.render_group = LayeredDirty()
-        self.callback_map = {
-            QUIT: self.__quit__,
-            MOUSEBUTTONUP: self.__mouse_up__
-        }
+        if container_class is None:
+            container_class = GameObjectContainer
+        self.game_objects = container_class()
+
+    def __contains__(self, item: Hashable) -> bool:
+        return item in self.game_objects
 
     def render(self):
         window = self.engine.display
         self.render_group.add(chain(g.sprites() for g in self.groups.values()))
         return self.render_group.draw(window, self.background)
 
-    def handle_event(self, event):
-        self.callback_map.get(event.type, self.__null__)(event)
-
-    def publish_event(self, event):
-        pass
-
     def simulate(self, time_delta: float):
         for group in list(self.groups.values()):
-            group.update(time_delta)
+            group.update(self, time_delta)
 
     def change(self):
         """
@@ -41,13 +38,118 @@ class BaseScene(Scene):
         """
         return self.running, {"scene_class": self.next}
 
-    def __null__(self, event):
-        pass
+    def add(self, game_object: Hashable, tags: Iterable=())-> None:
+        """
+        Add a game_object to the scene.
 
-    def __quit__(self, event):
-        _ = event
-        self.running = False
-        self.quit = True
+        game_object: Any GameObject object. The item to be added.
+        tags: An iterable of Hashable objects. Values that can be used to
+              retrieve a group containing the game_object.
 
-    def __mouse_up__(self, event):
-        pass
+        Examples:
+            scene.add(MyGameObject())
+
+            scene.add(MyGameObject(), tags=("red", "blue")
+        """
+        self.game_objects.add(game_object, tags)
+
+    def get(self, *, kind: Type=None, tag: Hashable=None, **kwargs) -> Iterator:
+        """
+        Get an iterator of GameObjects by kind or tag.
+
+        kind: Any type. Pass to get a subset of contained GameObjects with the
+              given type.
+        tag: Any Hashable object. Pass to get a subset of contained GameObjects
+             with the given tag.
+
+        Pass both kind and tag to get objects that are both that type and that
+        tag.
+
+        Examples:
+            scene.get(type=MyGameObject)
+
+            scene.get(tag="red")
+
+            scene.get(type=MyGameObject, tag="red")
+        """
+        return self.game_objects.get(kind=kind, tag=tag, **kwargs)
+
+    def remove(self, game_object: Hashable) -> None:
+        """
+        Remove the given object from the scene.
+
+        game_object: A game object.
+
+        Example:
+            scene.remove(my_game_object)
+        """
+        self.game_objects.remove(game_object)
+
+
+class GameObjectContainer:
+    """A container for game objects."""
+
+    def __init__(self):
+        self.all = set()
+        self.kinds = defaultdict(set)
+        self.tags = defaultdict(set)
+
+    def __contains__(self, item: Hashable) -> bool:
+        return item in self.all
+
+    def add(self, game_object: Hashable, tags: Iterable[Hashable]=()) -> None:
+        """
+        Add a game_object to the container.
+
+        game_object: Any Hashable object. The item to be added.
+        tags: An iterable of Hashable objects. Values that can be used to
+              retrieve a group containing the game_object.
+
+        Examples:
+            container.add(MyObject())
+
+            container.add(MyObject(), tags=("red", "blue")
+        """
+        self.all.add(game_object)
+        self.kinds[type(game_object)].add(game_object)
+        for tag in tags:
+            self.tags[tag].add(game_object)
+
+    def get(self, *, kind: Type=None, tag: Hashable=None, **_) -> Iterator:
+        """
+        Get an iterator of objects by kind or tag.
+
+        kind: Any type. Pass to get a subset of contained items with the given
+              type.
+        tag: Any Hashable object. Pass to get a subset of contained items with
+             the given tag.
+
+        Pass both kind and tag to get objects that are both that type and that
+        tag.
+
+        Examples:
+            container.get(type=MyObject)
+
+            container.get(tag="red")
+
+            container.get(type=MyObject, tag="red")
+        """
+        if kind is None and tag is None:
+            raise TypeError("get() takes at least one keyword-only argument. 'kind' or 'tag'.")
+        kinds = self.kinds[kind] or self.all
+        tags = self.tags[tag] or self.all
+        return (x for x in kinds.intersection(tags))
+
+    def remove(self, game_object: Hashable) -> None:
+        """
+        Remove the given object from the container.
+
+        game_object: A hashable contained by container.
+
+        Example:
+            container.remove(myObject)
+        """
+        self.all.remove(game_object)
+        self.kinds[type(game_object)].remove(game_object)
+        for s in self.tags.values():
+            s.discard(game_object)
