@@ -1,4 +1,5 @@
 from collections import defaultdict
+from collections.abc import Collection
 from itertools import chain
 from typing import Hashable
 from typing import Iterable
@@ -17,7 +18,7 @@ class BaseScene(Scene):
         self.background = engine.display.copy()
         self.background.fill(self.background_color)
         if container_class is None:
-            container_class = GameObjectContainer
+            container_class = GameObjectCollection
         self.game_objects = container_class()
 
     def __contains__(self, item: Hashable) -> bool:
@@ -86,7 +87,7 @@ class BaseScene(Scene):
         self.game_objects.remove(game_object)
 
 
-class GameObjectContainer:
+class GameObjectCollection(Collection):
     """A container for game objects."""
 
     def __init__(self):
@@ -96,6 +97,12 @@ class GameObjectContainer:
 
     def __contains__(self, item: Hashable) -> bool:
         return item in self.all
+
+    def __iter__(self) -> Iterator[Hashable]:
+        return (x for x in list(self.all))
+
+    def __len__(self):
+        return len(self.all)
 
     def add(self, game_object: Hashable, tags: Iterable[Hashable]=()) -> None:
         """

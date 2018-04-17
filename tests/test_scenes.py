@@ -5,7 +5,7 @@ from pytest import mark
 from pytest import raises
 
 from ppb.scenes import BaseScene
-from ppb.scenes import GameObjectContainer
+from ppb.scenes import GameObjectCollection
 
 
 class TestEnemy:
@@ -21,7 +21,7 @@ class TestSprite:
 
 
 def containers():
-    yield GameObjectContainer()
+    yield GameObjectCollection()
     yield BaseScene(Mock())
 
 
@@ -93,3 +93,20 @@ def test_remove_methods(container, player, enemies):
     assert enemies[0] in container
     assert enemies[0] in container.get(tag="test")
     assert enemies[1] in container
+
+
+@mark.parametrize("container", [GameObjectCollection()])
+def test_collection_methods(container, player, enemies):
+    container.add(player)
+    container.add(enemies[0])
+
+    # Test __len__
+    assert len(container) == 2
+
+    # Test __contains__
+    assert player in container
+    assert enemies[1] not in container
+
+    # Test __iter__
+    for game_object in container:
+        assert game_object is player or game_object is enemies[0]
