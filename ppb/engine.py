@@ -48,7 +48,11 @@ class GameEngine(Engine):
         else:
             self.display.fill(self.current_scene.background_color)
 
-    def manage_scene(self, scene_running, next_scene):
+    def manage_scene(self):
+        if self.current_scene is None:
+            self.running = False
+            return None
+        scene_running, next_scene = self.current_scene.change()
         if not scene_running:
             self.scenes.pop()
         if next_scene:
@@ -58,22 +62,16 @@ class GameEngine(Engine):
         self.start()
         while self.running:
             time.sleep(.0000000001)
-            scene = self.current_scene
-            if scene is None:
-                return
-            self.manage_scene(*scene.change())
-            pygame.display.update(list(scene.render()))
-            tick = time.time()
-            self.unused_time += tick - self.last_tick
-            self.last_tick = tick
+            self.render()
+            self.advance_time()
             while self.unused_time >= self.delta_time:
                 for event in pygame.event.get():
-                    scene.handle_event(event)
                     if event.type == pygame.QUIT:
                         return
                 self.update_input()
-                scene.simulate(self.delta_time)
+                self.current_scene.simulate(self.delta_time)
                 self.unused_time -= self.delta_time
+            self.manage_scene()
 
     @property
     def current_scene(self):
@@ -93,3 +91,11 @@ class GameEngine(Engine):
     def update_input(self):
         self.mouse["x"], self.mouse["y"] = pygame.mouse.get_pos()
         self.mouse[1], self.mouse[2], self.mouse[3] = pygame.mouse.get_pressed()
+
+    def render(self):
+        pygame.display.update(list(self.current_scene.render()))
+
+    def advance_time(self):
+        tick = time.time()
+        self.unused_time += tick - self.last_tick
+        self.last_tick = tick
