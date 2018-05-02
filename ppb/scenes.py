@@ -6,6 +6,8 @@ from typing import Iterable
 from typing import Iterator
 from typing import Type
 
+from pygame.sprite import LayeredDirty
+
 from ppb.abc import Scene
 
 
@@ -20,13 +22,14 @@ class BaseScene(Scene):
         if container_class is None:
             container_class = GameObjectCollection
         self.game_objects = container_class()
+        self.render_group = LayeredDirty()
 
     def __contains__(self, item: Hashable) -> bool:
         return item in self.game_objects
 
     def render(self):
         window = self.engine.display
-        self.render_group.add(chain(g.sprites() for g in self.groups.values()))
+        self.render_group.add(s for s in self.game_objects)
         return self.render_group.draw(window, self.background)
 
     def simulate(self, time_delta: float):
