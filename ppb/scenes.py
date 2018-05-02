@@ -33,8 +33,8 @@ class BaseScene(Scene):
         return self.render_group.draw(window, self.background)
 
     def simulate(self, time_delta: float):
-        for group in list(self.groups.values()):
-            group.update(self, time_delta)
+        for game_object in self.game_objects:
+            game_object.update(time_delta)
 
     def change(self):
         """

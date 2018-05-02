@@ -128,3 +128,14 @@ def test_scene_render(scene):
     scene.render_group = Mock()  # Render group is an implementation detail
     scene.render()
 
+
+def test_scene_simulate(scene):
+    """
+    Ensure that all game_objects get called by simulate.
+    """
+    all_mocks = (Mock(), Mock(), Mock())
+    for mock in all_mocks:
+        scene.add(mock)
+    scene.simulate(0.016)
+    for mock in all_mocks:
+        mock.update.assert_called_once()
