@@ -5,7 +5,7 @@ from pytest import mark
 from pytest import raises
 
 from ppb.scenes import BaseScene
-from ppb.scenes import GameObjectContainer
+from ppb.scenes import GameObjectCollection
 
 
 class TestEnemy:
@@ -21,7 +21,7 @@ class TestSprite:
 
 
 def containers():
-    yield GameObjectContainer()
+    yield GameObjectCollection()
     yield BaseScene(Mock())
 
 
@@ -33,6 +33,12 @@ def player():
 @fixture()
 def enemies():
     return TestEnemy(), TestEnemy()
+
+
+@fixture()
+def scene():
+    engine = Mock()
+    return BaseScene(engine)
 
 
 @mark.parametrize("container", containers())
@@ -93,3 +99,43 @@ def test_remove_methods(container, player, enemies):
     assert enemies[0] in container
     assert enemies[0] in container.get(tag="test")
     assert enemies[1] in container
+
+
+@mark.parametrize("container", [GameObjectCollection()])
+def test_collection_methods(container, player, enemies):
+    container.add(player)
+    container.add(enemies[0])
+
+    # Test __len__
+    assert len(container) == 2
+
+    # Test __contains__
+    assert player in container
+    assert enemies[1] not in container
+
+    # Test __iter__
+    for game_object in container:
+        assert game_object is player or game_object is enemies[0]
+
+
+def test_scene_render(scene):
+    """
+    This test ensure a call to render works.
+
+    The two mocks allow the test to run without hardware, but makes sure
+    that the function runs to completion without errors.
+    """
+    scene.render_group = Mock()  # Render group is an implementation detail
+    scene.render()
+
+
+def test_scene_simulate(scene):
+    """
+    Ensure that all game_objects get called by simulate.
+    """
+    all_mocks = (Mock(), Mock(), Mock())
+    for mock in all_mocks:
+        scene.add(mock)
+    scene.simulate(0.016)
+    for mock in all_mocks:
+        mock.update.assert_called_once()

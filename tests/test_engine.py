@@ -40,7 +40,7 @@ class TestEngineSceneActivate(unittest.TestCase):
         state.
         """
         self.mock_scene.change = mock.Mock(return_value=(CONTINUE, {}))
-        self.engine.manage_scene(*self.engine.current_scene.change())
+        self.engine.manage_scene()
         self.assertIs(self.engine.current_scene, self.mock_scene)
 
     def test_stop_scene_no_new_scene(self):
@@ -49,7 +49,7 @@ class TestEngineSceneActivate(unittest.TestCase):
         stack empty.
         """
         self.mock_scene.change = mock.Mock(return_value=(STOP, {}))
-        self.engine.manage_scene(*self.engine.current_scene.change())
+        self.engine.manage_scene()
         self.assertIsNone(self.engine.current_scene)
 
     def test_next_scene_none(self):
@@ -57,5 +57,5 @@ class TestEngineSceneActivate(unittest.TestCase):
                                                          {"scene_class": None}
                                                          )
                                            )
-        self.engine.manage_scene(*self.engine.current_scene.change())
+        self.engine.manage_scene()
         self.assertIs(self.engine.current_scene, self.mock_scene)
