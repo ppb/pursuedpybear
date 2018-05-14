@@ -129,7 +129,6 @@ class BaseScene(Scene):
 
             scene.add(MyGameObject(), tags=("red", "blue")
         """
-        self.engine.event_engine.register_object(game_object)
         self.game_objects.add(game_object, tags)
 
     def get(self, *, kind: Type=None, tag: Hashable=None, **kwargs) -> Iterator:
