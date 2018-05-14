@@ -1,7 +1,13 @@
-from ppb.events import EventMixin, fire_event
+from pytest import fixture
+from ppb.events import EventSystem, EventMixin
 
 
-def test_events():
+@fixture
+def eventsystem():
+    return EventSystem()
+
+
+def test_events(eventsystem):
     passed_bag = None
     passed_scene = None
 
@@ -16,7 +22,8 @@ def test_events():
     scene = object()
 
     e = Eventable()
+    eventsystem.register_object(e)
 
-    fire_event('spam', bag, scene)
+    eventsystem.fire_event('spam', bag, scene)
     assert bag is passed_bag
     assert scene is passed_scene

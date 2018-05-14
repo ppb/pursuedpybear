@@ -3,6 +3,7 @@ import time
 from typing import Type
 import pygame
 from ppb.abc import Engine, Scene
+from .events import EventSystem
 
 
 class GameEngine(Engine):
@@ -25,6 +26,8 @@ class GameEngine(Engine):
         self.last_tick = None
         self.running = False
         self.display = None
+
+        self.event_engine = EventSystem()
 
     def __enter__(self):
         logging.getLogger(self.__class__.__name__).info("Entering context.")
@@ -93,3 +96,12 @@ class GameEngine(Engine):
     def update_input(self):
         self.mouse["x"], self.mouse["y"] = pygame.mouse.get_pos()
         self.mouse[1], self.mouse[2], self.mouse[3] = pygame.mouse.get_pressed()
+
+    def fire_event(self, name: str, bag: object, scene: Scene=None):
+        """
+        Fire an event, executing its handlers.
+        """
+        if scene is None:
+            scene = self.current_scene
+
+        self.event_engine.fire_event(name, bag, scene)

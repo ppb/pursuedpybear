@@ -6,40 +6,46 @@ from .dataclasses import dataclass
 from .abc import Scene
 
 __all__ = (
-    'EventMixin', 'fire_event',
+    'EventMixin',
+    # EventSystem is public but not a default import
     'UpdateEvent',
 )
-
-_registrations = collections.defaultdict(set)
-
 
 class EventMixin:
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        _register_instance(self)
 
+class EventSystem:
+    def __init__(self):
+        self.registrations = collections.defaultdict(set)
 
-def _register_instance(obj: EventMixin):
-    global _registrations
-    for name in dir(obj):
-        if not name.startswith('on_'):
-            continue
-        event = name[len('on_'):]
-        val = getattr(obj, name)
-        if callable(val):
-            _registrations[event].add(weakref.WeakMethod(val))
+    def register_object(self, obj: EventMixin):
+        for name in dir(obj):
+            if not name.startswith('on_'):
+                continue
+            event = name[len('on_'):]
+            val = getattr(obj, name)
+            if callable(val):
+                self.registrations[event].add(weakref.WeakMethod(val))
 
+    def fire_event(self, name: str, bag: object, scene: Scene):
+        """
+        Fire an event, executing its handlers.
+        """
+        callback = lambda name, bag: self.fire_event(name, bag, scene)
 
-def fire_event(name: str, bag: object, scene: Scene):
-    callback = lambda name, bag: fire_event(name, bag, scene)
+        elog = logging.getLogger('events')
+        ppblog = logging.getLogger('ppb.events')
 
-    log = logging.getLogger('events')
+        if scene is None:
+            ppblog.warning(f"Event {name} fired with no scene")
+            return
 
-    for func in _registrations[name]:
-        try:
-            func()(bag, scene, callback)
-        except Exception:
-            log.exception("Error in event handler")
+        for func in self.registrations[name]:
+            try:
+                func()(bag, scene, callback)
+            except Exception:
+                elog.exception("Error in event handler")
 
 
 @dataclass()
