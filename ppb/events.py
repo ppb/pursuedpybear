@@ -26,7 +26,7 @@ class EventMixin:
         meth = getattr(self, 'on_' + name, None)
         if meth and callable(meth):
             elog.debug(f"Calling handler {meth} for {name}")
-            meth(bag, scene, fire_event)
+            meth(bag, fire_event)
 
 
 # Remember to define scene at the end so the pargs version of __init__() still works

@@ -87,7 +87,7 @@ class GameObjectCollection(Collection):
             s.discard(game_object)
 
 
-class BaseScene(Scene):
+class BaseScene(Scene, EventMixin):
 
     def __init__(self, engine, *, background_color=(0, 0, 55),
                  container_class=GameObjectCollection, **kwargs):

@@ -14,15 +14,13 @@ def test_eventmixin():
             nonlocal passed_bag, passed_fire
             passed_fire = fire_event
             passed_bag = bag
-            passed_scene = scene
 
     bag = Spam()
-    scene = object()
     fire_event = lambda: none
 
     e = Eventable()
 
-    e.__event__(bag, scene, fire_event)
+    e.__event__(bag, fire_event)
     assert bag is passed_bag
     assert fire_event is passed_fire
 
