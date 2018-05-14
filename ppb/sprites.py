@@ -2,6 +2,8 @@ from numbers import Number
 from typing import Dict, Iterable, AnyStr, Sequence
 
 from ppb import Vector
+from .events import EventMixin
+
 
 TOP = "top"
 BOTTOM = "bottom"
@@ -12,7 +14,7 @@ error_message = "'{klass}' object does not have attribute '{attribute}'"
 side_attribute_error_message = error_message.format
 
 
-class Side(object):
+class Side:
     sides = {
         LEFT: ('x', -1),
         RIGHT: ('x', 1),
@@ -113,7 +115,7 @@ class Side(object):
             raise AttributeError(message)
 
 
-class BaseSprite(object):
+class BaseSprite(EventMixin):
 
     def __init__(self, size: int=1, pos: Iterable=(0, 0), blackboard: Dict=None, facing: Vector=Vector(0, -1)):
         super().__init__()
