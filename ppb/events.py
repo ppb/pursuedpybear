@@ -2,55 +2,48 @@ import weakref
 import collections
 import logging
 import typing
+import re
 from .dataclasses import dataclass
 from .abc import Scene
 
 __all__ = (
     'EventMixin',
-    # EventSystem is public but not a default import
-    'UpdateEvent',
+    'Update',
 )
 
+
+def camel_to_snake(txt):
+    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', txt)
+    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
+
+
 class EventMixin:
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __event__(self, bag, fire_event):
+        elog = logging.getLogger('game.events')
 
-class EventSystem:
-    def __init__(self):
-        self.registrations = collections.defaultdict(set)
+        name = camel_to_snake(type(bag).__name__)
 
-    def register_object(self, obj: EventMixin):
-        for name in dir(obj):
-            if not name.startswith('on_'):
-                continue
-            event = name[len('on_'):]
-            val = getattr(obj, name)
-            if callable(val):
-                self.registrations[event].add(weakref.WeakMethod(val))
+        meth = getattr(self, 'on_' + name, None)
+        if meth and callable(meth):
+            elog.debug(f"Calling handler {meth} for {name}")
+            meth(bag, scene, fire_event)
 
-    def fire_event(self, name: str, bag: object, scene: Scene):
-        """
-        Fire an event, executing its handlers.
-        """
-        callback = lambda name, bag: self.fire_event(name, bag, scene)
 
-        elog = logging.getLogger('events')
-        ppblog = logging.getLogger('ppb.events')
-
-        if scene is None:
-            ppblog.warning(f"Event {name} fired with no scene")
-            return
-
-        for func in self.registrations[name]:
-            try:
-                func()(bag, scene, callback)
-            except Exception:
-                elog.exception("Error in event handler")
+# Remember to define scene at the end so the pargs version of __init__() still works
 
 
 @dataclass()
-class UpdateEvent:
+class Update:
     """
     Fired on game tick
     """
     time_delta: float
+    scene: Scene = None
+
+
+@dataclass()
+class Prerender:
+    """
+    TODO
+    """
+    scene: Scene = None

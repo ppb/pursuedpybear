@@ -5,10 +5,13 @@ from typing import Iterable
 from typing import Iterator
 from typing import Type
 
+from copy import copy
+
 from ppb.abc import Scene
+from ppb.events import EventMixin
 
 
-class BaseScene(Scene):
+class BaseScene(Scene, EventMixin):
 
     def __init__(self, engine, *, background_color=(0, 0, 55),
                  container_class=None, **kwargs):
@@ -86,11 +89,18 @@ class BaseScene(Scene):
         """
         self.game_objects.remove(game_object)
 
-    def fire_event(self, name: str, bag: object):
-        """
-        Fire an event, executing its handlers.
-        """
-        self.engine.event_engine.fire_event(name, bag, self)
+    def __event__(self, bag, fire_event):
+        if bag.scene is None or not bag.scene is self:
+            bag = copy(bag)
+            bag.scene = self
+
+        def wrapped_fire_event(bag):
+            bag.scene = self
+            fire_event(bag)
+
+        super().__event__(bag, wrapped_fire_event)
+        for go in self.game_objects:
+            go.__event__(bag, wrapped_fire_event)
 
 
 class GameObjectContainer:

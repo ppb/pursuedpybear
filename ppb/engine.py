@@ -3,12 +3,11 @@ import time
 from typing import Type
 import pygame
 from ppb.abc import Engine, Scene
-from .events import EventSystem
 
 
 class GameEngine(Engine):
 
-    def __init__(self, first_scene: Type, *, delta_time=0.016, resolution=(600, 400), flags=0, depth=0, log_level=logging.WARNING, event_engine=EventSystem, **kwargs):
+    def __init__(self, first_scene: Type, *, delta_time=0.016, resolution=(600, 400), flags=0, depth=0, log_level=logging.WARNING, **kwargs):
         super(GameEngine, self).__init__()
 
         # Engine Configuration
@@ -26,8 +25,6 @@ class GameEngine(Engine):
         self.last_tick = None
         self.running = False
         self.display = None
-
-        self.event_engine = event_engine()
 
     def __enter__(self):
         logging.getLogger(self.__class__.__name__).info("Entering context.")
