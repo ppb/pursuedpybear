@@ -93,8 +93,6 @@ class BaseScene(Scene):
         self.background_color = background_color
         self.background = engine.display.copy()
         self.background.fill(self.background_color)
-        if container_class is None:
-            container_class = GameObjectCollection
         self.game_objects = container_class()
         self.render_group = LayeredDirty()
 
