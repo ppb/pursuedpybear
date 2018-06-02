@@ -94,7 +94,6 @@ class BaseScene(Scene):
         self.background = None
         self.game_objects = container_class()
         self.render_group = LayeredDirty()
-        print(f"{set_up}")
         if set_up is not None:
             set_up(self)
 
