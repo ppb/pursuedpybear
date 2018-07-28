@@ -2,12 +2,17 @@ import logging
 import time
 from typing import Type
 import pygame
-from ppb.abc import Engine, Scene
+
+from ppb.abc import Engine
+from ppb.systems import Renderer
 
 
 class GameEngine(Engine):
 
-    def __init__(self, first_scene: Type, *, delta_time=0.016, resolution=(600, 400), flags=0, depth=0, log_level=logging.WARNING, **kwargs):
+    def __init__(self, first_scene: Type, *, delta_time=0.016, depth=0,
+                 flags=0, log_level=logging.WARNING, renderer_class=Renderer,
+                 resolution=(600, 400), scene_kwargs=None, **kwargs):
+
         super(GameEngine, self).__init__()
 
         # Engine Configuration
@@ -17,6 +22,7 @@ class GameEngine(Engine):
         self.depth = depth
         self.log_level = log_level
         self.first_scene = first_scene
+        self.scene_kwargs = scene_kwargs or {}
         logging.basicConfig(level=self.log_level)
 
         # Engine State
@@ -24,14 +30,14 @@ class GameEngine(Engine):
         self.unused_time = 0
         self.last_tick = None
         self.running = False
-        self.display = None
+
+        # Systems
+        self.renderer = renderer_class()
 
     def __enter__(self):
         logging.getLogger(self.__class__.__name__).info("Entering context.")
         pygame.init()
-        self.display = pygame.display.set_mode(self.resolution,
-                                               self.flags,
-                                               self.depth)
+        pygame.display.set_mode(self.resolution, self.flags, self.depth)
         self.update_input()
         return self
 
@@ -42,11 +48,9 @@ class GameEngine(Engine):
     def start(self):
         self.running = True
         self.last_tick = time.time()
-        self.activate({"scene_class": self.first_scene})
-        if hasattr(self.current_scene, "background") and self.current_scene is not None:
-            self.display.blit(self.current_scene.background, (0, 0, 0, 0))
-        else:
-            self.display.fill(self.current_scene.background_color)
+        self.activate({"scene_class": self.first_scene,
+                       "kwargs": self.scene_kwargs})
+        self.renderer.start()
 
     def manage_scene(self):
         if self.current_scene is None:
@@ -84,8 +88,8 @@ class GameEngine(Engine):
         scene = next_scene["scene_class"]
         if scene is None:
             return
-        args = next_scene.get("arguments", [])
-        kwargs = next_scene.get("keyword_arguments", {})
+        args = next_scene.get("args", [])
+        kwargs = next_scene.get("kwargs", {})
         self.scenes.append(scene(self, *args, **kwargs))
 
     def update_input(self):
@@ -93,7 +97,7 @@ class GameEngine(Engine):
         self.mouse[1], self.mouse[2], self.mouse[3] = pygame.mouse.get_pressed()
 
     def render(self):
-        pygame.display.update(list(self.current_scene.render()))
+        self.renderer.render(self.current_scene)
 
     def advance_time(self):
         tick = time.time()

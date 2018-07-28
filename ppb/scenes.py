@@ -87,17 +87,21 @@ class GameObjectCollection(Collection):
 
 class BaseScene(Scene):
 
-    def __init__(self, engine, *, background_color=(0, 0, 55),
-                 container_class=GameObjectCollection, **kwargs):
+    def __init__(self, engine, *, background_color=(0, 0, 100),
+                 container_class=GameObjectCollection, set_up=None, **kwargs):
         super().__init__(engine)
         self.background_color = background_color
-        self.background = engine.display.copy()
-        self.background.fill(self.background_color)
+        self.background = None
         self.game_objects = container_class()
         self.render_group = LayeredDirty()
+        if set_up is not None:
+            set_up(self)
 
     def __contains__(self, item: Hashable) -> bool:
         return item in self.game_objects
+
+    def __iter__(self):
+        return (x for x in self.game_objects)
 
     def render(self):
         window = self.engine.display
@@ -106,7 +110,7 @@ class BaseScene(Scene):
 
     def simulate(self, time_delta: float):
         for game_object in self.game_objects:
-            game_object.update(time_delta)
+            game_object.on_update(time_delta)
 
     def change(self):
         """

@@ -1,4 +1,7 @@
+from inspect import getfile
 from numbers import Number
+from os.path import realpath
+from pathlib import Path
 from typing import Dict, Iterable, AnyStr, Sequence
 
 from ppb import Vector
@@ -20,7 +23,7 @@ class Side(object):
         BOTTOM: ('y', 1)
     }
 
-    def __init__(self, parent: 'BaseSprite', side: AnyStr):
+    def __init__(self, parent: 'BaseSprite',side: AnyStr):
         self.side = side
         self.parent = parent
 
@@ -115,6 +118,9 @@ class Side(object):
 
 class BaseSprite(object):
 
+    image = None
+    resource_path = None
+
     def __init__(self, size: int=1, pos: Iterable=(0, 0), blackboard: Dict=None, facing: Vector=Vector(0, -1)):
         super().__init__()
         self.position = Vector(*pos)
@@ -168,3 +174,16 @@ class BaseSprite(object):
 
     def rotate(self, degrees: Number):
         self.facing.rotate(degrees)
+
+    def __image__(self):
+        if self.image is None:
+            self.image = f"{type(self).__name__.lower()}.png"
+        return self.image
+
+    def __resource_path__(self):
+        if self.resource_path is None:
+            self.resource_path = Path(realpath(getfile(type(self)))).absolute().parent
+        return self.resource_path
+
+    def on_update(self, time_delta):
+        pass
