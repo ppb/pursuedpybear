@@ -1,5 +1,3 @@
-import sys
-
 import pygame
 
 from ppb import Vector
@@ -10,6 +8,7 @@ class Renderer:
     def __init__(self):
         self.resources = {}
         self.window = None
+        self.offset = None
         self.camera_position = Vector(0, 0)
 
     def render(self, scene):
@@ -32,6 +31,7 @@ class Renderer:
 
     def prepare_rectangle(self, resource, game_object):
         rect = resource.get_rect()
+        rect.center = game_object.position - (self.offset - self.camera_position)
         return rect
 
     def register(self, resource_path, name=None):
@@ -46,3 +46,5 @@ class Renderer:
 
     def start(self):
         self.window = pygame.display.get_surface()
+        self.offset = Vector(-0.5 * self.window.get_width(),
+                             -0.5 * self.window.get_height())

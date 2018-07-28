@@ -23,7 +23,7 @@ class Side(object):
         BOTTOM: ('y', 1)
     }
 
-    def __init__(self, parent: 'BaseSprite', side: AnyStr):
+    def __init__(self, parent: 'BaseSprite',side: AnyStr):
         self.side = side
         self.parent = parent
 
