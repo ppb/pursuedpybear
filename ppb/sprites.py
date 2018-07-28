@@ -5,6 +5,8 @@ from pathlib import Path
 from typing import Dict, Iterable, AnyStr, Sequence
 
 from ppb import Vector
+from .events import EventMixin
+
 
 TOP = "top"
 BOTTOM = "bottom"
@@ -15,7 +17,7 @@ error_message = "'{klass}' object does not have attribute '{attribute}'"
 side_attribute_error_message = error_message.format
 
 
-class Side(object):
+class Side:
     sides = {
         LEFT: ('x', -1),
         RIGHT: ('x', 1),
@@ -116,7 +118,7 @@ class Side(object):
             raise AttributeError(message)
 
 
-class BaseSprite(object):
+class BaseSprite(EventMixin):
 
     image = None
     resource_path = None

@@ -1,5 +1,6 @@
 from collections import defaultdict
 from collections.abc import Collection
+from copy import copy
 from typing import Hashable
 from typing import Iterable
 from typing import Iterator
@@ -8,6 +9,7 @@ from typing import Type
 from pygame.sprite import LayeredDirty
 
 from ppb.abc import Scene
+from ppb.events import EventMixin
 
 
 class GameObjectCollection(Collection):
@@ -85,7 +87,7 @@ class GameObjectCollection(Collection):
             s.discard(game_object)
 
 
-class BaseScene(Scene):
+class BaseScene(Scene, EventMixin):
 
     def __init__(self, engine, *, background_color=(0, 0, 100),
                  container_class=GameObjectCollection, set_up=None, **kwargs):
@@ -164,3 +166,16 @@ class BaseScene(Scene):
             scene.remove(my_game_object)
         """
         self.game_objects.remove(game_object)
+
+    def __event__(self, bag, fire_event):
+        if bag.scene is None or not bag.scene is self:
+            bag = copy(bag)
+            bag.scene = self
+
+        def wrapped_fire_event(bag):
+            bag.scene = self
+            fire_event(bag)
+
+        super().__event__(bag, wrapped_fire_event)
+        for go in self.game_objects:
+            go.__event__(bag, wrapped_fire_event)
