@@ -110,10 +110,6 @@ class BaseScene(Scene, EventMixin):
         self.render_group.add(s for s in self.game_objects)
         return self.render_group.draw(window, self.background)
 
-    def simulate(self, time_delta: float):
-        for game_object in self.game_objects:
-            game_object.on_update(time_delta)
-
     def change(self):
         """
         Default case, override in subclass as necessary.
@@ -166,16 +162,3 @@ class BaseScene(Scene, EventMixin):
             scene.remove(my_game_object)
         """
         self.game_objects.remove(game_object)
-
-    def __event__(self, bag, fire_event):
-        if bag.scene is None or not bag.scene is self:
-            bag = copy(bag)
-            bag.scene = self
-
-        def wrapped_fire_event(bag):
-            bag.scene = self
-            fire_event(bag)
-
-        super().__event__(bag, wrapped_fire_event)
-        for go in self.game_objects:
-            go.__event__(bag, wrapped_fire_event)

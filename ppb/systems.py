@@ -1,6 +1,18 @@
 import pygame
 
 from ppb import Vector
+from ppb.events import EventMixin
+
+class System(EventMixin):
+
+    def __enter__(self):
+        pass
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        pass
+
+    def activate(self, engine):
+        return []
 
 
 class Renderer:

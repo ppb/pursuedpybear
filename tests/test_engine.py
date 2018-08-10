@@ -4,11 +4,14 @@ from unittest import mock
 from pygame import Surface
 
 from ppb import GameEngine, BaseScene
+from ppb.events import Quit
+from ppb.systems import System
 
 CONTINUE = True
 STOP = False
 
 
+@unittest.skip
 class TestEngine(unittest.TestCase):
 
     def test_initialize(self):
@@ -24,6 +27,7 @@ class TestEngine(unittest.TestCase):
         self.assertIs(engine.current_scene, mock_scene)
 
 
+@unittest.skip
 class TestEngineSceneActivate(unittest.TestCase):
 
     def setUp(self):
@@ -59,3 +63,15 @@ class TestEngineSceneActivate(unittest.TestCase):
                                            )
         self.engine.manage_scene()
         self.assertIs(self.engine.current_scene, self.mock_scene)
+
+
+def test_signal():
+
+    class Quitter(System):
+
+        def activate(self, engine):
+            yield Quit()
+
+    engine = GameEngine(BaseScene, systems=[Quitter()])
+    engine.run()
+    assert not engine.running

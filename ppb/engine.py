@@ -1,17 +1,24 @@
+from collections import deque
+from contextlib import ExitStack
+from itertools import chain
 import logging
 import time
+from typing import Callable
 from typing import Type
 import pygame
 
 from ppb.abc import Engine
+from ppb.events import EventMixin
+from ppb.events import Quit
 from ppb.systems import Renderer
 
 
-class GameEngine(Engine):
+class GameEngine(Engine, EventMixin):
 
-    def __init__(self, first_scene: Type, *, delta_time=0.016, depth=0,
-                 flags=0, log_level=logging.WARNING, renderer_class=Renderer,
-                 resolution=(600, 400), scene_kwargs=None, **kwargs):
+    def __init__(self, first_scene: Type, *, delta_time: float=0.016,
+                 depth: int=0, flags=0, log_level=logging.WARNING,
+                 systems=(Renderer,), resolution=(600, 400),
+                 scene_kwargs=None, **kwargs):
 
         super(GameEngine, self).__init__()
 
@@ -27,22 +34,25 @@ class GameEngine(Engine):
 
         # Engine State
         self.scenes = []
+        self.events = deque()
         self.unused_time = 0
         self.last_tick = None
         self.running = False
 
         # Systems
-        self.renderer = renderer_class()
+        self.systems_classes = systems
+        self.systems = []
+        self.exit_stack = ExitStack()
 
     def __enter__(self):
         logging.getLogger(self.__class__.__name__).info("Entering context.")
         pygame.init()
         pygame.display.set_mode(self.resolution, self.flags, self.depth)
-        self.update_input()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         logging.getLogger(self.__class__.__name__).info("Exiting context")
+        self.exit_stack.close()
         pygame.quit()
 
     def start(self):
@@ -50,7 +60,16 @@ class GameEngine(Engine):
         self.last_tick = time.time()
         self.activate({"scene_class": self.first_scene,
                        "kwargs": self.scene_kwargs})
-        self.renderer.start()
+        self.start_systems()
+
+    def start_systems(self):
+        for system in self.systems_classes:
+            try:
+                system = system()
+            except : # TODO: Check if type error or attribute error
+                pass
+            self.systems.append(system)
+            self.exit_stack.enter_context(system)
 
     def manage_scene(self):
         if self.current_scene is None:
@@ -66,14 +85,14 @@ class GameEngine(Engine):
         self.start()
         while self.running:
             time.sleep(.0000000001)
-            self.render()
             self.advance_time()
             while self.unused_time >= self.delta_time:
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        return
-                self.update_input()
-                self.current_scene.simulate(self.delta_time)
+                for system in self.systems:
+                    logging.warning(f"System: {system}")
+                    for event in system.activate(self):
+                        self.signal(event)
+                        while self.events:
+                            self.publish()
                 self.unused_time -= self.delta_time
             self.manage_scene()
 
@@ -92,14 +111,18 @@ class GameEngine(Engine):
         kwargs = next_scene.get("kwargs", {})
         self.scenes.append(scene(self, *args, **kwargs))
 
-    def update_input(self):
-        self.mouse["x"], self.mouse["y"] = pygame.mouse.get_pos()
-        self.mouse[1], self.mouse[2], self.mouse[3] = pygame.mouse.get_pressed()
-
-    def render(self):
-        self.renderer.render(self.current_scene)
-
     def advance_time(self):
         tick = time.time()
         self.unused_time += tick - self.last_tick
         self.last_tick = tick
+
+    def publish(self):
+        event = self.events.popleft()
+        for entity in chain((self,), self.systems, (self.current_scene,), self.current_scene):
+            entity.__event__(event, self.signal)
+
+    def signal(self, event):
+        self.events.append(event)
+
+    def on_quit(self, quit_event: 'Quit', signal: Callable):  #TODO: Look up syntax for Callable typing.
+        self.running = False

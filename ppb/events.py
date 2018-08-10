@@ -47,3 +47,8 @@ class Prerender:
     TODO
     """
     scene: Scene = None
+
+
+@dataclass()
+class Quit:
+    pass
