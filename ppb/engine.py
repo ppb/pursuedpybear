@@ -11,13 +11,14 @@ from ppb.abc import Engine
 from ppb.events import EventMixin
 from ppb.events import Quit
 from ppb.systems import Renderer
+from ppb.systems import Updater
 
 
 class GameEngine(Engine, EventMixin):
 
     def __init__(self, first_scene: Type, *, delta_time: float=0.016,
                  depth: int=0, flags=0, log_level=logging.WARNING,
-                 systems=(Renderer,), resolution=(600, 400),
+                 systems=(Renderer, Updater), resolution=(600, 400),
                  scene_kwargs=None, **kwargs):
 
         super(GameEngine, self).__init__()

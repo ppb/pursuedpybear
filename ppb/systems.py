@@ -1,3 +1,5 @@
+import time
+
 import pygame
 
 from ppb import Vector
@@ -5,6 +7,7 @@ from ppb.events import EventMixin
 from ppb.events import Prerender
 from ppb.events import Quit
 from ppb.events import Render
+from ppb.events import Update
 
 
 class System(EventMixin):
@@ -83,3 +86,23 @@ class Renderer(System):
         image_name = renderable.__image__()
         source_path = renderable.__resource_path__()
         self.register(source_path / image_name, image_name)
+
+
+class Updater(System):
+
+    def __init__(self, time_step=0.016):
+        self.accumulated_time = 0
+        self.last_tick = None
+        self.start_time = None
+        self.time_step = time_step
+
+    def __enter__(self):
+        self. last_tick = self.start_time = time.time()
+
+    def activate(self, engine):
+        this_tick = time.time()
+        self.accumulated_time += this_tick - self.last_tick
+        self.last_tick = this_tick
+        while self.accumulated_time >= self.time_step:
+            self.accumulated_time += -self.time_step
+            yield Update(self.time_step)

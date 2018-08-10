@@ -186,6 +186,3 @@ class BaseSprite(EventMixin):
         if self.resource_path is None:
             self.resource_path = Path(realpath(getfile(type(self)))).absolute().parent
         return self.resource_path
-
-    def on_update(self, time_delta):
-        pass
