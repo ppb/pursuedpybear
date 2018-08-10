@@ -2,6 +2,7 @@ import pygame
 
 from ppb import Vector
 from ppb.events import EventMixin
+from ppb.events import Quit
 
 class System(EventMixin):
 
@@ -13,6 +14,16 @@ class System(EventMixin):
 
     def activate(self, engine):
         return []
+
+
+
+class Quitter(System):
+    """
+    System for running test. Limits the engine to a single loop.
+    """
+
+    def activate(self, engine):
+        yield Quit()
 
 
 class Renderer:

@@ -52,7 +52,6 @@ class GameEngine(Engine, EventMixin):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         logging.getLogger(self.__class__.__name__).info("Exiting context")
-        self.exit_stack.close()
         pygame.quit()
 
     def start(self):
@@ -95,6 +94,7 @@ class GameEngine(Engine, EventMixin):
                             self.publish()
                 self.unused_time -= self.delta_time
             self.manage_scene()
+        self.exit_stack.close()
 
     @property
     def current_scene(self):

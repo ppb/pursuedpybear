@@ -4,7 +4,7 @@ from unittest import mock
 from pygame import Surface
 
 from ppb import GameEngine, BaseScene
-from ppb.events import Quit
+from ppb.systems import Quitter
 from ppb.systems import System
 
 CONTINUE = True
@@ -67,11 +67,31 @@ class TestEngineSceneActivate(unittest.TestCase):
 
 def test_signal():
 
-    class Quitter(System):
-
-        def activate(self, engine):
-            yield Quit()
-
-    engine = GameEngine(BaseScene, systems=[Quitter()])
+    engine = GameEngine(BaseScene, systems=[Quitter])
     engine.run()
     assert not engine.running
+
+
+def test_contexts():
+    class FakeRenderer(System):
+
+        def __init__(self):
+            self.entered = False
+            self.exited = False
+
+        def __enter__(self):
+            self.entered = True
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            self.exited = True
+
+    engine = GameEngine(BaseScene, systems=[FakeRenderer, Quitter])
+    engine.run()
+    for system in engine.systems:
+        if isinstance(system, FakeRenderer):
+            break
+    else:
+        system = None
+        assert isinstance(system, FakeRenderer)
+    assert system.entered
+    assert system.exited
