@@ -4,7 +4,7 @@ import pygame
 
 from ppb import Vector
 from ppb.events import EventMixin
-from ppb.events import Prerender
+from ppb.events import PreRender
 from ppb.events import Quit
 from ppb.events import Render
 from ppb.events import Update
@@ -21,6 +21,30 @@ class System(EventMixin):
     def activate(self, engine):
         return []
 
+
+class PygameEventPoller(System):
+    """
+    An event poller that converts Pygame events into PPB events.
+    """
+
+    event_map = {
+        pygame.QUIT: Quit,
+    }
+
+    def __init__(self):
+        pass
+
+    def __enter__(self):
+        pygame.init()
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        pygame.quit()
+
+    def on_update(self, update, signal):
+        for pygame_event in pygame.event.get():
+            ppb_event = self.event_map.get(pygame_event.type)
+            if ppb_event is not None:
+                signal(ppb_event())
 
 
 class Quitter(System):
@@ -51,7 +75,7 @@ class Renderer(System):
         pygame.quit()
 
     def activate(self, engine):
-        yield Prerender()
+        yield PreRender()
         yield Render()
 
     def on_render(self, render_event, signal):
@@ -61,6 +85,7 @@ class Renderer(System):
             rectangle = self.prepare_rectangle(resource, game_object)
             self.window.blit(resource, rectangle)
         pygame.display.update()
+        pygame.event.pump()
 
     def render_background(self, scene):
         self.window.fill(scene.background_color)

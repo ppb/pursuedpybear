@@ -1,14 +1,11 @@
-import weakref
-import collections
 import logging
-import typing
 import re
 from .dataclasses import dataclass
 from .abc import Scene
 
 __all__ = (
     'EventMixin',
-    'Prerender',
+    'PreRender',
     'Quit',
     'Render',
     'Update',
@@ -45,7 +42,7 @@ class Update:
 
 
 @dataclass()
-class Prerender:
+class PreRender:
     """
     TODO
     """
