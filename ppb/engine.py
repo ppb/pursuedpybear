@@ -118,6 +118,7 @@ class GameEngine(Engine, EventMixin):
 
     def publish(self):
         event = self.events.popleft()
+        event.scene = self.current_scene
         for entity in chain((self,), self.systems, (self.current_scene,), self.current_scene):
             entity.__event__(event, self.signal)
 

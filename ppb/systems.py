@@ -2,7 +2,10 @@ import pygame
 
 from ppb import Vector
 from ppb.events import EventMixin
+from ppb.events import Prerender
 from ppb.events import Quit
+from ppb.events import Render
+
 
 class System(EventMixin):
 
@@ -26,17 +29,31 @@ class Quitter(System):
         yield Quit()
 
 
-class Renderer:
+class Renderer(System):
 
     def __init__(self):
+        self.resolution = 600, 400
         self.resources = {}
         self.window = None
         self.offset = None
         self.camera_position = Vector(0, 0)
 
-    def render(self, scene):
-        self.render_background(scene)
-        for game_object in scene:
+    def __enter__(self):
+        pygame.init()
+        self.window = pygame.display.set_mode(self.resolution)
+        self.offset = Vector(-0.5 * self.window.get_width(),
+                             -0.5 * self.window.get_height())
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        pygame.quit()
+
+    def activate(self, engine):
+        yield Prerender()
+        yield Render()
+
+    def on_render(self, render_event, signal):
+        self.render_background(render_event.scene)
+        for game_object in render_event.scene:
             resource = self.prepare_resource(game_object)
             rectangle = self.prepare_rectangle(resource, game_object)
             self.window.blit(resource, rectangle)
@@ -66,8 +83,3 @@ class Renderer:
         image_name = renderable.__image__()
         source_path = renderable.__resource_path__()
         self.register(source_path / image_name, image_name)
-
-    def start(self):
-        self.window = pygame.display.get_surface()
-        self.offset = Vector(-0.5 * self.window.get_width(),
-                             -0.5 * self.window.get_height())

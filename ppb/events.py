@@ -8,6 +8,9 @@ from .abc import Scene
 
 __all__ = (
     'EventMixin',
+    'Prerender',
+    'Quit',
+    'Render',
     'Update',
 )
 
@@ -43,6 +46,14 @@ class Update:
 
 @dataclass()
 class Prerender:
+    """
+    TODO
+    """
+    scene: Scene = None
+
+
+@dataclass()
+class Render:
     """
     TODO
     """
