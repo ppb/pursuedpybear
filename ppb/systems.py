@@ -1,3 +1,4 @@
+import random
 import time
 
 import pygame
@@ -60,7 +61,7 @@ class Renderer(System):
         self.resources = {}
         self.window = None
         self.offset = None
-        self.camera_position = Vector(0, 0)
+        self.camera_position = camera_position
 
     def __enter__(self):
         pygame.init()
@@ -100,7 +101,17 @@ class Renderer(System):
         return rect
 
     def register(self, resource_path, name=None):
-        resource = pygame.image.load(str(resource_path)).convert_alpha(self.window)
+        try:
+           resource = pygame.image.load(str(resource_path)).convert_alpha(self.window)
+        except pygame.error:
+            # Image didn't load, so either the name is bad or the file doesn't
+            # exist. Instead, we'll render a square with a random color.
+            resource = pygame.Surface((70, 70))
+            random.seed(hash(resource_path))
+            r = random.randint(65, 255)
+            g = random.randint(65, 255)
+            b = random.randint(65, 255)
+            resource.fill((r, g, b))
         name = name or resource_path
         self.resources[name] = resource
 
