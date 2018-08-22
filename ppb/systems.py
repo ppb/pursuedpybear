@@ -3,14 +3,13 @@ import time
 import pygame
 
 from ppb import Vector
-from ppb.events import EventMixin
-from ppb.events import PreRender
-from ppb.events import Quit
-from ppb.events import Render
-from ppb.events import Update
+import ppb.events as events
 
 
-class System(EventMixin):
+class System(events.EventMixin):
+
+    def __init__(self, **_):
+        pass
 
     def __enter__(self):
         pass
@@ -28,11 +27,8 @@ class PygameEventPoller(System):
     """
 
     event_map = {
-        pygame.QUIT: Quit,
+        pygame.QUIT: events.Quit,
     }
-
-    def __init__(self):
-        pass
 
     def __enter__(self):
         pygame.init()
@@ -53,13 +49,14 @@ class Quitter(System):
     """
 
     def activate(self, engine):
-        yield Quit()
+        yield events.Quit()
 
 
 class Renderer(System):
 
-    def __init__(self):
-        self.resolution = 600, 400
+    def __init__(self, resolution=(800, 600), camera_position=Vector(0, 0),
+                 **kwargs):
+        self.resolution = resolution
         self.resources = {}
         self.window = None
         self.offset = None
@@ -75,8 +72,8 @@ class Renderer(System):
         pygame.quit()
 
     def activate(self, engine):
-        yield PreRender()
-        yield Render()
+        yield events.PreRender()
+        yield events.Render()
 
     def on_render(self, render_event, signal):
         self.render_background(render_event.scene)
@@ -115,19 +112,21 @@ class Renderer(System):
 
 class Updater(System):
 
-    def __init__(self, time_step=0.016):
+    def __init__(self, time_step=0.016, **kwargs):
         self.accumulated_time = 0
         self.last_tick = None
         self.start_time = None
         self.time_step = time_step
 
     def __enter__(self):
-        self. last_tick = self.start_time = time.time()
+        self.start_time = time.time()
 
     def activate(self, engine):
+        if self.last_tick is None:
+            self.last_tick = time.time()
         this_tick = time.time()
         self.accumulated_time += this_tick - self.last_tick
         self.last_tick = this_tick
         while self.accumulated_time >= self.time_step:
             self.accumulated_time += -self.time_step
-            yield Update(self.time_step)
+            yield events.Update(self.time_step)
