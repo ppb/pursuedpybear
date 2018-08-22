@@ -1,7 +1,10 @@
+from dataclasses import dataclass
 import logging
 import re
-from .dataclasses import dataclass
-from .abc import Scene
+from typing import Iterable
+
+from ppb.abc import Scene
+from ppb.vector import Vector
 
 __all__ = (
     'EventMixin',
@@ -26,39 +29,50 @@ class EventMixin:
         name = camel_to_snake(type(bag).__name__)
 
         meth = getattr(self, 'on_' + name, None)
-        if meth and callable(meth):
+        if callable(meth):
             elog.debug(f"Calling handler {meth} for {name}")
             meth(bag, fire_event)
 
 
 # Remember to define scene at the end so the pargs version of __init__() still works
 
+@dataclass
+class MouseMotion:
+    """An event to represent mouse motion."""
+    position: Vector
+    delta: Vector
+    buttons: Iterable
+    scene: Scene = None
 
-@dataclass()
+
+@dataclass
+class PreRender:
+    """
+    Fired before rendering.
+    """
+    scene: Scene = None
+
+
+@dataclass
+class Quit:
+    """
+    Fired on an OS Quit event.
+    """
+    scene: Scene = None
+
+
+@dataclass
+class Render:
+    """
+    Fired at render.
+    """
+    scene: Scene = None
+
+
+@dataclass
 class Update:
     """
     Fired on game tick
     """
     time_delta: float
     scene: Scene = None
-
-
-@dataclass()
-class PreRender:
-    """
-    TODO
-    """
-    scene: Scene = None
-
-
-@dataclass()
-class Render:
-    """
-    TODO
-    """
-    scene: Scene = None
-
-
-@dataclass()
-class Quit:
-    pass
