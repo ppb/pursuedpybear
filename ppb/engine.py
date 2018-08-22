@@ -1,3 +1,4 @@
+from collections import defaultdict
 from collections import deque
 from contextlib import ExitStack
 from itertools import chain
@@ -32,6 +33,7 @@ class GameEngine(Engine, EventMixin):
         # Engine State
         self.scenes = []
         self.events = deque()
+        self.event_extensions = defaultdict(dict)
         self.running = False
         self.entered = False
 
@@ -108,6 +110,8 @@ class GameEngine(Engine, EventMixin):
     def publish(self):
         event = self.events.popleft()
         event.scene = self.current_scene
+        for attr_name, attr_value in self.event_extensions[type(event)].items():
+            setattr(event, attr_name, attr_value)
         for entity in chain((self,), self.systems, (self.current_scene,), self.current_scene):
             entity.__event__(event, self.signal)
 
@@ -123,3 +127,6 @@ class GameEngine(Engine, EventMixin):
 
     def on_quit(self, quit_event: 'Quit', signal: Callable):  #TODO: Look up syntax for Callable typing.
         self.running = False
+
+    def register(self, event_type, attribute, value):
+        self.event_extensions[event_type][attribute] = value
