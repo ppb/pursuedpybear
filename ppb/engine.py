@@ -86,7 +86,7 @@ class GameEngine(Engine, EventMixin):
 
     def main_loop(self):
         while self.running:
-            time.sleep(.0000000001)
+            time.sleep(0)
             for system in self.systems:
                 for event in system.activate(self):
                     self.signal(event)
