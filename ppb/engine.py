@@ -5,7 +5,6 @@ import logging
 import time
 from typing import Callable
 from typing import Type
-import pygame
 
 from ppb.abc import Engine
 from ppb.events import EventMixin
@@ -27,6 +26,7 @@ class GameEngine(Engine, EventMixin):
         self.log_level = log_level
         self.first_scene = first_scene
         self.scene_kwargs = scene_kwargs or {}
+        self.kwargs = kwargs
         logging.basicConfig(level=self.log_level)
 
         # Engine State
@@ -63,9 +63,10 @@ class GameEngine(Engine, EventMixin):
             return
         for system in self.systems_classes:
             try:
-                system = system()
-            except TypeError:
-                pass
+                system = system(engine=self, **self.kwargs)
+            except TypeError as e:
+                if hasattr(system, "__exit__"):
+                    raise e
             self.systems.append(system)
             self.exit_stack.enter_context(system)
 
