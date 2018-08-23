@@ -102,7 +102,7 @@ class Renderer(System):
 
     def register(self, resource_path, name=None):
         try:
-           resource = pygame.image.load(str(resource_path)).convert_alpha(self.window)
+            resource = pygame.image.load(str(resource_path)).convert_alpha(self.window)
         except pygame.error:
             # Image didn't load, so either the name is bad or the file doesn't
             # exist. Instead, we'll render a square with a random color.

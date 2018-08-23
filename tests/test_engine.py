@@ -75,7 +75,7 @@ def test_signal():
 def test_contexts():
     class FakeRenderer(System):
 
-        def __init__(self):
+        def __init__(self, **kwargs):
             self.entered = False
             self.exited = False
 
