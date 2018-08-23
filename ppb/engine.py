@@ -1,56 +1,119 @@
+from collections import defaultdict
+from collections import deque
+from contextlib import ExitStack
+from itertools import chain
 import logging
 import time
+from typing import Callable
 from typing import Type
-import pygame
 
 from ppb.abc import Engine
+from ppb.events import EventMixin
+from ppb.events import Quit
+from ppb.systems import PygameEventPoller
 from ppb.systems import Renderer
+from ppb.systems import Updater
 
 
-class GameEngine(Engine):
+class GameEngine(Engine, EventMixin):
 
-    def __init__(self, first_scene: Type, *, delta_time=0.016, depth=0,
-                 flags=0, log_level=logging.WARNING, renderer_class=Renderer,
-                 resolution=(600, 400), scene_kwargs=None, **kwargs):
+    def __init__(self, first_scene: Type, *, log_level=logging.WARNING,
+                 systems=(Renderer, Updater, PygameEventPoller),
+                 scene_kwargs=None, **kwargs):
 
         super(GameEngine, self).__init__()
 
         # Engine Configuration
-        self.delta_time = delta_time
-        self.resolution = resolution
-        self.flags = flags
-        self.depth = depth
         self.log_level = log_level
         self.first_scene = first_scene
         self.scene_kwargs = scene_kwargs or {}
+        self.kwargs = kwargs
         logging.basicConfig(level=self.log_level)
 
         # Engine State
         self.scenes = []
-        self.unused_time = 0
-        self.last_tick = None
+        self.events = deque()
+        self.event_extensions = defaultdict(dict)
         self.running = False
+        self.entered = False
 
         # Systems
-        self.renderer = renderer_class()
+        self.systems_classes = systems
+        self.systems = []
+        self.exit_stack = ExitStack()
+
+    @property
+    def current_scene(self):
+        try:
+            return self.scenes[-1]
+        except IndexError:
+            return None
 
     def __enter__(self):
         logging.getLogger(self.__class__.__name__).info("Entering context.")
-        pygame.init()
-        pygame.display.set_mode(self.resolution, self.flags, self.depth)
-        self.update_input()
+        self.start_systems()
+        self.entered = True
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         logging.getLogger(self.__class__.__name__).info("Exiting context")
-        pygame.quit()
+        self.entered = False
+        self.exit_stack.close()
+
+    def start_systems(self):
+        if self.systems:
+            return
+        for system in self.systems_classes:
+            try:
+                system = system(engine=self, **self.kwargs)
+            except TypeError as e:
+                if hasattr(system, "__exit__"):
+                    raise e
+            self.systems.append(system)
+            self.exit_stack.enter_context(system)
+
+    def run(self):
+        if not self.entered:
+            with self:
+                self.start()
+                self.main_loop()
+        else:
+            self.start()
+            self.main_loop()
 
     def start(self):
         self.running = True
-        self.last_tick = time.time()
         self.activate({"scene_class": self.first_scene,
                        "kwargs": self.scene_kwargs})
-        self.renderer.start()
+
+    def main_loop(self):
+        while self.running:
+            time.sleep(0)
+            for system in self.systems:
+                for event in system.activate(self):
+                    self.signal(event)
+                    while self.events:
+                        self.publish()
+            self.manage_scene()
+
+    def activate(self, next_scene: dict):
+        scene = next_scene["scene_class"]
+        if scene is None:
+            return
+        args = next_scene.get("args", [])
+        kwargs = next_scene.get("kwargs", {})
+        self.scenes.append(scene(self, *args, **kwargs))
+
+    def signal(self, event):
+        self.events.append(event)
+
+    def publish(self):
+        event = self.events.popleft()
+        event.scene = self.current_scene
+        for attr_name, attr_value in self.event_extensions[type(event)].items():
+            setattr(event, attr_name, attr_value)
+        for entity in chain((self,), self.systems, (self.current_scene,), self.current_scene):
+            entity.__event__(event, self.signal)
 
     def manage_scene(self):
         if self.current_scene is None:
@@ -62,44 +125,8 @@ class GameEngine(Engine):
         if next_scene:
             self.activate(next_scene)
 
-    def run(self):
-        self.start()
-        while self.running:
-            time.sleep(.0000000001)
-            self.render()
-            self.advance_time()
-            while self.unused_time >= self.delta_time:
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        return
-                self.update_input()
-                self.current_scene.simulate(self.delta_time)
-                self.unused_time -= self.delta_time
-            self.manage_scene()
+    def on_quit(self, quit_event: 'Quit', signal: Callable):  #TODO: Look up syntax for Callable typing.
+        self.running = False
 
-    @property
-    def current_scene(self):
-        try:
-            return self.scenes[-1]
-        except IndexError:
-            return None
-
-    def activate(self, next_scene: dict):
-        scene = next_scene["scene_class"]
-        if scene is None:
-            return
-        args = next_scene.get("args", [])
-        kwargs = next_scene.get("kwargs", {})
-        self.scenes.append(scene(self, *args, **kwargs))
-
-    def update_input(self):
-        self.mouse["x"], self.mouse["y"] = pygame.mouse.get_pos()
-        self.mouse[1], self.mouse[2], self.mouse[3] = pygame.mouse.get_pressed()
-
-    def render(self):
-        self.renderer.render(self.current_scene)
-
-    def advance_time(self):
-        tick = time.time()
-        self.unused_time += tick - self.last_tick
-        self.last_tick = tick
+    def register(self, event_type, attribute, value):
+        self.event_extensions[event_type][attribute] = value

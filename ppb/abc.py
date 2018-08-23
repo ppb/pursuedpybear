@@ -72,9 +72,6 @@ class Scene(object):
     def render(self) -> Iterable:
         raise NotImplementedError
 
-    def handle_event(self, event):
-        raise NotImplementedError
-
     def simulate(self, time_delta: float):
         raise NotImplementedError
 

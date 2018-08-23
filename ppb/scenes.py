@@ -1,5 +1,6 @@
 from collections import defaultdict
 from collections.abc import Collection
+from copy import copy
 from typing import Hashable
 from typing import Iterable
 from typing import Iterator
@@ -8,6 +9,7 @@ from typing import Type
 from pygame.sprite import LayeredDirty
 
 from ppb.abc import Scene
+from ppb.events import EventMixin
 
 
 class GameObjectCollection(Collection):
@@ -85,7 +87,7 @@ class GameObjectCollection(Collection):
             s.discard(game_object)
 
 
-class BaseScene(Scene):
+class BaseScene(Scene, EventMixin):
 
     def __init__(self, engine, *, background_color=(0, 0, 100),
                  container_class=GameObjectCollection, set_up=None, **kwargs):
@@ -107,10 +109,6 @@ class BaseScene(Scene):
         window = self.engine.display
         self.render_group.add(s for s in self.game_objects)
         return self.render_group.draw(window, self.background)
-
-    def simulate(self, time_delta: float):
-        for game_object in self.game_objects:
-            game_object.on_update(time_delta)
 
     def change(self):
         """
