@@ -56,6 +56,10 @@ class Camera(BaseSprite):
                 self.frame_bottom >= sprite.top
                 )
 
-    def translate_to_game_space(self, point:Vector) -> Vector:
+    def translate_to_frame(self, point:Vector) -> Vector:
         offset = (point - self.viewport_offset) * (1/self.pixel_ratio)
         return self.position + offset
+
+    def translate_to_viewport(self, point:Vector) -> Vector:
+        offset = (point - self.position) * self.pixel_ratio
+        return self.viewport_offset + offset
