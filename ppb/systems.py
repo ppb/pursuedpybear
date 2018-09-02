@@ -1,10 +1,15 @@
 import random
 import time
+from typing import Union
+from typing import Iterable
 
 import pygame
 
 from ppb import Vector
 import ppb.events as events
+from ppb.mouse import Mouse
+
+default_resolution = 800, 600
 
 
 class System(events.EventMixin):
@@ -27,9 +32,17 @@ class PygameEventPoller(System):
     An event poller that converts Pygame events into PPB events.
     """
 
-    event_map = {
-        pygame.QUIT: events.Quit,
-    }
+    event_map = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls.event_map is None:
+            cls.event_map = {
+                pygame.QUIT: cls.quit
+            }
+
+    def __init__(self, resolution=default_resolution, **kwargs):
+        self.offset = Vector(-0.5 * resolution[0],
+                             -0.5 * resolution[1])
 
     def __enter__(self):
         pygame.init()
@@ -41,7 +54,59 @@ class PygameEventPoller(System):
         for pygame_event in pygame.event.get():
             ppb_event = self.event_map.get(pygame_event.type)
             if ppb_event is not None:
-                signal(ppb_event())
+                signal(ppb_event(pygame_event, update.scene))
+
+    def quit(self, event, scene):
+        return events.Quit()
+
+    def mouse_motion(self, event):
+        screen_position = Vector(*event.pos)
+
+        delta = Vector(*event.rel)
+        buttons = [bool(x) for x in event.buttons]
+        return events.MouseMotion(Vector(0, 0), screen_position, delta, buttons)
+
+class MouseSystem(System):
+    """
+    Mouse system.
+    """
+
+    def __init__(self, *, engine, resolution=default_resolution, **kwargs):
+        self.mouse = Mouse()
+        self.offset = Vector(-0.5 * resolution[0],
+                             -0.5 * resolution[1])
+        engine.register(events.Update, "mouse", self.mouse)
+
+    def activate(self, engine):
+        """Sync mouse with hardware."""
+        buttons = self.get_hardware_buttons()
+        if buttons is not None:
+            self.mouse.buttons = [bool(x) for x in buttons]
+        screen_position = self.get_hardware_position()
+        if screen_position is not None:
+            self.mouse.screen_position = Vector(*screen_position)
+            self.mouse.position = self.mouse.screen_position - self.offset
+        return []
+
+    def on_mouse_motion(self, mouse_motion_event, signal):
+        self.mouse.buttons = mouse_motion_event.buttons
+        self.mouse.screen_position = mouse_motion_event.screen_position
+        self.mouse.position = mouse_motion_event.screen_position - self.offset
+
+    def get_hardware_buttons(self) -> Union[Iterable, None]:
+        pass
+
+    def get_hardware_position(self) -> Union[Iterable, None]:
+        pass
+
+
+class PygameMouseSystem(MouseSystem):
+
+    def get_hardware_buttons(self):
+        return pygame.mouse.get_pressed()
+
+    def get_hardware_position(self):
+        return pygame.mouse.get_pos()
 
 
 class Quitter(System):
@@ -55,8 +120,8 @@ class Quitter(System):
 
 class Renderer(System):
 
-    def __init__(self, resolution=(800, 600), camera_position=Vector(0, 0),
-                 **kwargs):
+    def __init__(self, resolution=default_resolution,
+                 camera_position=Vector(0, 0), **kwargs):
         self.resolution = resolution
         self.resources = {}
         self.window = None
@@ -83,7 +148,6 @@ class Renderer(System):
             rectangle = self.prepare_rectangle(resource, game_object)
             self.window.blit(resource, rectangle)
         pygame.display.update()
-        pygame.event.pump()
 
     def render_background(self, scene):
         self.window.fill(scene.background_color)
@@ -107,7 +171,7 @@ class Renderer(System):
             # Image didn't load, so either the name is bad or the file doesn't
             # exist. Instead, we'll render a square with a random color.
             resource = pygame.Surface((70, 70))
-            random.seed(hash(resource_path))
+            random.seed(str(resource_path))
             r = random.randint(65, 255)
             g = random.randint(65, 255)
             b = random.randint(65, 255)
