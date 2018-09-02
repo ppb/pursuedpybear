@@ -1,3 +1,6 @@
+from typing import Sequence
+from typing import Union
+
 from ppb import Vector
 from ppb.sprites import BaseSprite
 from ppb.flags import DoNotRender
@@ -6,7 +9,8 @@ class Camera(BaseSprite):
 
     image = DoNotRender
 
-    def __init__(self, viewport=(0, 0, 800, 600), pixel_ratio=80):
+    def __init__(self, viewport: Sequence[int]=(0, 0, 800, 600),
+                 pixel_ratio: Union[int, float]=80):
         """
 
         viewport: A container of origin x, origin y, width, and
@@ -33,19 +37,19 @@ class Camera(BaseSprite):
         self.half_height = self.frame_height / 2
 
     @property
-    def frame_top(self):
+    def frame_top(self) -> Union[int, float]:
         return self.position.y - self.half_height
 
     @property
-    def frame_bottom(self):
+    def frame_bottom(self) -> Union[int, float]:
         return self.position.y + self.half_height
 
     @property
-    def frame_left(self):
+    def frame_left(self) -> Union[int, float]:
         return self.position.x - self.half_width
 
     @property
-    def frame_right(self):
+    def frame_right(self) -> Union[int, float]:
         return self.position.x + self.half_width
 
     def point_in_viewport(self, point:Vector) -> bool:
@@ -55,7 +59,7 @@ class Camera(BaseSprite):
         vph = self.viewport_height
         return vpx <= px <= vpw and vpy <= py <= vph
 
-    def in_frame(self, sprite: BaseSprite):
+    def in_frame(self, sprite: BaseSprite) -> bool:
         return (self.frame_left <= sprite.right and
                 self.frame_right >= sprite.left and
                 self.frame_top <= sprite.bottom and

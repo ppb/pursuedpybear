@@ -1,9 +1,12 @@
 from collections import defaultdict
 from collections.abc import Collection
+from typing import Callable
 from typing import Hashable
 from typing import Iterable
 from typing import Iterator
+from typing import Sequence
 from typing import Type
+from typing import Union
 
 from pygame.sprite import LayeredDirty
 
@@ -26,7 +29,7 @@ class GameObjectCollection(Collection):
     def __iter__(self) -> Iterator[Hashable]:
         return (x for x in list(self.all))
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.all)
 
     def add(self, game_object: Hashable, tags: Iterable[Hashable]=()) -> None:
@@ -95,9 +98,10 @@ class GameObjectCollection(Collection):
 
 class BaseScene(Scene, EventMixin):
 
-    def __init__(self, engine, *, background_color=(0, 0, 100),
-                 container_class=GameObjectCollection, set_up=None,
-                 pixel_ratio=80, **kwargs):
+    def __init__(self, engine, *, background_color: Sequence[int]=(0, 0, 100),
+                 container_class: Type=GameObjectCollection,
+                 set_up: Callable=None, pixel_ratio: Union[int, float]=80,
+                 **kwargs):
         super().__init__(engine)
         self.background_color = background_color
         self.background = None
@@ -110,7 +114,7 @@ class BaseScene(Scene, EventMixin):
     def __contains__(self, item: Hashable) -> bool:
         return item in self.game_objects
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         return (x for x in self.game_objects)
 
     def render(self):
@@ -118,7 +122,7 @@ class BaseScene(Scene, EventMixin):
         self.render_group.add(s for s in self.game_objects)
         return self.render_group.draw(window, self.background)
 
-    def change(self):
+    def change(self) -> Iterator[bool, dict]:
         """
         Default case, override in subclass as necessary.
         """
