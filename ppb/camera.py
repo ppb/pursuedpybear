@@ -1,8 +1,10 @@
 from ppb import Vector
 from ppb import BaseSprite
-
+from ppb.flags import DoNotRender
 
 class Camera(BaseSprite):
+
+    image = DoNotRender
 
     def __init__(self, viewport=(0, 0, 800, 600), pixel_ratio=80):
         """

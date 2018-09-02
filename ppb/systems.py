@@ -3,9 +3,8 @@ import time
 
 import pygame
 
-from ppb import Vector
 import ppb.events as events
-
+import ppb.flags as flags
 
 class System(events.EventMixin):
 
@@ -73,10 +72,11 @@ class Renderer(System):
 
     def on_render(self, render_event, signal):
         self.render_background(render_event.scene)
-        result_set = list(render_event.scene.get(tag="main_camera"))
-        camera = result_set[0]
+        camera = list(render_event.scene.get(tag="main_camera"))[0]
         for game_object in render_event.scene:
             resource = self.prepare_resource(game_object)
+            if resource is None:
+                continue
             rectangle = self.prepare_rectangle(resource, game_object, camera)
             self.window.blit(resource, rectangle)
         pygame.display.update()
@@ -87,6 +87,8 @@ class Renderer(System):
 
     def prepare_resource(self, game_object):
         image_name = game_object.__image__()
+        if image_name is flags.DoNotRender:
+            return None
         if image_name not in self.resources:
             self.register_renderable(game_object)
         # TODO: Rotate Image to facing.
