@@ -104,7 +104,7 @@ class BaseScene(Scene, EventMixin):
         self.background = None
         self.game_objects = container_class()
         self.render_group = LayeredDirty()
-        self.add(Camera(pixel_ratio=pixel_ratio), "main_camera")
+        self.add(Camera(pixel_ratio=pixel_ratio), ["main_camera"])
         if set_up is not None:
             set_up(self)
 
