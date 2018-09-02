@@ -74,7 +74,6 @@ class Renderer(System):
     def on_render(self, render_event, signal):
         self.render_background(render_event.scene)
         result_set = list(render_event.scene.get(tag="main_camera"))
-        print(result_set)
         camera = result_set[0]
         for game_object in render_event.scene:
             resource = self.prepare_resource(game_object)

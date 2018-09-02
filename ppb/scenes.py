@@ -76,7 +76,6 @@ class GameObjectCollection(Collection):
             kinds = self.kinds[kind]
         if tag is not None:
             tags = self.tags[tag]
-        print(f"kinds: {kinds}\ntags: {tags}")
         return (x for x in kinds.intersection(tags))
 
     def remove(self, game_object: Hashable) -> None:
