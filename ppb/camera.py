@@ -1,5 +1,5 @@
 from ppb import Vector
-from ppb import BaseSprite
+from ppb.sprites import BaseSprite
 from ppb.flags import DoNotRender
 
 class Camera(BaseSprite):

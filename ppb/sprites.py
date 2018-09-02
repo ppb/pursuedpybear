@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Dict, Iterable, AnyStr, Sequence
 
 from ppb import Vector
-from .events import EventMixin
+from ppb.events import EventMixin
 
 
 TOP = "top"
