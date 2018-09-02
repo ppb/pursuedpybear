@@ -42,6 +42,8 @@ class GameObjectCollection(Collection):
 
             container.add(MyObject(), tags=("red", "blue")
         """
+        if isinstance(tags, (str, bytes)):
+            raise TypeError("You passed a string instead of an iterable, this probably isn't what you intended.\n\nTry making it a tuple.")
         self.all.add(game_object)
         self.kinds[type(game_object)].add(game_object)
         for tag in tags:
@@ -68,8 +70,13 @@ class GameObjectCollection(Collection):
         """
         if kind is None and tag is None:
             raise TypeError("get() takes at least one keyword-only argument. 'kind' or 'tag'.")
-        kinds = self.kinds[kind] or self.all
-        tags = self.tags[tag] or self.all
+        kinds = self.all
+        tags = self.all
+        if kind is not None:
+            kinds = self.kinds[kind]
+        if tag is not None:
+            tags = self.tags[tag]
+        print(f"kinds: {kinds}\ntags: {tags}")
         return (x for x in kinds.intersection(tags))
 
     def remove(self, game_object: Hashable) -> None:
