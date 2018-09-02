@@ -77,16 +77,30 @@ def test_get_methods(container, player, enemies):
     assert len(red_set) == 2
     assert player in red_set
     assert enemies[1] in red_set
+    assert enemies[0] not in red_set
+
+    null_set = set(container.get(tag="this doesn't exist"))
+    assert len(null_set) == 0
+    assert player not in null_set
+    assert enemies[0] not in null_set
+    assert enemies[1] not in null_set
 
     with raises(TypeError):
         container.get()
 
 
 @mark.parametrize("container", containers())
+def test_get_with_string_tags(container, player):
+    """Test that addings a string instead of an array-like throws."""
+    with raises(TypeError):
+        container.add(player, "player")
+
+
+@mark.parametrize("container", containers())
 def test_remove_methods(container, player, enemies):
-    container.add(player, "test")
-    container.add(enemies[0], "test")
-    container.add(enemies[1], "blue")
+    container.add(player, ["test"])
+    container.add(enemies[0], ["test"])
+    container.add(enemies[1], ["blue"])
     assert player in container
     assert enemies[0] in container
     assert enemies[1] in container
