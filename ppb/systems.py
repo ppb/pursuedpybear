@@ -55,19 +55,14 @@ class Quitter(System):
 
 class Renderer(System):
 
-    def __init__(self, resolution=(800, 600), camera_position=Vector(0, 0),
-                 **kwargs):
+    def __init__(self, resolution=(800, 600), **kwargs):
         self.resolution = resolution
         self.resources = {}
         self.window = None
-        self.offset = None
-        self.camera_position = camera_position
 
     def __enter__(self):
         pygame.init()
         self.window = pygame.display.set_mode(self.resolution)
-        self.offset = Vector(-0.5 * self.window.get_width(),
-                             -0.5 * self.window.get_height())
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         pygame.quit()
@@ -78,9 +73,12 @@ class Renderer(System):
 
     def on_render(self, render_event, signal):
         self.render_background(render_event.scene)
+        result_set = list(render_event.scene.get(tag="main_camera"))
+        print(result_set)
+        camera = result_set[0]
         for game_object in render_event.scene:
             resource = self.prepare_resource(game_object)
-            rectangle = self.prepare_rectangle(resource, game_object)
+            rectangle = self.prepare_rectangle(resource, game_object, camera)
             self.window.blit(resource, rectangle)
         pygame.display.update()
         pygame.event.pump()
@@ -95,9 +93,9 @@ class Renderer(System):
         # TODO: Rotate Image to facing.
         return self.resources[game_object.image]
 
-    def prepare_rectangle(self, resource, game_object):
+    def prepare_rectangle(self, resource, game_object, camera):
         rect = resource.get_rect()
-        rect.center = game_object.position - (self.offset - self.camera_position)
+        rect.center = camera.translate_to_viewport(game_object.position)
         return rect
 
     def register(self, resource_path, name=None):
