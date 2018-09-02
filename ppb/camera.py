@@ -10,9 +10,13 @@ class Camera(BaseSprite):
         """
 
         viewport: A container of origin x, origin y, width, and
-                  height in pixel space.
-        pixel_ratio: An number defining the pixel to game space ratio.
-                     Effectively a "zoom".
+                  height. The origin is the top left point of the viewport
+                  measured from the top left point of the window or screen.
+                  The width and height are the raw pixel measurements of the
+                  viewport.
+        pixel_ratio: A number defining the pixel to game unit ratio. Divide
+                     the viewport dimensions by the pixel ratio to get the
+                     frame in game unit terms.
         """
         super().__init__(size=0)
         # Cameras don't take up game space, thus size 0.
