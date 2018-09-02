@@ -1,6 +1,5 @@
 from collections import defaultdict
 from collections.abc import Collection
-from copy import copy
 from typing import Hashable
 from typing import Iterable
 from typing import Iterator
@@ -9,6 +8,7 @@ from typing import Type
 from pygame.sprite import LayeredDirty
 
 from ppb.abc import Scene
+from ppb.camera import Camera
 from ppb.events import EventMixin
 
 
@@ -90,12 +90,14 @@ class GameObjectCollection(Collection):
 class BaseScene(Scene, EventMixin):
 
     def __init__(self, engine, *, background_color=(0, 0, 100),
-                 container_class=GameObjectCollection, set_up=None, **kwargs):
+                 container_class=GameObjectCollection, set_up=None,
+                 pixel_ratio=80, **kwargs):
         super().__init__(engine)
         self.background_color = background_color
         self.background = None
         self.game_objects = container_class()
         self.render_group = LayeredDirty()
+        self.add(Camera(pixel_ratio=pixel_ratio), "main_camera")
         if set_up is not None:
             set_up(self)
 
