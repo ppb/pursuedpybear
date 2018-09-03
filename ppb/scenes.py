@@ -5,6 +5,7 @@ from typing import Hashable
 from typing import Iterable
 from typing import Iterator
 from typing import Sequence
+from typing import Tuple
 from typing import Type
 from typing import Union
 
@@ -122,7 +123,7 @@ class BaseScene(Scene, EventMixin):
         self.render_group.add(s for s in self.game_objects)
         return self.render_group.draw(window, self.background)
 
-    def change(self) -> Iterator[bool, dict]:
+    def change(self) -> Tuple[bool, dict]:
         """
         Default case, override in subclass as necessary.
         """

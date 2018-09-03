@@ -26,8 +26,8 @@ class Camera(BaseSprite):
         # Cameras don't take up game space, thus size 0.
         self.position = Vector(0, 0)
         self.viewport_origin = Vector(viewport[0], viewport[1])
-        self.viewport_width = viewport[2]
-        self.viewport_height = viewport[3]
+        self._viewport_width = viewport[2]
+        self._viewport_height = viewport[3]
         self.viewport_offset = Vector(self.viewport_width / 2,
                                       self.viewport_height / 2)
         self.pixel_ratio = pixel_ratio
@@ -51,6 +51,24 @@ class Camera(BaseSprite):
     @property
     def frame_right(self) -> Union[int, float]:
         return self.position.x + self.half_width
+
+    @property
+    def viewport_width(self) -> Union[int, float]:
+        return self._viewport_width
+
+    @viewport_width.setter
+    def viewport_width(self, value: Union[int, float]):
+        self._viewport_width = value
+        self.viewport_offset = Vector(value / 2, self.viewport_height / 2)
+
+    @property
+    def viewport_height(self) -> Union[int, float]:
+        return self._viewport_height
+
+    @viewport_height.setter
+    def viewport_height(self, value: Union[int, float]):
+        self._viewport_height = value
+        self.viewport_offset = Vector(self.viewport_width / 2, value / 2)
 
     def point_in_viewport(self, point:Vector) -> bool:
         px, py = point

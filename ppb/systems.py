@@ -73,6 +73,7 @@ class Renderer(System):
     def on_render(self, render_event, signal):
         self.render_background(render_event.scene)
         camera = list(render_event.scene.get(tag="main_camera"))[0]
+        camera.viewport_height, camera.viewport_width = self.resolution
         for game_object in render_event.scene:
             resource = self.prepare_resource(game_object)
             if resource is None:
