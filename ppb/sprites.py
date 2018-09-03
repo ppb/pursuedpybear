@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Dict, Iterable, AnyStr, Sequence
 
 from ppb import Vector
-from .events import EventMixin
+from ppb.events import EventMixin
 
 
 TOP = "top"
@@ -41,13 +41,34 @@ class Side:
     def __radd__(self, other):
         return other + self.value
 
+    def __sub__(self, other):
+        return self.value - other
+
+    def __rsub__(self, other):
+        return other - self.value
+
     def __eq__(self, other):
         return self.value == other
+
+    def __le__(self, other):
+        return self.value <= other
+
+    def __ge__(self, other):
+        return self.value >= other
+
+    def __ne__(self, other):
+        return self.value != other
+
+    def __gt__(self, other):
+        return self.value > other
+
+    def __lt__(self, other):
+        return self.value < other
 
     @property
     def value(self):
         coordinate, multiplier = self.sides[self.side]
-        offset = self.parent.offset_value
+        offset = self.parent._offset_value
         return self.parent.position[coordinate] + (offset * multiplier)
 
     @property
@@ -126,7 +147,8 @@ class BaseSprite(EventMixin):
     def __init__(self, size: int=1, pos: Iterable=(0, 0), blackboard: Dict=None, facing: Vector=Vector(0, -1)):
         super().__init__()
         self.position = Vector(*pos)
-        self.offset_value = size / 2
+        self._offset_value = None
+        self._game_unit_size = None
         self.game_unit_size = size
         self.facing = facing
         self.blackboard = blackboard or {}
@@ -148,7 +170,7 @@ class BaseSprite(EventMixin):
 
     @left.setter
     def left(self, value: float):
-        self.position.x = value + self.offset_value
+        self.position.x = value + self._offset_value
 
     @property
     def right(self) -> Side:
@@ -156,7 +178,7 @@ class BaseSprite(EventMixin):
 
     @right.setter
     def right(self, value):
-        self.position.x = value - self.offset_value
+        self.position.x = value - self._offset_value
 
     @property
     def top(self):
@@ -164,7 +186,7 @@ class BaseSprite(EventMixin):
 
     @top.setter
     def top(self, value):
-        self.position.y = value + self.offset_value
+        self.position.y = value + self._offset_value
 
     @property
     def bottom(self):
@@ -172,7 +194,16 @@ class BaseSprite(EventMixin):
 
     @bottom.setter
     def bottom(self, value):
-        self.position.y = value - self.offset_value
+        self.position.y = value - self._offset_value
+
+    @property
+    def game_unit_size(self):
+        return self._game_unit_size
+
+    @game_unit_size.setter
+    def game_unit_size(self, value):
+        self._game_unit_size = value
+        self._offset_value = self._game_unit_size / 2
 
     def rotate(self, degrees: Number):
         self.facing.rotate(degrees)
