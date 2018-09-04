@@ -1,28 +1,22 @@
 # PursuedPyBear
+
 ## A Python Game Engine
 
-Ppb is a project to build a beginner's game engine using the lessons
-learned from trying to build small games in python.
+**PPB** is a miniature game engine intended for educational uses.
+Designed to require as little boilerplate as possible to let new
+students focus on solving problems with their designs. It will also be
+heavily extensible to grow with their abilities as developers.
+
+**PPB** is only compatible with Python 3.6 and later.
 
 ## Guiding Principles
 
-* Education Friendly
+* Education Focused
 * Idiomatic Python
 * Object Oriented
 * Event Driven
-* Hardware Library Agnostic
+
 
 ## Try it
 
-_Note: Version 0.2.0 is currently not supported with the examples._
-
-The current example framecount.py uses the terminal as your view. It outputs
-and the current runtime to the terminal at a rate of 60 per second.
-
-## Compatibility
-
-PPB uses Python 3, but is currently backwards compatible to Python 2.7. 
-Backwards compatibility is not guaranteed.
-
-The API is not currently fixed. Do not count on the API to remain consistent 
-between versions.
+A series of tutorials are [available here](https://github.com/pathunstrom/game-tutorial).
