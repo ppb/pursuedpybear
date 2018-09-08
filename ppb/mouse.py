@@ -49,5 +49,5 @@ class FeatureNotProvided(NotImplementedError):
     pass
 
 
-def _not_implemented(*_):
-    raise NotImplementedError
+def _not_implemented(message, *_):
+    raise FeatureNotProvided(message)
