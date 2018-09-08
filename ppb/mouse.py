@@ -33,6 +33,7 @@ class Mouse:
 
 
 class FeatureNotProvided(NotImplementedError):
+    """The hardware library being depended on does not include some functionality."""
     pass
 
 
