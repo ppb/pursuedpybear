@@ -45,7 +45,7 @@ class Mouse:
             raise FeatureNotProvided("Your hardware library did not include a Mouse.move_to function.")
 
 
-class FeatureNotProvided(Exception):
+class FeatureNotProvided(NotImplementedError):
     pass
 
 
