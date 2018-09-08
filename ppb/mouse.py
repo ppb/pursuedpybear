@@ -1,22 +1,27 @@
+from functools import partial
 from typing import Callable
 
 from ppb.vector import Vector
 
+PRESS_ERROR = "Your hardware library did not include a Mouse.press function."
+MOVE_ERROR = "Your hardware library did not include a Mouse.move function."
+MOVE_TO_ERROR = "Your hardware library did not include a Mouse.move_to function."
 
 class Mouse:
     """
     Object interface to the hardware mouse.
 
     """
-    def __init__(self, press_function: Callable=None,
-                 move_function: Callable=None, move_to_function: Callable=None):
+    def __init__(self, press_function: Callable[[int], None]=None,
+                 move_function: Callable[[Vector], None]=None,
+                 move_to_function: Callable[[Vector], None]=None):
         self.position = Vector(0, 0)
         self.screen_position = Vector(0, 0)
         self.buttons = [False, False, False]
 
-        self.press_function = press_function or _not_implemented
-        self.move_function = move_function or _not_implemented
-        self.move_to_function = move_to_function or _not_implemented
+        self.press = press_function or partial(_not_implemented, PRESS_ERROR)
+        self.move = move_function or partial(_not_implemented, MOVE_ERROR)
+        self.move_to = move_to_function or partial(_not_implemented, MOVE_TO_ERROR)
 
     @property
     def left_button(self) -> bool:
@@ -25,24 +30,6 @@ class Mouse:
     @property
     def right_button(self) -> bool:
         return self.buttons[2]
-
-    def press(self, button: int) -> None:
-        try:
-            self.press_function(button)
-        except NotImplementedError:
-            raise FeatureNotProvided("Your hardware library did not include a Mouse.press function.")
-
-    def move(self, vector: Vector) -> None:
-        try:
-            self.move_function(vector)
-        except NotImplementedError:
-            raise FeatureNotProvided("Your hardware library did not include a Mouse.move function.")
-
-    def move_to(self, position: Vector) -> None:
-        try:
-            self.move_to_function(position)
-        except NotImplementedError:
-            raise FeatureNotProvided("Your hardware library did not include a Mouse.move_to function.")
 
 
 class FeatureNotProvided(NotImplementedError):
