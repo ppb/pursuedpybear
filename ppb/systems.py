@@ -39,7 +39,7 @@ class PygameEventPoller(System):
         if cls.event_map is None:
             cls.event_map = {
                 pygame.QUIT: "quit",
-                pygame.MOUSEMOTION: "mouse_motion"
+                pygame.MOUSEMOTION: "mouse_motion",
             }
         return super().__new__(cls)
 
