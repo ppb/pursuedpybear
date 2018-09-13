@@ -57,9 +57,36 @@ nearly seamlessly switch between various Python libraries.
 
 ## Try it
 
-Use the `run` function to make simple single screen simulations. It has
-reasonable defaults for screen size but requires you pass a setup
-function to initialize your scene.
+Install ppb in the standard method:
+
+```bash
+pip install ppb
+```
+
+
+`ppb` provides a `run` function that makes it simple to start single
+screen games.
+
+To make a very simple game, make a directory and add an image file
+called `ship.png` to it. Then add the following to a python file and
+run it.
+
+```python
+import ppb
+
+
+class Ship(ppb.BaseSprite):
+
+    def on_update(self, update_event, signal):
+        self.position += 0, -(4 * update_event.time_delta)
+
+
+def setup(scene):
+    scene.add(Ship(pos=(0, 3.5)))
+
+
+ppb.run(scene_kwargs={"set_up": setup})
+```
 
 ## Compatibility
 
