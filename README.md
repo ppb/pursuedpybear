@@ -94,3 +94,13 @@ ppb.run(scene_kwargs={"set_up": setup})
 dataclasses so you might need to inject a shim into your environment if
 you use earlier versions. That said, it is strongly encouraged you use
 3.7 to develop `ppb` projects.
+
+## Get Involved
+
+The fastest way to get involved is to check out the [ongoing
+discussions.](https://github.com/ppb/pursuedpybear/issues?q=is%3Aissue+is%3Aopen+label%3Adiscussion)
+If you're already using `ppb` feel free to report bugs, suggest
+enhancements, or ask for new features.
+
+If you want to contribute code, definitely read the relavant portions
+of Contributing.MD
