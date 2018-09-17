@@ -22,6 +22,9 @@ def camel_to_snake(txt):
     return boundaries_finder_2.sub(r'\1_\2', s1).lower()
 
 
+class BadEventHandlerException(TypeError): pass
+
+
 class EventMixin:
     def __event__(self, bag, fire_event):
         elog = logging.getLogger('game.events')
@@ -30,8 +33,26 @@ class EventMixin:
 
         meth = getattr(self, 'on_' + name, None)
         if callable(meth):
-            elog.debug(f"Calling handler {meth} for {name}")
-            meth(bag, fire_event)
+            try:
+                elog.debug(f"Calling handler {meth} for {name}")
+                meth(bag, fire_event)
+            except TypeError as ex:
+                kind = type(self).__name__
+                message = f"""
+{kind}.{meth.__name__}() signature incorrect, it should accept {['a', 'an'][int(type(bag).__name__.lower()[0] in "aeiou")]} {type(bag).__name__} object and a signal function.
+
+{type(bag).__name__} is a dataclass that represents an event. Its attributes 
+tell you about the event.
+
+The signal function is a function you can call that accepts an event instance
+as its only parameter. Call it to add an event to the queue.
+
+It should look like this:
+
+def {meth.__name__}({type(bag).__name__.lower()}_event: {type(bag).__name__}, signal_function):
+    (Your code goes here.)
+"""
+                raise BadEventHandlerException(message) from ex
 
 
 # Remember to define scene at the end so the pargs version of __init__() still works
