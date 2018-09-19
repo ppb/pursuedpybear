@@ -80,3 +80,10 @@ jobs:
           command: |
             . venv/bin/activate
             python manage.py test
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build-linux-36
+      - build-mac-36
