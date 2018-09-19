@@ -15,8 +15,6 @@ matrix:
             - MINICONDA_OS="Linux"
         - os: linux
           python: 3.7-dev
-        - os: linux
-          python: "pypy3"
         - os: osx
           language: generic
           env: PYTHON="3.6" MINICONDA_OS="MacOSX"
@@ -25,7 +23,6 @@ matrix:
           env: PYTHON="3.7" MINICONDA_OS="MacOSX"
     allow_failures:
         - python: "3.7-dev"
-        - python: "pypy3"
 
 before_install:
   - if [[ $MINICONDA_OS ]]; then
