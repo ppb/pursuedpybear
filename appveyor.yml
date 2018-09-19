@@ -8,8 +8,8 @@ environment:
     - PYTHON: "C:\\Python37-x64"
 
 install:
-  -  %PYTHON%\Scripts\pip install -e .
-  -  %PYTHON%\Scripts\pip install pytest
+  -  '%PYTHON%\Scripts\pip install -e .'
+  -  '%PYTHON%\Scripts\pip install pytest'
 build: off
 test_script:
-  - %PYTHON%\Scripts\pytest
+  - '%PYTHON%\Scripts\pytest'
