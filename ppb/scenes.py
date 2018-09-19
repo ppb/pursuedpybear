@@ -9,8 +9,6 @@ from typing import Tuple
 from typing import Type
 from typing import Union
 
-from pygame.sprite import LayeredDirty
-
 from ppb.abc import Scene
 from ppb.camera import Camera
 from ppb.events import EventMixin
@@ -107,8 +105,7 @@ class BaseScene(Scene, EventMixin):
         self.background_color = background_color
         self.background = None
         self.game_objects = container_class()
-        self.render_group = LayeredDirty()
-        self.add(Camera(pixel_ratio=pixel_ratio), ["main_camera"])
+        self.main_camera = Camera(pixel_ratio=pixel_ratio)
         if set_up is not None:
             set_up(self)
 
@@ -118,10 +115,15 @@ class BaseScene(Scene, EventMixin):
     def __iter__(self) -> Iterator:
         return (x for x in self.game_objects)
 
-    def render(self):
-        window = self.engine.display
-        self.render_group.add(s for s in self.game_objects)
-        return self.render_group.draw(window, self.background)
+    @property
+    def main_camera(self) -> Camera:
+        return next(self.game_objects.get(tag="main_camera"))
+
+    @main_camera.setter
+    def main_camera(self, value: Camera):
+        for camera in self.game_objects.get(tag="main_camera"):
+            self.game_objects.remove(camera)
+        self.game_objects.add(value, tags=["main_camera"])
 
     def change(self) -> Tuple[bool, dict]:
         """

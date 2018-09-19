@@ -64,7 +64,7 @@ class PygameEventPoller(System):
 
     def mouse_motion(self, event, scene):
         screen_position = Vector(*event.pos)
-        camera = list(scene.get(tag="main_camera"))[0]
+        camera = scene.main_camera
         game_position = camera.translate_to_frame(screen_position)
         delta = Vector(*event.rel) * (1/camera.pixel_ratio)
         buttons = [bool(x) for x in event.buttons]
@@ -88,7 +88,7 @@ class MouseSystem(System):
             self.mouse.buttons = [bool(x) for x in buttons]
         screen_position = self.get_hardware_position()
         if screen_position is not None:
-            camera = list(engine.current_scene.get(tag="main_camera"))[0]
+            camera = engine.current_scene.main_camera
             self.mouse.screen_position = Vector(*screen_position)
             self.mouse.position = camera.translate_to_frame(self.mouse.screen_position)
         return []
@@ -143,7 +143,7 @@ class Renderer(System):
 
     def on_render(self, render_event, signal):
         self.render_background(render_event.scene)
-        camera = list(render_event.scene.get(tag="main_camera"))[0]
+        camera = render_event.scene.main_camera
         camera.viewport_width, camera.viewport_height = self.resolution
         for game_object in render_event.scene:
             resource = self.prepare_resource(game_object)

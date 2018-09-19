@@ -5,6 +5,7 @@ from pytest import mark
 from pytest import raises
 
 from ppb.scenes import BaseScene
+from ppb.camera import Camera
 from ppb.scenes import GameObjectCollection
 
 
@@ -132,12 +133,14 @@ def test_collection_methods(container, player, enemies):
         assert game_object is player or game_object is enemies[0]
 
 
-def test_scene_render(scene):
-    """
-    This test ensure a call to render works.
+def test_main_camera(scene):
 
-    The two mocks allow the test to run without hardware, but makes sure
-    that the function runs to completion without errors.
-    """
-    scene.render_group = Mock()  # Render group is an implementation detail
-    scene.render()
+    assert isinstance(scene.main_camera, Camera)
+    old_cam = scene.main_camera
+    new_cam = Camera()
+
+    scene.main_camera = new_cam
+
+    assert scene.main_camera == new_cam
+    assert old_cam not in scene
+    assert new_cam in scene
