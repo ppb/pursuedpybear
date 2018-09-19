@@ -1,0 +1,48 @@
+language: python
+matrix:
+    include:
+        # Travis does not yet support Python 3.7 on Linux
+        # uncomment the following when it does
+        #- os: linux
+        #  python: 3.7
+        #  env:
+        #    - MINICONDA_OS="Linux"
+        #    - CI=true
+        #    - TRAVIS=true
+        - os: linux
+          python: 3.6
+          env:
+            - MINICONDA_OS="Linux"
+        - os: linux
+          python: 3.7-dev
+        - os: linux
+          python: "pypy3"
+        - os: osx
+          language: generic
+          env: PYTHON="3.6" MINICONDA_OS="MacOSX"
+        - os: osx
+          language: generic
+          env: PYTHON="3.7" MINICONDA_OS="MacOSX"
+    allow_failures:
+        - python: "3.7-dev"
+        - python: "pypy3"
+
+before_install:
+  - if [[ $MINICONDA_OS ]]; then
+      URL="https://repo.continuum.io/miniconda/Miniconda3-latest-${MINICONDA_OS}-x86_64.sh";
+      wget "${URL}" -O miniconda.sh;
+      bash miniconda.sh -b -p $HOME/miniconda;
+      export PATH="$HOME/miniconda/bin:$PATH";
+      hash -r;
+      conda config --set always_yes yes --set changeps1 no;
+      conda update -q conda;
+      conda info -a;
+    fi
+
+install:
+  - pip install -e .;
+  - pip install pytest
+  
+script:
+  - set -e
+  - pytest
