@@ -118,11 +118,6 @@ class BaseScene(Scene, EventMixin):
     def __iter__(self) -> Iterator:
         return (x for x in self.game_objects)
 
-    def render(self):
-        window = self.engine.display
-        self.render_group.add(s for s in self.game_objects)
-        return self.render_group.draw(window, self.background)
-
     def change(self) -> Tuple[bool, dict]:
         """
         Default case, override in subclass as necessary.
