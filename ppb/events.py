@@ -24,8 +24,9 @@ def camel_to_snake(txt):
 
 class BadEventHandlerException(TypeError):
 
-    def __init__(self, object_type, method, event_type):
-
+    def __init__(self, instance, method, event):
+        object_type = type(instance)
+        event_type = type(event)
         o_name = object_type.__name__
         e_name = event_type.__name__
         article = ['a', 'an'][int(e_name.lower()[0] in "aeiou")]
@@ -65,7 +66,7 @@ class EventMixin:
                 try:
                     sig.bind(bag, fire_event)
                 except TypeError:
-                    raise BadEventHandlerException(type(self), meth_name, type(bag)) from ex
+                    raise BadEventHandlerException(self, meth_name, bag) from ex
                 else:
                     raise
 
