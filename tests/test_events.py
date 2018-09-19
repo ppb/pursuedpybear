@@ -1,5 +1,9 @@
 from pytest import mark
-from ppb.events import EventMixin, camel_to_snake
+from pytest import raises
+
+from ppb.events import BadEventHandlerException
+from ppb.events import camel_to_snake
+from ppb.events import EventMixin
 
 
 def test_eventmixin():
@@ -16,13 +20,42 @@ def test_eventmixin():
             passed_bag = bag
 
     bag = Spam()
-    fire_event = lambda: none
+    fire_event = lambda: None
 
     e = Eventable()
 
     e.__event__(bag, fire_event)
     assert bag is passed_bag
     assert fire_event is passed_fire
+
+
+def test_event_mixin_with_bad_signature():
+
+    class BadSpam:
+        pass
+
+
+    class Spam:
+        pass
+
+
+    class Eventable(EventMixin):
+        def on_spam(self, spam_event):
+            pass
+
+        def on_bad_spam(self, bad_spam_event, signal):
+            raise TypeError
+
+    e = Eventable()
+
+    with raises(BadEventHandlerException):
+        e.__event__(Spam(), lambda x: None)
+
+    with raises(TypeError) as exception_info:
+        e.__event__(BadSpam(), lambda x: None)
+
+    exec = exception_info.value
+    assert not isinstance(exec, BadEventHandlerException)
 
 
 @mark.parametrize("text,expected", [
