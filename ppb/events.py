@@ -22,26 +22,16 @@ def camel_to_snake(txt):
     return boundaries_finder_2.sub(r'\1_\2', s1).lower()
 
 
-class BadEventHandlerException(TypeError): pass
+class BadEventHandlerException(TypeError):
 
+    def __init__(self, object_type, method, event_type):
+        article = ['a', 'an'][int(type(event_type).__name__.lower()[0] in "aeiou")]
+        o_name = object_type.__name__
+        e_name = event_type.__name__
+        message = f"""
+{o_name}.{method}() signature incorrect, it should accept {article} {e_name} object and a signal function.
 
-class EventMixin:
-    def __event__(self, bag, fire_event):
-        elog = logging.getLogger('game.events')
-
-        name = camel_to_snake(type(bag).__name__)
-
-        meth = getattr(self, 'on_' + name, None)
-        if callable(meth):
-            try:
-                elog.debug(f"Calling handler {meth} for {name}")
-                meth(bag, fire_event)
-            except TypeError as ex:
-                kind = type(self).__name__
-                message = f"""
-{kind}.{meth.__name__}() signature incorrect, it should accept {['a', 'an'][int(type(bag).__name__.lower()[0] in "aeiou")]} {type(bag).__name__} object and a signal function.
-
-{type(bag).__name__} is a dataclass that represents an event. Its attributes 
+{e_name} is a dataclass that represents an event. Its attributes 
 tell you about the event.
 
 The signal function is a function you can call that accepts an event instance
@@ -49,10 +39,32 @@ as its only parameter. Call it to add an event to the queue.
 
 It should look like this:
 
-def {meth.__name__}({type(bag).__name__.lower()}_event: {type(bag).__name__}, signal_function):
+def {method}({e_name.lower()}_event: {e_name}, signal_function):
     (Your code goes here.)
 """
-                raise BadEventHandlerException(message) from ex
+        super().__init__(message)
+
+
+class EventMixin:
+    def __event__(self, bag, fire_event):
+        elog = logging.getLogger('game.events')
+
+        name = camel_to_snake(type(bag).__name__)
+        meth_name = 'on_' + name
+        meth = getattr(self, meth_name, None)
+        if callable(meth):
+            try:
+                elog.debug(f"Calling handler {meth} for {name}")
+                meth(bag, fire_event)
+            except TypeError as ex:
+                from inspect import signature
+                sig = signature(meth)
+                try:
+                    sig.bind(bag, fire_event)
+                except TypeError:
+                    raise BadEventHandlerException(type(self), meth_name, type(bag)) from ex
+                else:
+                    raise
 
 
 # Remember to define scene at the end so the pargs version of __init__() still works
