@@ -25,9 +25,11 @@ def camel_to_snake(txt):
 class BadEventHandlerException(TypeError):
 
     def __init__(self, object_type, method, event_type):
-        article = ['a', 'an'][int(type(event_type).__name__.lower()[0] in "aeiou")]
+
         o_name = object_type.__name__
         e_name = event_type.__name__
+        article = ['a', 'an'][int(e_name.lower()[0] in "aeiou")]
+
         message = f"""
 {o_name}.{method}() signature incorrect, it should accept {article} {e_name} object and a signal function.
 
