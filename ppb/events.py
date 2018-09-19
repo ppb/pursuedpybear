@@ -35,7 +35,8 @@ class BadEventHandlerException(TypeError):
 tell you about the event.
 
 The signal function is a function you can call that accepts an event instance
-as its only parameter. Call it to add an event to the queue.
+as its only parameter. Call it to add an event to the queue. You don't have to
+use it, but it is a mandatory argument provided by ppb.
 
 It should look like this:
 
