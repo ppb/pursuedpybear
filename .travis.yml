@@ -3,7 +3,6 @@ matrix:
     include:
         - os: linux
           python: 3.6
-          env:
         - os: linux
           language: generic
           env:
@@ -30,13 +29,13 @@ before_install:
       conda config --set always_yes yes --set changeps1 no;
       conda update -q conda;
       conda info -a;
-      conda create -q -n test-environment python=$PYTHON
-      source activate test-environment
-    fi
+      conda create -q -n test-environment python=$PYTHON;
+      source activate test-environment;
+    fi;
 
 install:
   - pip install -e .;
-  - pip install pytest
+  - pip install pytest;
   
 script:
   - set -e
