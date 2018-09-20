@@ -4,11 +4,11 @@ matrix:
         - os: linux
           python: 3.6
           env:
-            - MINICONDA_OS="Linux"
         - os: linux
-          python: 3.7
+          language: generic
           env:
             - MINICONDA_OS="Linux"
+            - PYTHON="3.7"
         - os: linux
           python: nightly
         - os: osx
@@ -30,6 +30,8 @@ before_install:
       conda config --set always_yes yes --set changeps1 no;
       conda update -q conda;
       conda info -a;
+      conda create -q -n test-environment python=$PYTHON
+      source activate test-environment
     fi
 
 install:
