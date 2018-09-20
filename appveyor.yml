@@ -1,0 +1,15 @@
+environment:
+
+  matrix:
+    # https://www.appveyor.com/docs/windows-images-software/#python
+    - PYTHON: "C:\\Python36"
+    - PYTHON: "C:\\Python37"
+    - PYTHON: "C:\\Python36-x64"
+    - PYTHON: "C:\\Python37-x64"
+
+install:
+  -  '%PYTHON%\Scripts\pip install -e .'
+  -  '%PYTHON%\Scripts\pip install pytest'
+build: off
+test_script:
+  - '%PYTHON%\Scripts\pytest'

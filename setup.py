@@ -1,9 +1,15 @@
 from setuptools import setup
+import sys
 
 
 def readme():
     with open('README.md') as file:
         return file.read()
+
+backports = []
+
+if sys.version_info < (3, 7):
+    backports += ['dataclasses']
 
 setup(
     name='ppb',
@@ -12,7 +18,7 @@ setup(
     install_requires=[
         'pygame',
         'ppb-vector',
-    ],
+    ] + backports,
     url='https://github.com/pathunstrom/pursuedpybear',
     license='',
     author='Piper Thunstrom',
