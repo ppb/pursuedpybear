@@ -18,18 +18,16 @@ from ppb.systems import Updater
 
 class GameEngine(Engine, EventMixin):
 
-    def __init__(self, first_scene: Type, *, log_level=logging.WARNING,
+    def __init__(self, first_scene: Type, *,
                  systems=(Renderer, Updater, PygameEventPoller, PygameMouseSystem),
                  scene_kwargs=None, **kwargs):
 
         super(GameEngine, self).__init__()
 
         # Engine Configuration
-        self.log_level = log_level
         self.first_scene = first_scene
         self.scene_kwargs = scene_kwargs or {}
         self.kwargs = kwargs
-        logging.basicConfig(level=self.log_level)
 
         # Engine State
         self.scenes = []
