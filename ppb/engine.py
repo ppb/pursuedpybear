@@ -65,11 +65,8 @@ class GameEngine(Engine, EventMixin):
         if self.systems:
             return
         for system in self.systems_classes:
-            try:
+            if isinstance(system, type):
                 system = system(engine=self, **self.kwargs)
-            except TypeError as e:
-                if hasattr(system, "__exit__"):
-                    raise e
             self.systems.append(system)
             self.exit_stack.enter_context(system)
 
