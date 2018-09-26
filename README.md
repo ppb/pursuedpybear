@@ -6,7 +6,7 @@ useful tool for any topic that a simulation can be helpful.
 
 ## A Game Engine
 
-At it's core, `ppb` provides a number of features that make it perfect
+At its core, `ppb` provides a number of features that make it perfect
 for video games. The `GameEngine` itself provides a pluggable subsystem
 architecture where adding new features is as simple as subclassing and
 extending `System`. Additionally, it contains a state stack of `Scenes`
@@ -90,10 +90,7 @@ ppb.run(scene_kwargs={"set_up": setup})
 
 ## Compatibility
 
-`ppb` is guaranteed compatible with Python 3.7. The event system uses
-dataclasses so you might need to inject a shim into your environment if
-you use earlier versions. That said, it is strongly encouraged you use
-3.7 to develop `ppb` projects.
+`ppb` is guaranteed compatible with Python 3.6 or later.
 
 ## Get Involved
 
