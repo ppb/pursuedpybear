@@ -2,7 +2,6 @@ from collections import defaultdict
 from collections import deque
 from contextlib import ExitStack
 from itertools import chain
-import logging
 import time
 from typing import Callable
 from typing import Type
@@ -14,22 +13,21 @@ from ppb.systems import PygameEventPoller
 from ppb.systems import PygameMouseSystem
 from ppb.systems import Renderer
 from ppb.systems import Updater
+from ppb.utils import LoggingMixin
 
 
-class GameEngine(Engine, EventMixin):
+class GameEngine(Engine, EventMixin, LoggingMixin):
 
-    def __init__(self, first_scene: Type, *, log_level=logging.WARNING,
+    def __init__(self, first_scene: Type, *,
                  systems=(Renderer, Updater, PygameEventPoller, PygameMouseSystem),
                  scene_kwargs=None, **kwargs):
 
         super(GameEngine, self).__init__()
 
         # Engine Configuration
-        self.log_level = log_level
         self.first_scene = first_scene
         self.scene_kwargs = scene_kwargs or {}
         self.kwargs = kwargs
-        logging.basicConfig(level=self.log_level)
 
         # Engine State
         self.scenes = []
@@ -51,13 +49,13 @@ class GameEngine(Engine, EventMixin):
             return None
 
     def __enter__(self):
-        logging.getLogger(self.__class__.__name__).info("Entering context.")
+        self.logger.info("Entering context")
         self.start_systems()
         self.entered = True
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        logging.getLogger(self.__class__.__name__).info("Exiting context")
+        self.logger.info("Exiting context")
         self.entered = False
         self.exit_stack.close()
 
