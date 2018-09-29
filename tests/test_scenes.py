@@ -144,3 +144,14 @@ def test_main_camera(scene):
     assert scene.main_camera == new_cam
     assert old_cam not in scene
     assert new_cam in scene
+
+
+def test_class_attrs():
+    class BackgroundScene(BaseScene):
+        background_color = (0, 4, 2)
+
+    scene = BackgroundScene(Mock())
+    assert scene.background_color == (0, 4, 2)
+
+    scene = BackgroundScene(Mock(), background_color=(2, 4, 0))
+    assert scene.background_color == (2, 4, 0)
