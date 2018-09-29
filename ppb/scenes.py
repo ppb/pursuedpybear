@@ -96,16 +96,20 @@ class GameObjectCollection(Collection):
 
 
 class BaseScene(Scene, EventMixin):
+    background_color: Sequence[int] = (0, 0, 100)
+    background = None
 
-    def __init__(self, engine, *, background_color: Sequence[int]=(0, 0, 100),
+    def __init__(self, engine, *,
                  container_class: Type=GameObjectCollection,
                  set_up: Callable=None, pixel_ratio: Union[int, float]=80,
                  **kwargs):
         super().__init__(engine)
-        self.background_color = background_color
-        self.background = None
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
         self.game_objects = container_class()
         self.main_camera = Camera(pixel_ratio=pixel_ratio)
+
         if set_up is not None:
             set_up(self)
 
