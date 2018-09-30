@@ -13,7 +13,7 @@ if sys.version_info < (3, 7):
 
 setup(
     name='ppb',
-    version='0.4.0rc3',
+    version='0.4.0',
     packages=['ppb'],
     install_requires=[
         'pygame',
