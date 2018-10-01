@@ -29,92 +29,6 @@ class System(events.EventMixin):
         return []
 
 
-# class PygameEventPoller(System):
-#     """
-#     An event poller that converts Pygame events into PPB events.
-#     """
-
-#     event_map = None
-
-#     def __new__(cls, *args, **kwargs):
-#         if cls.event_map is None:
-#             cls.event_map = {
-#                 pygame.QUIT: "quit",
-#                 pygame.MOUSEMOTION: "mouse_motion",
-#             }
-#         return super().__new__(cls)
-
-#     def __init__(self, resolution=default_resolution, **kwargs):
-#         self.offset = Vector(-0.5 * resolution[0],
-#                              -0.5 * resolution[1])
-
-#     def __enter__(self):
-#         pygame.init()
-
-#     def __exit__(self, exc_type, exc_val, exc_tb):
-#         pygame.quit()
-
-#     def on_update(self, update, signal):
-#         for pygame_event in pygame.event.get():
-#             ppb_event = self.event_map.get(pygame_event.type)
-#             if ppb_event is not None:
-#                 signal(getattr(self, ppb_event)(pygame_event, update.scene))
-
-#     def quit(self, event, scene):
-#         return events.Quit()
-
-#     def mouse_motion(self, event, scene):
-#         screen_position = Vector(*event.pos)
-#         camera = scene.main_camera
-#         game_position = camera.translate_to_frame(screen_position)
-#         delta = Vector(*event.rel) * (1/camera.pixel_ratio)
-#         buttons = [bool(x) for x in event.buttons]
-#         return events.MouseMotion(game_position, screen_position, delta, buttons)
-
-# class MouseSystem(System):
-#     """
-#     Mouse system.
-#     """
-
-#     def __init__(self, *, engine, resolution=default_resolution, **kwargs):
-#         self.mouse = Mouse()
-#         self.offset = Vector(-0.5 * resolution[0],
-#                              -0.5 * resolution[1])
-#         engine.register(events.Update, "mouse", self.mouse)
-
-#     def activate(self, engine):
-#         """Sync mouse with hardware."""
-#         buttons = self.get_hardware_buttons()
-#         if buttons is not None:
-#             self.mouse.buttons = [bool(x) for x in buttons]
-#         screen_position = self.get_hardware_position()
-#         if screen_position is not None:
-#             camera = engine.current_scene.main_camera
-#             self.mouse.screen_position = Vector(*screen_position)
-#             self.mouse.position = camera.translate_to_frame(self.mouse.screen_position)
-#         return []
-
-#     def on_mouse_motion(self, mouse_motion_event, signal):
-#         self.mouse.buttons = mouse_motion_event.buttons
-#         self.mouse.screen_position = mouse_motion_event.screen_position
-#         self.mouse.position = mouse_motion_event.position
-
-#     def get_hardware_buttons(self) -> Union[Iterable, None]:
-#         pass
-
-#     def get_hardware_position(self) -> Union[Iterable, None]:
-#         pass
-
-
-# class PygameMouseSystem(MouseSystem):
-
-#     def get_hardware_buttons(self):
-#         return pygame.mouse.get_pressed()
-
-#     def get_hardware_position(self):
-#         return pygame.mouse.get_pos()
-
-
 class Quitter(System):
     """
     System for running test. Limits the engine to a single loop.
@@ -122,74 +36,6 @@ class Quitter(System):
 
     def activate(self, engine):
         yield events.Quit()
-
-
-# class Renderer(System):
-
-#     def __init__(self, resolution=default_resolution, **kwargs):
-#         self.resolution = resolution
-#         self.resources = {}
-#         self.window = None
-
-#     def __enter__(self):
-#         pygame.init()
-#         self.window = pygame.display.set_mode(self.resolution)
-
-#     def __exit__(self, exc_type, exc_val, exc_tb):
-#         pygame.quit()
-
-#     def activate(self, engine):
-#         yield events.PreRender()
-#         yield events.Render()
-
-#     def on_render(self, render_event, signal):
-#         self.render_background(render_event.scene)
-#         camera = render_event.scene.main_camera
-#         camera.viewport_width, camera.viewport_height = self.resolution
-#         for game_object in render_event.scene:
-#             resource = self.prepare_resource(game_object)
-#             if resource is None:
-#                 continue
-#             rectangle = self.prepare_rectangle(resource, game_object, camera)
-#             self.window.blit(resource, rectangle)
-#         pygame.display.update()
-
-#     def render_background(self, scene):
-#         self.window.fill(scene.background_color)
-
-#     def prepare_resource(self, game_object):
-#         image_name = game_object.__image__()
-#         if image_name is flags.DoNotRender:
-#             return None
-#         if image_name not in self.resources:
-#             self.register_renderable(game_object)
-#         # TODO: Rotate Image to facing.
-#         return self.resources[game_object.image]
-
-#     def prepare_rectangle(self, resource, game_object, camera):
-#         rect = resource.get_rect()
-#         rect.center = camera.translate_to_viewport(game_object.position)
-#         return rect
-
-#     def register(self, resource_path, name=None):
-#         try:
-#             resource = pygame.image.load(str(resource_path)).convert_alpha(self.window)
-#         except pygame.error:
-#             # Image didn't load, so either the name is bad or the file doesn't
-#             # exist. Instead, we'll render a square with a random color.
-#             resource = pygame.Surface((70, 70))
-#             random.seed(str(resource_path))
-#             r = random.randint(65, 255)
-#             g = random.randint(65, 255)
-#             b = random.randint(65, 255)
-#             resource.fill((r, g, b))
-#         name = name or resource_path
-#         self.resources[name] = resource
-
-#     def register_renderable(self, renderable):
-#         image_name = renderable.__image__()
-#         source_path = renderable.__resource_path__()
-#         self.register(source_path / image_name, image_name)
 
 
 class Updater(System):
@@ -252,7 +98,8 @@ class PygletWindow(System):
 
     def _update_camera(self, scene):
         camera = scene.main_camera
-        camera.viewport_width, camera.viewport_height = width, height
+        camera.viewport_width = self.window.width
+        camera.viewport_height = self.window.height
 
     def _insert_call(self, object, attr, call):
         old_call = getattr(object, attr)
@@ -268,23 +115,49 @@ class PygletWindow(System):
 
     def _scene_add_sprite(self, scene, sprite, tags=()):
         img = sprite.__image__()
+        sprite.__prev_image = img
         if img is flags.DoNotRender:
             sprite.__resource = None
             sprite.__sprite = None
         else:
             # FIXME: The resource path is relative to the source file, use __resource_path__()
             # TODO: Cache these?
-            sprite.__resource = pyglet.resource.image(sprite.__image__())
+            sprite.__resource = pyglet.resource.image(img)
+            pos = scene.main_camera.translate_to_viewport(sprite.position)
             sprite.__sprite = pyglet.sprite.Sprite(
                 img=sprite.__resource,
-                x=sprite.position.x,
-                y=sprite.position.y,
+                x=pos.x,
+                y=pos.y,
                 batch=scene.__batch,
+            )
+
+    def _update_sprite(self, scene, sprite):
+        img = sprite.__image__()
+        if img is flags.DoNotRender and sprite.__prev_image is not flags.DoNotRender:
+            # The sprite has been hidden, delete its resources
+            s = sprite.__sprite
+            s.batch = None
+            s.delete()
+            sprite.__resource = None
+            sprite.__sprite = None
+        elif img is not flags.DoNotRender:
+            # Sprite is visible, update
+            if img != sprite.__prev_image:
+                sprite.__resource = pyglet.resource.image(img)
+                sprite.__prev_image = img
+                sprite.__sprite.image = img
+            pos = scene.main_camera.translate_to_viewport(sprite.position)
+            sprite.__sprite.update(
+                x=pos.x,
+                y=pos.y,
             )
 
     def _scene_remove_sprite(self, scene, sprite):
         sprite.__sprite.batch = None
         sprite.__sprite.delete()
+        sprite.__sprite = None
+        sprite.__resource = None
+        sprite.__prev_image = None
 
     def _annotate_scene(self, scene):
         scene.__batch = batch = pyglet.graphics.Batch()
@@ -293,12 +166,21 @@ class PygletWindow(System):
         for sprite in scene:
             self._scene_add_sprite(scene, sprite)
 
+    def _scan_scene(self, scene):
+        for sprite in scene:
+            if sprite._dirty:
+                self._update_sprite(scene, sprite)
+            sprite.__dict__['_dirty'] = False
+
     def on_draw(self):
         scene = self.engine.current_scene
         try:
             scene.__batch
         except AttributeError:
             self._annotate_scene(scene)
+
+        self._update_camera(scene)
+        self._scan_scene(scene)
 
         scene.__batch.draw()
 
