@@ -170,16 +170,23 @@ class PygletWindow(System):
             sprite.__dict__['_dirty'] = False
 
     def on_draw(self):
-        self.engine.signal(events.PreRender())
         scene = self.engine.current_scene
+        # 1. Hook anything unhooked
         try:
             scene.__batch
         except AttributeError:
             self._annotate_scene(scene)
 
+        # 2. Syncronize the camera with the window
         self._update_camera(scene)
+
+        # 3. Let everything do their frame-level stuff
+        self.engine.signal(events.PreRender())
+
+        # 4. Update graphics objects with their game counterparts
         self._scan_scene(scene)
 
+        # 5. Actually draw the scene
         self.window.clear()
         scene.__batch.draw()
 
