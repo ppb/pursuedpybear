@@ -1,11 +1,8 @@
 import unittest
 from unittest import mock
 
-from pygame import Surface
-
 from ppb import GameEngine, BaseScene
-from ppb.systems import Quitter
-from ppb.systems import System
+from ppb.systems import System, Quitter
 
 CONTINUE = True
 STOP = False

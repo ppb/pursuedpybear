@@ -16,7 +16,7 @@ setup(
     version='0.4.0',
     packages=['ppb'],
     install_requires=[
-        'pygame',
+        'pyglet',
         'ppb-vector',
     ] + backports,
     url='https://github.com/ppb/pursuedpybear',

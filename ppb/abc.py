@@ -22,21 +22,9 @@ class Canvas(object):
 
 
 class Engine(object):
-
-    def __init__(self):
-        self.mouse = {"x": 0, "y": 0, 1: 0, 2: 0, 3: 0}  # type: dict
-        # Consider making mouse an object.
-        self.keys = []  # type: Container
-        self.display = None  # type: Canvas
-
-    def __enter__(self):
-        raise NotImplementedError
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        raise NotImplementedError
-
-    def run(self):
-        raise NotImplementedError
+    pass
+    # def run(self):
+    #     raise NotImplementedError
 
 
 class GameObject(object):
