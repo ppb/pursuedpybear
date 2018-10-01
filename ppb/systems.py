@@ -105,6 +105,12 @@ class PygletWindow(System):
         if scene is not None:
             self._update_camera(scene)
 
+    def _load_resource(self, img):
+        res = pyglet.resource.image(img)
+        res.anchor_x = res.width / 2
+        res.anchor_y = res.height / 2
+        return res
+
     def _scene_add_sprite(self, scene, sprite, tags=()):
         img = sprite.__image__()
         sprite.__prev_image = img
@@ -113,7 +119,7 @@ class PygletWindow(System):
             sprite.__sprite = None
         else:
             # FIXME: The resource path is relative to the source file, use __resource_path__()
-            sprite.__resource = pyglet.resource.image(img)
+            sprite.__resource = self._load_resource(img)
             pos = scene.main_camera.translate_to_viewport(sprite.position)
             sprite.__sprite = pyglet.sprite.Sprite(
                 img=sprite.__resource,
@@ -134,7 +140,7 @@ class PygletWindow(System):
         elif img is not flags.DoNotRender:
             # Sprite is visible, update
             if img != sprite.__prev_image:
-                sprite.__resource = pyglet.resource.image(img)
+                sprite.__resource = self._load_resource(img)
                 sprite.__prev_image = img
                 sprite.__sprite.image = sprite.__resource
             pos = scene.main_camera.translate_to_viewport(sprite.position)
