@@ -157,7 +157,7 @@ class BaseSprite(EventMixin):
         self.blackboard = blackboard or {}
 
     def __setattr__(self, name, value):
-        self._dirty = True
+        self.__dict__['_dirty'] = True
         super().__setattr__(name, value)
 
     @property

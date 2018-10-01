@@ -2,6 +2,7 @@ import random
 import time
 from typing import Union
 from typing import Iterable
+import functools
 
 import pyglet
 
@@ -238,6 +239,70 @@ class PygletWindow(System):
         meth = getattr(self, meth_name, None)
         if meth is not None:
             meth(event, signal)
+
+    def _insert_call(self, object, attr, call):
+        old_call = getattr(object, attr)
+        @functools.wraps(old_call)
+        def _wrap(*p, **kw):
+            call(*p, **kw)
+            return old_call(*p, **kw)
+        setattr(object, attr, _wrap)
+
+    ### DRAWING ###
+
+    def _update_camera(self, scene):
+        camera = scene.main_camera
+        camera.viewport_width, camera.viewport_height = width, height
+
+    def _insert_call(self, object, attr, call):
+        old_call = getattr(object, attr)
+        def _wrap(*p, **kw):
+            call(*p, **kw)
+            return old_call(*p, **kw)
+        setattr(object, attr, _wrap)
+
+    def on_resize(self, width, height):
+        scene = self.engine.current_scene
+        if scene is not None:
+            self._update_camera(scene)
+
+    def _scene_add_sprite(self, scene, sprite, tags=()):
+        img = sprite.__image__()
+        if img is flags.DoNotRender:
+            sprite.__resource = None
+            sprite.__sprite = None
+        else:
+            # FIXME: The resource path is relative to the source file, use __resource_path__()
+            # TODO: Cache these?
+            sprite.__resource = pyglet.resource.image(sprite.__image__())
+            sprite.__sprite = pyglet.sprite.Sprite(
+                img=sprite.__resource,
+                x=sprite.position.x,
+                y=sprite.position.y,
+                batch=scene.__batch,
+            )
+
+    def _scene_remove_sprite(self, scene, sprite):
+        sprite.__sprite.batch = None
+        sprite.__sprite.delete()
+
+    def _annotate_scene(self, scene):
+        scene.__batch = batch = pyglet.graphics.Batch()
+        self._insert_call(scene, 'add', self._scene_add_sprite)
+        self._insert_call(scene, 'remove', self._scene_remove_sprite)
+        for sprite in scene:
+            self._scene_add_sprite(scene, sprite)
+
+    def on_draw(self):
+        scene = self.engine.current_scene
+        try:
+            scene.__batch
+        except AttributeError:
+            self._annotate_scene(scene)
+
+        scene.__batch.draw()
+
+    ### MOUSE HANDLING ###
 
     def on_mouse_motion(self, x, y, dx, dy):
         self.engine.signal(events.MouseMotion(
