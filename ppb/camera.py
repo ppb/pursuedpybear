@@ -60,6 +60,8 @@ class Camera(BaseSprite):
     def viewport_width(self, value: Union[int, float]):
         self._viewport_width = value
         self.viewport_offset = Vector(value / 2, self.viewport_height / 2)
+        self.frame_width = value / self.pixel_ratio
+        self.half_width = self.frame_width / 2
 
     @property
     def viewport_height(self) -> Union[int, float]:
@@ -69,6 +71,8 @@ class Camera(BaseSprite):
     def viewport_height(self, value: Union[int, float]):
         self._viewport_height = value
         self.viewport_offset = Vector(self.viewport_width / 2, value / 2)
+        self.frame_height = value / self.pixel_ratio
+        self.half_height = self.frame_height / 2
 
     def point_in_viewport(self, point:Vector) -> bool:
         px, py = point
