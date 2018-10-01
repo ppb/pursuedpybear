@@ -19,7 +19,7 @@ class GameEngine(
 ):
 
     def __init__(self, first_scene: Type, *,
-                 systems=(Updater),
+                 systems=(Updater,),
                  scene_kwargs=None, **kwargs):
 
         super().__init__()

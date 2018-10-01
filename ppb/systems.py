@@ -15,8 +15,8 @@ default_resolution = 800, 600
 
 class System(events.EventMixin):
 
-    def __init__(self, **_):
-        pass
+    def __init__(self, *, engine, **_):
+        self.engine = engine  # XXX: Does this need to be a weakref?
 
     def __enter__(self):
         pass
@@ -192,22 +192,19 @@ class Quitter(System):
 
 
 class Updater(System):
+    time_step = 1 / 60
 
-    def __init__(self, time_step=0.016, **kwargs):
-        self.accumulated_time = 0
-        self.last_tick = None
-        self.start_time = None
-        self.time_step = time_step
+    def __init__(self, *, time_step=None, **kwargs):
+        super().__init__(**kwargs)
+        
+        if time_step:
+            self.time_step = time_step
 
     def __enter__(self):
-        self.start_time = time.time()
+        pyglet.clock.schedule_interval(self._tick, self.time_step)
 
-    def activate(self, engine):
-        if self.last_tick is None:
-            self.last_tick = time.time()
-        this_tick = time.time()
-        self.accumulated_time += this_tick - self.last_tick
-        self.last_tick = this_tick
-        while self.accumulated_time >= self.time_step:
-            self.accumulated_time += -self.time_step
-            yield events.Update(self.time_step)
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        pyglet.clock.unschedule(self._tick)
+
+    def _tick(self, dt):
+        self.engine.signal(events.Update(time_delta=dt))
