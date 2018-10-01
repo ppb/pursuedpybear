@@ -136,7 +136,7 @@ class PygletWindow(System):
             if img != sprite.__prev_image:
                 sprite.__resource = pyglet.resource.image(img)
                 sprite.__prev_image = img
-                sprite.__sprite.image = img
+                sprite.__sprite.image = sprite.__resource
             pos = scene.main_camera.translate_to_viewport(sprite.position)
             sprite.__sprite.update(
                 x=pos.x,
