@@ -113,7 +113,6 @@ class PygletWindow(System):
             sprite.__sprite = None
         else:
             # FIXME: The resource path is relative to the source file, use __resource_path__()
-            # TODO: Cache these?
             sprite.__resource = pyglet.resource.image(img)
             pos = scene.main_camera.translate_to_viewport(sprite.position)
             sprite.__sprite = pyglet.sprite.Sprite(
@@ -181,9 +180,12 @@ class PygletWindow(System):
     ### MOUSE HANDLING ###
 
     def on_mouse_motion(self, x, y, dx, dy):
+        cam = self.engine.current_scene.main_camera
+        p = cam.translate_to_frame(Vector(x, y))
+        d = cam.translate_to_frame(Vector(dx, dy))
         self.engine.signal(events.MouseMotion(
-            position=Vector(x, y),
-            delta=Vector(dx, dy),
+            position=p,
+            delta=d,
             buttons=[False] * 3,
         ))
 
