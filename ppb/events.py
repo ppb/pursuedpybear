@@ -77,7 +77,6 @@ class EventMixin:
 class MouseMotion:
     """An event to represent mouse motion."""
     position: Vector
-    screen_position: Vector
     delta: Vector
     buttons: Iterable
     scene: Scene = None

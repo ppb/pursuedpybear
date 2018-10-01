@@ -8,7 +8,7 @@ import pyglet
 
 from ppb.abc import Engine
 from ppb.events import EventMixin, Quit
-from ppb.systems import Updater
+from ppb.systems import Updater, PygletWindow
 from ppb.utils import LoggingMixin
 
 
@@ -19,7 +19,7 @@ class GameEngine(
 ):
 
     def __init__(self, first_scene: Type, *,
-                 systems=(Updater,),
+                 systems=(Updater, PygletWindow),
                  scene_kwargs=None, **kwargs):
 
         super().__init__()

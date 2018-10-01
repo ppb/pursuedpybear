@@ -192,13 +192,10 @@ class Quitter(System):
 
 
 class Updater(System):
-    time_step = 1 / 60
-
-    def __init__(self, *, time_step=None, **kwargs):
+    def __init__(self, *, time_step=1 / 60, **kwargs):
         super().__init__(**kwargs)
         
-        if time_step:
-            self.time_step = time_step
+        self.time_step = time_step
 
     def __enter__(self):
         pyglet.clock.schedule_interval(self._tick, self.time_step)
@@ -208,3 +205,55 @@ class Updater(System):
 
     def _tick(self, dt):
         self.engine.signal(events.Update(time_delta=dt))
+
+
+class PygletWindow(System):
+    def __init__(self, *, window_title=None, resolution=default_resolution, **kw):
+        super().__init__(**kw)
+        self.window = pyglet.window.Window(
+            visible=False,
+            resizable=False,
+            caption=window_title,
+            width=resolution[0],
+            height=resolution[1],
+        )
+
+        self._mouse_buttons = [False, False, False]
+
+        # Dynamic pyglet event registration
+        for attr in self.window.event_types:
+            if hasattr(self, attr):
+                self.window.event(getattr(self, attr))
+
+    def __enter__(self):
+        self.window.set_visible(True)
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.window.set_visible(False)
+
+    def __event__(self, event, signal):
+        # We're handling event dispatch ourselves, so that we don't have
+        # conflicts with pyglet.
+        meth_name = 'on_ppb_' + type(event).__name__
+        meth = getattr(self, meth_name, None)
+        if meth is not None:
+            meth(event, signal)
+
+    def on_mouse_motion(self, x, y, dx, dy):
+        self.engine.signal(events.MouseMotion(
+            position=Vector(x, y),
+            delta=Vector(dx, dy),
+            buttons=[False] * 3,
+        ))
+
+    def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
+        buttons = [
+            buttons & 0b1,
+            buttons & 0b100,
+            buttons & 0b10,
+        ]
+        self.engine.signal(events.MouseMotion(
+            position=Vector(x, y),
+            delta=Vector(dx, dy),
+            buttons=[False] * 3,
+        ))
