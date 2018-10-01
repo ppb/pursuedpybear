@@ -144,6 +144,9 @@ class BaseSprite(EventMixin):
     image = None
     resource_path = None
 
+    # Used by the renderer to detect if things need to be updated
+    _dirty = False
+
     def __init__(self, size: int=1, pos: Iterable=(0, 0), blackboard: Dict=None, facing: Vector=Vector(0, -1)):
         super().__init__()
         self.position = Vector(*pos)
@@ -152,6 +155,10 @@ class BaseSprite(EventMixin):
         self.game_unit_size = size
         self.facing = facing
         self.blackboard = blackboard or {}
+
+    def __setattr__(self, name, value):
+        self._dirty = True
+        super().__setattr__(name, value)
 
     @property
     def center(self) -> Vector:
