@@ -8,7 +8,6 @@ import pyglet
 
 import ppb.events as events
 import ppb.flags as flags
-from ppb.mouse import Mouse
 from ppb.vector import Vector
 
 default_resolution = 800, 600
@@ -166,6 +165,7 @@ class PygletWindow(System):
             sprite.__dict__['_dirty'] = False
 
     def on_draw(self):
+        self.engine.signal(events.PreRender())
         scene = self.engine.current_scene
         try:
             scene.__batch
