@@ -86,13 +86,13 @@ class PygletWindow(System):
         if meth is not None:
             meth(event, signal)
 
-    def _insert_call(self, object, attr, call):
-        old_call = getattr(object, attr)
+    def _insert_call(self, obj, attr, call):
+        old_call = getattr(obj, attr)
         @functools.wraps(old_call)
         def _wrap(*p, **kw):
-            call(*p, **kw)
+            call(obj, *p, **kw)
             return old_call(*p, **kw)
-        setattr(object, attr, _wrap)
+        setattr(obj, attr, _wrap)
 
     ### DRAWING ###
 
@@ -100,13 +100,6 @@ class PygletWindow(System):
         camera = scene.main_camera
         camera.viewport_width = self.window.width
         camera.viewport_height = self.window.height
-
-    def _insert_call(self, object, attr, call):
-        old_call = getattr(object, attr)
-        def _wrap(*p, **kw):
-            call(*p, **kw)
-            return old_call(*p, **kw)
-        setattr(object, attr, _wrap)
 
     def on_resize(self, width, height):
         scene = self.engine.current_scene
@@ -182,6 +175,7 @@ class PygletWindow(System):
         self._update_camera(scene)
         self._scan_scene(scene)
 
+        self.window.clear()
         scene.__batch.draw()
 
     ### MOUSE HANDLING ###
@@ -194,13 +188,16 @@ class PygletWindow(System):
         ))
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
+        cam = self.engine.current_scene.main_camera
         buttons = [
             buttons & 0b1,
             buttons & 0b100,
             buttons & 0b10,
         ]
+        p = cam.translate_to_frame(Vector(x, y))
+        d = cam.translate_to_frame(Vector(dx, dy))
         self.engine.signal(events.MouseMotion(
-            position=Vector(x, y),
-            delta=Vector(dx, dy),
-            buttons=[False] * 3,
+            position=p,
+            delta=d,
+            buttons=buttons,
         ))
