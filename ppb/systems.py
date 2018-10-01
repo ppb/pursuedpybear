@@ -99,6 +99,7 @@ class PygletWindow(System):
         camera = scene.main_camera
         camera.viewport_width = self.window.width
         camera.viewport_height = self.window.height
+        # FIXME: Tell camera about Y flip
 
     def on_resize(self, width, height):
         scene = self.engine.current_scene
@@ -187,6 +188,8 @@ class PygletWindow(System):
         self._scan_scene(scene)
 
         # 5. Actually draw the scene
+        bg = scene.background_color
+        pyglet.gl.glClearColor(bg[0] / 255, bg[1] / 255, bg[2] / 255, 1)
         self.window.clear()
         scene.__batch.draw()
 
