@@ -31,7 +31,6 @@ class GameEngine(
 
         # Engine State
         self.scenes = []
-        self.events = deque()
         self.event_extensions = defaultdict(dict)
 
         # Systems
@@ -70,8 +69,6 @@ class GameEngine(
         for system in self.systems:
             for event in system.activate(self):
                 self.signal(event)
-                while self.events:
-                    self.publish()
         self.manage_scene()
         return super().idle()
 
