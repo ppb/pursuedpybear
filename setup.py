@@ -9,7 +9,7 @@ def readme():
 
 setup(
     name='ppb',
-    version='0.4.0',
+    version='0.4.1',
     packages=['ppb'],
     install_requires=[
         'pygame',
