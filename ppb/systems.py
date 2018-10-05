@@ -125,7 +125,7 @@ class Quitter(System):
 
 class Renderer(System):
 
-    def __init__(self, resolution=default_resolution, window_title=None, **kwargs):
+    def __init__(self, resolution=default_resolution, window_title: str="PursuedPyBear", **kwargs):
         self.resolution = resolution
         self.resources = {}
         self.window = None
@@ -134,8 +134,7 @@ class Renderer(System):
     def __enter__(self):
         pygame.init()
         self.window = pygame.display.set_mode(self.resolution)
-        if self.window_title is not None:
-            pygame.display.set_caption(self.window_title)
+        pygame.display.set_caption(self.window_title)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         pygame.quit()
