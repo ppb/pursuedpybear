@@ -9,139 +9,128 @@ for, it's target audience is new developers not used to contribution.
 
 ## Before You Begin
 
-* Read the [README](https://github.com/pathunstrom/pursuedpybear/blob/master/README.md).
-* Read the [Code of Conduct](https://github.com/pathunstrom/pursuedpybear/blob/master/CodeofConduct.md).
+1. Read the [README][readme].
+2. Read the [Code of Conduct][coc].
     * All contributors must abide by the current code of conduct.
-    * The current code of conduct is the [Contributor Covenant](http://contributor-covenant.org/)
-* Familiarize yourself with this guide!
-* [Fork](https://help.github.com/articles/fork-a-repo/) ppb.
+    * The current code of conduct is the [Contributor's Covenant][covenant].
+3. Familiarize yourself with this guide!
 
-## Tasks
+## I've Never Coded Before
 
-If you'd like to work on the engine itself, you can contribute to tasks.
+`ppb` doesn't include tools to get you from a proper zero to running.
+Check out something like [Automate the Boring Stuff][auto] or ask a
+teacher for a resource to learn with.
 
-### Task Contribution Steps Summary
+## I Don't Know How To Start
 
-1. Choose a task.
-2. Comment on the Github issue.
-3. OPTIONAL: A maintainer can assign the issue to one team member.
-4. Make a new branch.
-5. Code
-6. Merge
-7. Pull request
-8. Review
-9. Issue is closed
+The best place to start is to build something with `ppb`! Joining the
+community of developers who are using it and asking questions is a great
+place to start. Read the tutorials written by ppb and others, and keep
+notes: any time you do something that feels rough or seems to be harder
+than you'd like, take a note!
 
-### Choose a Task
+## I Don't Like How This Works
 
-Items will be kept in two places:
+After you're comfortable using `ppb` it's time to join the discussions.
+We try to keep discussions public on github, and label any issue meant
+to be a discussion with the [discussion label][discuss]. Your opinion
+matters, and you might notice something no one else has. If you don't
+like what it's like to use `ppb`, talk about it with us, and we can try
+to find a solution together.
 
-* [Github Issue Tracker](https://github.com/pathunstrom/pursuedpybear/issues)
-* [Project TODO file](https://github.com/pathunstrom/pursuedpybear/blob/master/TODO.md)
+## I Found A Bug
 
-Any task in the TODO file should have a related item in the issue tracker. 
-Items in the issue tracker may not have a related item in the TODO file. When 
-you have picked a task, comment on the Issue that you're working on it. The 
-intent is to let other developers know who to communicate with while working on 
-a task and which remotes to track.
+Good news: You already know where the issue tracker is, report your bug
+by adding a [new issue][issues] to the github page! Your report should
+focus on the problem: What broke? What didn't work the way you expected?
+How did you expect it to work?
 
-### Task Assignment
+In addition to that, we'll want to know how you got there: A link to
+your code, any packages you used with ppb, and a stack trace if there is
+one!
 
-In some cases, a maintainer will choose a contributor to assign the task to.
-The assignee will come from people working on the task, and that person will
-be the arbiter of work on the task. If a person is assigned, only pull requests
-from that user will be accepted into master.
+Label it with the label `bug` and one of the contributors will get to it
+soon!
 
-### Make a Branch
+## I Have A Suggestion
 
-Make a working branch off of ppb/master. ppb/dev is [pathunstrom](https://github.com/pathunstrom)'s 
-working branch. ppb/luna-dev is [lunacodes](https://github.com/lunacodes)' working branch. Do not base work off of those branches.
+Same as with bugs, head on over to the [issue tracker][issues] and
+write up an issue describing what you want to improve, and how you'd do
+it.
 
-### Do the Work
+Remember to consider the [goals and principles of ppb][goals]. We want
+to leave enough for people to explore on their own, but solve enough of
+the hard problems that they're free to do that.
 
-Now it's time to code.
+## I Want To Code
 
-Feel free to work however is best for you.
+Thanks for considering code contributions! Check out the latest [ppb
+release project][projects]. The basic rundown is simple: The `To Do`
+column is all of the issues we have to solve before the next release.
+Right now, that list is chosen and broken down by the maintainers at the
+beginning of each release cycle.
 
-Python's PEP 8 is strongly encouraged.
+The `Wishlist` column is all of the tickets we'd really like to include,
+but aren't critical to the goals of the next release. It mostly gets
+filled by the maintainers, but important tickets with lots of discussion
+and things suggested by oversight team members will make it there too.
 
-### CONTRIBUTORS.md
+The rest of the columns are for tracking, and a maintainer will move
+the tickets appropriately.
 
-Before you finish, add your information to CONTRIBUTORS.md.
+Now you need to [fork ppb][fork]. Once you've done that, go through
+either column and find a ticket you like. Start a branch, add your name
+to the [CONTRIBUTORS file][contrib], commit that change and open a PR:
 
-Form: \[NAME](github profile) | email | Twitter
+* Include "WORKING" in the title
+* Reference the issue you want to work on in the body of the PR.
 
-Name does not have to be your legal name. It can be any identifier you are 
-comfortable with as long as it does not break the code of conduct.
+Now get to work! Some tickets have detailed instructions: A maintainer
+mapped out the needs and wrote some instructions. Others are more open.
+Start working, try to solve the problem. If you get stuck, ask
+questions in your open PR. The maintainers and active contributors are
+here to help.
 
-Both email and Twitter are optional field. You may also make them hyperlinks.
+Once you think it's ready, time to remove "Working" from the title. Now
+someone senior in the project will review. They'll either ask for
+changes or approve your PR. If you need to make changes, commit to your
+branch and push it up and it'll update the PR. Your reviewer will look
+again later.
 
-### Merge into Local Master
+If you got accepted, your PR will make it into the project soon! Only a
+maintainer can merge your PR, so you'll need to wait. They may ask for
+some final changes. Same rules as before: Push new changes to your
+branch and things will be updated.
 
-Make sure to [update your local master to match](https://help.github.com/articles/fork-a-repo/#keep-your-fork-synced) ppb/master. Then merge your 
-working branch into local master. Resolve conflicts and make sure all the 
-examples and available tests still work. Then push to your fork.
+## Can I Review
 
-### Pull request
+You're always welcome to review other PRs! Just use the comment function
+unless you're told you can block PRs. The people doing the "official"
+review will take your comments into consideration. If you actively
+provide reviews, you'll be told to add your name to
+[CONTRIBUTORS][contrib] as a reviewer!
 
-Make a Pull Request through github to ppb/master. Please make sure the request 
-has a meaningful title and references the issue number you're working on.
+## I want to teach
 
-*Example*
+There's a tutorial project! See the [tutorials repository's CONTRIBUTING
+file][tutorial] for more details.
 
-> Ref #8: Contributing Guide
+## Can I Contribute Without Code?
 
-### Review
+There's so much else that needs to be done besides fixing `ppb`'s code.
+We need documentation. Docstrings or [the docs project][docs] are
+available to be added to. Our test suite could use some love. In the
+end you contribute to `ppb` by being part of its community.
 
-At least one maintainer and anyone else working on the task will review your 
-code using the issue tracker. When a consensus is reached, the code will be 
-merged into master and the task closed.
-
-## Documentation
-
-Due to PPB's aim as a learning library, documentation standard will be higher 
-than most projects. All modules, classes, functions and methods should include 
-[docstrings](https://en.wikipedia.org/wiki/Docstring#Python). 
-
-Currently we are using [reStructuredText](https://en.wikipedia.org/wiki/ReStructuredText#Examples_of_reST_markup) style.
-
-All examples will include section by section explanation of the code.
-
-If you see any code without docstrings or explanatory in line comments, feel 
-free to add them. The process is similar to tasks, but should include ONLY 
-documentation in the changes.
-
-In the pull request, make sure the title includes the word Documentation and 
-the body of the comment includes what was documented.
-
-## Examples
-
-Examples using various parts of the engine in different ways is highly 
-encouraged. An example must run with the current HEAD when it is added. Please 
-document the example well. The pull request should include the word Example in 
-the title.
-
-In addition, when there is a major shift in the API, some examples might break.
-Contributors are encouraged to update examples to current standards.
-
-## Requests, Bug Reports, Enhancements, and Other
-
-If you're not comfortable working on the code, join the discussion on the issue 
-tracker. 
-
-If you need a specific interface for your project, add an issue with a detailed 
-summary of what you need, why you need it, and a link to an example of how you 
-expect it to work. Use the feature label.
-
-If you find a bug in the engine add an issue and mark it as a bug. Please include
-the events that create the bug and a minimal example that recreates the bug. 
-This will be examined by contributors and determined where the task belongs.
-
-If you have an idea to improve the code in any way (better algorithms, improved 
-organization, better naming), add an issue and mark it as an enhancement. 
-Optimizations and improvements that do not break the current API 
-(Or can be integrated with the current API) are more likely to get moved to a 
-task.
-
-Feel free to join any discussion on any issue. Community feedback will be 
-critical to making the goal of PPB a reality.
+[auto]: https://automatetheboringstuff.com "Automate the Boring Stuff"
+[coc]: https://github.com/pathunstrom/pursuedpybear/blob/master/CodeofConduct.md "Code of Conduct"
+[contributors]: https://github.com/ppb/pursuedpybear/blob/master/CONTRIBUTORS.md "Contributors"
+[covenant]: http://contributor-covenant.org/ "Contributor's Covenant"
+[discuss]: https://github.com/ppb/pursuedpybear/issues?q=is%3Aissue+is%3Aopen+label%3Adiscussion "PPB Discussions"
+[docs]: https://github.com/ppb/docs "PPB Docs"
+[fork]: https://help.github.com/articles/fork-a-repo/ "Fork a repo"
+[goals]: https://github.com/ppb/pursuedpybear#guiding-principles "PPB Goals"
+[issues]: https://github.com/ppb/pursuedpybear/issues "PPB Issues"
+[projects]: https://github.com/orgs/ppb/projects "PPB Projects"
+[readme]: https://github.com/pathunstrom/pursuedpybear/blob/master/README.md "PPB README"
+[tutorial]: https://github.com/ppb/tutorials "PPB Tutorials"
