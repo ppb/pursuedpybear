@@ -1,10 +1,11 @@
 from dataclasses import dataclass
 import logging
 import re
-from typing import Iterable
+from typing import Iterable, Collection, Type
 
 from ppb.abc import Scene
 from ppb.vector import Vector
+from ppb.buttons import MouseButton
 
 __all__ = (
     'EventMixin',
@@ -78,7 +79,29 @@ class MouseMotion:
     """An event to represent mouse motion."""
     position: Vector
     delta: Vector
-    buttons: Iterable
+    buttons: Collection[Type[MouseButton]]
+    scene: Scene = None
+
+
+@dataclass
+class ButtonPressed:
+    """
+    Fired when a button is pressed
+    """
+    button: Type[MouseButton]
+    position: Vector  # Scene position
+    # TODO: Add frame position
+    scene: Scene = None
+
+
+@dataclass
+class ButtonReleased:
+    """
+    Fired when a button is released
+    """
+    button: Type[MouseButton]
+    position: Vector  # Scene position
+    # TODO: Add frame position
     scene: Scene = None
 
 

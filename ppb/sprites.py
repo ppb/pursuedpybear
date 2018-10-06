@@ -154,7 +154,6 @@ class BaseSprite(EventMixin):
         self._game_unit_size = None
         self.game_unit_size = size
         self.facing = facing
-        self.blackboard = blackboard or {}
 
     def __setattr__(self, name, value):
         self.__dict__['_dirty'] = True

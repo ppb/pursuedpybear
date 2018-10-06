@@ -31,7 +31,10 @@ class GameEngine(
 
         # Engine State
         self.scenes = []
+        self.events = deque()
         self.event_extensions = defaultdict(dict)
+        self.running = False
+        self.entered = False
 
         # Systems
         self.systems_classes = systems
