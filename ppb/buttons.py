@@ -1,7 +1,7 @@
 from .flags import Flag
 
 
-class MouseButton(Flag):
+class MouseButton(Flag, abstract=True):
     """
     A mouse button
     """
