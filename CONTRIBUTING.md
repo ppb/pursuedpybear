@@ -47,7 +47,8 @@ How did you expect it to work?
 
 In addition to that, we'll want to know how you got there: A link to
 your code, any packages you used with ppb, and a stack trace if there is
-one!
+one! Definitely remember to get the python version with `python
+--version`.
 
 Label it with the label `bug` and one of the contributors will get to it
 soon!
