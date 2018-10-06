@@ -64,9 +64,9 @@ class PygameEventPoller(System):
     def on_update(self, update, signal):
         for pygame_event in pygame.event.get():
             methname = self.event_map.get(pygame_event.type)
-            if methname is not None:
+            if methname is not None:  # Is there a handler for this pygame event?
                 ppbevent = getattr(self, methname)(pygame_event, update.scene)
-                if ppbevent:
+                if ppbevent:  # Did the handler actually produce a ppb event?
                     signal(ppbevent)
 
     def quit(self, event, scene):
@@ -75,10 +75,18 @@ class PygameEventPoller(System):
     def mouse_motion(self, event, scene):
         screen_position = Vector(*event.pos)
         camera = scene.main_camera
-        game_position = camera.translate_to_frame(screen_position)
+        scene_position = camera.translate_to_frame(screen_position)
         delta = Vector(*event.rel) * (1/camera.pixel_ratio)
-        buttons = [bool(x) for x in event.buttons]
-        return events.MouseMotion(game_position, screen_position, delta, buttons)
+        buttons = {
+            self.button_map[btn+1]
+            for btn, value in enumerate(event.buttons)
+            if value
+        }
+        return events.MouseMotion(
+            position=scene_position,
+            screen_position=screen_position,
+            delta=delta,
+            buttons=buttons)
 
     def button_pressed(self, event, scene):
         screen_position = Vector(*event.pos)
