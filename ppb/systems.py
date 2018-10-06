@@ -129,6 +129,7 @@ class Renderer(System):
         self.resolution = resolution
         self.resources = {}
         self.window = None
+        self.pixel_ratio = 80  # TODO: Default this somewhere sensible.
 
     def __enter__(self):
         pygame.init()
@@ -145,6 +146,7 @@ class Renderer(System):
         self.render_background(render_event.scene)
         camera = render_event.scene.main_camera
         camera.viewport_width, camera.viewport_height = self.resolution
+        self.pixel_ratio = camera.pixel_ratio
         for game_object in render_event.scene:
             resource = self.prepare_resource(game_object)
             if resource is None:
@@ -162,8 +164,11 @@ class Renderer(System):
             return None
         if image_name not in self.resources:
             self.register_renderable(game_object)
+
+        source_image = self.resources[game_object.image]
+        final_image = self.resize_image(source_image, game_object.game_unit_size)
         # TODO: Rotate Image to facing.
-        return self.resources[game_object.image]
+        return final_image
 
     def prepare_rectangle(self, resource, game_object, camera):
         rect = resource.get_rect()
@@ -189,6 +194,16 @@ class Renderer(System):
         image_name = renderable.__image__()
         source_path = renderable.__resource_path__()
         self.register(source_path / image_name, image_name)
+
+    def resize_image(self, image, game_unit_size):
+        # TODO: Pygame specific code To be abstracted somehow.
+        height = image.get_height()
+        width = image.get_width()
+        generated_height = self.pixel_ratio * game_unit_size
+        target_ratio = height / generated_height
+        generated_width = width / target_ratio
+        target_resolution = round(generated_width), round(generated_height)
+        return pygame.transform.smoothscale(image, target_resolution)
 
 
 class Updater(System):
