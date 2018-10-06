@@ -8,7 +8,11 @@ class Player(ppb.BaseSprite):
         ... # Set movement, using WASD
 
     def on_button_press(self, event, signal):
-        ... # Create bullet
+        if ...:  # Which mouse button
+            event.scene.add(
+                Bullet(pos=self.position),
+                tags=['bullet']
+            )
 
     def on_update(self, update, signal):
         ... # Execute movement
