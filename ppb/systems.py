@@ -7,6 +7,7 @@ import pygame
 
 import ppb.events as events
 import ppb.flags as flags
+import ppb.buttons as buttons
 from ppb.mouse import Mouse
 from ppb.vector import Vector
 
@@ -35,11 +36,19 @@ class PygameEventPoller(System):
 
     event_map = None
 
+    button_map = {
+        1: buttons.Primary,
+        2: buttons.Tertiary,
+        3: buttons.Secondary,
+    }
+
     def __new__(cls, *args, **kwargs):
         if cls.event_map is None:
             cls.event_map = {
                 pygame.QUIT: "quit",
                 pygame.MOUSEMOTION: "mouse_motion",
+                pygame.MOUSEBUTTONDOWN: "button_pressed",
+                pygame.MOUSEBUTTONUP: "button_released",
             }
         return super().__new__(cls)
 
@@ -69,6 +78,29 @@ class PygameEventPoller(System):
         delta = Vector(*event.rel) * (1/camera.pixel_ratio)
         buttons = [bool(x) for x in event.buttons]
         return events.MouseMotion(game_position, screen_position, delta, buttons)
+
+    def button_pressed(self, event, scene):
+        screen_position = Vector(*event.pos)
+        camera = scene.main_camera
+        game_position = camera.translate_to_frame(screen_position)
+        btn = self.button_map.get(event.button)
+        if btn is not None:
+            return events.ButtonPressed(
+                button=btn,
+                position=game_position,
+            )
+
+    def button_released(self, event, scene):
+        screen_position = Vector(*event.pos)
+        camera = scene.main_camera
+        game_position = camera.translate_to_frame(screen_position)
+        btn = self.button_map.get(event.button)
+        if btn is not None:
+            return events.ButtonReleased(
+                button=btn,
+                position=game_position,
+            )
+
 
 class MouseSystem(System):
     """

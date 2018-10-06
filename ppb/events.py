@@ -5,6 +5,7 @@ from typing import Iterable
 
 from ppb.abc import Scene
 from ppb.vector import Vector
+from .buttons import MouseButton
 
 __all__ = (
     'EventMixin',
@@ -80,6 +81,26 @@ class MouseMotion:
     screen_position: Vector
     delta: Vector
     buttons: Iterable
+    scene: Scene = None
+
+
+@dataclass
+class ButtonPressed:
+    """
+    Fired when a button is pressed
+    """
+    button: MouseButton
+    position: Vector
+    scene: Scene = None
+
+
+@dataclass
+class ButtonReleased:
+    """
+    Fired when a button is pressed
+    """
+    button: MouseButton
+    position: Vector
     scene: Scene = None
 
 
