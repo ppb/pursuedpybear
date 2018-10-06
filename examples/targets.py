@@ -52,8 +52,8 @@ class GameScene(ppb.BaseScene):
         # Set up sprites
         self.add(Player(pos=Vector(0, 0)), tags=['player'])
 
-        # 5 targets in x = -3.75 -> 3.75, give 1/5 margin between targets 
-        for x in (-2.4, -1.2, 0, 1.2, 2.4):
+        # 5 targets in x = -3.75 -> 3.75, with margin
+        for x in (-3, -1.5, 0, 1.5, 3):
             self.add(Target(pos=Vector(x, 1.875)), tags=['target'])
 
 
