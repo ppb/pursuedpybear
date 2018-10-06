@@ -196,6 +196,12 @@ class PygletWindow(System):
 
     ### MOUSE HANDLING ###
 
+    button_map = {
+        pyglet.window.mouse.LEFT: ppb.buttons.Primary,
+        pyglet.window.mouse.MIDDLE: ppb.buttons.Tertiary,
+        pyglet.window.mouse.RIGHT: ppb.buttons.Secondary,
+    }
+
     def on_mouse_motion(self, x, y, dx, dy):
         cam = self.engine.current_scene.main_camera
         p = cam.translate_to_frame(Vector(x, y))
@@ -208,10 +214,11 @@ class PygletWindow(System):
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
         cam = self.engine.current_scene.main_camera
-        btns = set()
-        if buttons & 0b001: btns.add(ppb.buttons.Primary)
-        if buttons & 0b100: btns.add(ppb.buttons.Secondary)
-        if buttons & 0b010: btns.add(ppb.buttons.Tertiary)
+        btns = {
+            v
+            for k, v in self.button_map.items()
+            if buttons & k
+        }
 
         p = cam.translate_to_frame(Vector(x, y))
         d = Vector(dx, dy) * (1 / cam.pixel_ratio)
@@ -220,3 +227,21 @@ class PygletWindow(System):
             delta=d,
             buttons=btns,
         ))
+
+    def on_mouse_press(self, x, y, button, modifiers):
+        cam = self.engine.current_scene.main_camera
+        p = cam.translate_to_frame(Vector(x, y))
+        if button in self.button_map:
+            self.engine.signal(events.ButtonPressed(
+                position=p,
+                button=self.button_map[button],
+            ))
+
+    def on_mouse_release(self, x, y, button, modifiers):
+        cam = self.engine.current_scene.main_camera
+        p = cam.translate_to_frame(Vector(x, y))
+        if button in self.button_map:
+            self.engine.signal(events.ButtonReleased(
+                position=p,
+                button=self.button_map[button],
+            ))
