@@ -30,8 +30,8 @@ class Player(MoverMixin, ppb.BaseSprite):
 
     # Fire a bullet on mouse button press, by just spawning it.
 
-    def on_button_press(self, event, signal):
-        if ...:  # Which mouse button
+    def on_button_pressed(self, event, signal):
+        if event.button is ppb.buttons.Primary:  # Which mouse button
             event.scene.add(
                 Bullet(pos=self.position),
                 tags=['bullet']
@@ -39,7 +39,7 @@ class Player(MoverMixin, ppb.BaseSprite):
 
 
 class Bullet(MoverMixin, ppb.BaseSprite):
-    velocity = Vector(0, 1.0)
+    velocity = Vector(0, 2)
 
     def on_update(self, update, signal):
         super().on_update(update, signal)  # Execute movement
@@ -51,14 +51,14 @@ class Bullet(MoverMixin, ppb.BaseSprite):
         else:
             for target in scene.get(tag='target'):
                 d = (target.position - self.position).length
-                if length <= target.radius:
+                if d <= target.radius:
                     scene.remove(self)
-                    scene.remote(target)
+                    scene.remove(target)
                     break
 
 
 class Target(ppb.BaseSprite):
-    radius = 1
+    radius = 0.5
 
 
 class GameScene(ppb.BaseScene):
