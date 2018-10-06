@@ -8,7 +8,6 @@ import pygame
 import ppb.events as events
 import ppb.flags as flags
 import ppb.buttons as buttons
-from ppb.mouse import Mouse
 from ppb.vector import Vector
 
 default_resolution = 800, 600
@@ -102,50 +101,6 @@ class PygameEventPoller(System):
                 button=btn,
                 position=game_position,
             )
-
-
-class MouseSystem(System):
-    """
-    Mouse system.
-    """
-
-    def __init__(self, *, engine, resolution=default_resolution, **kwargs):
-        self.mouse = Mouse()
-        self.offset = Vector(-0.5 * resolution[0],
-                             -0.5 * resolution[1])
-        engine.register(events.Update, "mouse", self.mouse)
-
-    def activate(self, engine):
-        """Sync mouse with hardware."""
-        buttons = self.get_hardware_buttons()
-        if buttons is not None:
-            self.mouse.buttons = [bool(x) for x in buttons]
-        screen_position = self.get_hardware_position()
-        if screen_position is not None:
-            camera = engine.current_scene.main_camera
-            self.mouse.screen_position = Vector(*screen_position)
-            self.mouse.position = camera.translate_to_frame(self.mouse.screen_position)
-        return []
-
-    def on_mouse_motion(self, mouse_motion_event, signal):
-        self.mouse.buttons = mouse_motion_event.buttons
-        self.mouse.screen_position = mouse_motion_event.screen_position
-        self.mouse.position = mouse_motion_event.position
-
-    def get_hardware_buttons(self) -> Union[Iterable, None]:
-        pass
-
-    def get_hardware_position(self) -> Union[Iterable, None]:
-        pass
-
-
-class PygameMouseSystem(MouseSystem):
-
-    def get_hardware_buttons(self):
-        return pygame.mouse.get_pressed()
-
-    def get_hardware_position(self):
-        return pygame.mouse.get_pos()
 
 
 class Quitter(System):
