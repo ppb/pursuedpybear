@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import logging
 import re
-from typing import Iterable, Collection, Type
+from typing import Iterable, Collection
 
 from ppb.abc import Scene
 from ppb.vector import Vector
@@ -80,7 +80,7 @@ class MouseMotion:
     position: Vector
     screen_position: Vector
     delta: Vector
-    buttons: Collection[Type[MouseButton]]
+    buttons: Collection[MouseButton]
     scene: Scene = None
 
 
@@ -89,7 +89,7 @@ class ButtonPressed:
     """
     Fired when a button is pressed
     """
-    button: Type[MouseButton]
+    button: MouseButton
     position: Vector  # Scene position
     # TODO: Add frame position
     scene: Scene = None
@@ -100,7 +100,7 @@ class ButtonReleased:
     """
     Fired when a button is released
     """
-    button: Type[MouseButton]
+    button: MouseButton
     position: Vector  # Scene position
     # TODO: Add frame position
     scene: Scene = None
