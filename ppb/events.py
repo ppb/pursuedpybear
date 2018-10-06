@@ -97,7 +97,7 @@ class ButtonPressed:
 @dataclass
 class ButtonReleased:
     """
-    Fired when a button is pressed
+    Fired when a button is released
     """
     button: MouseButton
     position: Vector

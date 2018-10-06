@@ -64,9 +64,11 @@ class PygameEventPoller(System):
 
     def on_update(self, update, signal):
         for pygame_event in pygame.event.get():
-            ppb_event = self.event_map.get(pygame_event.type)
-            if ppb_event is not None:
-                signal(getattr(self, ppb_event)(pygame_event, update.scene))
+            methname = self.event_map.get(pygame_event.type)
+            if methname is not None:
+                ppbevent = getattr(self, methname)(pygame_event, update.scene)
+                if ppbevent:
+                    signal(ppbevent)
 
     def quit(self, event, scene):
         return events.Quit()
