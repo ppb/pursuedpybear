@@ -8,6 +8,7 @@ import pyglet
 
 import ppb.events as events
 import ppb.flags as flags
+import ppb.buttons
 from ppb.vector import Vector
 
 default_resolution = 800, 600
@@ -198,24 +199,24 @@ class PygletWindow(System):
     def on_mouse_motion(self, x, y, dx, dy):
         cam = self.engine.current_scene.main_camera
         p = cam.translate_to_frame(Vector(x, y))
-        d = cam.translate_to_frame(Vector(dx, dy))
+        d = Vector(dx, dy) * (1 / cam.pixel_ratio)
         self.engine.signal(events.MouseMotion(
             position=p,
             delta=d,
-            buttons=[False] * 3,
+            buttons=set(),
         ))
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
         cam = self.engine.current_scene.main_camera
-        buttons = [
-            buttons & 0b1,
-            buttons & 0b100,
-            buttons & 0b10,
-        ]
+        btns = set()
+        if buttons & 0b001: btns.add(ppb.buttons.Primary)
+        if buttons & 0b100: btns.add(ppb.buttons.Secondary)
+        if buttons & 0b010: btns.add(ppb.buttons.Tertiary)
+
         p = cam.translate_to_frame(Vector(x, y))
-        d = cam.translate_to_frame(Vector(dx, dy))
+        d = Vector(dx, dy) * (1 / cam.pixel_ratio)
         self.engine.signal(events.MouseMotion(
             position=p,
             delta=d,
-            buttons=buttons,
+            buttons=btns,
         ))
