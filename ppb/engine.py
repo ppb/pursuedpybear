@@ -10,7 +10,6 @@ from ppb.abc import Engine
 from ppb.events import EventMixin
 from ppb.events import Quit
 from ppb.systems import PygameEventPoller
-from ppb.systems import PygameMouseSystem
 from ppb.systems import Renderer
 from ppb.systems import Updater
 from ppb.utils import LoggingMixin
@@ -19,7 +18,7 @@ from ppb.utils import LoggingMixin
 class GameEngine(Engine, EventMixin, LoggingMixin):
 
     def __init__(self, first_scene: Type, *,
-                 systems=(Renderer, Updater, PygameEventPoller, PygameMouseSystem),
+                 systems=(Renderer, Updater, PygameEventPoller),
                  scene_kwargs=None, **kwargs):
 
         super(GameEngine, self).__init__()
