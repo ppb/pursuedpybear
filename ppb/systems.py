@@ -83,23 +83,25 @@ class PygameEventPoller(System):
     def button_pressed(self, event, scene):
         screen_position = Vector(*event.pos)
         camera = scene.main_camera
-        game_position = camera.translate_to_frame(screen_position)
+        scene_position = camera.translate_to_frame(screen_position)
         btn = self.button_map.get(event.button)
         if btn is not None:
             return events.ButtonPressed(
                 button=btn,
-                position=game_position,
+                position=scene_position,
+                # TODO: Add frame position
             )
 
     def button_released(self, event, scene):
         screen_position = Vector(*event.pos)
         camera = scene.main_camera
-        game_position = camera.translate_to_frame(screen_position)
+        scene_position = camera.translate_to_frame(screen_position)
         btn = self.button_map.get(event.button)
         if btn is not None:
             return events.ButtonReleased(
                 button=btn,
-                position=game_position,
+                position=scene_position,
+                # TODO: Add frame position
             )
 
 
