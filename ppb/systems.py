@@ -200,11 +200,14 @@ class Renderer(System):
         # TODO: Pygame specific code To be abstracted somehow.
         height = image.get_height()
         width = image.get_width()
-        generated_height = self.pixel_ratio * game_unit_size
-        target_ratio = height / generated_height
-        generated_width = width / target_ratio
-        target_resolution = round(generated_width), round(generated_height)
-        return pygame.transform.smoothscale(image, target_resolution)
+        return pygame.transform.smoothscale(image, self.target_resolution(width, height, game_unit_size))
+
+    def target_resolution(self, width, height, game_unit_size):
+        values = [width, height]
+        short_side_index = width > height
+        target = self.pixel_ratio * game_unit_size
+        ratio = values[short_side_index] / target
+        return tuple(round(value / ratio) for value in values)
 
 
 class Updater(System):
