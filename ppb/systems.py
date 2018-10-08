@@ -130,6 +130,8 @@ class Renderer(System):
         self.window = None
         self.window_title = window_title
         self.pixel_ratio = 80  # TODO: Default this somewhere sensible.
+        self.resized_images = {}
+        self.old_resized_images = {}
 
     def __enter__(self):
         pygame.init()
@@ -148,6 +150,10 @@ class Renderer(System):
         camera = render_event.scene.main_camera
         camera.viewport_width, camera.viewport_height = self.resolution
         self.pixel_ratio = camera.pixel_ratio
+
+        self.old_resized_images = self.resized_images
+        self.resized_images = {}
+
         for game_object in render_event.scene:
             resource = self.prepare_resource(game_object)
             if resource is None:
@@ -198,9 +204,18 @@ class Renderer(System):
 
     def resize_image(self, image, game_unit_size):
         # TODO: Pygame specific code To be abstracted somehow.
-        height = image.get_height()
-        width = image.get_width()
-        return pygame.transform.smoothscale(image, self.target_resolution(width, height, game_unit_size))
+        key = (image, game_unit_size)
+        resized_image = self.old_resized_images.get(key)
+        if  resized_image is None:
+            height = image.get_height()
+            width = image.get_width()
+            target_resolution = self.target_resolution(width,
+                                                       height,
+                                                       game_unit_size)
+            resized_image = pygame.transform.smoothscale(image,
+                                                         target_resolution)
+        self.resized_images[key] = resized_image
+        return resized_image
 
     def target_resolution(self, width, height, game_unit_size):
         values = [width, height]
