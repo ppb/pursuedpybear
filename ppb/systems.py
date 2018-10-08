@@ -167,7 +167,7 @@ class Renderer(System):
             self.register_renderable(game_object)
 
         source_image = self.resources[game_object.image]
-        final_image = self.resize_image(source_image, game_object.game_unit_size)
+        final_image = self.resize_image(source_image, game_object.size)
         # TODO: Rotate Image to facing.
         return final_image
 
