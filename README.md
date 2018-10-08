@@ -55,6 +55,16 @@ Because `ppb` strongly tries to be extensible and pluggable, each
 hardware extension can provide its own hooks to `ppb`, and you can
 nearly seamlessly switch between various Python libraries.
 
+### Fun
+
+One of the maintainers put it best:
+
+> If it’s not fun to use, we should redo it
+
+ppb is about filing off the rough edges so that the joy of creation and
+discovery are both emphasized. A new user should be able to build their
+first game in a few hours, and continue exploring beyond that.
+
 ## Try it
 
 Install ppb in the standard method:

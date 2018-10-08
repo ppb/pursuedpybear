@@ -7,7 +7,7 @@ import pygame
 
 import ppb.events as events
 import ppb.flags as flags
-from ppb.mouse import Mouse
+import ppb.buttons as buttons
 from ppb.vector import Vector
 
 default_resolution = 800, 600
@@ -35,11 +35,19 @@ class PygameEventPoller(System):
 
     event_map = None
 
+    button_map = {
+        1: buttons.Primary,
+        2: buttons.Tertiary,
+        3: buttons.Secondary,
+    }
+
     def __new__(cls, *args, **kwargs):
         if cls.event_map is None:
             cls.event_map = {
                 pygame.QUIT: "quit",
                 pygame.MOUSEMOTION: "mouse_motion",
+                pygame.MOUSEBUTTONDOWN: "button_pressed",
+                pygame.MOUSEBUTTONUP: "button_released",
             }
         return super().__new__(cls)
 
@@ -55,9 +63,11 @@ class PygameEventPoller(System):
 
     def on_update(self, update, signal):
         for pygame_event in pygame.event.get():
-            ppb_event = self.event_map.get(pygame_event.type)
-            if ppb_event is not None:
-                signal(getattr(self, ppb_event)(pygame_event, update.scene))
+            methname = self.event_map.get(pygame_event.type)
+            if methname is not None:  # Is there a handler for this pygame event?
+                ppbevent = getattr(self, methname)(pygame_event, update.scene)
+                if ppbevent:  # Did the handler actually produce a ppb event?
+                    signal(ppbevent)
 
     def quit(self, event, scene):
         return events.Quit()
@@ -65,53 +75,42 @@ class PygameEventPoller(System):
     def mouse_motion(self, event, scene):
         screen_position = Vector(*event.pos)
         camera = scene.main_camera
-        game_position = camera.translate_to_frame(screen_position)
+        scene_position = camera.translate_to_frame(screen_position)
         delta = Vector(*event.rel) * (1/camera.pixel_ratio)
-        buttons = [bool(x) for x in event.buttons]
-        return events.MouseMotion(game_position, screen_position, delta, buttons)
+        buttons = {
+            self.button_map[btn+1]
+            for btn, value in enumerate(event.buttons)
+            if value
+        }
+        return events.MouseMotion(
+            position=scene_position,
+            screen_position=screen_position,
+            delta=delta,
+            buttons=buttons)
 
-class MouseSystem(System):
-    """
-    Mouse system.
-    """
+    def button_pressed(self, event, scene):
+        screen_position = Vector(*event.pos)
+        camera = scene.main_camera
+        scene_position = camera.translate_to_frame(screen_position)
+        btn = self.button_map.get(event.button)
+        if btn is not None:
+            return events.ButtonPressed(
+                button=btn,
+                position=scene_position,
+                # TODO: Add frame position
+            )
 
-    def __init__(self, *, engine, resolution=default_resolution, **kwargs):
-        self.mouse = Mouse()
-        self.offset = Vector(-0.5 * resolution[0],
-                             -0.5 * resolution[1])
-        engine.register(events.Update, "mouse", self.mouse)
-
-    def activate(self, engine):
-        """Sync mouse with hardware."""
-        buttons = self.get_hardware_buttons()
-        if buttons is not None:
-            self.mouse.buttons = [bool(x) for x in buttons]
-        screen_position = self.get_hardware_position()
-        if screen_position is not None:
-            camera = engine.current_scene.main_camera
-            self.mouse.screen_position = Vector(*screen_position)
-            self.mouse.position = camera.translate_to_frame(self.mouse.screen_position)
-        return []
-
-    def on_mouse_motion(self, mouse_motion_event, signal):
-        self.mouse.buttons = mouse_motion_event.buttons
-        self.mouse.screen_position = mouse_motion_event.screen_position
-        self.mouse.position = mouse_motion_event.position
-
-    def get_hardware_buttons(self) -> Union[Iterable, None]:
-        pass
-
-    def get_hardware_position(self) -> Union[Iterable, None]:
-        pass
-
-
-class PygameMouseSystem(MouseSystem):
-
-    def get_hardware_buttons(self):
-        return pygame.mouse.get_pressed()
-
-    def get_hardware_position(self):
-        return pygame.mouse.get_pos()
+    def button_released(self, event, scene):
+        screen_position = Vector(*event.pos)
+        camera = scene.main_camera
+        scene_position = camera.translate_to_frame(screen_position)
+        btn = self.button_map.get(event.button)
+        if btn is not None:
+            return events.ButtonReleased(
+                button=btn,
+                position=scene_position,
+                # TODO: Add frame position
+            )
 
 
 class Quitter(System):
@@ -125,15 +124,17 @@ class Quitter(System):
 
 class Renderer(System):
 
-    def __init__(self, resolution=default_resolution, **kwargs):
+    def __init__(self, resolution=default_resolution, window_title: str="PursuedPyBear", **kwargs):
         self.resolution = resolution
         self.resources = {}
         self.window = None
+        self.window_title = window_title
         self.pixel_ratio = 80  # TODO: Default this somewhere sensible.
 
     def __enter__(self):
         pygame.init()
         self.window = pygame.display.set_mode(self.resolution)
+        pygame.display.set_caption(self.window_title)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         pygame.quit()

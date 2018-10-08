@@ -6,19 +6,17 @@ def readme():
     with open('README.md') as file:
         return file.read()
 
-backports = []
-
-if sys.version_info < (3, 7):
-    backports += ['dataclasses']
 
 setup(
     name='ppb',
-    version='0.4.0',
+    version='0.4.1',
     packages=['ppb'],
     install_requires=[
         'pygame',
         'ppb-vector',
-    ] + backports,
+        'dataclasses; python_version < "3.7"'
+    ],
+    python_requires=">=3.6",
     url='https://github.com/ppb/pursuedpybear',
     license='Artistic-2.0',
     author='Piper Thunstrom',
