@@ -1,5 +1,6 @@
 from collections import defaultdict
 from collections.abc import Collection
+from numbers import Number
 from typing import Callable
 from typing import Hashable
 from typing import Iterable
@@ -99,7 +100,7 @@ class BaseScene(Scene, EventMixin):
 
     def __init__(self, engine, *, background_color: Sequence[int]=(0, 0, 100),
                  container_class: Type=GameObjectCollection,
-                 set_up: Callable=None, pixel_ratio: Union[int, float]=80,
+                 set_up: Callable=None, pixel_ratio: Number=80,
                  **kwargs):
         super().__init__(engine)
         self.background_color = background_color
