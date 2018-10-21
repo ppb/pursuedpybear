@@ -145,7 +145,7 @@ class PygletWindow(System):
                 sprite.__resource = self._load_resource(img)
                 sprite.__prev_image = img
                 sprite.__sprite.image = sprite.__resource
-            pos = scene.main_camera.translate_to_viewport(sprite.position)
+            pos = sprite.position * scene.main_camera.pixel_ratio
             sprite.__sprite.update(
                 x=pos.x,
                 y=pos.y,
@@ -192,6 +192,9 @@ class PygletWindow(System):
         bg = scene.background_color
         pyglet.gl.glClearColor(bg[0] / 255, bg[1] / 255, bg[2] / 255, 1)
         self.window.clear()
+        gcam = scene.main_camera.translate_to_viewport(Vector(0, 0))
+        pyglet.gl.glLoadIdentity()
+        pyglet.gl.glTranslatef(gcam.x, gcam.y, 0)
         scene.__batch.draw()
 
     ### MOUSE HANDLING ###
