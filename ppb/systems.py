@@ -122,7 +122,7 @@ class PygletWindow(System):
         else:
             # FIXME: The resource path is relative to the source file, use __resource_path__()
             sprite.__resource = self._load_resource(img)
-            pos = scene.main_camera.translate_to_viewport(sprite.position)
+            pos = sprite.position * scene.main_camera.pixel_ratio
             sprite.__sprite = pyglet.sprite.Sprite(
                 img=sprite.__resource,
                 x=pos.x,
