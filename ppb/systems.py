@@ -118,8 +118,30 @@ class Quitter(System):
     System for running test. Limits the engine to a single loop.
     """
 
+    def __init__(self, count=1, **kwargs):
+        self.counter = 0
+        self.count = count
+
     def activate(self, engine):
-        yield events.Quit()
+        self.counter += 1
+        if self.counter >= self.count:
+            yield events.Quit()
+
+
+class FailerSystem(System):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.start = time.monotonic()
+    def activate(self, engine):
+        try:
+            parent = engine.scenes[0]
+        except IndexError:
+            return ()
+        if parent.count > 0 and engine.current_scene != parent:
+            raise AssertionError("ParentScene should not be counting while a child exists.")
+        if time.monotonic() - self.start > 1:
+            raise AssertionError("Ran too long.")
+        return ()
 
 
 class Renderer(System):

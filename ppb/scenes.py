@@ -130,7 +130,9 @@ class BaseScene(Scene, EventMixin):
         """
         Default case, override in subclass as necessary.
         """
-        return self.running, {"scene_class": self.next}
+        next = self.next
+        self.next = None
+        return self.running, {"scene_class": next}
 
     def add(self, game_object: Hashable, tags: Iterable=())-> None:
         """
