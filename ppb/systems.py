@@ -1,7 +1,5 @@
 import random
 import time
-from typing import Union
-from typing import Iterable
 
 import pygame
 

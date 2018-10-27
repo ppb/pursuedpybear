@@ -7,6 +7,7 @@ from pygame import Surface
 from ppb import GameEngine, BaseScene
 from ppb.systems import System
 from ppb.systems import Updater
+from ppb.testutils import Failer
 from ppb.testutils import Quitter
 
 CONTINUE = True
@@ -89,22 +90,16 @@ def test_scene_change():
             if self.count >= 5:
                 self.running = False
 
-    class FailerSystem(System):
-        def __init__(self, **kwargs):
-            super().__init__(**kwargs)
-            self.start = time.monotonic()
-        def activate(self, engine):
-            try:
-                parent = engine.scenes[0]
-            except IndexError:
-                return ()
-            if parent.count > 0 and engine.current_scene != parent:
-                raise AssertionError("ParentScene should not be counting while a child exists.")
-            if time.monotonic() - self.start > 1:
-                raise AssertionError("Ran too long.")
-            return ()
+    def fail(engine):
+        try:
+            parent = engine.scenes[0]
+        except IndexError:
+            return False
+        if parent.count > 0 and engine.current_scene != parent:
+            return True
 
-    engine = GameEngine(ParentScene, systems=[Updater(time_step=0.001), FailerSystem])
+    failer = Failer(fail=fail, message="ParentScene should not be counting while a child exists.")
+    engine = GameEngine(ParentScene, systems=[Updater(time_step=0.001), failer])
     engine.run()
 
 
