@@ -98,11 +98,22 @@ class GameEngine(
         if next_scene:
             self.activate(next_scene)
 
-    def signal(self, event):
+    def signal(self, event, *, queue=True):
+        """
+        Fire an event.
+
+        * event: The event bag
+        * queue: Set to false to handle immediately instead of adding to the
+          event queue
+        """
         event.scene = self.current_scene
         for attr_name, attr_value in self.event_extensions[type(event)].items():
             setattr(event, attr_name, attr_value)
-        pyglet.app.platform_event_loop.post_event(self, '_on_ppb_event', event)
+
+        if queue:
+            pyglet.app.platform_event_loop.post_event(self, '_on_ppb_event', event)
+        else:
+            self._on_ppb_event(event)
 
     # Pyglet Event
     def _on_ppb_event(self, event):
