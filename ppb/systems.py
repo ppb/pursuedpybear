@@ -51,7 +51,7 @@ class Updater(System):
         pyglet.clock.unschedule(self._tick)
 
     def _tick(self, dt):
-        self.engine.signal(events.Update(time_delta=dt))
+        self.engine.signal(events.Update(time_delta=dt), queue=False)
 
 
 class PygletWindow(System):
@@ -183,7 +183,7 @@ class PygletWindow(System):
         self._update_camera(scene)
 
         # 3. Let everything do their frame-level stuff
-        self.engine.signal(events.PreRender())
+        self.engine.signal(events.PreRender(), queue=False)
 
         # 4. Update graphics objects with their game counterparts
         self._scan_scene(scene)
