@@ -1,7 +1,5 @@
 import random
 import time
-from typing import Union
-from typing import Iterable
 
 import pygame
 
@@ -111,15 +109,6 @@ class PygameEventPoller(System):
                 position=scene_position,
                 # TODO: Add frame position
             )
-
-
-class Quitter(System):
-    """
-    System for running test. Limits the engine to a single loop.
-    """
-
-    def activate(self, engine):
-        yield events.Quit()
 
 
 class Renderer(System):
