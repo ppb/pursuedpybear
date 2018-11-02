@@ -1,3 +1,12 @@
+"""
+Key Codes used by the keyboard system.
+
+Note that only base (unshifted) symbols and keys have keycodes.
+
+There is significant variation between layouts of different countries; keys are
+given by their semantic meaning and not by their position. But these are also
+not suitable for text input.
+"""
 import ppb.flags
 
 
@@ -280,7 +289,11 @@ class AltLeft(KeyCode):
 
 
 class Backslash(KeyCode):
-    "\\"
+    """
+    \\
+    
+    Shift+\\ is | on american keyboards
+    """
 
 
 class Backspace(KeyCode):
@@ -288,11 +301,19 @@ class Backspace(KeyCode):
 
 
 class BracketLeft(KeyCode):
-    "["
+    """
+    [
+    
+    Shift+[ is { on american keyboards
+    """
 
 
 class BracketRight(KeyCode):
-    "]"
+    """
+    ]
+    
+    Shift+] is } on american keyboards
+    """
 
 
 class CapsLock(KeyCode):
@@ -300,7 +321,11 @@ class CapsLock(KeyCode):
 
 
 class Comma(KeyCode):
-    ","
+    """
+    ,
+    
+    Shift+, is < on american keyboards
+    """
 
 
 class CtrlLeft(KeyCode):
@@ -328,7 +353,11 @@ class Enter(KeyCode):
 
 
 class Equals(KeyCode):
-    "="
+    """
+    =
+
+    Shift+= is + on american keyboards
+    """
 
 
 class Escape(KeyCode):
@@ -340,7 +369,11 @@ class Function(KeyCode):
 
 
 class Grave(KeyCode):
-    "`, usually to the left of 1 or F1"
+    """
+    `, usually to the left of 1 or F1 on american keyboards.
+
+    Shift+` is ~ on american keyboards
+    """
 
 
 class Home(KeyCode):
@@ -360,7 +393,11 @@ class Menu(KeyCode):
 
 
 class Minus(KeyCode):
-    "-"
+    """
+    -
+    
+    Shift+- is _ on american keyboards
+    """
 
 
 class NumLock(KeyCode):
@@ -376,19 +413,35 @@ class PageUp(KeyCode):
 
 
 class Pause(KeyCode):
-    ""
+    """
+    Pause, generally lives next to Print Screen and Scroll Lock.
+    
+    Also Break.
+    """
 
 
 class Period(KeyCode):
-    "."
+    """
+    .
+    
+    Shift+. is > on american keyboards
+    """
 
 
 class PrintScreen(KeyCode):
-    ""
+    """
+    PrtSc, PrtScrn, etc
+
+    Also System Request/SysReq/SysRq/etc.
+    """
 
 
 class Quote(KeyCode):
-    "'"
+    """
+    ', the single quote
+
+    Shift+' is " on american keyboards
+    """
 
 
 class Right(KeyCode):
@@ -400,7 +453,11 @@ class ScrollLock(KeyCode):
 
 
 class Semicolon(KeyCode):
-    ""
+    """
+    ;
+
+    Shift+; is : on american keyboards
+    """
 
 
 class ShiftLeft(KeyCode):
@@ -412,7 +469,11 @@ class ShiftRight(KeyCode):
 
 
 class Slash(KeyCode):
-    ""
+    """
+    /
+
+    Shift+/ is ? on american keyboards
+    """
 
 
 class Space(KeyCode):
