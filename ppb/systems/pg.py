@@ -208,10 +208,13 @@ class EventPoller(System):
 
     def key_pressed(self, event, scene):
         if event.key in self.key_map:
-            mods = {value for mod, value in self.mod_map.items() if mod & event.mod}
-            return events.KeyPressed(self.key_map[event.key], mods)
+            return events.KeyPressed(key=self.key_map[event.key],
+                                     mods=self.build_mods(event))
 
     def key_released(self, event, scene):
         if event.key in self.key_map:
-            mods = {value for mod, value in self.mod_map.items() if mod & event.mod}
-            return events.KeyReleased(self.key_map[event.key], mods)
+            return events.KeyReleased(key=self.key_map[event.key],
+                                      mods=self.build_mods(event))
+
+    def build_mods(self, event):
+        return {value for mod, value in self.mod_map.items() if mod & event.mod}
