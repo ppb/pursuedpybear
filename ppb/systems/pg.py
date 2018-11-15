@@ -17,7 +17,7 @@ class EventPoller(System):
 
     event_map = None
 
-    button_map = {
+    button_map: Dict[int, buttons.MouseButton] = {
         1: buttons.Primary,
         2: buttons.Tertiary,
         3: buttons.Secondary,
@@ -191,7 +191,5 @@ class EventPoller(System):
             )
 
     def key_pressed(self, event, scene):
-        print("Key pressed")
         if event.key in self.key_map:
-            print(f"{event.key} pressed")
             return events.KeyPressed(self.key_map[event.key]) # Mods!
