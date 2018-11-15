@@ -2,6 +2,7 @@ from dataclasses import dataclass
 import logging
 import re
 from typing import Collection
+from typing import Set
 
 from ppb.abc import Scene
 from ppb.buttons import MouseButton
@@ -100,6 +101,7 @@ class ButtonReleased:
 @dataclass
 class KeyPressed:
     key: KeyCode
+    mods: Set[KeyCode]
     scene: Scene = None
 
 

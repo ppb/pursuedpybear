@@ -113,9 +113,24 @@ class EventPoller(System):
         pygame.K_SLASH: keys.Slash,
         pygame.K_SPACE: keys.Space,
         pygame.K_LSUPER: keys.SuperLeft,
+        pygame.K_LMETA: keys.SuperLeft,
         pygame.K_RSUPER: keys.SuperRight,
+        pygame.K_RMETA: keys.SuperRight,
         pygame.K_TAB: keys.Tab,
         pygame.K_UP: keys.Up,
+    }
+
+    mod_map = {
+        pygame.KMOD_LSHIFT: keys.ShiftLeft,
+        pygame.KMOD_RSHIFT: keys.ShiftRight,
+        pygame.KMOD_LCTRL: keys.CtrlLeft,
+        pygame.KMOD_RCTRL: keys.CtrlRight,
+        pygame.KMOD_LALT: keys.AltLeft,
+        pygame.KMOD_RALT: keys.AltRight,
+        pygame.KMOD_LMETA: keys.SuperLeft,
+        pygame.KMOD_RMETA: keys.SuperRight,
+        pygame.KMOD_NUM: keys.NumLock,
+        pygame.KMOD_CAPS: keys.CapsLock
     }
 
     def __new__(cls, *args, **kwargs):
@@ -192,4 +207,5 @@ class EventPoller(System):
 
     def key_pressed(self, event, scene):
         if event.key in self.key_map:
-            return events.KeyPressed(self.key_map[event.key]) # Mods!
+            mods = {value for mod, value in self.mod_map.items() if mod & event.mod}
+            return events.KeyPressed(self.key_map[event.key], mods) # Mods!
