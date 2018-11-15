@@ -140,7 +140,8 @@ class EventPoller(System):
                 pygame.MOUSEMOTION: "mouse_motion",
                 pygame.MOUSEBUTTONDOWN: "button_pressed",
                 pygame.MOUSEBUTTONUP: "button_released",
-                pygame.KEYDOWN: "key_pressed"
+                pygame.KEYDOWN: "key_pressed",
+                pygame.KEYUP: "key_released"
             }
         return super().__new__(cls)
 
@@ -208,4 +209,9 @@ class EventPoller(System):
     def key_pressed(self, event, scene):
         if event.key in self.key_map:
             mods = {value for mod, value in self.mod_map.items() if mod & event.mod}
-            return events.KeyPressed(self.key_map[event.key], mods) # Mods!
+            return events.KeyPressed(self.key_map[event.key], mods)
+
+    def key_released(self, event, scene):
+        if event.key in self.key_map:
+            mods = {value for mod, value in self.mod_map.items() if mod & event.mod}
+            return events.KeyReleased(self.key_map[event.key], mods)

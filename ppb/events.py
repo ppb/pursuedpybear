@@ -106,6 +106,12 @@ class KeyPressed:
 
 
 @dataclass
+class KeyReleased:
+    key: KeyCode
+    mods: Set[KeyCode]
+    scene: Scene = None
+
+@dataclass
 class MouseMotion:
     """An event to represent mouse motion."""
     position: Vector
