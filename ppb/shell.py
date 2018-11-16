@@ -107,4 +107,4 @@ with ppb.GameEngine(ppb.BaseScene) as eng:
     handler.output = repl.interject
     repl.start()
     eng.run()
-    print("Engine has quit")
+    repl.interject("Engine has quit")
