@@ -2,7 +2,7 @@ from inspect import getfile
 from numbers import Number
 from os.path import realpath
 from pathlib import Path
-from typing import Dict, Iterable, AnyStr, Sequence
+from typing import Dict, Iterable, Sequence
 from typing import Union
 
 from ppb import Vector
@@ -26,7 +26,10 @@ class Side:
         BOTTOM: ('y', 1)
     }
 
-    def __init__(self, parent: 'BaseSprite',side: AnyStr):
+    side: str
+    parent: 'BaseSprite'
+
+    def __init__(self, parent: 'BaseSprite', side: str):
         self.side = side
         self.parent = parent
 
@@ -149,7 +152,7 @@ class BaseSprite(EventMixin):
                  facing: Vector=Vector(0, -1)):
         super().__init__()
         self.position = Vector(*pos)
-        self._offset_value = None
+        self._offset_value = 0
         self._size = None
         self.size = size
         self.facing = facing
