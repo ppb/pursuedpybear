@@ -36,6 +36,7 @@ install:
   - pip install pytest mypy;
   
 script:
-  - export MYPYPATH=/home/travis/build/ppb/pursuedpybear
+  - export MYPYPATH=$(python -c "print(':'.join(p for p in __import__('sys').path if p and not p.endswith('site-packages') and '/usr/lib' not in p and '/opt' not in p))")
+  - python -c "print(':'.join(p for p in __import__('sys').path))"
   - pytest
   - mypy ppb tests
