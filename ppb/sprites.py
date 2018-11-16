@@ -1,5 +1,4 @@
 from inspect import getfile
-from numbers import Number
 from os.path import realpath
 from pathlib import Path
 from typing import Dict, Iterable, Sequence
@@ -213,7 +212,7 @@ class BaseSprite(EventMixin):
         self._size = value
         self._offset_value = self._size / 2
 
-    def rotate(self, degrees: Number):
+    def rotate(self, degrees: float):
         self.facing.rotate(degrees)
 
     def __image__(self):

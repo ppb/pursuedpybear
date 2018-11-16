@@ -70,7 +70,7 @@ class Camera(BaseSprite):
         self._viewport_height = value
         self.viewport_offset = Vector(self.viewport_width / 2, value / 2)
 
-    def point_in_viewport(self, point:Vector) -> bool:
+    def point_in_viewport(self, point: Vector) -> bool:
         px, py = point
         vpx, vpy = self.viewport_origin
         vpw = self.viewport_width
