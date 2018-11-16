@@ -280,7 +280,7 @@ def test_class_attrs():
         position = Vector(4, 2)
 
     sprite = TestSprite()
-    assert sprite.position == (4, 2)
+    assert sprite.position == Vector(4, 2)
 
     sprite = TestSprite(position=(2, 4))
-    assert sprite.position == (2, 4)
+    assert sprite.position == Vector(2, 4)
