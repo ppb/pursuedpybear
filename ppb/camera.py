@@ -76,7 +76,7 @@ class Camera(BaseSprite):
         vpx, vpy = self.viewport_origin
         vpw = self.viewport_width
         vph = self.viewport_height
-        return vpx <= px <= vpw and vpy <= py <= vph
+        return vpx <= px <= (vpw+vpx) and vpy <= py <= (vph+vpy)
 
     def in_frame(self, sprite: BaseSprite) -> bool:
         return (self.frame_left <= sprite.right and
