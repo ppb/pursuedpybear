@@ -1,11 +1,13 @@
 from dataclasses import dataclass
 import logging
 import re
-from typing import Iterable, Collection, Type
+from typing import Collection
+from typing import Set
 
 from ppb.abc import Scene
-from ppb.vector import Vector
 from ppb.buttons import MouseButton
+from ppb.keycodes import KeyCode
+from ppb.vector import Vector
 
 __all__ = (
     'EventMixin',
@@ -75,21 +77,11 @@ class EventMixin:
 # Remember to define scene at the end so the pargs version of __init__() still works
 
 @dataclass
-class MouseMotion:
-    """An event to represent mouse motion."""
-    position: Vector
-    screen_position: Vector
-    delta: Vector
-    buttons: Collection[Type[MouseButton]]
-    scene: Scene = None
-
-
-@dataclass
 class ButtonPressed:
     """
     Fired when a button is pressed
     """
-    button: Type[MouseButton]
+    button: MouseButton
     position: Vector  # Scene position
     # TODO: Add frame position
     scene: Scene = None
@@ -100,9 +92,32 @@ class ButtonReleased:
     """
     Fired when a button is released
     """
-    button: Type[MouseButton]
+    button: MouseButton
     position: Vector  # Scene position
     # TODO: Add frame position
+    scene: Scene = None
+
+
+@dataclass
+class KeyPressed:
+    key: KeyCode
+    mods: Set[KeyCode]
+    scene: Scene = None
+
+
+@dataclass
+class KeyReleased:
+    key: KeyCode
+    mods: Set[KeyCode]
+    scene: Scene = None
+
+@dataclass
+class MouseMotion:
+    """An event to represent mouse motion."""
+    position: Vector
+    screen_position: Vector
+    delta: Vector
+    buttons: Collection[MouseButton]
     scene: Scene = None
 
 
