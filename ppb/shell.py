@@ -5,6 +5,7 @@ import threading
 import logging
 import readline
 import pathlib
+import textwrap
 
 
 class InteractiveConsole(code.InteractiveConsole):
@@ -23,7 +24,7 @@ class InteractiveConsole(code.InteractiveConsole):
              # readline.redisplay() doesn't seem to do anything
             + readline.get_line_buffer()
         )
-        
+
 
 class ReadlineHandler(logging.Handler):
     def __init__(self, *p, **kw):
@@ -46,6 +47,14 @@ class BaseSprite(ppb.BaseSprite):
 
 class ReplThread(threading.Thread):
     banner = """
+    PPB Interactive Console
+
+    Vector, BaseSprite, BaseScene, ppb and several other things are imported.
+
+    current_scene() gets the current scene.
+    signal() injects an event.
+
+    Type "help" for more information.
     """
     def __init__(self, engine):
         super().__init__(name='repl')
@@ -58,7 +67,12 @@ class ReplThread(threading.Thread):
             "__doc__": None,
             "Vector": ppb.Vector,
             "BaseScene": ppb.BaseScene,
-            "BaseSprite": BaseSprite, 
+            "BaseSprite": BaseSprite,
+            "DoNotRender": ppb.flags.DoNotRender,
+            "ppb": ppb,
+            "events": ppb.events,
+            "keycodes": ppb.keycodes,
+            "buttons": ppb.buttons,
             "current_scene": self.get_scene,
             "signal": self.signal,
         }
@@ -75,7 +89,7 @@ class ReplThread(threading.Thread):
         if sys.__interactivehook__ is not None:
             sys.__interactivehook__()
 
-        self.console.interact(banner=self.banner, exitmsg="")
+        self.console.interact(banner=textwrap.dedent(self.banner), exitmsg="")
         self.signal(ppb.events.Quit())
 
     def interject(self, text):
