@@ -150,6 +150,13 @@ class BaseSprite(EventMixin):
 
     def __init__(self, **kwargs):
         super().__init__()
+
+        # Make these instance properties with fresh instances
+        # Don't use Vector.convert() because we need copying
+        self.position = Vector(*self.position)
+        self.facing = Vector(*self.facing)
+
+        # Initialize things
         for k, v in kwargs.items():
             # Abbreviations
             if k == 'pos':
