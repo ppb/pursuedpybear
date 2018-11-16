@@ -37,5 +37,6 @@ install:
   
 script:
   - export MYPYPATH=$(python -c "print(':'.join(p for p in __import__('sys').path if p and not p.endswith('site-packages') and '/usr/lib' not in p))")
+  - echo $MYPYPATH
   - pytest
   - mypy ppb tests
