@@ -10,7 +10,7 @@ class Camera(BaseSprite):
     image = DoNotRender
 
     def __init__(self, viewport: Sequence[int]=(0, 0, 800, 600),
-                 pixel_ratio: Union[int, float]=80):
+                 pixel_ratio: float=80):
         """
 
         viewport: A container of origin x, origin y, width, and
@@ -31,10 +31,6 @@ class Camera(BaseSprite):
         self.viewport_offset = Vector(self.viewport_width / 2,
                                       self.viewport_height / 2)
         self.pixel_ratio = pixel_ratio
-        self.frame_width = self.viewport_width / pixel_ratio
-        self.frame_height = self.viewport_height / pixel_ratio
-        self.half_width = self.frame_width / 2
-        self.half_height = self.frame_height / 2
 
     @property
     def frame_top(self) -> Union[int, float]:
@@ -52,6 +48,21 @@ class Camera(BaseSprite):
     def frame_right(self) -> Union[int, float]:
         return self.position.x + self.half_width
 
+    @property
+    def frame_height(self) -> float:
+        return self.viewport_height / self.pixel_ratio
+
+    @property
+    def frame_width(self) -> float:
+        return self.viewport_width / self.pixel_ratio
+
+    @property
+    def half_height(self) -> float:
+        return self.frame_height / 2
+
+    @property
+    def half_width(self) -> float:
+        return self.frame_width / 2
     @property
     def viewport_width(self) -> int:
         return self._viewport_width

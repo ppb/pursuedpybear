@@ -54,3 +54,10 @@ def test_sprite_in_viewport():
     assert not cam.in_frame(sprite_out)
     assert cam.in_frame(sprite_in)
     assert cam.in_frame(sprite_half_in)
+
+
+def test_viewport_change_affects_frame_height():
+    cam = Camera(viewport=(0, 0, 800, 600), pixel_ratio=80)
+    assert cam.frame_left == -5
+    cam.viewport_width = 400
+    assert cam.frame_left == -2.5
