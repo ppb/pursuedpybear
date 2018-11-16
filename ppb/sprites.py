@@ -144,14 +144,13 @@ class BaseSprite(EventMixin):
     image = None
     resource_path = None
 
-    def __init__(self, size: int=1, pos: Iterable=(0, 0), blackboard: Dict=None, facing: Vector=Vector(0, -1)):
+    def __init__(self, size: int=1, pos: Iterable=(0, 0), facing: Vector=Vector(0, -1)):
         super().__init__()
         self.position = Vector(*pos)
         self._offset_value = None
         self._game_unit_size = None
         self.game_unit_size = size
         self.facing = facing
-        self.blackboard = blackboard or {}
 
     @property
     def center(self) -> Vector:
