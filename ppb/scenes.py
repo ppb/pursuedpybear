@@ -10,7 +10,7 @@ from typing import Type
 from typing import Union
 from typing import Optional
 
-import ppb
+import ppb.engine
 from ppb.camera import Camera
 from ppb.events import EventMixin
 
@@ -100,7 +100,7 @@ class BaseScene(EventMixin):
     # Background color, in RGB, each channel is 0-255
     background_color: Sequence[int] = (0, 0, 100)
     container_class: Type = GameObjectCollection
-    engine: 'ppb.engine.GameEngine'
+    engine: ppb.engine.GameEngine
     running: bool = True
     next: Optional[Type] = None
 

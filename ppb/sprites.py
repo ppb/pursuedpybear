@@ -4,6 +4,7 @@ from os.path import realpath
 from pathlib import Path
 from typing import Dict, Iterable, Sequence
 from typing import Union
+from typing import Optional
 
 from ppb import Vector
 from ppb.events import EventMixin
@@ -145,8 +146,8 @@ class Side:
 
 class BaseSprite(EventMixin):
 
-    image = None
-    resource_path = None
+    image: Optional[str] = None
+    resource_path: Union[str, Path, None] = None
 
     def __init__(self, size: Union[int, float]=1, pos: Iterable=(0, 0),
                  facing: Vector=Vector(0, -1)):
