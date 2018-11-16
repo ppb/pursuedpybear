@@ -21,6 +21,7 @@ class ReplThread(threading.Thread):
             "BaseScene": ppb.BaseScene,
             "BaseSprite": ppb.BaseSprite, 
             "current_scene": self.get_scene,
+            "signal": self.signal,
         }
 
     def signal(self, event):
