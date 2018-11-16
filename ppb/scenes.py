@@ -1,6 +1,5 @@
 from collections import defaultdict
 from collections.abc import Collection
-from numbers import Number
 from typing import Callable
 from typing import Hashable
 from typing import Iterable
@@ -11,6 +10,7 @@ from typing import Type
 from typing import Union
 from typing import Optional
 
+import ppb
 from ppb.camera import Camera
 from ppb.events import EventMixin
 
@@ -105,7 +105,7 @@ class BaseScene(EventMixin):
     next: Optional[Type] = None
 
     def __init__(self, engine, *,                 
-                 set_up: Callable=None, pixel_ratio: Number=80,
+                 set_up: Callable=None, pixel_ratio: Union[int, float]=80,
                  **kwargs):
         self.engine = engine
 
