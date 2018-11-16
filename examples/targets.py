@@ -1,6 +1,7 @@
 import logging
 import ppb
 from ppb import Vector
+from ppb import keycodes
 
 
 class MoverMixin(ppb.BaseSprite):
@@ -16,16 +17,16 @@ class Player(MoverMixin, ppb.BaseSprite):
     left_vector = Vector(-0.5, 0)
     right_vector = Vector(0.5, 0)
 
-    def on_key_press(self, event, signal):
-        if ...: # A or LEFT
+    def on_key_pressed(self, event, signal):
+        if event.key in (keycode.A, keycode.Left):
             self.velocity += self.left_vector
-        elif ...: # D or RIGHT
+        elif event.key in (keycode.D, keycode.Right):
             self.velocity += self.right_vector
 
-    def on_key_release(self, event, signal):
-        if ...: # A or LEFT
+    def on_key_released(self, event, signal):
+        if event.key in (keycode.A, keycode.Left):
             self.velocity -= self.left_vector
-        elif ...: # D or RIGHT
+        elif event.key in (keycode.D, keycode.Right):
             self.velocity -= self.right_vector
 
     # Fire a bullet on mouse button press, by just spawning it.
