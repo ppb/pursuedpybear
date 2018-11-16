@@ -5,9 +5,11 @@ from pathlib import Path
 from typing import Dict, Iterable, Sequence
 from typing import Union
 from typing import Optional
+from typing import Type
 
 from ppb import Vector
 from ppb.events import EventMixin
+from ppb.flags import DoNotRender
 
 
 TOP = "top"
@@ -146,7 +148,7 @@ class Side:
 
 class BaseSprite(EventMixin):
 
-    image: Optional[str] = None
+    image: Union[str, Type[DoNotRender], None] = None
     resource_path: Union[str, Path, None] = None
 
     def __init__(self, size: Union[int, float]=1, pos: Iterable=(0, 0),

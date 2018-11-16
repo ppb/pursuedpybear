@@ -3,6 +3,7 @@ import logging
 import re
 from typing import Collection
 from typing import Set
+from typing import Optional
 
 __all__ = (
     'EventMixin',
@@ -83,7 +84,7 @@ class ButtonPressed:
     button: MouseButton
     position: Vector  # Scene position
     # TODO: Add frame position
-    scene: BaseScene = None
+    scene: Optional[BaseScene] = None
 
 
 @dataclass
@@ -94,21 +95,21 @@ class ButtonReleased:
     button: MouseButton
     position: Vector  # Scene position
     # TODO: Add frame position
-    scene: BaseScene = None
+    scene: Optional[BaseScene] = None
 
 
 @dataclass
 class KeyPressed:
     key: KeyCode
     mods: Set[KeyCode]
-    scene: BaseScene = None
+    scene: Optional[BaseScene] = None
 
 
 @dataclass
 class KeyReleased:
     key: KeyCode
     mods: Set[KeyCode]
-    scene: BaseScene = None
+    scene: Optional[BaseScene] = None
 
 @dataclass
 class MouseMotion:
@@ -117,7 +118,7 @@ class MouseMotion:
     screen_position: Vector
     delta: Vector
     buttons: Collection[MouseButton]
-    scene: BaseScene = None
+    scene: Optional[BaseScene] = None
 
 
 @dataclass
@@ -125,7 +126,7 @@ class PreRender:
     """
     Fired before rendering.
     """
-    scene: BaseScene = None
+    scene: Optional[BaseScene] = None
 
 
 @dataclass
@@ -133,7 +134,7 @@ class Quit:
     """
     Fired on an OS Quit event.
     """
-    scene: BaseScene = None
+    scene: Optional[BaseScene] = None
 
 
 @dataclass
@@ -141,7 +142,7 @@ class Render:
     """
     Fired at render.
     """
-    scene: BaseScene = None
+    scene: Optional[BaseScene] = None
 
 
 @dataclass
@@ -150,4 +151,4 @@ class Update:
     Fired on game tick
     """
     time_delta: float
-    scene: BaseScene = None
+    scene: Optional[BaseScene] = None
