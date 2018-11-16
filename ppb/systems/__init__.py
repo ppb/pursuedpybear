@@ -34,7 +34,7 @@ class Renderer(System):
         self.resources = {}
         self.window = None
         self.window_title = window_title
-        self.pixel_ratio = 80  # TODO: Default this somewhere sensible.
+        self.pixel_ratio = None
         self.resized_images = {}
         self.old_resized_images = {}
 
