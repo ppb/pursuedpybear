@@ -44,7 +44,7 @@ def test_sprite_in_viewport():
     class Thing(BaseSprite):
         def __init__(self, position=Vector(2, 2)):
             super().__init__()
-            self.game_unit_size = 2
+            self.size = 2
             self.position = position
 
     sprite_in = Thing(Vector(-3, -1))
