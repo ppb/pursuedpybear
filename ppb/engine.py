@@ -5,8 +5,9 @@ from itertools import chain
 import time
 from typing import Callable
 from typing import Type
+from typing import Mapping
+from typing import Any
 
-from ppb.abc import Engine
 from ppb.events import EventMixin
 from ppb.events import Quit
 from ppb.systems import PygameEventPoller
@@ -15,7 +16,11 @@ from ppb.systems import Updater
 from ppb.utils import LoggingMixin
 
 
-class GameEngine(Engine, EventMixin, LoggingMixin):
+class GameEngine(EventMixin, LoggingMixin):
+    scenes: list
+    events: deque
+    event_extensions: Mapping[Type, Mapping[str, Any]]
+    systems: list
 
     def __init__(self, first_scene: Type, *,
                  systems=(Renderer, Updater, PygameEventPoller),

@@ -1,5 +1,6 @@
 import random
 import time
+import typing
 
 import pygame
 
@@ -28,6 +29,9 @@ from ppb.systems.pg import EventPoller as PygameEventPoller  # To not break old 
 
 
 class Renderer(System):
+    resources: typing.Mapping[str, typing.Any]
+    resized_images: typing.Mapping[str, typing.Any]
+    old_resized_images: typing.Mapping[str, typing.Any]
 
     def __init__(self, resolution=default_resolution, window_title: str="PursuedPyBear", **kwargs):
         self.resolution = resolution

@@ -33,7 +33,10 @@ before_install:
 
 install:
   - pip install -e .;
-  - pip install pytest;
+  - pip install pytest mypy;
   
 script:
+  - python -c "print(':'.join(p for p in __import__('sys').path))"
+  - export MYPYPATH=/home/travis/virtualenv/python3.6.3/lib/python3.6:/home/travis/build/ppb/pursuedpybear
   - pytest
+  - mypy ppb tests

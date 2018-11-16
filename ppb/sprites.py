@@ -1,12 +1,15 @@
 from inspect import getfile
-from numbers import Number
 from os.path import realpath
 from pathlib import Path
-from typing import Dict, Iterable, AnyStr, Sequence
+from typing import Dict, Iterable, Sequence
 from typing import Union
+from typing import Optional
+from typing import Type
+from typing import Any
 
 from ppb import Vector
 from ppb.events import EventMixin
+from ppb.flags import DoNotRender
 
 
 TOP = "top"
@@ -26,7 +29,10 @@ class Side:
         BOTTOM: ('y', 1)
     }
 
-    def __init__(self, parent: 'BaseSprite',side: AnyStr):
+    side: str
+    parent: 'BaseSprite'
+
+    def __init__(self, parent: 'BaseSprite', side: str):
         self.side = side
         self.parent = parent
 
@@ -142,14 +148,14 @@ class Side:
 
 class BaseSprite(EventMixin):
 
-    image = None
-    resource_path = None
+    image: Union[str, Any, None] = None  # Any is actually DoNotRender
+    resource_path: Union[str, Path, None] = None
 
     def __init__(self, size: Union[int, float]=1, pos: Iterable=(0, 0),
                  facing: Vector=Vector(0, -1)):
         super().__init__()
         self.position = Vector(*pos)
-        self._offset_value = None
+        self._offset_value = 0
         self._size = None
         self.size = size
         self.facing = facing
@@ -206,7 +212,7 @@ class BaseSprite(EventMixin):
         self._size = value
         self._offset_value = self._size / 2
 
-    def rotate(self, degrees: Number):
+    def rotate(self, degrees: float):
         self.facing.rotate(degrees)
 
     def __image__(self):

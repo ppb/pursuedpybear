@@ -1,6 +1,5 @@
 from typing import Sequence
 from typing import Union
-from numbers import Number
 
 from ppb import Vector
 from ppb.sprites import BaseSprite
@@ -34,19 +33,19 @@ class Camera(BaseSprite):
         self.pixel_ratio = pixel_ratio
 
     @property
-    def frame_top(self) -> Number:
+    def frame_top(self) -> Union[int, float]:
         return self.position.y - self.half_height
 
     @property
-    def frame_bottom(self) -> Number:
+    def frame_bottom(self) -> Union[int, float]:
         return self.position.y + self.half_height
 
     @property
-    def frame_left(self) -> Number:
+    def frame_left(self) -> Union[int, float]:
         return self.position.x - self.half_width
 
     @property
-    def frame_right(self) -> Number:
+    def frame_right(self) -> Union[int, float]:
         return self.position.x + self.half_width
 
     @property
@@ -82,7 +81,7 @@ class Camera(BaseSprite):
         self._viewport_height = value
         self.viewport_offset = Vector(self.viewport_width / 2, value / 2)
 
-    def point_in_viewport(self, point:Vector) -> bool:
+    def point_in_viewport(self, point: Vector) -> bool:
         px, py = point
         vpx, vpy = self.viewport_origin
         vpw = self.viewport_width

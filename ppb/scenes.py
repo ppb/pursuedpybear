@@ -1,6 +1,5 @@
 from collections import defaultdict
 from collections.abc import Collection
-from numbers import Number
 from typing import Callable
 from typing import Hashable
 from typing import Iterable
@@ -9,8 +8,9 @@ from typing import Sequence
 from typing import Tuple
 from typing import Type
 from typing import Union
+from typing import Optional
 
-from ppb.abc import Scene
+import ppb.engine
 from ppb.camera import Camera
 from ppb.events import EventMixin
 
@@ -96,15 +96,19 @@ class GameObjectCollection(Collection):
             s.discard(game_object)
 
 
-class BaseScene(Scene, EventMixin):
+class BaseScene(EventMixin):
     # Background color, in RGB, each channel is 0-255
     background_color: Sequence[int] = (0, 0, 100)
     container_class: Type = GameObjectCollection
+    engine: 'ppb.engine.GameEngine'
+    running: bool = True
+    next: Optional[Type] = None
 
     def __init__(self, engine, *,                 
-                 set_up: Callable=None, pixel_ratio: Number=80,
+                 set_up: Callable=None, pixel_ratio: Union[int, float]=80,
                  **kwargs):
-        super().__init__(engine)
+        self.engine = engine
+
         for k, v in kwargs.items():
             setattr(self, k, v)
 
