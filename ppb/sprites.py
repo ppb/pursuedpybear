@@ -141,18 +141,26 @@ class Side:
 
 
 class BaseSprite(EventMixin):
-
     image = None
     resource_path = None
+    position: Vector = Vector(0, 0)
+    facing: Vector = Vector(0, -1)
+    _size: Union[int, float] = 1
+    _offset_value = None
 
-    def __init__(self, size: Union[int, float]=1, pos: Iterable=(0, 0),
-                 facing: Vector=Vector(0, -1)):
+    def __init__(self, **kwargs):
         super().__init__()
-        self.position = Vector(*pos)
-        self._offset_value = None
-        self._size = None
-        self.size = size
-        self.facing = facing
+        for k, v in kwargs.items():
+            # Abbreviations
+            if k == 'pos':
+                k = 'position'
+            # Castings
+            if k in ('position', 'facing'):
+                v = Vector(*v)  # Vector.convert() when that ships.
+            setattr(self, k, v)
+
+        # Trigger some calculations
+        self.size = self.size
 
     @property
     def center(self) -> Vector:
@@ -198,11 +206,11 @@ class BaseSprite(EventMixin):
         self.position.y = value - self._offset_value
 
     @property
-    def size(self):
+    def size(self) -> Union[int, float]:
         return self._size
 
     @size.setter
-    def size(self, value):
+    def size(self, value: Union[int, float]):
         self._size = value
         self._offset_value = self._size / 2
 
