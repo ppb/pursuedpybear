@@ -3,6 +3,30 @@ import code
 import ppb
 import threading
 import logging
+import readline
+import pathlib
+
+
+class ReadlineHandler(logging.StreamHandler):
+    def emit(self, record):
+        # Blatently stolen from logging.StreamHandler.emit()
+
+        # ANSI for "move to the begining of the line, then erase it"
+        self.stream.write("\r\x1B[2K")
+        
+        try:
+            msg = self.format(record)
+            self.stream.write(msg + self.terminator)
+            self.flush()
+
+        except Exception:
+            self.handleError(record)
+
+        readline.redisplay()
+
+
+class BaseSprite(ppb.BaseSprite):
+    resource_path = pathlib.Path.cwd()
 
 
 class ReplThread(threading.Thread):
@@ -19,7 +43,7 @@ class ReplThread(threading.Thread):
             "__doc__": None,
             "Vector": ppb.Vector,
             "BaseScene": ppb.BaseScene,
-            "BaseSprite": ppb.BaseSprite, 
+            "BaseSprite": BaseSprite, 
             "current_scene": self.get_scene,
             "signal": self.signal,
         }
@@ -40,7 +64,7 @@ class ReplThread(threading.Thread):
         self.signal(ppb.events.Quit())
 
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, handlers=[ReadlineHandler()])
 
 with ppb.GameEngine(ppb.BaseScene) as eng:
     repl = ReplThread(eng)
