@@ -25,14 +25,19 @@ class TestScene(ppb.BaseScene):
         self.start_time = time.monotonic()
 
     def on_update(self, event, signal):
-        # Fires at the update rate (~60 times a second)
+        """
+        Fires at the update rate (~60 times a second)
+        """
         t = time.monotonic() - self.start_time
         if t >= self.duration:
             signal(ppb.events.Quit())
 
     def on_pre_render(self, event, signal):
-        # Fires each frame, which varies from the update rate
-        # We minimize the amount of work done here to maximize framerate
+        """
+        Fires each frame.
+
+        The frame rate is variable and different from the update rate.
+        """
         t = time.monotonic() - self.start_time
         self.frames += 1
         print(f"Frame {self.frames} rendered at {t}")
