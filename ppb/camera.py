@@ -1,6 +1,5 @@
 from typing import Sequence
 from typing import Union
-from numbers import Number
 
 from ppb import Vector
 from ppb.sprites import BaseSprite
@@ -11,7 +10,7 @@ class Camera(BaseSprite):
     image = DoNotRender
 
     def __init__(self, viewport: Sequence[int]=(0, 0, 800, 600),
-                 pixel_ratio: Number=80):
+                 pixel_ratio: Union[int, float]=80):
         """
 
         viewport: A container of origin x, origin y, width, and
@@ -38,36 +37,36 @@ class Camera(BaseSprite):
         self.half_height = self.frame_height / 2
 
     @property
-    def frame_top(self) -> Number:
+    def frame_top(self) -> Union[int, float]:
         return self.position.y - self.half_height
 
     @property
-    def frame_bottom(self) -> Number:
+    def frame_bottom(self) -> Union[int, float]:
         return self.position.y + self.half_height
 
     @property
-    def frame_left(self) -> Number:
+    def frame_left(self) -> Union[int, float]:
         return self.position.x - self.half_width
 
     @property
-    def frame_right(self) -> Number:
+    def frame_right(self) -> Union[int, float]:
         return self.position.x + self.half_width
 
     @property
-    def viewport_width(self) -> Number:
+    def viewport_width(self) -> int:
         return self._viewport_width
 
     @viewport_width.setter
-    def viewport_width(self, value: Number):
+    def viewport_width(self, value: int):
         self._viewport_width = value
         self.viewport_offset = Vector(value / 2, self.viewport_height / 2)
 
     @property
-    def viewport_height(self) -> Number:
+    def viewport_height(self) -> int:
         return self._viewport_height
 
     @viewport_height.setter
-    def viewport_height(self, value: Number):
+    def viewport_height(self, value: int):
         self._viewport_height = value
         self.viewport_offset = Vector(self.viewport_width / 2, value / 2)
 
