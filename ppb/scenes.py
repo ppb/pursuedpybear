@@ -102,7 +102,7 @@ class BaseScene(Scene, EventMixin):
     container_class: Type = GameObjectCollection
 
     def __init__(self, engine, *,                 
-                 set_up: Callable=None, pixel_ratio: Number=80,
+                 set_up: Callable=None, pixel_ratio: Number=64,
                  **kwargs):
         super().__init__(engine)
         for k, v in kwargs.items():
