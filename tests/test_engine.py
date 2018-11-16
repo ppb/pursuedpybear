@@ -25,7 +25,6 @@ class TestEngine(unittest.TestCase):
         mock_scene.background_color = (0, 0, 0)
         mock_scene_class = mock.Mock(spec=BaseScene, return_value=mock_scene)
         engine = GameEngine(mock_scene_class)
-        engine.display = mock.Mock(spec=Surface)
         engine.start()
         self.assertIs(engine.current_scene, mock_scene)
 
@@ -38,7 +37,6 @@ class TestEngineSceneActivate(unittest.TestCase):
         self.mock_scene.background_color = (0, 0, 0)
         self.mock_scene_class = mock.Mock(return_value=self.mock_scene)
         self.engine = GameEngine(self.mock_scene_class)
-        self.engine.display = mock.Mock(spec=Surface)
         self.engine.start()
 
     def test_continue_running(self):

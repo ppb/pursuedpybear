@@ -4,11 +4,6 @@ import re
 from typing import Collection
 from typing import Set
 
-from ppb.abc import Scene
-from ppb.buttons import MouseButton
-from ppb.keycodes import KeyCode
-from ppb.vector import Vector
-
 __all__ = (
     'EventMixin',
     'PreRender',
@@ -73,9 +68,13 @@ class EventMixin:
                 else:
                     raise
 
+# Import these late so we don't have circular import problems.
+from ppb.buttons import MouseButton
+from ppb.keycodes import KeyCode
+from ppb.vector import Vector
+from ppb.scenes import BaseScene
 
 # Remember to define scene at the end so the pargs version of __init__() still works
-
 @dataclass
 class ButtonPressed:
     """
@@ -84,7 +83,7 @@ class ButtonPressed:
     button: MouseButton
     position: Vector  # Scene position
     # TODO: Add frame position
-    scene: Scene = None
+    scene: BaseScene = None
 
 
 @dataclass
@@ -95,21 +94,21 @@ class ButtonReleased:
     button: MouseButton
     position: Vector  # Scene position
     # TODO: Add frame position
-    scene: Scene = None
+    scene: BaseScene = None
 
 
 @dataclass
 class KeyPressed:
     key: KeyCode
     mods: Set[KeyCode]
-    scene: Scene = None
+    scene: BaseScene = None
 
 
 @dataclass
 class KeyReleased:
     key: KeyCode
     mods: Set[KeyCode]
-    scene: Scene = None
+    scene: BaseScene = None
 
 @dataclass
 class MouseMotion:
@@ -118,7 +117,7 @@ class MouseMotion:
     screen_position: Vector
     delta: Vector
     buttons: Collection[MouseButton]
-    scene: Scene = None
+    scene: BaseScene = None
 
 
 @dataclass
@@ -126,7 +125,7 @@ class PreRender:
     """
     Fired before rendering.
     """
-    scene: Scene = None
+    scene: BaseScene = None
 
 
 @dataclass
@@ -134,7 +133,7 @@ class Quit:
     """
     Fired on an OS Quit event.
     """
-    scene: Scene = None
+    scene: BaseScene = None
 
 
 @dataclass
@@ -142,7 +141,7 @@ class Render:
     """
     Fired at render.
     """
-    scene: Scene = None
+    scene: BaseScene = None
 
 
 @dataclass
@@ -151,4 +150,4 @@ class Update:
     Fired on game tick
     """
     time_delta: float
-    scene: Scene = None
+    scene: BaseScene = None
