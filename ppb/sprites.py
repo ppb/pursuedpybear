@@ -6,6 +6,7 @@ from typing import Dict, Iterable, Sequence
 from typing import Union
 from typing import Optional
 from typing import Type
+from typing import Any
 
 from ppb import Vector
 from ppb.events import EventMixin
@@ -148,7 +149,7 @@ class Side:
 
 class BaseSprite(EventMixin):
 
-    image: Union[str, Type[DoNotRender], None] = None
+    image: Union[str, Any, None] = None  # Any is actually DoNotRender
     resource_path: Union[str, Path, None] = None
 
     def __init__(self, size: Union[int, float]=1, pos: Iterable=(0, 0),
