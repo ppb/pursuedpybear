@@ -7,22 +7,37 @@ import readline
 import pathlib
 
 
-class ReadlineHandler(logging.StreamHandler):
+class InteractiveConsole(code.InteractiveConsole):
+    last_prompt = ""
+
+    def raw_input(self, prompt):
+        self.last_prompt = prompt
+        return super().raw_input(prompt)
+
+    def interject(self, text):
+        sys.stdout.write(
+            "\r\x1B[2K"  # ANSI for "move to the begining of the line, then erase it"
+            + text
+            + "\n"
+            + self.last_prompt
+             # readline.redisplay() doesn't seem to do anything
+            + readline.get_line_buffer()
+        )
+        
+
+class ReadlineHandler(logging.Handler):
+    def __init__(self, *p, **kw):
+        super().__init__(*p, **kw)
+        self.output = print
+
     def emit(self, record):
         # Blatently stolen from logging.StreamHandler.emit()
-
-        # ANSI for "move to the begining of the line, then erase it"
-        self.stream.write("\r\x1B[2K")
-        
         try:
             msg = self.format(record)
-            self.stream.write(msg + self.terminator)
-            self.flush()
+            self.output(msg)
 
         except Exception:
             self.handleError(record)
-
-        readline.redisplay()
 
 
 class BaseSprite(ppb.BaseSprite):
@@ -56,18 +71,26 @@ class ReplThread(threading.Thread):
 
     def run(self):
         # Stolen from stdlib code.interact()
-        console = code.InteractiveConsole(self.locals)
+        self.console = InteractiveConsole(self.locals)
         if sys.__interactivehook__ is not None:
             sys.__interactivehook__()
 
-        console.interact(banner=self.banner, exitmsg="")
+        self.console.interact(banner=self.banner, exitmsg="")
         self.signal(ppb.events.Quit())
 
+    def interject(self, text):
+        if self.console is None:
+            print(text)
+        else:
+            self.console.interject(text)
 
-logging.basicConfig(level=logging.INFO, handlers=[ReadlineHandler()])
+
+handler = ReadlineHandler()
+logging.basicConfig(level=logging.INFO, handlers=[handler])
 
 with ppb.GameEngine(ppb.BaseScene) as eng:
     repl = ReplThread(eng)
+    handler.output = repl.interject
     repl.start()
     eng.run()
     print("Engine has quit")
