@@ -36,7 +36,7 @@ install:
   - pip install pytest mypy;
   
 script:
-  - export MYPYPATH=$(python -c "print(':'.join(p for p in __import__('sys').path if p and '/opt' not in p and '.zip' not in p))")
+  - export MYPYPATH=$(python -c "print(':'.join(p for p in __import__('sys').path if p and 'site-packages' not in p and '/opt' not in p and '.zip' not in p))")
   - python -c "print(':'.join(p for p in __import__('sys').path))"
   - pytest
   - mypy ppb tests
