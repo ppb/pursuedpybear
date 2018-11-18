@@ -12,8 +12,6 @@ from ppb.abc import Engine
 from ppb.events import ChangeScene
 from ppb.events import EventMixin
 from ppb.events import Quit
-from ppb.events import SceneStart
-from ppb.events import ScenePause
 from ppb.systems import PygameEventPoller
 from ppb.systems import Renderer
 from ppb.systems import Updater
@@ -130,34 +128,47 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         Start a new scene. The current scene pauses.
         """
         # Empty the queue to limit the amount that can happen after a change.
-        self.events = deque()
-        signal(ScenePause())
-        self.publish()  # Let the scene and it's objects clean up for the pause.
-
-        if event.kwargs:
-            scene = event.new_scene(self, **event.kwargs)
-        else:
-            scene = event.new_scene
-        self.scenes.append(scene)
-
-        signal(SceneStart())  # This will be the only thing on the queue.
+        self.pause_scene()
+        self.start_scene(event.new_scene, **event.kwargs)
 
     def on_stop_scene(self, event: events.StopScene, signal: Callable[[Any], None]):
         """
         Stop a running scene. If there's a scene on the stack, it resumes.
         """
-        # Empty the queue before changing scenes.
-        self.events = deque()
-        signal(events.SceneStopped())
-        self.publish()
-        self.scenes.pop()
+        self.stop_scene()
         if self.current_scene is not None:
             signal(events.SceneContinued())
         else:
             signal(events.Quit())
 
+    def on_replace_scene(self, event: events.ReplaceScene, signal):
+        """
+        Replace the running scene with a new one.
+        """
+        self.stop_scene()
+        self.start_scene(event.new_scene, **event.kwargs)
+
     def on_quit(self, quit_event: Quit, signal: Callable[[Any], None]):
         self.running = False
+
+    def pause_scene(self):
+        # Empty the queue before changing scenes.
+        self.events = deque()
+        self.signal(events.ScenePaused())
+        self.publish()
+
+    def stop_scene(self):
+        # Empty the queue before changing scenes.
+        self.events = deque()
+        self.signal(events.SceneStopped())
+        self.publish()
+        self.scenes.pop()
+
+    def start_scene(self, scene, **kwargs):
+        if kwargs:
+            scene = scene(self, **kwargs)
+        self.scenes.append(scene)
+        self.signal(events.SceneStart())
 
     def register(self, event_type, attribute, value):
         self.event_extensions[event_type][attribute] = value

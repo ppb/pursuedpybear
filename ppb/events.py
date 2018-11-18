@@ -172,6 +172,23 @@ class Render:
 
 
 @dataclass
+class ReplaceScene:
+    """
+    Fired to replace the current scene with a new one.
+
+    new_scene can be an instance or a class. If a class, must include kwargs.
+    If an instance kwargs must be falsey, default is None.
+
+    Examples:
+        * `signal(new_scene=ChangeScene(MyScene(player=player))`
+        * `signal(new_scene=ChanngeScene, kwargs={"player": player}`
+    """
+    new_scene: Union[BaseScene, Type[BaseScene]]
+    kwargs: Dict[str, Any] = None
+    scene: BaseScene = None
+
+
+@dataclass
 class SceneContinued:
     """
     Fired when a paused scene continues.
