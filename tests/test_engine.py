@@ -113,7 +113,6 @@ def test_scene_change_no_new():
             self.running = False
 
         def change(self):
-            print(self.running)
             return super().change()
 
     failer = Failer(fail=lambda n: False, message="Will only time out.")
@@ -153,19 +152,60 @@ def test_contexts():
     assert system.exited
 
 
-@pytest.mark.skip
 def test_change_scene_event():
-    assert False
+
+    pause_was_run = mock.Mock()
+    scene_start_called = mock.Mock()
+
+    class FirstScene(BaseScene):
+
+        def on_update(self, event, signal):
+            signal(events.ChangeScene(new_scene=SecondScene(ge)))
+
+        def on_scene_paused(self, event, signal):
+            assert event.scene is self
+            pause_was_run()
+
+    class SecondScene(BaseScene):
+
+        def on_scene_started(self, event, signal):
+            assert event.scene == self
+            scene_start_called()
+            signal(events.Quit())
+
+    class Tester(System):
+        listening = False
+
+        def activate(self, engine):
+            if self.listening:
+                assert isinstance(engine.current_scene, SecondScene)
+                assert len(engine.scenes) == 2
+            return ()
+
+        def on_scene_paused(self, event, signal):
+            self.listening = True
+
+    with GameEngine(FirstScene, systems=[Updater, Tester]) as ge:
+        ge.run()
+
+    pause_was_run.assert_called()
+    scene_start_called.assert_called()
 
 
 def test_replace_scene_event():
+
     class FirstScene(BaseScene):
 
         def on_update(self, event, signal):
             signal(events.ReplaceScene(new_scene=SecondScene(ge)))
 
+        def on_scene_stopped(self, event, signal):
+            assert event.scene is self
+
     class SecondScene(BaseScene):
-        pass
+
+        def on_scene_started(self, event, signal):
+            assert event.scene is self
 
     class TestFailer(Failer):
 
@@ -198,6 +238,7 @@ def test_stop_scene_event():
             signal(events.StopScene())
 
         def on_scene_stopped(self, event, signal):
+            assert event.scene is self
             test_function()
 
     failer = Failer(fail=lambda x: False, message="Will only time out.")
