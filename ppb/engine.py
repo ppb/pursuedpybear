@@ -3,12 +3,16 @@ from collections import deque
 from contextlib import ExitStack
 from itertools import chain
 import time
+from typing import Any
 from typing import Callable
 from typing import Type
 
 from ppb.abc import Engine
+from ppb.events import ChangeScene
 from ppb.events import EventMixin
 from ppb.events import Quit
+from ppb.events import SceneStart
+from ppb.events import ScenePause
 from ppb.systems import PygameEventPoller
 from ppb.systems import Renderer
 from ppb.systems import Updater
@@ -120,7 +124,24 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         if next_scene:
             self.activate(next_scene)
 
-    def on_quit(self, quit_event: 'Quit', signal: Callable):  #TODO: Look up syntax for Callable typing.
+    def on_change_scene(self, event: ChangeScene, signal: Callable[[Any], None]):
+        """
+        Start a new scene. The current scene pauses.
+        """
+        # Empty the queue to limit the amount that can happen after a change.
+        self.events = deque()
+        signal(ScenePause())
+        self.publish()  # Let the scene and it's objects clean up for the pause.
+
+        if event.kwargs:
+            scene = event.new_scene(self, **event.kwargs)
+        else:
+            scene = event.new_scene
+        self.scenes.append(scene)
+
+        signal(SceneStart())  # This will be the only thing on the queue.
+
+    def on_quit(self, quit_event: Quit, signal: Callable[[Any], None]):
         self.running = False
 
     def register(self, event_type, attribute, value):

@@ -1,19 +1,27 @@
 from dataclasses import dataclass
 import logging
 import re
+from typing import Any
 from typing import Collection
+from typing import Dict
 from typing import Set
+from typing import Type
+from typing import Union
 
 from ppb.abc import Scene
 from ppb.buttons import MouseButton
 from ppb.keycodes import KeyCode
+from ppb.scenes import BaseScene
 from ppb.vector import Vector
 
 __all__ = (
+    'ChangeScene',
     'EventMixin',
     'PreRender',
     'Quit',
     'Render',
+    'ScenePause',
+    'SceneStart',
     'Update',
 )
 
@@ -99,6 +107,23 @@ class ButtonReleased:
 
 
 @dataclass
+class ChangeScene:
+    """
+    Fired to start a new scene.
+
+    new_scene can be an instance or a class. If a class, must include kwargs.
+    If an instance kwargs must be falsey, default is None.
+
+    Examples:
+        * `signal(new_scene=ChangeScene(MyScene(player=player))`
+        * `signal(new_scene=ChanngeScene, kwargs={"player": player}`
+    """
+    new_scene: Union[BaseScene, Type[BaseScene]]
+    kwargs: Dict[str, Any] = None
+    scene: BaseScene = None
+
+
+@dataclass
 class KeyPressed:
     key: KeyCode
     mods: Set[KeyCode]
@@ -110,6 +135,7 @@ class KeyReleased:
     key: KeyCode
     mods: Set[KeyCode]
     scene: Scene = None
+
 
 @dataclass
 class MouseMotion:
@@ -143,6 +169,16 @@ class Render:
     Fired at render.
     """
     scene: Scene = None
+
+
+@dataclass
+class SceneStart:
+    scene: BaseScene = None
+
+
+@dataclass
+class ScenePause:
+    scene: BaseScene = None
 
 
 @dataclass
