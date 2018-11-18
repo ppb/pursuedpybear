@@ -1,10 +1,11 @@
-import time
 import unittest
+import pytest
 from unittest import mock
 
 from pygame import Surface
 
 from ppb import GameEngine, BaseScene
+from ppb import events
 from ppb.systems import System
 from ppb.systems import Updater
 from ppb.testutils import Failer
@@ -68,7 +69,7 @@ class TestEngineSceneActivate(unittest.TestCase):
         self.assertIs(self.engine.current_scene, self.mock_scene)
 
 
-def test_scene_change():
+def test_scene_change_thrashing():
 
     class ChildScene(BaseScene):
         count = 0
@@ -103,6 +104,23 @@ def test_scene_change():
     engine.run()
 
 
+def test_scene_change_no_new():
+
+    class Scene(BaseScene):
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.running = False
+
+        def change(self):
+            print(self.running)
+            return super().change()
+
+    failer = Failer(fail=lambda n: False, message="Will only time out.")
+    with GameEngine(Scene, systems=[Updater, failer]) as ge:
+        ge.run()
+
+
 def test_signal():
 
     engine = GameEngine(BaseScene, systems=[Quitter])
@@ -133,3 +151,32 @@ def test_contexts():
         assert isinstance(system, FakeRenderer)
     assert system.entered
     assert system.exited
+
+
+@pytest.mark.skip
+def test_change_scene_event():
+    assert False
+
+
+@pytest.mark.skip
+def test_replace_scene_event():
+    assert False
+
+
+def test_stop_scene_event():
+
+    test_function = mock.Mock()
+
+    class TestScene(BaseScene):
+
+        def on_update(self, event, signal):
+            signal(events.StopScene())
+
+        def on_scene_stopped(self, event, signal):
+            test_function()
+
+    failer = Failer(fail=lambda x: False, message="Will only time out.")
+    with GameEngine(TestScene, systems=[Updater, failer]) as ge:
+        ge.run()
+
+    test_function.assert_called()

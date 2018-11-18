@@ -1,7 +1,6 @@
 from collections import defaultdict
 from collections import deque
 from contextlib import ExitStack
-from itertools import chain
 import time
 from typing import Any
 from typing import Callable
@@ -107,11 +106,19 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
 
     def publish(self):
         event = self.events.popleft()
-        event.scene = self.current_scene
+        scene = self.current_scene
+        event.scene = scene
         for attr_name, attr_value in self.event_extensions[type(event)].items():
             setattr(event, attr_name, attr_value)
-        for entity in chain((self,), self.systems, (self.current_scene,), self.current_scene):
-            entity.__event__(event, self.signal)
+        self.__event__(event, self.signal)
+        for system in self.systems:
+            system.__event__(event, self.signal)
+        # Required for if we publish with no current scene.
+        # Should only happen when the last scene stops via event.
+        if scene is not None:
+            scene.__event__(event, self.signal)
+            for game_object in scene:
+                game_object.__event__(event, self.signal)
 
     def manage_scene(self):
         if self.current_scene is None:
@@ -168,7 +175,7 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         if kwargs:
             scene = scene(self, **kwargs)
         self.scenes.append(scene)
-        self.signal(events.SceneStart())
+        self.signal(events.SceneStarted())
 
     def register(self, event_type, attribute, value):
         self.event_extensions[event_type][attribute] = value
