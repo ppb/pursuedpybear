@@ -136,7 +136,7 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         """
         # Empty the queue to limit the amount that can happen after a change.
         self.pause_scene()
-        self.start_scene(event.new_scene, **event.kwargs)
+        self.start_scene(event.new_scene, event.kwargs)
 
     def on_stop_scene(self, event: events.StopScene, signal: Callable[[Any], None]):
         """
@@ -153,7 +153,7 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         Replace the running scene with a new one.
         """
         self.stop_scene()
-        self.start_scene(event.new_scene, **event.kwargs)
+        self.start_scene(event.new_scene, event.kwargs)
 
     def on_quit(self, quit_event: Quit, signal: Callable[[Any], None]):
         self.running = False
@@ -171,7 +171,7 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         self.publish()
         self.scenes.pop()
 
-    def start_scene(self, scene, **kwargs):
+    def start_scene(self, scene, kwargs):
         if kwargs:
             scene = scene(self, **kwargs)
         self.scenes.append(scene)

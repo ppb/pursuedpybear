@@ -158,9 +158,34 @@ def test_change_scene_event():
     assert False
 
 
-@pytest.mark.skip
 def test_replace_scene_event():
-    assert False
+    class FirstScene(BaseScene):
+
+        def on_update(self, event, signal):
+            signal(events.ReplaceScene(new_scene=SecondScene(ge)))
+
+    class SecondScene(BaseScene):
+        pass
+
+    class TestFailer(Failer):
+
+        def __init__(self, engine):
+            super().__init__(fail=self.fail, message="Will not call")
+            self.first_scene_ended = False
+
+        def on_scene_stopped(self, event, signal):
+            if isinstance(event.scene, FirstScene):
+                self.first_scene_ended = True
+
+        def fail(self, engine) -> bool:
+            if self.first_scene_ended:
+                assert len(engine.scenes) == 1, "Too many scenes on stack."
+                assert isinstance(engine.current_scene, SecondScene), "Wrong current scene."
+                engine.signal(events.Quit())
+            return False
+
+    with GameEngine(FirstScene, systems=[Updater, TestFailer]) as ge:
+        ge.run()
 
 
 def test_stop_scene_event():
