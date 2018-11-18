@@ -11,7 +11,6 @@ from typing import Union
 from ppb.abc import Scene
 from ppb.buttons import MouseButton
 from ppb.keycodes import KeyCode
-from ppb.scenes import BaseScene
 from ppb.vector import Vector
 
 __all__ = (
@@ -20,8 +19,12 @@ __all__ = (
     'PreRender',
     'Quit',
     'Render',
-    'ScenePause',
-    'SceneStart',
+    'ReplaceScene',
+    'SceneContinued',
+    'ScenePaused',
+    'SceneStarted',
+    'SceneStopped',
+    'StopScene',
     'Update',
 )
 
@@ -118,9 +121,9 @@ class ChangeScene:
         * `signal(new_scene=ChangeScene(MyScene(player=player))`
         * `signal(new_scene=ChanngeScene, kwargs={"player": player}`
     """
-    new_scene: Union[BaseScene, Type[BaseScene]]
+    new_scene: Union[Scene, Type[Scene]]
     kwargs: Dict[str, Any] = None
-    scene: BaseScene = None
+    scene: Scene = None
 
 
 @dataclass
@@ -183,9 +186,9 @@ class ReplaceScene:
         * `signal(new_scene=ChangeScene(MyScene(player=player))`
         * `signal(new_scene=ChanngeScene, kwargs={"player": player}`
     """
-    new_scene: Union[BaseScene, Type[BaseScene]]
+    new_scene: Union[Scene, Type[Scene]]
     kwargs: Dict[str, Any] = None
-    scene: BaseScene = None
+    scene: Scene = None
 
 
 @dataclass
@@ -193,7 +196,7 @@ class SceneContinued:
     """
     Fired when a paused scene continues.
     """
-    scene: BaseScene = None
+    scene: Scene = None
 
 
 @dataclass
@@ -201,7 +204,7 @@ class SceneStarted:
     """
     Fired when a scene starts.
     """
-    scene: BaseScene = None
+    scene: Scene = None
 
 
 @dataclass
@@ -209,7 +212,7 @@ class SceneStopped:
     """
     Fired when a scene stops.
     """
-    scene: BaseScene = None
+    scene: Scene = None
 
 
 @dataclass
@@ -217,7 +220,7 @@ class ScenePaused:
     """
     Fired when a scene pauses.
     """
-    scene: BaseScene = None
+    scene: Scene = None
 
 
 @dataclass
@@ -225,7 +228,7 @@ class StopScene:
     """
     Fired to stop a scene.
     """
-    scene: BaseScene = None
+    scene: Scene = None
 
 
 @dataclass
