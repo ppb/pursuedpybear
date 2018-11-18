@@ -7,6 +7,7 @@ from typing import Any
 from typing import Callable
 from typing import Type
 
+import ppb.events as events
 from ppb.abc import Engine
 from ppb.events import ChangeScene
 from ppb.events import EventMixin
@@ -140,6 +141,20 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         self.scenes.append(scene)
 
         signal(SceneStart())  # This will be the only thing on the queue.
+
+    def on_stop_scene(self, event: events.StopScene, signal: Callable[[Any], None]):
+        """
+        Stop a running scene. If there's a scene on the stack, it resumes.
+        """
+        # Empty the queue before changing scenes.
+        self.events = deque()
+        signal(events.SceneStopped())
+        self.publish()
+        self.scenes.pop()
+        if self.current_scene is not None:
+            signal(events.SceneContinued())
+        else:
+            signal(events.Quit())
 
     def on_quit(self, quit_event: Quit, signal: Callable[[Any], None]):
         self.running = False

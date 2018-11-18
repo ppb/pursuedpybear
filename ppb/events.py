@@ -172,12 +172,42 @@ class Render:
 
 
 @dataclass
-class SceneStart:
+class SceneContinued:
+    """
+    Fired when a paused scene continues.
+    """
     scene: BaseScene = None
 
 
 @dataclass
-class ScenePause:
+class SceneStarted:
+    """
+    Fired when a scene starts.
+    """
+    scene: BaseScene = None
+
+
+@dataclass
+class SceneStopped:
+    """
+    Fired when a scene stops.
+    """
+    scene: BaseScene = None
+
+
+@dataclass
+class ScenePaused:
+    """
+    Fired when a scene pauses.
+    """
+    scene: BaseScene = None
+
+
+@dataclass
+class StopScene:
+    """
+    Fired to stop a scene.
+    """
     scene: BaseScene = None
 
 
