@@ -18,6 +18,14 @@ def test_camera_viewport():
     assert cam.viewport_offset == Vector(400, 300)
 
 
+def test_camera_point_in_viewport_not_at_origin():
+    cam = Camera(viewport=(100, 100, 800, 600))
+    assert cam.point_in_viewport(Vector(150, 650))
+    assert cam.point_in_viewport(Vector(899, 300))
+    assert not cam.point_in_viewport(Vector(50, 50))
+    assert not cam.point_in_viewport(Vector(901, 600))
+
+
 def test_camera_translate_to_frame():
     cam = Camera(viewport=(0, 0, 800, 600), pixel_ratio=80)
     assert cam.position == Vector(0, 0)
