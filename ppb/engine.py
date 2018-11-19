@@ -134,7 +134,6 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         """
         Start a new scene. The current scene pauses.
         """
-        # Empty the queue to limit the amount that can happen after a change.
         self.pause_scene()
         self.start_scene(event.new_scene, event.kwargs)
 
@@ -160,13 +159,13 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
 
     def pause_scene(self):
         # Empty the queue before changing scenes.
-        self.events = deque()
+        self.flush_events()
         self.signal(events.ScenePaused())
         self.publish()
 
     def stop_scene(self):
         # Empty the queue before changing scenes.
-        self.events = deque()
+        self.flush_events()
         self.signal(events.SceneStopped())
         self.publish()
         self.scenes.pop()
@@ -179,3 +178,12 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
 
     def register(self, event_type, attribute, value):
         self.event_extensions[event_type][attribute] = value
+
+    def flush_events(self):
+        """
+        Flush the event queue.
+
+        Call before doing anything that will cause signals to be delivered to
+        the wrong scene.
+        """
+        self.events = deque()

@@ -1,5 +1,4 @@
 import unittest
-import pytest
 from unittest import mock
 
 from pygame import Surface
@@ -246,3 +245,16 @@ def test_stop_scene_event():
         ge.run()
 
     test_function.assert_called()
+
+
+def test_flush_events():
+
+    ge = GameEngine(BaseScene)
+    ge.signal(events.SceneStopped())
+    ge.signal(events.Quit())
+
+    assert len(ge.events) == 2
+
+    ge.flush_events()
+
+    assert len(ge.events) == 0
