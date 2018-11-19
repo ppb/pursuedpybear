@@ -8,7 +8,7 @@ from typing import Type
 
 import ppb.events as events
 from ppb.abc import Engine
-from ppb.events import ChangeScene
+from ppb.events import StartScene
 from ppb.events import EventMixin
 from ppb.events import Quit
 from ppb.systems import PygameEventPoller
@@ -130,7 +130,7 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         if next_scene:
             self.activate(next_scene)
 
-    def on_change_scene(self, event: ChangeScene, signal: Callable[[Any], None]):
+    def on_start_scene(self, event: StartScene, signal: Callable[[Any], None]):
         """
         Start a new scene. The current scene pauses.
         """

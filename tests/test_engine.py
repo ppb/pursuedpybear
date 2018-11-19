@@ -159,7 +159,7 @@ def test_change_scene_event():
     class FirstScene(BaseScene):
 
         def on_update(self, event, signal):
-            signal(events.ChangeScene(new_scene=SecondScene(ge)))
+            signal(events.StartScene(new_scene=SecondScene(ge)))
 
         def on_scene_paused(self, event, signal):
             assert event.scene is self
