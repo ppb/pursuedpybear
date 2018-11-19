@@ -115,7 +115,7 @@ class ChangeScene:
     Fired to start a new scene.
 
     new_scene can be an instance or a class. If a class, must include kwargs.
-    If an instance kwargs must be falsey, default is None.
+    If new_scene is an instance kwargs should be empty or None.
 
     Examples:
         * `signal(new_scene=ChangeScene(MyScene(player=player))`
