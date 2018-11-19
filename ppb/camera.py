@@ -11,7 +11,7 @@ class Camera(BaseSprite):
     image = DoNotRender
 
     def __init__(self, viewport: Sequence[int]=(0, 0, 800, 600),
-                 pixel_ratio: float=80):
+                 pixel_ratio: float=64):
         """
 
         viewport: A container of origin x, origin y, width, and

@@ -47,7 +47,9 @@ def test_camera_translate_to_viewport():
 
 
 def test_sprite_in_viewport():
-    cam = Camera(viewport=(0, 0, 800, 600))
+    # Added the expected pixel ratio due to change in default breaking this test.
+    # 80 is the legacy value.
+    cam = Camera(viewport=(0, 0, 800, 600), pixel_ratio=80)
 
     class Thing(BaseSprite):
         def __init__(self, position=Vector(2, 2)):
