@@ -141,6 +141,17 @@ class Side:
 
 
 class BaseSprite(EventMixin):
+    """
+    The base Sprite class. All sprites should inherit from this (directly or
+    indirectly).
+
+    Attributes:
+    * image (str): The image file
+    * resource_path (pathlib.Path): The path that image is relative to
+    * position: Location of the sprite
+    * facing: The direction of the "top" of the sprite (rendering only)
+    * size: The width/height of the sprite (sprites are square)
+    """
     image = None
     resource_path = None
     position: Vector = Vector(0, 0)
