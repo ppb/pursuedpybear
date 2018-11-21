@@ -3,6 +3,7 @@ from numbers import Number
 from os.path import realpath
 from pathlib import Path
 from typing import Dict, Iterable, AnyStr, Sequence
+from typing import Union
 
 from ppb import Vector
 from ppb.events import EventMixin
@@ -144,12 +145,13 @@ class BaseSprite(EventMixin):
     image = None
     resource_path = None
 
-    def __init__(self, size: int=1, pos: Iterable=(0, 0), facing: Vector=Vector(0, -1)):
+    def __init__(self, size: Union[int, float]=1, pos: Iterable=(0, 0),
+                 facing: Vector=Vector(0, -1)):
         super().__init__()
         self.position = Vector(*pos)
         self._offset_value = None
-        self._game_unit_size = None
-        self.game_unit_size = size
+        self._size = None
+        self.size = size
         self.facing = facing
 
     @property
@@ -196,13 +198,13 @@ class BaseSprite(EventMixin):
         self.position.y = value - self._offset_value
 
     @property
-    def game_unit_size(self):
-        return self._game_unit_size
+    def size(self):
+        return self._size
 
-    @game_unit_size.setter
-    def game_unit_size(self, value):
-        self._game_unit_size = value
-        self._offset_value = self._game_unit_size / 2
+    @size.setter
+    def size(self, value):
+        self._size = value
+        self._offset_value = self._size / 2
 
     def rotate(self, degrees: Number):
         self.facing.rotate(degrees)

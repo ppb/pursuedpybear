@@ -18,6 +18,14 @@ def test_camera_viewport():
     assert cam.viewport_offset == Vector(400, 300)
 
 
+def test_camera_point_in_viewport_not_at_origin():
+    cam = Camera(viewport=(100, 100, 800, 600))
+    assert cam.point_in_viewport(Vector(150, 650))
+    assert cam.point_in_viewport(Vector(899, 300))
+    assert not cam.point_in_viewport(Vector(50, 50))
+    assert not cam.point_in_viewport(Vector(901, 600))
+
+
 def test_camera_translate_to_frame():
     cam = Camera(viewport=(0, 0, 800, 600), pixel_ratio=80)
     assert cam.position == Vector(0, 0)
@@ -39,12 +47,14 @@ def test_camera_translate_to_viewport():
 
 
 def test_sprite_in_viewport():
-    cam = Camera(viewport=(0, 0, 800, 600))
+    # Added the expected pixel ratio due to change in default breaking this test.
+    # 80 is the legacy value.
+    cam = Camera(viewport=(0, 0, 800, 600), pixel_ratio=80)
 
     class Thing(BaseSprite):
         def __init__(self, position=Vector(2, 2)):
             super().__init__()
-            self.game_unit_size = 2
+            self.size = 2
             self.position = position
 
     sprite_in = Thing(Vector(-3, -1))
@@ -54,3 +64,10 @@ def test_sprite_in_viewport():
     assert not cam.in_frame(sprite_out)
     assert cam.in_frame(sprite_in)
     assert cam.in_frame(sprite_half_in)
+
+
+def test_viewport_change_affects_frame_height():
+    cam = Camera(viewport=(0, 0, 800, 600), pixel_ratio=80)
+    assert cam.frame_left == -5
+    cam.viewport_width = 400
+    assert cam.frame_left == -2.5

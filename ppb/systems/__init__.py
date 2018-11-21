@@ -34,6 +34,9 @@ class Renderer(System):
         self.resources = {}
         self.window = None
         self.window_title = window_title
+        self.pixel_ratio = None
+        self.resized_images = {}
+        self.old_resized_images = {}
 
     def __enter__(self):
         pygame.init()
@@ -51,6 +54,11 @@ class Renderer(System):
         self.render_background(render_event.scene)
         camera = render_event.scene.main_camera
         camera.viewport_width, camera.viewport_height = self.resolution
+        self.pixel_ratio = camera.pixel_ratio
+
+        self.old_resized_images = self.resized_images
+        self.resized_images = {}
+
         for game_object in render_event.scene:
             resource = self.prepare_resource(game_object)
             if resource is None:
@@ -68,8 +76,11 @@ class Renderer(System):
             return None
         if image_name not in self.resources:
             self.register_renderable(game_object)
+
+        source_image = self.resources[game_object.image]
+        final_image = self.resize_image(source_image, game_object.size)
         # TODO: Rotate Image to facing.
-        return self.resources[game_object.image]
+        return final_image
 
     def prepare_rectangle(self, resource, game_object, camera):
         rect = resource.get_rect()
@@ -95,6 +106,28 @@ class Renderer(System):
         image_name = renderable.__image__()
         source_path = renderable.__resource_path__()
         self.register(source_path / image_name, image_name)
+
+    def resize_image(self, image, game_unit_size):
+        # TODO: Pygame specific code To be abstracted somehow.
+        key = (image, game_unit_size)
+        resized_image = self.old_resized_images.get(key)
+        if  resized_image is None:
+            height = image.get_height()
+            width = image.get_width()
+            target_resolution = self.target_resolution(width,
+                                                       height,
+                                                       game_unit_size)
+            resized_image = pygame.transform.smoothscale(image,
+                                                         target_resolution)
+        self.resized_images[key] = resized_image
+        return resized_image
+
+    def target_resolution(self, width, height, game_unit_size):
+        values = [width, height]
+        short_side_index = width > height
+        target = self.pixel_ratio * game_unit_size
+        ratio = values[short_side_index] / target
+        return tuple(round(value / ratio) for value in values)
 
 
 class Updater(System):
