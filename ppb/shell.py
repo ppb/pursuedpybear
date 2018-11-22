@@ -56,7 +56,7 @@ class ReplThread(threading.Thread):
     Vector, BaseSprite, BaseScene, ppb and several other things are imported.
 
     scene is preloaded with the starting scene. Defining things in the REPL show
-    up on the scene.
+    up on the scene. Event handlers work.
 
     current_scene() gets the current scene.
     signal() injects an event.
