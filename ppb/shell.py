@@ -6,6 +6,7 @@ import logging
 import readline
 import pathlib
 import textwrap
+import atexit
 
 
 class InteractiveConsole(code.InteractiveConsole):
@@ -24,7 +25,10 @@ class InteractiveConsole(code.InteractiveConsole):
              # readline.redisplay() doesn't seem to do anything
             + readline.get_line_buffer()
         )
+        sys.stdout.flush()
 
+# Reset terminal on exit
+# atexit.register(print, "\x1Bc", flush=True)
 
 class ReadlineHandler(logging.Handler):
     def __init__(self, *p, **kw):
@@ -50,6 +54,9 @@ class ReplThread(threading.Thread):
     PPB Interactive Console
 
     Vector, BaseSprite, BaseScene, ppb and several other things are imported.
+
+    scene is preloaded with the starting scene. Defining things in the REPL show
+    up on the scene.
 
     current_scene() gets the current scene.
     signal() injects an event.
@@ -89,8 +96,10 @@ class ReplThread(threading.Thread):
         if sys.__interactivehook__ is not None:
             sys.__interactivehook__()
 
-        self.console.interact(banner=textwrap.dedent(self.banner), exitmsg="")
-        self.signal(ppb.events.Quit())
+        try:
+            self.console.interact(banner=textwrap.dedent(self.banner), exitmsg="")
+        finally:
+            self.signal(ppb.events.Quit())
 
     def interject(self, text):
         if self.console is None:
@@ -98,11 +107,27 @@ class ReplThread(threading.Thread):
         else:
             self.console.interject(text)
 
+repl = None
+
+class ReplScene(ppb.BaseScene):
+    def __init__(self, *p, **kw):
+        super().__init__(*p, **kw)
+        repl.locals['scene'] = self
+
+    def __getattribute__(self, name):
+        global repl
+        if repl is not None:
+            try:
+                return repl.locals[name]
+            except KeyError:
+                pass # Fall through
+        return super().__getattribute__(name)
+
 
 handler = ReadlineHandler()
 logging.basicConfig(level=logging.INFO, handlers=[handler])
 
-with ppb.GameEngine(ppb.BaseScene) as eng:
+with ppb.GameEngine(ReplScene) as eng:
     repl = ReplThread(eng)
     handler.output = repl.interject
     repl.start()
