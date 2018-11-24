@@ -7,6 +7,7 @@ import readline
 import pathlib
 import textwrap
 import atexit
+import signal
 
 
 class InteractiveConsole(code.InteractiveConsole):
@@ -114,6 +115,17 @@ class ReplScene(ppb.BaseScene):
         super().__init__(*p, **kw)
         repl.locals['scene'] = self
 
+    last_event_error = None
+
+    def __event__(self, event, signal):
+        try:
+            super().__event__(event, signal)
+        except Exception:
+            event_name = type(event).__name__
+            if self.last_event_error != event_name:
+                logging.exception("Error handling %s event", event_name)
+                self.last_event_error = event_name
+
     def __getattribute__(self, name):
         global repl
         if repl is not None:
@@ -126,6 +138,10 @@ class ReplScene(ppb.BaseScene):
 
 handler = ReadlineHandler()
 logging.basicConfig(level=logging.INFO, handlers=[handler])
+
+# Don't let Ctrl-C kill the game engine
+# FIXME: Figure out some way to raise KeyboardInterrupt in the repl thread
+signal.signal(signal.SIGINT, signal.SIG_IGN)
 
 with ppb.GameEngine(ReplScene) as eng:
     repl = ReplThread(eng)
