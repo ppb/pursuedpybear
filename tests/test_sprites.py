@@ -273,3 +273,14 @@ class TestBaseSprite(TestCase):
     def test_bottom_bottom(self):
         self.assertRaises(AttributeError, getattr, self.sprite.bottom, "bottom")
         self.assertRaises(AttributeError, setattr, self.sprite.bottom, "bottom", Vector(1, 1))
+
+
+def test_class_attrs():
+    class TestSprite(BaseSprite):
+        position = Vector(4, 2)
+
+    sprite = TestSprite()
+    assert sprite.position == Vector(4, 2)
+
+    sprite = TestSprite(position=(2, 4))
+    assert sprite.position == Vector(2, 4)
