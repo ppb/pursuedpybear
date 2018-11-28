@@ -124,8 +124,8 @@ class StartScene:
     SceneStarted event will be sent.
 
     Examples:
-        * `signal(new_scene=ChangeScene(MyScene(player=player))`
-        * `signal(new_scene=ChangeScene, kwargs={"player": player}`
+        * `signal(new_scene=StartScene(MyScene(player=player))`
+        * `signal(new_scene=StartScene, kwargs={"player": player}`
     """
     new_scene: Union[Scene, Type[Scene]]
     kwargs: Dict[str, Any] = None
