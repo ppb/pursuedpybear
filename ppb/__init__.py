@@ -7,7 +7,7 @@ from ppb.scenes import BaseScene
 from ppb.sprites import BaseSprite
 
 
-def run(setup: Callable[[BaseScene], None], *, log_level=logging.WARNING,
+def run(setup: Callable[[BaseScene], None]=None, *, log_level=logging.WARNING,
         starting_scene=BaseScene):
     """
     Run a small game.
