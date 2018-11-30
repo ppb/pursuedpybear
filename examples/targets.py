@@ -1,107 +1,85 @@
 import logging
-
-from ppb import engine
-from ppb import hw as hardware
-from ppb.utilities import Publisher
-from ppb.event import (Quit,
-                       Tick,
-                       MouseButtonDown,
-                       ObjectCreated,
-                       ObjectDestroyed,
-                       Collision)
-from ppb.components import models
-from ppb.components.controls import control_move, emit_object
-from ppb.physics import Physics
-from ppb.vmath import Vector2 as Vector
+import ppb
+from ppb import Vector
+from ppb import keycodes
 
 
-publisher = Publisher()
+class MoverMixin(ppb.BaseSprite):
+    velocity = Vector(0, 0)
+
+    def on_update(self, update, signal):
+        self.position += self.velocity * update.time_delta
 
 
-class Player(models.GameObject,
-             models.Mobile,
-             models.HardwarePrimitive,
-             models.Collider):
-    pass
+class Player(MoverMixin, ppb.BaseSprite):
+    # We handle movement by mapping each key to a velocity vector
+    # and adding it on press and subtracting it on release.
+    left_vector = Vector(-1, 0)
+    right_vector = Vector(1, 0)
+
+    def on_key_pressed(self, event, signal):
+        if event.key in (keycodes.A, keycodes.Left):
+            self.velocity += self.left_vector
+        elif event.key in (keycodes.D, keycodes.Right):
+            self.velocity += self.right_vector
+        elif event.key is keycodes.Space:
+            self._fire_bullet(event.scene)
+
+    def on_key_released(self, event, signal):
+        if event.key in (keycodes.A, keycodes.Left):
+            self.velocity -= self.left_vector
+        elif event.key in (keycodes.D, keycodes.Right):
+            self.velocity -= self.right_vector
+
+    def on_button_pressed(self, event, signal):
+        if event.button is ppb.buttons.Primary:
+            self._fire_bullet(event.scene)
+
+    def _fire_bullet(self, scene):
+        scene.add(
+            Bullet(pos=self.position),
+            tags=['bullet']
+        )
 
 
-class Bullet(models.GameObject,
-             models.Mobile,
-             models.HardwarePrimitive,
-             models.Collider):
-    pass
+class Bullet(MoverMixin, ppb.BaseSprite):
+    velocity = Vector(0, 2)
 
+    def on_update(self, update, signal):
+        super().on_update(update, signal)  # Execute movement
 
-class Target(models.GameObject, models.HardwarePrimitive, models.Collider):
-    pass
-
-
-def hit(self, collision):
-    is_hit = False
-    other = None
-    for item in collision.members:
-        if item == self:
-            is_hit = True
+        scene = update.scene
+        
+        if self.position.y > scene.main_camera.frame_bottom:
+            scene.remove(self)
         else:
-            other = item
-    if is_hit:
-        if isinstance(other, Bullet) or isinstance(other, Target):
-            self.kill()
+            for target in scene.get(tag='target'):
+                d = (target.position - self.position).length
+                if d <= target.radius:
+                    scene.remove(self)
+                    scene.remove(target)
+                    break
 
 
-def subscribe(event):
-    for command in event.commands:
-        publisher.subscribe(*command)
+class Target(ppb.BaseSprite):
+    radius = 0.5
 
 
-def unsubscribe(event):
-    for command in event.commands:
-        publisher.unsubscribe(*command)
+class GameScene(ppb.BaseScene):
+    def __init__(self, *p, **kw):
+        super().__init__(*p, **kw)
 
+        # Set up sprites
+        self.add(Player(pos=Vector(0, 0)), tags=['player'])
 
-def main():
-    logging.basicConfig(level=logging.DEBUG)
-    hardware.choose("pygame")
-    hardware.init((600, 400), "Targets")
-    publisher.subscribe(Quit, hardware.quit)
-    publisher.subscribe(ObjectCreated, subscribe)
-    publisher.subscribe(ObjectDestroyed, unsubscribe)
-    publisher.subscribe(Tick, hardware.update_input)
-    hardware.View(publisher,
-                  hardware.display(),
-                  30,
-                  hardware,
-                  hardware.image_primitive((0, 0, 0), (600, 400)))
-    Physics()
+        # 5 targets in x = -3.75 -> 3.75, with margin
+        for x in (-3, -1.5, 0, 1.5, 3):
+            self.add(Target(pos=Vector(x, 1.875)), tags=['target'])
 
-    player_color = (128, 65, 40)
-    key_bindings = {"up": ord("w"),
-                    "down": ord("s"),
-                    "left": ord("a"),
-                    "right": ord("d")}
-    player_speed = 60
-    bullet_params = {"color": (255, 255, 255),
-                     "image_size": 4,
-                     "hardware": hardware,
-                     "behaviors": [(Collision, hit)]}
-    controls = [(Tick, control_move(speed=player_speed,
-                                    **key_bindings)),
-                (MouseButtonDown, emit_object(Bullet, bullet_params, 1, 120))]
-    Player(color=player_color,
-           hardware=hardware,
-           pos=Vector(300, 200),
-           behaviors=controls,
-           radius=10)
-    target_color = (0, 123, 0)
-    step = 600 / 6
-    for x in range(5):
-        Target(color=target_color,
-               image_size=20,
-               hardware=hardware,
-               pos=Vector(step * (x + 1), 50),
-               radius=10,
-               behaviors=[(Collision, hit)])
-    engine.run(publisher)
 
 if __name__ == "__main__":
-    main()
+    ppb.run(GameScene,
+        logging_level=logging.DEBUG,
+        window_title="Targets",
+        resolution=(600, 400),
+    )
