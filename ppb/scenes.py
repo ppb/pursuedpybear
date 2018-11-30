@@ -8,7 +8,6 @@ from typing import Iterator
 from typing import Sequence
 from typing import Tuple
 from typing import Type
-from typing import Union
 
 from ppb.abc import Scene
 from ppb.camera import Camera

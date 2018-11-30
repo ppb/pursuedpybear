@@ -1,10 +1,10 @@
-import time
 import unittest
 from unittest import mock
 
 from pygame import Surface
 
 from ppb import GameEngine, BaseScene
+from ppb import events
 from ppb.systems import System
 from ppb.systems import Updater
 from ppb.testutils import Failer
@@ -68,7 +68,7 @@ class TestEngineSceneActivate(unittest.TestCase):
         self.assertIs(self.engine.current_scene, self.mock_scene)
 
 
-def test_scene_change():
+def test_scene_change_thrashing():
 
     class ChildScene(BaseScene):
         count = 0
@@ -103,6 +103,22 @@ def test_scene_change():
     engine.run()
 
 
+def test_scene_change_no_new():
+
+    class Scene(BaseScene):
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.running = False
+
+        def change(self):
+            return super().change()
+
+    failer = Failer(fail=lambda n: False, message="Will only time out.")
+    with GameEngine(Scene, systems=[Updater, failer]) as ge:
+        ge.run()
+
+
 def test_signal():
 
     engine = GameEngine(BaseScene, systems=[Quitter])
@@ -133,3 +149,112 @@ def test_contexts():
         assert isinstance(system, FakeRenderer)
     assert system.entered
     assert system.exited
+
+
+def test_change_scene_event():
+
+    pause_was_run = mock.Mock()
+    scene_start_called = mock.Mock()
+
+    class FirstScene(BaseScene):
+
+        def on_update(self, event, signal):
+            signal(events.StartScene(new_scene=SecondScene(ge)))
+
+        def on_scene_paused(self, event, signal):
+            assert event.scene is self
+            pause_was_run()
+
+    class SecondScene(BaseScene):
+
+        def on_scene_started(self, event, signal):
+            assert event.scene == self
+            scene_start_called()
+            signal(events.Quit())
+
+    class Tester(System):
+        listening = False
+
+        def activate(self, engine):
+            if self.listening:
+                assert isinstance(engine.current_scene, SecondScene)
+                assert len(engine.scenes) == 2
+            return ()
+
+        def on_scene_paused(self, event, signal):
+            self.listening = True
+
+    with GameEngine(FirstScene, systems=[Updater, Tester]) as ge:
+        ge.run()
+
+    pause_was_run.assert_called()
+    scene_start_called.assert_called()
+
+
+def test_replace_scene_event():
+
+    class FirstScene(BaseScene):
+
+        def on_update(self, event, signal):
+            signal(events.ReplaceScene(new_scene=SecondScene(ge)))
+
+        def on_scene_stopped(self, event, signal):
+            assert event.scene is self
+
+    class SecondScene(BaseScene):
+
+        def on_scene_started(self, event, signal):
+            assert event.scene is self
+
+    class TestFailer(Failer):
+
+        def __init__(self, engine):
+            super().__init__(fail=self.fail, message="Will not call")
+            self.first_scene_ended = False
+
+        def on_scene_stopped(self, event, signal):
+            if isinstance(event.scene, FirstScene):
+                self.first_scene_ended = True
+
+        def fail(self, engine) -> bool:
+            if self.first_scene_ended:
+                assert len(engine.scenes) == 1, "Too many scenes on stack."
+                assert isinstance(engine.current_scene, SecondScene), "Wrong current scene."
+                engine.signal(events.Quit())
+            return False
+
+    with GameEngine(FirstScene, systems=[Updater, TestFailer]) as ge:
+        ge.run()
+
+
+def test_stop_scene_event():
+
+    test_function = mock.Mock()
+
+    class TestScene(BaseScene):
+
+        def on_update(self, event, signal):
+            signal(events.StopScene())
+
+        def on_scene_stopped(self, event, signal):
+            assert event.scene is self
+            test_function()
+
+    failer = Failer(fail=lambda x: False, message="Will only time out.")
+    with GameEngine(TestScene, systems=[Updater, failer]) as ge:
+        ge.run()
+
+    test_function.assert_called()
+
+
+def test_flush_events():
+
+    ge = GameEngine(BaseScene)
+    ge.signal(events.SceneStopped())
+    ge.signal(events.Quit())
+
+    assert len(ge.events) == 2
+
+    ge.flush_events()
+
+    assert len(ge.events) == 0
