@@ -7,7 +7,8 @@ from ppb.scenes import BaseScene
 from ppb.sprites import BaseSprite
 
 
-def run(setup: Callable[[BaseScene], None], *, log_level=logging.WARNING):
+def run(setup: Callable[[BaseScene], None], *, log_level=logging.WARNING,
+        starting_scene=BaseScene):
     """
     Run a small game.
 
@@ -17,6 +18,8 @@ def run(setup: Callable[[BaseScene], None], *, log_level=logging.WARNING):
 
     log_level let's you set the expected log level. Consider logging.DEBUG if
     something is behaving oddly.
+
+    starting_scene let's you change the scene used by the engine.
     """
     logging.basicConfig(level=log_level)
 
@@ -27,5 +30,5 @@ def run(setup: Callable[[BaseScene], None], *, log_level=logging.WARNING):
         }
     }
 
-    with GameEngine(BaseScene, **kwargs) as eng:
+    with GameEngine(starting_scene, **kwargs) as eng:
         eng.run()
