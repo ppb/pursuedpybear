@@ -8,6 +8,7 @@ from typing import Iterator
 from typing import Sequence
 from typing import Tuple
 from typing import Type
+from warnings import warn
 
 from ppb.abc import Scene
 from ppb.camera import Camera
@@ -135,6 +136,10 @@ class BaseScene(Scene, EventMixin):
         """
         next = self.next
         self.next = None
+        if self.next or not self.running:
+            message = "The Scene.change interface is deprecated. Use the events commands instead."
+            warn(message, DeprecationWarning)
+
         return self.running, {"scene_class": next}
 
     def add(self, game_object: Hashable, tags: Iterable=())-> None:
