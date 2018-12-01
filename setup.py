@@ -8,7 +8,7 @@ def readme():
 
 setup(
     name='ppb',
-    version='0.5rc1',
+    version='0.5.0rc1',
     packages=['ppb'],
     install_requires=[
         'pygame',
