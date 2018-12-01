@@ -1,5 +1,4 @@
 from setuptools import setup
-import sys
 
 
 def readme():
@@ -9,7 +8,7 @@ def readme():
 
 setup(
     name='ppb',
-    version='0.4.1',
+    version='0.5rc1',
     packages=['ppb'],
     install_requires=[
         'pygame',
