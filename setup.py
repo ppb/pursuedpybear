@@ -8,8 +8,8 @@ def readme():
 
 setup(
     name='ppb',
-    version='0.5.0rc1',
-    packages=['ppb'],
+    version='0.5.0rc2',
+    packages=['ppb', 'ppb.systems'],
     install_requires=[
         'pygame',
         'ppb-vector',
