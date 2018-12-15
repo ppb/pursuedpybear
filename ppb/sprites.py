@@ -156,8 +156,7 @@ class BaseSprite(EventMixin):
     resource_path = None
     position: Vector = Vector(0, 0)
     facing: Vector = Vector(0, -1)
-    _size: Union[int, float] = 1
-    _offset_value = None
+    size: Union[int, float] = 1
 
     def __init__(self, **kwargs):
         super().__init__()
@@ -224,13 +223,8 @@ class BaseSprite(EventMixin):
         self.position.y = value - self._offset_value
 
     @property
-    def size(self) -> Union[int, float]:
-        return self._size
-
-    @size.setter
-    def size(self, value: Union[int, float]):
-        self._size = value
-        self._offset_value = self._size / 2
+    def _offset_value(self):
+        return self.size / 2
 
     def rotate(self, degrees: Number):
         self.facing.rotate(degrees)
