@@ -284,3 +284,10 @@ def test_class_attrs():
 
     sprite = TestSprite(position=(2, 4))
     assert sprite.position == Vector(2, 4)
+
+
+def test_offset():
+    class TestSprite(BaseSprite):
+        size = 1.1
+
+    assert TestSprite().left < -0.5
