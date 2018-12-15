@@ -290,4 +290,4 @@ def test_offset():
     class TestSprite(BaseSprite):
         size = 1.1
 
-    assert TestSprite().left < -1
+    assert TestSprite().left < -0.5
