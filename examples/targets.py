@@ -78,8 +78,7 @@ class GameScene(ppb.BaseScene):
 
 
 if __name__ == "__main__":
-    ppb.run(GameScene,
-        logging_level=logging.DEBUG,
-        window_title="Targets",
-        resolution=(600, 400),
+    ppb.run(
+        starting_scene=GameScene,
+        log_level=logging.DEBUG,
     )
