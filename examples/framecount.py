@@ -44,4 +44,4 @@ class TestScene(ppb.BaseScene):
 
 
 if __name__ == "__main__":
-    ppb.run(TestScene, log_level=logging.INFO)
+    ppb.run(starting_scene=TestScene, log_level=logging.INFO)
