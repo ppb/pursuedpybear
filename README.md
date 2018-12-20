@@ -95,7 +95,7 @@ def setup(scene):
     scene.add(Ship(pos=(0, 3.5)))
 
 
-ppb.run(scene_kwargs={"set_up": setup})
+ppb.run(setup=setup)
 ```
 
 ## Compatibility
