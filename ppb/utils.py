@@ -38,6 +38,9 @@ class LoggingMixin:
 
     @property
     def logger(self):
+        """
+        The logger for this class.
+        """
         # This is internal/CPython only/etc
         # It's also astonishingly faster than alternatives.
         frame = sys._getframe(1)
