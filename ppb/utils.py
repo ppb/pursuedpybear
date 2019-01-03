@@ -45,4 +45,3 @@ class LoggingMixin:
 
         module_name = _get_module(file_name)
         return logging.getLogger(module_name)
-    
