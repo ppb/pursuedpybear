@@ -212,10 +212,7 @@ class BaseSprite(EventMixin):
 
     @center.setter
     def center(self, value: Sequence[float]):
-        x = value[0]
-        y = value[1]
-        self.position.x = x
-        self.position.y = y
+        self.position = Vector(*value)
 
     @property
     def left(self) -> Side:
@@ -223,7 +220,7 @@ class BaseSprite(EventMixin):
 
     @left.setter
     def left(self, value: float):
-        self.position.x = value + self._offset_value
+        self.position = Vector(value + self._offset_value, self.position.y)
 
     @property
     def right(self) -> Side:
@@ -231,7 +228,7 @@ class BaseSprite(EventMixin):
 
     @right.setter
     def right(self, value):
-        self.position.x = value - self._offset_value
+        self.position = Vector(value - self._offset_value, self.position.y)
 
     @property
     def top(self):
@@ -239,7 +236,7 @@ class BaseSprite(EventMixin):
 
     @top.setter
     def top(self, value):
-        self.position.y = value + self._offset_value
+        self.position = Vector(self.position.x, value + self._offset_value)
 
     @property
     def bottom(self):
@@ -247,7 +244,7 @@ class BaseSprite(EventMixin):
 
     @bottom.setter
     def bottom(self, value):
-        self.position.y = value - self._offset_value
+        self.position = Vector(self.position.x, value - self._offset_value)
 
     @property
     def _offset_value(self):
