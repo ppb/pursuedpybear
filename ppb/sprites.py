@@ -80,8 +80,7 @@ class Side:
     @top.setter
     def top(self, value):
         self._attribute_gate(TOP, [TOP, BOTTOM])
-        setattr(self.parent, self.side, value[0])
-        self.parent.top = value[1]
+        self.parent.position = self._mk_update_vector_side(TOP, value)
 
     @property
     def bottom(self):
@@ -91,8 +90,7 @@ class Side:
     @bottom.setter
     def bottom(self, value):
         self._attribute_gate(BOTTOM, [TOP, BOTTOM])
-        setattr(self.parent, self.side, value[0])
-        self.parent.bottom = value[1]
+        self.parent.position = self._mk_update_vector_side(BOTTOM, value)
 
     @property
     def left(self):
@@ -102,8 +100,7 @@ class Side:
     @left.setter
     def left(self, value):
         self._attribute_gate(LEFT, [LEFT, RIGHT])
-        setattr(self.parent, self.side, value[1])
-        self.parent.left = value[0]
+        self.parent.position = self._mk_update_vector_side(LEFT, value)
 
     @property
     def right(self):
@@ -113,8 +110,7 @@ class Side:
     @right.setter
     def right(self, value):
         self._attribute_gate(RIGHT, [LEFT, RIGHT])
-        setattr(self.parent, self.side, value[1])
-        self.parent.right = value[0]
+        self.parent.position = self._mk_update_vector_side(RIGHT, value)
 
     @property
     def center(self):
@@ -125,12 +121,43 @@ class Side:
 
     @center.setter
     def center(self, value):
-        if self.side in (TOP, BOTTOM):
-            setattr(self.parent, self.side, value[1])
-            self.parent.center.x = value[0]
-        else:
-            setattr(self.parent, self.side, value[0])
-            self.parent.position.y = value[1]
+        self.parent.position = self._mk_update_vector_center(value)
+
+    def _mk_update_vector_side(self, attribute, value):
+        value = Vector(*value)
+        assert attribute != 'center'
+        # Does a bunch of dynamc resolution:
+        # Sprite.top.left
+        #        ^   ^ attribute
+        #        self.side
+        self_dimension, self_sign = Side.sides[self.side]
+        self_offset = self_sign * self.parent._offset_value
+
+        attr_dimension, attr_sign = Side.sides[attribute]
+        attr_offset = attr_sign * self.parent._offset_value
+
+        assert self_dimension != attr_dimension
+
+        fields = {
+            self_dimension: value[self_dimension] - self_offset,
+            attr_dimension: value[attr_dimension] - attr_offset,
+        }
+        return Vector(**fields)
+
+    def _mk_update_vector_center(self, value):
+        value = Vector(*value)
+        # Pretty similar to ._mk_update_vector_side()
+        self_dimension, self_sign = Side.sides[self.side]
+        self_offset = self_sign * self.parent._offset_value
+
+        attr_dimension = 'y' if self_dimension == 'x' else 'x'
+
+        fields = {
+            self_dimension: value[self_dimension] - self_offset,
+            attr_dimension: value[attr_dimension]
+        }
+
+        return Vector(**fields)
 
     def _attribute_gate(self, attribute, bad_sides):
         if self.side in bad_sides:
