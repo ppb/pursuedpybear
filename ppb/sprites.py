@@ -127,7 +127,7 @@ class Side:
         self.parent.position = self._mk_update_vector_center(value)
 
     def _mk_update_vector_side(self, attribute, value):
-        value = Vector(*value)
+        value = Vector.convert(value)
         assert attribute != 'center'
         # Does a bunch of dynamc resolution:
         # Sprite.top.left
@@ -146,7 +146,7 @@ class Side:
         return Vector(**fields)
 
     def _mk_update_vector_center(self, value):
-        value = Vector(*value)
+        value = Vector.convert(value)
         # Pretty similar to ._mk_update_vector_side()
         self_dimension, self_offset = self._lookup_side(self.side)
 
@@ -212,7 +212,7 @@ class BaseSprite(EventMixin):
 
     @center.setter
     def center(self, value: Sequence[float]):
-        self.position = Vector(*value)
+        self.position = Vector.convert(value)
 
     @property
     def left(self) -> Side:
