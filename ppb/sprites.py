@@ -2,7 +2,7 @@ from inspect import getfile
 from numbers import Number
 from os.path import realpath
 from pathlib import Path
-from typing import Dict, Iterable, AnyStr, Sequence
+from typing import Dict, Iterable, Sequence
 from typing import Union
 
 from ppb import Vector
@@ -26,7 +26,7 @@ class Side:
         BOTTOM: ('y', 1)
     }
 
-    def __init__(self, parent: 'BaseSprite',side: AnyStr):
+    def __init__(self, parent: 'BaseSprite', side: str):
         self.side = side
         self.parent = parent
 
@@ -190,8 +190,8 @@ class BaseSprite(EventMixin):
 
         # Make these instance properties with fresh instances
         # Don't use Vector.convert() because we need copying
-        self.position = Vector(*self.position)
-        self.facing = Vector(*self.facing)
+        self.position = Vector(self.position)
+        self.facing = Vector(self.facing)
 
         # Initialize things
         for k, v in kwargs.items():
@@ -200,7 +200,7 @@ class BaseSprite(EventMixin):
                 k = 'position'
             # Castings
             if k in ('position', 'facing'):
-                v = Vector(*v)  # Vector.convert() when that ships.
+                v = Vector.convert(v)
             setattr(self, k, v)
 
         # Trigger some calculations
