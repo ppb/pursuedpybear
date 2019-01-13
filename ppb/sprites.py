@@ -251,7 +251,7 @@ class BaseSprite(EventMixin):
         return self.size / 2
 
     def rotate(self, degrees: Number):
-        self.facing.rotate(degrees)
+        self.facing = self.facing.rotate(degrees)
 
     def __image__(self):
         if self.image is None:
