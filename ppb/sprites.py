@@ -66,11 +66,14 @@ class Side:
     def __lt__(self, other):
         return self.value < other
 
+    def _lookup_side(self, side):
+        dimension, sign = self.sides[side]
+        return dimension, sign * self.parent._offset_value
+
     @property
     def value(self):
-        coordinate, multiplier = self.sides[self.side]
-        offset = self.parent._offset_value
-        return self.parent.position[coordinate] + (offset * multiplier)
+        dimension, offset = self._lookup_side(self.side)
+        return self.parent.position[dimension] + offset
 
     @property
     def top(self):
@@ -130,11 +133,9 @@ class Side:
         # Sprite.top.left
         #        ^   ^ attribute
         #        self.side
-        self_dimension, self_sign = Side.sides[self.side]
-        self_offset = self_sign * self.parent._offset_value
+        self_dimension, self_offset = self._lookup_side(self.side)
 
-        attr_dimension, attr_sign = Side.sides[attribute]
-        attr_offset = attr_sign * self.parent._offset_value
+        attr_dimension, attr_offset = self._lookup_side(attribute)
 
         assert self_dimension != attr_dimension
 
@@ -147,8 +148,7 @@ class Side:
     def _mk_update_vector_center(self, value):
         value = Vector(*value)
         # Pretty similar to ._mk_update_vector_side()
-        self_dimension, self_sign = Side.sides[self.side]
-        self_offset = self_sign * self.parent._offset_value
+        self_dimension, self_offset = self._lookup_side(self.side)
 
         attr_dimension = 'y' if self_dimension == 'x' else 'x'
 
