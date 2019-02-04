@@ -81,7 +81,7 @@ the tickets appropriately.
 
 Now you need to [fork ppb][fork]. Once you've done that, go through
 either column and find a ticket you like. Start a branch, add your name
-to the [CONTRIBUTORS file][contrib], commit that change and open a PR:
+to the [CONTRIBUTORS file][contributors], commit that change and open a PR:
 
 * Include "WORKING" in the title
 * Reference the issue you want to work on in the body of the PR.
@@ -109,7 +109,7 @@ You're always welcome to review other PRs! Just use the comment function
 unless you're told you can block PRs. The people doing the "official"
 review will take your comments into consideration. If you actively
 provide reviews, you'll be told to add your name to
-[CONTRIBUTORS][contrib] as a reviewer!
+[CONTRIBUTORS][contributors] as a reviewer!
 
 ## I want to teach
 
