@@ -105,7 +105,7 @@ class Renderer(System):
     def register_renderable(self, renderable):
         image_name = renderable.__image__()
         source_path = renderable.__resource_path__()
-        self.register(source_path / image_name, image_name)
+        self.register(source_path +"/"+ image_name, image_name)
 
     def resize_image(self, image, game_unit_size):
         # TODO: Pygame specific code To be abstracted somehow.
