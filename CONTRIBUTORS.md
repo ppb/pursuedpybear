@@ -19,3 +19,4 @@ Name | Email | Twitter |
 [Dimitris Maroulidis](https://github.com/dmaroulidis) | [dimitris@dimitrismaroulidis.com](mailto:dimitris@dimitrismaroulidis.com) | [dmaroulidis](https://twitter.com/dmaroulidis)
 [Jenny Li](https://github.com/imjennyli) | 
 [Andrew Schamp](https://github.com/schamp/) | | [schamp](https://twitter.com/schamp)
+[Nicolas Braud-Santoni](https://nicolas.braud-santoni.eu) | | |
