@@ -140,7 +140,32 @@ class Side:
             raise AttributeError(message)
 
 
-class BaseSprite(EventMixin):
+class Rotatable:
+    """
+    A simple rotation mixin. Can be included with sprites.
+    """
+    _rotation = 0
+    # This is necessary to make facing do the thing while also being adjustable.
+    _basis = Vector(0, -1)
+
+    @property
+    def facing(self):
+        return Vector(*self._basis).rotate(self.rotation).normalize()
+
+    @property
+    def rotation(self):
+        return self._rotation
+
+    @rotation.setter
+    def rotation(self, value):
+        self._rotation = value % 360
+
+    def rotate(self, degrees):
+        """Change the current rotation by degrees."""
+        self.rotation += degrees
+
+
+class BaseSprite(EventMixin, Rotatable):
     """
     The base Sprite class. All sprites should inherit from this (directly or
     indirectly).

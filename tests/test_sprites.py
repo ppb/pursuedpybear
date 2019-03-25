@@ -1,6 +1,7 @@
 from unittest import TestCase
 
 from ppb import BaseSprite, Vector
+from ppb.sprites import Rotatable
 
 
 class TestBaseSprite(TestCase):
@@ -291,3 +292,38 @@ def test_offset():
         size = 1.1
 
     assert TestSprite().left < -0.5
+
+
+def test_rotatable_instatiation():
+    rotatable = Rotatable()
+    assert rotatable.rotation == 0
+
+
+def test_rotatable_subclass():
+
+    class TestRotatable(Rotatable):
+        _rotation = 180
+        _basis = Vector(0, 1)
+
+    rotatable = TestRotatable()
+    assert rotatable.rotation == 180
+    assert rotatable.facing == Vector(0, -1)
+
+
+def test_rotatable_rotation_setter():
+    rotatable = Rotatable()
+
+    rotatable.rotation = 405
+    assert rotatable.rotation == 45
+
+
+def test_rotatable_rotate():
+    rotatable = Rotatable()
+
+    assert rotatable.rotation == 0
+    rotatable.rotate(180)
+    assert rotatable.rotation == 180
+    rotatable.rotate(200)
+    assert rotatable.rotation == 20
+    rotatable.rotate(-300)
+    assert rotatable.rotation == 80
