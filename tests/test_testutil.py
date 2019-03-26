@@ -17,22 +17,28 @@ def test_quitter(loop_count):
     raise AssertionError("Quitter did not raise a quit event.")
 
 
-def test_failer():
+def test_failer_immediate():
     failer = testutil.Failer(fail=lambda e: True, message="Expected failure.")
 
     with raises(AssertionError):
         failer.activate(None)
 
-    failer = testutil.Failer(fail=lambda e: False, message="Should time out", run_time=0.1)
-    last_tick = monotonic()
-    run_time = 0
 
-    with raises(AssertionError) as e:
-        while True:
+def test_failer_timed():
+    failer = testutil.Failer(fail=lambda e: False, message="Should time out", run_time=0.1)
+
+    start_time = monotonic()
+
+    while True:
+        try:
             failer.activate(None)
-            tick = monotonic()
-            run_time += tick - last_tick
-            last_tick = tick
-            if run_time >= 0.11:
+        except AssertionError as e:
+            if e.args[0] == "Test ran too long.":
+                end_time = monotonic()
                 break
-    assert e.value.args[0] == "Test ran too long."
+            else:
+                raise
+
+    run_time = end_time - start_time
+
+    assert abs(run_time - 0.1) <= 0.01
