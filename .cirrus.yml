@@ -1,3 +1,17 @@
+docs_task:
+  skip: $CIRRUS_BRANCH =~ '.*\.tmp'
+  container:
+    image: python:3.7-slim
+
+  install_script:
+    - apt update && apt install make
+    - pip install --upgrade-strategy eager -U -r requirements-docs.txt
+    - pip install -e .
+
+  script:
+    - make -C docs/ html
+
+
 FreeBSD_task:
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
   freebsd_instance:
