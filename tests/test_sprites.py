@@ -303,7 +303,7 @@ def test_rotatable_subclass():
 
     class TestRotatable(Rotatable):
         _rotation = 180
-        _basis = Vector(0, 1)
+        basis = Vector(0, 1)
 
     rotatable = TestRotatable()
     assert rotatable.rotation == 180
@@ -327,3 +327,10 @@ def test_rotatable_rotate():
     assert rotatable.rotation == 20
     rotatable.rotate(-300)
     assert rotatable.rotation == 80
+
+
+def test_rotatable_base_sprite():
+    test_sprite = BaseSprite()
+
+    test_sprite.rotate(1)
+    assert test_sprite.rotation == 1

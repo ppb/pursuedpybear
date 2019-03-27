@@ -182,7 +182,6 @@ class BaseSprite(EventMixin, Rotatable):
     image = None
     resource_path = None
     position: Vector = Vector(0, 0)
-    facing: Vector = Vector(0, -1)
     size: Union[int, float] = 1
 
     def __init__(self, **kwargs):
@@ -191,7 +190,6 @@ class BaseSprite(EventMixin, Rotatable):
         # Make these instance properties with fresh instances
         # Don't use Vector.convert() because we need copying
         self.position = Vector(*self.position)
-        self.facing = Vector(*self.facing)
 
         # Initialize things
         for k, v in kwargs.items():
@@ -199,7 +197,7 @@ class BaseSprite(EventMixin, Rotatable):
             if k == 'pos':
                 k = 'position'
             # Castings
-            if k in ('position', 'facing'):
+            if k == 'position':
                 v = Vector(*v)  # Vector.convert() when that ships.
             setattr(self, k, v)
 
@@ -252,9 +250,6 @@ class BaseSprite(EventMixin, Rotatable):
     @property
     def _offset_value(self):
         return self.size / 2
-
-    def rotate(self, degrees: Number):
-        self.facing.rotate(degrees)
 
     def __image__(self):
         if self.image is None:
