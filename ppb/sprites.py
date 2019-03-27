@@ -146,11 +146,13 @@ class Rotatable:
     """
     _rotation = 0
     # This is necessary to make facing do the thing while also being adjustable.
-    _basis = Vector(0, -1)
+    basis = Vector(0, -1)
+    # Considered making basis private, the only reason to do so is to
+    # discourage people from relying on it as data.
 
     @property
     def facing(self):
-        return Vector(*self._basis).rotate(self.rotation).normalize()
+        return Vector(*self.basis).rotate(self.rotation).normalize()
 
     @property
     def rotation(self):
