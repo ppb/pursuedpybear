@@ -78,9 +78,9 @@ class Renderer(System):
             self.register_renderable(game_object)
 
         source_image = self.resources[game_object.image]
-        final_image = self.resize_image(source_image, game_object.size)
-        # TODO: Rotate Image to facing.
-        return final_image
+        resized_image = self.resize_image(source_image, game_object.size)
+        rotated_image = self.rotate_image(resized_image, game_object.rotation)
+        return rotated_image
 
     def prepare_rectangle(self, resource, game_object, camera):
         rect = resource.get_rect()
@@ -121,6 +121,10 @@ class Renderer(System):
                                                          target_resolution)
         self.resized_images[key] = resized_image
         return resized_image
+
+    def rotate_image(self, image, rotation):
+        """Rotates image counter-clockwise {rotation} degrees."""
+        return pygame.transform.rotate(image, -rotation)
 
     def target_resolution(self, width, height, game_unit_size):
         values = [width, height]
