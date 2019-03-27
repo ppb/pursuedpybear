@@ -12,29 +12,6 @@ docs_task:
     - make -C docs/ html
 
 
-FreeBSD_task:
-  skip: $CIRRUS_BRANCH =~ '.*\.tmp'
-  freebsd_instance:
-    image: freebsd-12-0-release-amd64
-  env:
-    matrix:
-      - PYTHON: 3.6
-      - PYTHON: 3.7
-  install_script:
-    - PYVER=`echo $PYTHON | tr -d '.'`
-    - PYPKG=py${PYVER}
-    - PY=python${PYTHON}
-    - pkg install -y bash python${PYVER} ${PYPKG}-setuptools
-    - ${PY} -m ensurepip
-    - ${PY} -m pip install --upgrade-strategy eager -U pytest
-    - ${PY} -m pip install -e .
-
-  script:
-    - export PY=python${PYTHON}
-    - ${PY} --version
-    - ${PY} -m pip list
-    - ${PY} -m pytest
-
 Linux_task:
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
   allow_failures: $CIRRUS_TASK_NAME =~ '.*-rc-.*'
@@ -90,7 +67,6 @@ Windows_task:
     matrix:
       - image: python:3.6-windowsservercore-1809
       - image: python:3.7-windowsservercore-1809
-      - image: python:3.8-rc-windowsservercore-1809
 
   install_script:
     - C:\Python\python.exe -m pip install --upgrade-strategy eager -U pytest
