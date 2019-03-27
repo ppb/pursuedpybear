@@ -4,7 +4,7 @@ docs_task:
     image: python:3.7-slim
 
   install_script:
-    - apt update && apt install make
+    - apt update || true ; apt install -qq -y make
     - pip install --upgrade-strategy eager -U -r requirements-docs.txt
     - pip install -e .
 
@@ -46,6 +46,8 @@ Linux_task:
       - image: pypy:3.6-slim
 
   install_script:
+    - apt update || true
+    - apt install -qq -y pkgconf libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libsdl1.2-dev libsmpeg-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev libfreetype6-dev gcc
     - pip install --upgrade-strategy eager -U pytest
     - pip install -e .
 
