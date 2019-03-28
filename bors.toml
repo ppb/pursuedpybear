@@ -1,0 +1,9 @@
+status = [
+  "docs",
+  "Linux container:python:3.6-slim",
+  "Linux container:python:3.7-slim",
+  "Windows container:python:3.6-windowsservercore-1809",
+  "Windows container:python:3.7-windowsservercore-1809",
+  "macOS PYTHON:3.6.8",
+  "macOS PYTHON:3.7.2",
+]
