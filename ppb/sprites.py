@@ -163,7 +163,7 @@ class Rotatable:
         self._rotation = value % 360
 
     def rotate(self, degrees):
-        """Change the current rotation by degrees."""
+        """Rotate the sprite by a given angle (in degrees)."""
         self.rotation += degrees
 
 
