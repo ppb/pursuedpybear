@@ -41,4 +41,4 @@ def test_failer_timed():
 
     run_time = end_time - start_time
 
-    assert abs(run_time - 0.1) <= 0.01
+    assert abs(run_time - 0.1) <= 0.011
