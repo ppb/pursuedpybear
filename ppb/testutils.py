@@ -17,10 +17,10 @@ class Failer(System):
         self.run_time = run_time
 
     def activate(self, engine):
-        if time.monotonic() - self.start > self.run_time:
-            raise AssertionError("Test ran too long.")
         if self.fail(engine):
             raise AssertionError(self.message)
+        if time.monotonic() - self.start > self.run_time:
+            raise AssertionError("Test ran too long.")
         return ()
 
 
