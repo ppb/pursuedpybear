@@ -69,12 +69,8 @@ Windows_task:
   windows_container:
     os_version: 2019
     matrix:
-      - image: python:3.6-windowsservercore-1809
-      - image: python:3.7-windowsservercore-1809
-
-  install_script:
-    - C:\Python\python.exe -m pip install --upgrade-strategy eager -U -r requirements-tests.txt
-    - C:\Python\python.exe -m pip install -e .
+      - dockerfile: .ci/dockerfiles/python:3.6-windowsservercore-1809.Dockerfile
+      - dockerfile: .ci/dockerfiles/python:3.7-windowsservercore-1809.Dockerfile
 
   script:
     - C:\Python\python.exe --version
