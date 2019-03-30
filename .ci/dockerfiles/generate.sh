@@ -16,7 +16,7 @@ EOF
 function postinstall() {
     case "$1" in
         python:*-windowsservercore-*)
-            echo -n 'rd /s /q %LOCALAPPDATA%\pip\Cache'
+            echo -n 'Remove-Item –path %LOCALAPPDATA%\pip\Cache -recurse -ErrorAction Ignore'
             ;;
 
         *)
