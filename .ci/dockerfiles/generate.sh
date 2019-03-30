@@ -43,7 +43,7 @@ function py() {
 
 for image in python:{3.6,3.7}-{slim,windowsservercore-1809} \
              python:3.8-rc-slim pypy:3.6-slim; do
-    cat > "${image}.Dockerfile" <<EOF
+    cat > "${image/:/_}.Dockerfile" <<EOF
 FROM ${image}
 
 $(preinstall $image)
