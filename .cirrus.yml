@@ -1,3 +1,13 @@
+dockerfiles_task:
+  skip: $CIRRUS_BRANCH =~ '.*\.tmp'
+  container:
+    image: ellerbrock/alpine-bash-git
+
+  script:
+    - ./.ci/dockerfiles/generate.sh
+    - git diff --exit-code
+
+
 docs_task:
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
   container:
