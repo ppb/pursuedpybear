@@ -3,14 +3,6 @@ from ppb import Vector
 from ppb.camera import Camera
 
 
-def test_camera_move():
-    cam = Camera()
-    cam.position = Vector(500, 500)
-    assert cam.position == Vector(500, 500)
-    cam.position += Vector(100, 100)
-    assert cam.position == Vector(600, 600)
-
-
 def test_camera_viewport():
     cam = Camera(viewport=(0, 0, 800, 600))
     assert cam.point_in_viewport(Vector(400, 400))
