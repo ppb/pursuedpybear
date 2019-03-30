@@ -41,6 +41,29 @@ function py() {
     echo -n $PY
 }
 
+function run() {
+    image="$1"; shift
+    case $image in
+        *:*-windowsservercore-*)
+            echo -n RUN '(' "$1" ')'; shift
+            for command in "$@"; do
+                echo ' -and' '\'
+                echo -n '   ' '(' "$command" ')'
+            done
+            echo
+            ;;
+
+        *)
+            echo -n RUN "$1"; shift
+            for command in "$@"; do
+                echo ' &&' '\'
+                echo -n '   ' "$command"
+            done
+            echo
+            ;;
+    esac
+}
+
 for image in python:{3.6,3.7}-{slim,windowsservercore-1809} \
              python:3.8-rc-slim pypy:3.6-slim; do
     cat > "${image/:/_}.Dockerfile" <<EOF
@@ -49,8 +72,8 @@ FROM ${image}
 $(preinstall $image)
 
 ADD requirements.txt /
-RUN $(py $image) -m pip install --upgrade-strategy eager -U pytest && \\
-    $(py $image) -m pip install --upgrade-strategy eager -U -r requirements.txt && \\
-    $(postinstall $image)
+$(run $image "$(py $image) -m pip install --upgrade-strategy eager -U pytest" \
+             "$(py $image) -m pip install --upgrade-strategy eager -U -r requirements.txt" \
+             "$(postinstall $image)")
 EOF
 done
