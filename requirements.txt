@@ -1,0 +1,3 @@
+pygame
+ppb-vector
+dataclasses; python_version < "3.7"
