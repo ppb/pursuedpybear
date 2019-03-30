@@ -17,19 +17,10 @@ Linux_task:
   allow_failures: $CIRRUS_TASK_NAME =~ '.*-rc-.*'
   container:
     matrix:
-      - image: python:3.6-slim
-      - image: python:3.7-slim
-      - image: python:3.8-rc-slim
-      - image: pypy:3.6-slim
-
-  install_script:
-    - >-
-      if command -v pypy3 >/dev/null || python3 -c 'import sys; exit(sys.implementation.version.releaselevel == "final")'; then
-        apt update || true;
-        apt install -qq -y pkgconf libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libsdl1.2-dev libsmpeg-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev libfreetype6-dev gcc
-      fi
-    - pip install --upgrade-strategy eager -U -r requirements-tests.txt
-    - pip install -e .
+      - dockerfile: .ci/dockerfiles/python:3.6-slim.Dockerfile
+      - dockerfile: .ci/dockerfiles/python:3.7-slim.Dockerfile
+      - dockerfile: .ci/dockerfiles/python:3.8-rc-slim.Dockerfile
+      - dockerfile: .ci/dockerfiles/pypy:3.6-slim.Dockerfile
 
   script:
     - command -v pypy3 >/dev/null && export PY=pypy3
