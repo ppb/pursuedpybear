@@ -6,10 +6,10 @@ source .common.sh
 function preinstall() {
     case "$1" in
         pypy:*|python:*-rc-slim)
-            cat <<EOF
-ADD .ci/install-debian-deps.sh /
-RUN /install-debian-deps.sh
-EOF
+            run "$1" \
+                "apt update || true" \
+                "apt install -qq -y pkgconf libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libsdl1.2-dev libsmpeg-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev libfreetype6-dev gcc" \
+                "rm -rf /var/cache/apt/*"
             ;;
     esac
 }
