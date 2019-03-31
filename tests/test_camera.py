@@ -1,13 +1,22 @@
+from hypothesis import given
+
 from ppb import BaseSprite
 from ppb import Vector
 from ppb.camera import Camera
+from ppb.testutils import integer_vectors
 
 
-def test_camera_viewport():
-    cam = Camera(viewport=(0, 0, 800, 600))
-    assert cam.point_in_viewport(Vector(400, 400))
-    assert not cam.point_in_viewport(Vector(900, 600))
-    assert cam.viewport_offset == Vector(400, 300)
+ONE_K = 1024
+ONE_M = ONE_K * ONE_K
+
+
+@given(diagonal=integer_vectors(min_value=2, max_value=ONE_M))
+def test_camera_viewport(diagonal: Vector):
+    x, y = diagonal
+    cam = Camera(viewport=(0, 0, x, y))
+    assert cam.point_in_viewport(0.5 * diagonal)
+    assert not cam.point_in_viewport(diagonal + (100, 100))
+    assert cam.viewport_offset == 0.5 * diagonal
 
 
 def test_camera_point_in_viewport_not_at_origin():
