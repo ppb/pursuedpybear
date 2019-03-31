@@ -1,6 +1,7 @@
 #!/bin/bash -eu
 
 cd $(dirname ${BASH_SOURCE[0]})
+source .common.sh
 
 function preinstall() {
     case "$1" in
@@ -25,44 +26,6 @@ function postinstall() {
     esac
 }
 
-function py() {
-    case "$1" in
-        pypy:*)
-            PY=pypy3
-            ;;
-        python:*-windowsservercore-*)
-            PY='C:\Python\python.exe'
-            ;;
-        *)
-            PY=python3
-            ;;
-    esac
-
-    echo -n $PY
-}
-
-function run() {
-    image="$1"; shift
-    case $image in
-        *:*-windowsservercore-*)
-            echo -n RUN '(' "$1" ')'; shift
-            for command in "$@"; do
-                echo ' -and' '\'
-                echo -n '   ' '(' "$command" ')'
-            done
-            echo
-            ;;
-
-        *)
-            echo -n RUN "$1"; shift
-            for command in "$@"; do
-                echo ' &&' '\'
-                echo -n '   ' "$command"
-            done
-            echo
-            ;;
-    esac
-}
 
 for image in python:{3.6,3.7}-{slim,windowsservercore-1809} \
              python:3.8-rc-slim pypy:3.6-slim; do
