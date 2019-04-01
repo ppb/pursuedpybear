@@ -19,6 +19,7 @@ setup(
     version='0.5.0',
     packages=['ppb', 'ppb.systems'],
     install_requires=requirements(),
+    setup_requires=['pytest-runner'],
     tests_require=requirements('tests'),
     python_requires=">=3.6",
     url='https://github.com/ppb/pursuedpybear',
