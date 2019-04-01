@@ -2,6 +2,7 @@ import time
 from typing import Callable
 
 from ppb.engine import GameEngine
+from ppb.events import Heartbeat
 from ppb.events import Quit
 from ppb.systems import System
 
@@ -9,17 +10,18 @@ from ppb.systems import System
 class Failer(System):
 
     def __init__(self, *, fail: Callable[[GameEngine], bool], message: str,
-                 run_time: float=1, **kwargs):
+                 run_time: float=1, engine, **kwargs):
         super().__init__(**kwargs)
         self.fail = fail
         self.message = message
         self.start = time.monotonic()
         self.run_time = run_time
+        self.engine = engine
 
-    def activate(self, engine):
+    def on_heartbeat(self, heartbeat_event: Heartbeat, signal):
         if time.monotonic() - self.start > self.run_time:
             raise AssertionError("Test ran too long.")
-        if self.fail(engine):
+        if self.fail(self.engine):
             raise AssertionError(self.message)
         return ()
 

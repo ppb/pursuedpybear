@@ -36,6 +36,7 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         self.event_extensions = defaultdict(dict)
         self.running = False
         self.entered = False
+        self.last_heartbeat = None
 
         # Systems
         self.systems_classes = systems
@@ -80,12 +81,20 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
 
     def start(self):
         self.running = True
+        self.last_heartbeat = time.monotonic()
         self.activate({"scene_class": self.first_scene,
                        "kwargs": self.scene_kwargs})
 
     def main_loop(self):
         while self.running:
             time.sleep(0)
+            now = time.monotonic()
+            self.signal(events.Heartbeat(now - self.last_heartbeat))
+            self.last_heartbeat = now
+            # Okay, doing this twice is hacky as hell, but fine while I remove
+            # the old system.
+            while self.events:
+                self.publish()
             for system in self.systems:
                 for event in system.activate(self):
                     self.signal(event)
