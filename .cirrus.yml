@@ -28,7 +28,7 @@ Linux_task:
         apt update || true;
         apt install -qq -y pkgconf libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libsdl1.2-dev libsmpeg-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev libfreetype6-dev gcc
       fi
-    - pip install --upgrade-strategy eager -U pytest
+    - pip install --upgrade-strategy eager -U -r requirements-tests.txt
     - pip install -e .
 
   script:
@@ -54,7 +54,7 @@ macOS_task:
     - pyenv install ${PYTHON}
     - pyenv global ${PYTHON}
     - pyenv rehash
-    - pip install --upgrade-strategy eager -U pytest
+    - pip install --upgrade-strategy eager -U -r requirements-tests.txt
     - pip install -e .
 
   script:
@@ -72,7 +72,7 @@ Windows_task:
       - image: python:3.7-windowsservercore-1809
 
   install_script:
-    - C:\Python\python.exe -m pip install --upgrade-strategy eager -U pytest
+    - C:\Python\python.exe -m pip install --upgrade-strategy eager -U -r requirements-tests.txt
     - C:\Python\python.exe -m pip install -e .
 
   script:
