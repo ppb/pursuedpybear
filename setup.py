@@ -5,16 +5,22 @@ def readme():
     with open('README.md') as file:
         return file.read()
 
+def requirements(section=None):
+    if section is None:
+        filename = "requirements.txt"
+    else:
+        filename = f"requirements-{section}.txt"
+
+    with open(filename) as file:
+        return [line.strip() for line in file]
 
 setup(
     name='ppb',
     version='0.5.0',
     packages=['ppb', 'ppb.systems'],
-    install_requires=[
-        'pygame',
-        'ppb-vector',
-        'dataclasses; python_version < "3.7"'
-    ],
+    install_requires=requirements(),
+    setup_requires=['pytest-runner'],
+    tests_require=requirements('tests'),
     python_requires=">=3.6",
     url='https://github.com/ppb/pursuedpybear',
     license='Artistic-2.0',

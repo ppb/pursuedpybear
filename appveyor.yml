@@ -9,7 +9,7 @@ environment:
 
 install:
   -  '%PYTHON%\Scripts\pip install -e .'
-  -  '%PYTHON%\Scripts\pip install pytest'
+  -  '%PYTHON%\Scripts\pip install -r requirements-tests.txt'
 build: off
 test_script:
   - '%PYTHON%\Scripts\pytest'
