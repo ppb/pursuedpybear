@@ -26,17 +26,26 @@ function postinstall() {
     esac
 }
 
+function template() {
+    image="$1"; shift
+    PIP="$(py $image) -m pip install --upgrade-strategy eager -U"
+    CMDS=()
+    for requirement in "$@" requirements.txt; do
+        CMDS+=("$PIP -r $requirement")
+    done
+    CMDS+=("$(postinstall $image)")
 
-for image in python:{3.6,3.7}-{slim,windowsservercore-1809} \
-             python:3.8-rc-slim pypy:3.6-slim; do
-    cat > "${image/:/_}.Dockerfile" <<EOF
+    cat <<EOF
 FROM ${image}
 
 $(preinstall $image)
 
-ADD requirements-tests.txt requirements.txt /
-$(run $image "$(py $image) -m pip install --upgrade-strategy eager -U -r requirements-tests.txt" \
-             "$(py $image) -m pip install --upgrade-strategy eager -U -r requirements.txt" \
-             "$(postinstall $image)")
+ADD $@ requirements.txt /
+$(run $image "${CMDS[@]}")
 EOF
+}
+
+for image in python:{3.6,3.7}-{slim,windowsservercore-1809} \
+             python:3.8-rc-slim pypy:3.6-slim; do
+    template $image requirements-tests.txt > "${image/:/_}.Dockerfile"
 done
