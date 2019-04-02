@@ -34,8 +34,8 @@ FROM ${image}
 
 $(preinstall $image)
 
-ADD requirements.txt /
-$(run $image "$(py $image) -m pip install --upgrade-strategy eager -U pytest" \
+ADD requirements-tests.txt requirements.txt /
+$(run $image "$(py $image) -m pip install --upgrade-strategy eager -U -r requirements-tests.txt" \
              "$(py $image) -m pip install --upgrade-strategy eager -U -r requirements.txt" \
              "$(postinstall $image)")
 EOF
