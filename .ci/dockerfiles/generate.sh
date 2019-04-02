@@ -28,6 +28,7 @@ function postinstall() {
 
 function template() {
     image="$1"; shift
+    preinstall="$1"; shift
     PIP="$(py $image) -m pip install --upgrade-strategy eager -U"
     CMDS=()
     for requirement in "$@" requirements.txt; do
@@ -38,7 +39,7 @@ function template() {
     cat <<EOF
 FROM ${image}
 
-$(preinstall $image)
+${preinstall}
 
 ADD $@ requirements.txt /
 $(run $image "${CMDS[@]}")
@@ -47,5 +48,11 @@ EOF
 
 for image in python:{3.6,3.7}-{slim,windowsservercore-1809} \
              python:3.8-rc-slim pypy:3.6-slim; do
-    template $image requirements-tests.txt > "${image/:/_}.Dockerfile"
+    template $image "$(preinstall $image)" requirements-tests.txt \
+             > "${image/:/_}.Dockerfile"
 done
+
+image=python:3.7-slim
+template $image \
+  "$(run $image "apt update || true" "apt install -qq -y make" "rm -rf /var/cache/apt/*")" \
+  requirements-docs.txt > docs.Dockerfile

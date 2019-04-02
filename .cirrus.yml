@@ -11,15 +11,8 @@ dockerfiles_task:
 docs_task:
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
   container:
-    image: python:3.7-slim
-
-  install_script:
-    - apt update || true ; apt install -qq -y make
-    - pip install --upgrade-strategy eager -U -r requirements-docs.txt
-    - pip install -e .
-
-  script:
-    - make -C docs/ html
+    dockerfile: .ci/dockerfiles/docs.Dockerfile
+  script: make -C docs/ html
 
 
 Linux_task:
