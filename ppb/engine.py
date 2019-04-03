@@ -4,6 +4,8 @@ from contextlib import ExitStack
 import time
 from typing import Any
 from typing import Callable
+from typing import DefaultDict
+from typing import Dict
 from typing import Type
 
 import ppb.events as events
@@ -33,7 +35,7 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         # Engine State
         self.scenes = []
         self.events = deque()
-        self.event_extensions = defaultdict(dict)
+        self.event_extensions: DefaultDict[type, Dict[str, Callable[[], Any]]] = defaultdict(dict)
         self.running = False
         self.entered = False
 
@@ -108,8 +110,9 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         event = self.events.popleft()
         scene = self.current_scene
         event.scene = scene
-        for attr_name, attr_value in self.event_extensions[type(event)].items():
-            setattr(event, attr_name, attr_value)
+        extension_dict = self.event_extensions[type(event)]
+        for attr_name, attr_callback in extension_dict.items():
+            setattr(event, attr_name, attr_callback())
         self.__event__(event, self.signal)
         for system in self.systems:
             system.__event__(event, self.signal)
@@ -176,8 +179,18 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         self.scenes.append(scene)
         self.signal(events.SceneStarted())
 
-    def register(self, event_type, attribute, value):
-        self.event_extensions[event_type][attribute] = value
+    def register(self, event_type: type, attribute: str, callback: Callable[[], Any]):
+        """
+        Register a callback to be applied to an event at time of publishing.
+
+        Primarily to be used by subsystems.
+
+        :param event_type: The class of an event.
+        :param attribute: A string, the name you want applied to the event.
+        :param callback: A callable, must accept no parameters, and return a value.
+        :return: None
+        """
+        self.event_extensions[event_type][attribute] = callback
 
     def flush_events(self):
         """
