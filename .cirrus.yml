@@ -12,6 +12,8 @@ docs_task:
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
   container:
     dockerfile: .ci/dockerfiles/docs.Dockerfile
+
+  install_script: pip install -e .
   script: make -C docs/ html
 
 
