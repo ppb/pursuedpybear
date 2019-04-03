@@ -190,6 +190,12 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         :param callback: A callable, must accept no parameters, and return a value.
         :return: None
         """
+        if not isinstance(event_type, type):
+            raise TypeError(f"{type(self)}.register requires event_type to be a type.")
+        if not isinstance(attribute, str):
+            raise TypeError(f"{type(self)}.register requires attribute to be a string.")
+        if not callable(callback):
+            raise TypeError(f"{type(self)}.register requires callback to be callable.")
         self.event_extensions[event_type][attribute] = callback
 
     def flush_events(self):
