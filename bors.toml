@@ -7,3 +7,5 @@ status = [
   "macOS PYTHON:3.6.8",
   "macOS PYTHON:3.7.2",
 ]
+
+delete_merged_branches = true
