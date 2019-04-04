@@ -35,6 +35,13 @@ def test_camera_point_in_viewport_not_at_origin():
     assert not cam.point_in_viewport(Vector(901, 600))
 
 
+@given(cam=cameras(), v=vectors())
+def test_camera_roundtrip_frame_viewport(cam: Camera, v: Vector):
+    """Check that Camera.translate_to_{frame,viewport} are inverse of one another."""
+    assert cam.translate_to_frame(cam.translate_to_viewport(v)).isclose(v)
+    assert cam.translate_to_viewport(cam.translate_to_frame(v)).isclose(v)
+
+
 def test_camera_translate_to_frame():
     cam = Camera(viewport=(0, 0, 800, 600), pixel_ratio=80)
     assert cam.position == Vector(0, 0)
