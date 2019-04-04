@@ -1,0 +1,81 @@
+docs_task:
+  skip: $CIRRUS_BRANCH =~ '.*\.tmp'
+  container:
+    image: python:3.7-slim
+
+  install_script:
+    - apt update || true ; apt install -qq -y make
+    - pip install --upgrade-strategy eager -U -r requirements-docs.txt
+    - pip install -e .
+
+  script:
+    - make -C docs/ html
+
+
+Linux_task:
+  skip: $CIRRUS_BRANCH =~ '.*\.tmp'
+  allow_failures: $CIRRUS_TASK_NAME =~ '.*-rc-.*'
+  container:
+    matrix:
+      - image: python:3.6-slim
+      - image: python:3.7-slim
+      - image: python:3.8-rc-slim
+      - image: pypy:3.6-slim
+
+  install_script:
+    - >-
+      if command -v pypy3 >/dev/null || python3 -c 'import sys; exit(sys.implementation.version.releaselevel == "final")'; then
+        apt update || true;
+        apt install -qq -y pkgconf libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libsdl1.2-dev libsmpeg-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev libfreetype6-dev gcc
+      fi
+    - pip install --upgrade-strategy eager -U -r requirements-tests.txt
+    - pip install -e .
+
+  script:
+    - command -v pypy3 >/dev/null && export PY=pypy3
+    - ${PY-python3} --version
+    - pip list
+    - pytest
+
+macOS_task:
+  skip: $CIRRUS_BRANCH =~ '.*\.tmp'
+  osx_instance:
+    image: mojave-base
+  env:
+    PATH: ${HOME}/.pyenv/shims:${PATH}
+    matrix:
+      - PYTHON: 3.6.8
+      - PYTHON: 3.7.2
+  install_script:
+    # Per the pyenv homebrew recommendations.
+    # https://github.com/pyenv/pyenv/wiki#suggested-build-environment
+    - sudo installer -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg -target /
+    - brew install openssl readline pyenv
+    - pyenv install ${PYTHON}
+    - pyenv global ${PYTHON}
+    - pyenv rehash
+    - pip install --upgrade-strategy eager -U -r requirements-tests.txt
+    - pip install -e .
+
+  script:
+    - python3 --version
+    - pip list
+    - pytest
+
+Windows_task:
+  skip: $CIRRUS_BRANCH =~ '.*\.tmp'
+  allow_failures: $CIRRUS_TASK_NAME =~ '.*-rc-.*'
+  windows_container:
+    os_version: 2019
+    matrix:
+      - image: python:3.6-windowsservercore-1809
+      - image: python:3.7-windowsservercore-1809
+
+  install_script:
+    - C:\Python\python.exe -m pip install --upgrade-strategy eager -U -r requirements-tests.txt
+    - C:\Python\python.exe -m pip install -e .
+
+  script:
+    - C:\Python\python.exe --version
+    - C:\Python\python.exe -m pip list
+    - C:\Python\python.exe -m pytest

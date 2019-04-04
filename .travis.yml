@@ -33,7 +33,7 @@ before_install:
 
 install:
   - pip install -e .;
-  - pip install pytest;
+  - pip install -r requirements-tests.txt;
   
 script:
   - pytest
