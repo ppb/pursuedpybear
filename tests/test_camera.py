@@ -1,13 +1,21 @@
-from hypothesis import given
+from hypothesis import given, note, strategies as st
 
 from ppb import BaseSprite
 from ppb import Vector
 from ppb.camera import Camera
-from ppb.testutils import integer_vectors
+from ppb.testutils import integer_vectors, vectors
 
 
 ONE_K = 1024
 ONE_M = ONE_K * ONE_K
+
+
+def cameras():
+    return st.builds(
+        lambda offset, diagonal: Camera(viewport=(*offset, *(offset+diagonal))),
+        integer_vectors(min_value=-ONE_M, max_value=ONE_M),
+        integer_vectors(min_value=2, max_value=ONE_M),
+    )
 
 
 @given(diagonal=integer_vectors(min_value=2, max_value=ONE_M))
