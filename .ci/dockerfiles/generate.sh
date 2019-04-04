@@ -48,11 +48,10 @@ EOF
 
 for image in python:{3.6,3.7}-{slim,windowsservercore-1809} \
              python:3.8-rc-slim pypy:3.6-slim; do
-    template $image "$(preinstall $image)" requirements-tests.txt \
-             > "${image/:/_}.Dockerfile"
+    template $image "$(preinstall $image)" requirements-tests.txt > "${image/:/_}"
 done
 
 image=python:3.7-slim
 template $image \
   "$(run $image "apt update || true" "apt install -qq -y make" "rm -rf /var/cache/apt/*")" \
-  requirements-docs.txt > docs.Dockerfile
+  requirements-docs.txt > docs
