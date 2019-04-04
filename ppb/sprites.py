@@ -127,7 +127,7 @@ class Side:
         self.parent.position = self._mk_update_vector_center(value)
 
     def _mk_update_vector_side(self, attribute, value):
-        value = Vector.convert(value)
+        value = Vector(value)
         assert attribute != 'center'
         # Does a bunch of dynamc resolution:
         # Sprite.top.left
@@ -146,7 +146,7 @@ class Side:
         return Vector(**fields)
 
     def _mk_update_vector_center(self, value):
-        value = Vector.convert(value)
+        value = Vector(value)
         # Pretty similar to ._mk_update_vector_side()
         self_dimension, self_offset = self._lookup_side(self.side)
 
