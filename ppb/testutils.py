@@ -16,6 +16,13 @@ def integer_vectors(min_value=None, max_value=None):
         st.integers(min_value=min_value, max_value=max_value),
     )
 
+def vectors(max_magnitude=1e75):
+    return st.builds(
+        Vector,
+        st.floats(min_value=-max_magnitude, max_value=max_magnitude),
+        st.floats(min_value=-max_magnitude, max_value=max_magnitude),
+    )
+
 
 class Failer(System):
 
