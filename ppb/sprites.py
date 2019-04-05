@@ -140,7 +140,34 @@ class Side:
             raise AttributeError(message)
 
 
-class BaseSprite(EventMixin):
+class Rotatable:
+    """
+    A simple rotation mixin. Can be included with sprites.
+    """
+    _rotation = 0
+    # This is necessary to make facing do the thing while also being adjustable.
+    basis = Vector(0, -1)
+    # Considered making basis private, the only reason to do so is to
+    # discourage people from relying on it as data.
+
+    @property
+    def facing(self):
+        return Vector(*self.basis).rotate(self.rotation).normalize()
+
+    @property
+    def rotation(self):
+        return self._rotation
+
+    @rotation.setter
+    def rotation(self, value):
+        self._rotation = value % 360
+
+    def rotate(self, degrees):
+        """Rotate the sprite by a given angle (in degrees)."""
+        self.rotation += degrees
+
+
+class BaseSprite(EventMixin, Rotatable):
     """
     The base Sprite class. All sprites should inherit from this (directly or
     indirectly).
@@ -155,7 +182,6 @@ class BaseSprite(EventMixin):
     image = None
     resource_path = None
     position: Vector = Vector(0, 0)
-    facing: Vector = Vector(0, -1)
     size: Union[int, float] = 1
 
     def __init__(self, **kwargs):
@@ -164,7 +190,6 @@ class BaseSprite(EventMixin):
         # Make these instance properties with fresh instances
         # Don't use Vector.convert() because we need copying
         self.position = Vector(*self.position)
-        self.facing = Vector(*self.facing)
 
         # Initialize things
         for k, v in kwargs.items():
@@ -172,7 +197,7 @@ class BaseSprite(EventMixin):
             if k == 'pos':
                 k = 'position'
             # Castings
-            if k in ('position', 'facing'):
+            if k == 'position':
                 v = Vector(*v)  # Vector.convert() when that ships.
             setattr(self, k, v)
 
@@ -225,9 +250,6 @@ class BaseSprite(EventMixin):
     @property
     def _offset_value(self):
         return self.size / 2
-
-    def rotate(self, degrees: Number):
-        self.facing.rotate(degrees)
 
     def __image__(self):
         if self.image is None:
