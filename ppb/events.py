@@ -4,6 +4,7 @@ import re
 from typing import Any
 from typing import Collection
 from typing import Dict
+from typing import Iterable
 from typing import Set
 from typing import Type
 from typing import Union
@@ -64,7 +65,20 @@ def {method}({e_name.lower()}_event: {e_name}, signal_function):
 
 
 class EventMixin:
+    children: Iterable['EventMixin'] = []
+
     def __event__(self, bag, fire_event):
+        """Actual protocol for reaching event handlers."""
+        self._publish_to_children(bag, fire_event)
+        self._handle_event(bag, fire_event)
+
+    def _publish_to_children(self, bag, fire_event):
+        """Publishes to children of this object."""
+        for child in self.children:
+            child.__event__(bag, fire_event)
+
+    def _handle_event(self, bag, fire_event):
+        """Event handler lookup and error handling."""
         elog = logging.getLogger('game.events')
 
         name = camel_to_snake(type(bag).__name__)
