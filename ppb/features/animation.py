@@ -52,7 +52,7 @@ class Animation:
 
     def pause(self):
         if not self._pause_level:
-            self._paused_time = self._clock()
+            self._paused_time = self._clock() + self._offset
             self._paused_frame = self.current_frame
         self._pause_level += 1
 
