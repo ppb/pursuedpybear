@@ -74,10 +74,11 @@ class Renderer(System):
         image_name = game_object.__image__()
         if image_name is flags.DoNotRender:
             return None
+        image_name = str(image_name)
         if image_name not in self.resources:
             self.register_renderable(game_object)
 
-        source_image = self.resources[game_object.image]
+        source_image = self.resources[image_name]
         resized_image = self.resize_image(source_image, game_object.size)
         rotated_image = self.rotate_image(resized_image, game_object.rotation)
         return rotated_image
@@ -103,7 +104,7 @@ class Renderer(System):
         self.resources[name] = resource
 
     def register_renderable(self, renderable):
-        image_name = renderable.__image__()
+        image_name = str(renderable.__image__())
         source_path = renderable.__resource_path__()
         self.register(source_path / image_name, image_name)
 
