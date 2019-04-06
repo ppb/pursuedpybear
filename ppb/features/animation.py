@@ -36,8 +36,8 @@ class Animation:
         start = int(start)
         end = int(end)
         template = FILE_PATTERN.sub(
+            '{:0%dd}' % numdigits,
             self._filename,
-            '{:0%dd}' % numdigits
         )
         self._frames = [
             template.format(n)
