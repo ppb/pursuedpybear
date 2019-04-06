@@ -26,6 +26,12 @@ class Animation:
         self._offset = -self._clock()
         self._compile_filename()
 
+    def __repr__(self):
+        return f"{type(self).__name__}({self._filename!r}, {self.frames_per_second!r})"
+
+    def copy(self):
+        return type(self)(self._filename, self.frames_per_second)
+
     def _clock(self):
         return type(self).clock()
 
@@ -76,3 +82,16 @@ class Animation:
 
     def __str__(self):
         return self._frames[self.current_frame]
+
+    # This is so that if you assign an Animation to a class, instances will get
+    # their own copy, so their animations run independently.
+    _prop_name = None
+
+    def __get__(self, obj, type=None):
+        v = vars(obj)
+        if self._prop_name not in v:
+            v[self._prop_name] = self.copy()
+        return v[self._prop_name]
+
+    def __set_name__(self, owner, name):
+        self._prop_name = name
