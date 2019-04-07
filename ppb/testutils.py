@@ -23,8 +23,6 @@ class Failer(System):
             raise AssertionError("Test ran too long.")
         if self.fail(self.engine):
             raise AssertionError(self.message)
-        return ()
-
 
 
 class Quitter(System):
@@ -37,7 +35,7 @@ class Quitter(System):
         self.counter = 0
         self.loop_count = loop_count
 
-    def activate(self, engine):
+    def on_heartbeat(self, heartbeat_event: Heartbeat, signal):
         self.counter += 1
         if self.counter >= self.loop_count:
-            yield Quit()
+            signal(Quit())
