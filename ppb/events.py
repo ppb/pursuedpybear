@@ -65,19 +65,8 @@ def {method}({e_name.lower()}_event: {e_name}, signal_function):
 
 
 class EventMixin:
-    children: Iterable['EventMixin'] = []
 
     def __event__(self, bag, fire_event):
-        """Actual protocol for reaching event handlers."""
-        self._publish_to_children(bag, fire_event)
-        self._handle_event(bag, fire_event)
-
-    def _publish_to_children(self, bag, fire_event):
-        """Publishes to children of this object."""
-        for child in self.children:
-            child.__event__(bag, fire_event)
-
-    def _handle_event(self, bag, fire_event):
         """Event handler lookup and error handling."""
         elog = logging.getLogger('game.events')
 
@@ -97,6 +86,18 @@ class EventMixin:
                     raise BadEventHandlerException(self, meth_name, bag) from ex
                 else:
                     raise
+
+
+class TreeStructurePublisher(EventMixin):
+    publish_targets: Iterable['EventMixin'] = []
+    # Was "children" but realize there's some potential naming conflicts.
+    # This is a more explicit name.
+
+    def __event__(self, bag, fire_event):
+        super().__event__(bag, fire_event)
+
+        for child in self.publish_targets:
+            child.__event__(bag, fire_event)
 
 
 # Remember to define scene at the end so the pargs version of __init__() still works
