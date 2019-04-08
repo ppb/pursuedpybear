@@ -5,7 +5,6 @@ import pygame
 
 import ppb.events as events
 import ppb.flags as flags
-import ppb.utils as utils
 
 default_resolution = 800, 600
 
@@ -150,12 +149,12 @@ class Updater(System):
         self.time_step = time_step
 
     def __enter__(self):
-        self.start_time = time.time()
+        self.start_time = time.monotonic()
 
     def on_idle(self, idle_event: events.Idle, signal):
         if self.last_tick is None:
-            self.last_tick = time.time()
-        this_tick = time.time()
+            self.last_tick = time.monotonic()
+        this_tick = time.monotonic()
         self.accumulated_time += this_tick - self.last_tick
         self.last_tick = this_tick
         while self.accumulated_time >= self.time_step:
