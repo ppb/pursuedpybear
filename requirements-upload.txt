@@ -7,4 +7,3 @@ requests-toolbelt==0.8.0
 tqdm==4.26.0
 twine==1.11.0
 urllib3==1.23
-wheel
