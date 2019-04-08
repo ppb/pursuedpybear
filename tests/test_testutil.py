@@ -5,7 +5,7 @@ from pytest import mark
 from pytest import raises
 
 import ppb.testutils as testutil
-from ppb.events import Heartbeat
+from ppb.events import Idle
 from ppb.events import Quit
 
 
@@ -14,7 +14,7 @@ def test_quitter(loop_count):
     quitter = testutil.Quitter(loop_count=loop_count)
     signal_mock = Mock()
     for i in range(loop_count):
-        quitter.__event__(Heartbeat(.01), signal_mock)
+        quitter.__event__(Idle(.01), signal_mock)
     signal_mock.assert_called_once()
     assert len(signal_mock.call_args[0]) == 1
     assert len(signal_mock.call_args[1]) == 0
@@ -25,7 +25,7 @@ def test_failer_immediate():
     failer = testutil.Failer(fail=lambda e: True, message="Expected failure.", engine=None)
 
     with raises(AssertionError):
-        failer.__event__(Heartbeat(0.0), lambda x: None)
+        failer.__event__(Idle(0.0), lambda x: None)
 
 
 def test_failer_timed():
@@ -35,7 +35,7 @@ def test_failer_timed():
 
     while True:
         try:
-            failer.__event__(Heartbeat(0.0), lambda x: None)
+            failer.__event__(Idle(0.0), lambda x: None)
         except AssertionError as e:
             if e.args[0] == "Test ran too long.":
                 end_time = monotonic()

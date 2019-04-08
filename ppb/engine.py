@@ -36,7 +36,7 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         self.event_extensions = defaultdict(dict)
         self.running = False
         self.entered = False
-        self.last_heartbeat = None
+        self.last_idle_event = None
 
         # Systems
         self.systems_classes = systems
@@ -81,7 +81,7 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
 
     def start(self):
         self.running = True
-        self.last_heartbeat = time.monotonic()
+        self.last_idle_event = time.monotonic()
         self.activate({"scene_class": self.first_scene,
                        "kwargs": self.scene_kwargs})
 
@@ -89,8 +89,8 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         while self.running:
             time.sleep(0)
             now = time.monotonic()
-            self.signal(events.Heartbeat(now - self.last_heartbeat))
-            self.last_heartbeat = now
+            self.signal(events.Idle(now - self.last_idle_event))
+            self.last_idle_event = now
             while self.events:
                 self.publish()
             self.manage_scene()

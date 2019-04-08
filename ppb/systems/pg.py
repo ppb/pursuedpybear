@@ -155,11 +155,11 @@ class EventPoller(System):
     def __exit__(self, exc_type, exc_val, exc_tb):
         pygame.quit()
 
-    def on_heartbeat(self, heartbeat, signal):
+    def on_idle(self, idle: events.Idle, signal):
         for pygame_event in pygame.event.get():
             methname = self.event_map.get(pygame_event.type)
             if methname is not None:  # Is there a handler for this pygame event?
-                ppbevent = getattr(self, methname)(pygame_event, heartbeat.scene)
+                ppbevent = getattr(self, methname)(pygame_event, idle.scene)
                 if ppbevent:  # Did the handler actually produce a ppb event?
                     signal(ppbevent)
 

@@ -272,7 +272,7 @@ class StopScene:
 
 
 @dataclass
-class Heartbeat:
+class Idle:
     """
     An engine plumbing event to pump timing information to subsystems.
     """

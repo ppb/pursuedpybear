@@ -176,8 +176,8 @@ def test_change_scene_event():
     class Tester(System):
         listening = False
 
-        def on_heartbeat(self, heartbeat, signal):
-            engine = heartbeat.engine
+        def on_idle(self, idle: events.Idle, signal):
+            engine = idle.engine
             if self.listening:
                 assert isinstance(engine.current_scene, SecondScene)
                 assert len(engine.scenes) == 2
@@ -187,7 +187,7 @@ def test_change_scene_event():
             self.listening = True
 
     with GameEngine(FirstScene, systems=[Updater, Tester]) as ge:
-        ge.register(events.Heartbeat, "engine", ge)
+        ge.register(events.Idle, "engine", ge)
         ge.run()
 
     pause_was_run.assert_called()
@@ -262,13 +262,13 @@ def test_flush_events():
     assert len(ge.events) == 0
 
 
-def test_heartbeats():
-    """This test confirms that Heartbeats work."""
+def test_idle():
+    """This test confirms that Idle events work."""
     was_called = False
 
     class TestSystem(System):
 
-        def on_heartbeat(self, event: events.Heartbeat, signal):
+        def on_idle(self, event: events.Idle, signal):
             global was_called
             was_called = True
             signal(events.Quit())

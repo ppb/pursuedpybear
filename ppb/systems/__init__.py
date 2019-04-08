@@ -48,8 +48,8 @@ class Renderer(System):
     def __exit__(self, exc_type, exc_val, exc_tb):
         pygame.quit()
 
-    def on_heartbeat(self, heartbeat_event: events.Heartbeat, signal):
-        self.render_clock += heartbeat_event.time_delta
+    def on_idle(self, idle_event: events.Idle, signal):
+        self.render_clock += idle_event.time_delta
         if self.render_ready:
             self.render_ready = False
             signal(events.Render())
@@ -152,13 +152,13 @@ class Updater(System):
     def __enter__(self):
         self.start_time = time.time()
 
-    def on_heartbeat(self, heartbeat_event, signal):
+    def on_idle(self, idle_event: events.Idle, signal):
         if self.last_tick is None:
             self.last_tick = time.time()
         this_tick = time.time()
         self.accumulated_time += this_tick - self.last_tick
         self.last_tick = this_tick
         while self.accumulated_time >= self.time_step:
-            # This might need to change for the heartbeat system to signal _only_ once per idle event.
+            # This might need to change for the Idle event system to signal _only_ once per idle event.
             self.accumulated_time += -self.time_step
             signal(events.Update(self.time_step))
