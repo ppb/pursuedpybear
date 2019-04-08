@@ -91,15 +91,8 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
             now = time.monotonic()
             self.signal(events.Heartbeat(now - self.last_heartbeat))
             self.last_heartbeat = now
-            # Okay, doing this twice is hacky as hell, but fine while I remove
-            # the old system.
             while self.events:
                 self.publish()
-            for system in self.systems:
-                for event in system.activate(self):
-                    self.signal(event)
-                    while self.events:
-                        self.publish()
             self.manage_scene()
 
     def activate(self, next_scene: dict):

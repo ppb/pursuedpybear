@@ -176,8 +176,8 @@ def test_change_scene_event():
     class Tester(System):
         listening = False
 
-# TODO: This is going to break with the new change.
-        def activate(self, engine):
+        def on_heartbeat(self, heartbeat, signal):
+            engine = heartbeat.engine
             if self.listening:
                 assert isinstance(engine.current_scene, SecondScene)
                 assert len(engine.scenes) == 2
@@ -187,6 +187,7 @@ def test_change_scene_event():
             self.listening = True
 
     with GameEngine(FirstScene, systems=[Updater, Tester]) as ge:
+        ge.register(events.Heartbeat, "engine", ge)
         ge.run()
 
     pause_was_run.assert_called()
