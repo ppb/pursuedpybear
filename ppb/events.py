@@ -272,6 +272,15 @@ class StopScene:
 
 
 @dataclass
+class Idle:
+    """
+    An engine plumbing event to pump timing information to subsystems.
+    """
+    time_delta: float
+    scene: Scene = None
+
+
+@dataclass
 class Update:
     """
     Fired on game tick
