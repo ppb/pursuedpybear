@@ -8,11 +8,11 @@ def readme():
 
 setup(
     name='ppb',
-    version='0.5.0',
+    version='0.5.1',
     packages=['ppb', 'ppb.systems'],
     install_requires=[
         'pygame',
-        'ppb-vector<1',
+        'ppb-vector<1.0.0',
         'dataclasses; python_version < "3.7"'
     ],
     python_requires=">=3.6",
