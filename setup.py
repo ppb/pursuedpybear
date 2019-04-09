@@ -12,7 +12,7 @@ setup(
     packages=['ppb', 'ppb.systems'],
     install_requires=[
         'pygame',
-        'ppb-vector',
+        'ppb-vector<1',
         'dataclasses; python_version < "3.7"'
     ],
     python_requires=">=3.6",
