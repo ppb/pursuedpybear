@@ -127,6 +127,9 @@ class Side:
         self.parent.position = self._mk_update_vector_center(value)
 
     def _mk_update_vector_side(self, attribute, value):
+        """
+        Calculate the updated vector for the given corner
+        """
         value = Vector(value)
         assert attribute != 'center'
         # Does a bunch of dynamc resolution:
@@ -143,9 +146,12 @@ class Side:
             self_dimension: value[self_dimension] - self_offset,
             attr_dimension: value[attr_dimension] - attr_offset,
         }
-        return Vector(**fields)
+        return Vector(fields)
 
     def _mk_update_vector_center(self, value):
+        """
+        Calculate the update vector for the midpoint of this side
+        """
         value = Vector(value)
         # Pretty similar to ._mk_update_vector_side()
         self_dimension, self_offset = self._lookup_side(self.side)
@@ -157,7 +163,7 @@ class Side:
             attr_dimension: value[attr_dimension]
         }
 
-        return Vector(**fields)
+        return Vector(fields)
 
     def _attribute_gate(self, attribute, bad_sides):
         if self.side in bad_sides:
@@ -235,7 +241,7 @@ class BaseSprite(EventMixin, Rotatable):
 
     @center.setter
     def center(self, value: Sequence[float]):
-        self.position = Vector.convert(value)
+        self.position = Vector(value)
 
     @property
     def left(self) -> Side:
