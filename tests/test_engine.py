@@ -1,9 +1,10 @@
+import dataclasses
 import unittest
 from unittest import mock
 
 from pygame import Surface
 
-from ppb import GameEngine, BaseScene
+from ppb import GameEngine, BaseScene, Vector
 from ppb import events
 from ppb.systems import System
 from ppb.systems import Updater
@@ -187,7 +188,9 @@ def test_change_scene_event():
             self.listening = True
 
     with GameEngine(FirstScene, systems=[Updater, Tester]) as ge:
-        ge.register(events.Idle, "engine", ge)
+        def extend(event):
+            event.engine = ge
+        ge.register(events.Idle, extend)
         ge.run()
 
     pause_was_run.assert_called()
@@ -260,6 +263,68 @@ def test_flush_events():
     ge.flush_events()
 
     assert len(ge.events) == 0
+
+
+def test_event_extension():
+
+    @dataclasses.dataclass
+    class TestEvent:
+        pass
+
+
+    class TestScene(BaseScene):
+
+        def __init__(self, engine):
+            super().__init__(engine)
+            engine.register(TestEvent, self.event_extension)
+
+        def on_update(self, event, signal):
+            signal(TestEvent())
+            signal(events.Quit())
+
+        def on_test_event(self, event, signal):
+            assert event.test_value == "Red"
+
+        def event_extension(self, event):
+            event.test_value = "Red"
+
+    with GameEngine(TestScene, systems=[Updater, Failer], message="Will only time out.", fail=lambda x: False) as ge:
+        ge.run()
+
+
+def test_extending_all_events():
+
+    def all_extension(event):
+        event.test_value = "pursuedpybear"
+
+    @dataclasses.dataclass
+    class TestEvent:
+        pass
+
+
+    class TestScene(BaseScene):
+
+        def on_update(self, event, signal):
+            assert event.test_value == "pursuedpybear"
+
+        def on_mouse_motion(self, event, signal):
+            assert event.test_value == "pursuedpybear"
+
+        def on_test_event(self, event, signal):
+            assert event.test_value == "pursuedpybear"
+
+    ge = GameEngine(TestScene)
+    ge.start()  # We need test scene instantiated.
+    ge.register(..., all_extension)
+
+    ge.signal(events.Update(0.01))
+    ge.publish()
+
+    ge.signal(events.MouseMotion(Vector(0, 0), Vector(0, 0), Vector(0, 1), []))
+    ge.publish()
+
+    ge.signal(TestEvent())
+    ge.publish()
 
 
 def test_idle():
