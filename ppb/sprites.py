@@ -8,6 +8,8 @@ from typing import Union
 from ppb import Vector
 from ppb.events import EventMixin
 
+import ppb_vector.vector2
+
 
 TOP = "top"
 BOTTOM = "bottom"
