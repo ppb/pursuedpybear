@@ -1,12 +1,14 @@
 from collections import defaultdict
 from collections import deque
 from contextlib import ExitStack
+from itertools import chain
 import time
 from typing import Any
 from typing import Callable
 from typing import DefaultDict
 from typing import List
 from typing import Type
+from typing import Union
 
 import ppb.events as events
 from ppb.abc import Engine
@@ -18,6 +20,8 @@ from ppb.systems import Renderer
 from ppb.systems import Updater
 from ppb.utils import LoggingMixin
 
+
+_ellipsis = type(...)
 
 class GameEngine(Engine, EventMixin, LoggingMixin):
 
@@ -35,7 +39,7 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         # Engine State
         self.scenes = []
         self.events = deque()
-        self.event_extensions: DefaultDict[List[Callable[[Any], None]]] = defaultdict(list)
+        self.event_extensions: DefaultDict[Union[Type, _ellipsis], List[Callable[[Any], None]]] = defaultdict(list)
         self.running = False
         self.entered = False
         self._last_idle_time = None
@@ -112,7 +116,7 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         event = self.events.popleft()
         scene = self.current_scene
         event.scene = scene
-        extensions = self.event_extensions[type(event)]
+        extensions = chain(self.event_extensions[type(event)], self.event_extensions[...])
         for callback in extensions:
             callback(event)
         self.__event__(event, self.signal)
@@ -181,7 +185,7 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         self.scenes.append(scene)
         self.signal(events.SceneStarted())
 
-    def register(self, event_type: type, callback: Callable[[], Any]):
+    def register(self, event_type: Union[Type, _ellipsis], callback: Callable[[], Any]):
         """
         Register a callback to be applied to an event at time of publishing.
 
@@ -194,7 +198,7 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         :param callback: A callable, must accept an event, and return no value.
         :return: None
         """
-        if not isinstance(event_type, type):
+        if not isinstance(event_type, type) and event_type is not ...:
             raise TypeError(f"{type(self)}.register requires event_type to be a type.")
         if not callable(callback):
             raise TypeError(f"{type(self)}.register requires callback to be callable.")

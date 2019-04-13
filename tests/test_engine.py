@@ -4,7 +4,7 @@ from unittest import mock
 
 from pygame import Surface
 
-from ppb import GameEngine, BaseScene
+from ppb import GameEngine, BaseScene, Vector
 from ppb import events
 from ppb.systems import System
 from ppb.systems import Updater
@@ -290,6 +290,41 @@ def test_event_extension():
 
     with GameEngine(TestScene, systems=[Updater, Failer], message="Will only time out.", fail=lambda x: False) as ge:
         ge.run()
+
+
+def test_extending_all_events():
+
+    def all_extension(event):
+        event.test_value = "pursuedpybear"
+
+    @dataclasses.dataclass
+    class TestEvent:
+        pass
+
+
+    class TestScene(BaseScene):
+
+        def on_update(self, event, signal):
+            assert event.test_value == "pursuedpybear"
+
+        def on_mouse_motion(self, event, signal):
+            assert event.test_value == "pursuedpybear"
+
+        def on_test_event(self, event, signal):
+            assert event.test_value == "pursuedpybear"
+
+    ge = GameEngine(TestScene)
+    ge.start()  # We need test scene instantiated.
+    ge.register(..., all_extension)
+
+    ge.signal(events.Update(0.01))
+    ge.publish()
+
+    ge.signal(events.MouseMotion(Vector(0, 0), Vector(0, 0), Vector(0, 1), []))
+    ge.publish()
+
+    ge.signal(TestEvent())
+    ge.publish()
 
 
 def test_idle():
