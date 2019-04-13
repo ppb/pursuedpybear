@@ -1,3 +1,4 @@
+import dataclasses
 import unittest
 from unittest import mock
 
@@ -258,3 +259,30 @@ def test_flush_events():
     ge.flush_events()
 
     assert len(ge.events) == 0
+
+
+def test_event_extension():
+
+    @dataclasses.dataclass
+    class TestEvent:
+        pass
+
+
+    class TestScene(BaseScene):
+
+        def __init__(self, engine):
+            super().__init__(engine)
+            engine.register(TestEvent, self.event_extension)
+
+        def on_update(self, event, signal):
+            signal(TestEvent())
+            signal(events.Quit())
+
+        def on_test_event(self, event, signal):
+            assert event.test_value == "Red"
+
+        def event_extension(self, event):
+            event.test_value = "Red"
+
+    with GameEngine(TestScene, systems=[Updater, Failer(message="Will only time out.", fail=lambda x: False)]) as ge:
+        ge.run()

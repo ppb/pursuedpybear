@@ -196,7 +196,7 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
             raise TypeError(f"{type(self)}.register requires event_type to be a type.")
         if not callable(callback):
             raise TypeError(f"{type(self)}.register requires callback to be callable.")
-        self.event_extensions[event_type] = callback
+        self.event_extensions[event_type].append(callback)
 
     def flush_events(self):
         """
