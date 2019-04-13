@@ -244,7 +244,7 @@ class BaseSprite(EventMixin, Rotatable):
         return self.position
 
     @center.setter
-    def center(self, value: Sequence[float]):
+    def center(self, value: ppb_vector.vector2.VectorLike):
         self.position = Vector(value)
 
     @property
