@@ -187,6 +187,10 @@ class Rotatable:
     def facing(self):
         return Vector(*self.basis).rotate(self.rotation).normalize()
 
+    @facing.setter
+    def facing(self, value):
+        self.rotation = self.basis.angle(value)
+
     @property
     def rotation(self):
         return self._rotation
@@ -278,9 +282,6 @@ class BaseSprite(EventMixin, Rotatable):
     @property
     def _offset_value(self):
         return self.size / 2
-
-    def rotate(self, degrees: Number):
-        self.facing = self.facing.rotate(degrees)
 
     def __image__(self):
         if self.image is None:

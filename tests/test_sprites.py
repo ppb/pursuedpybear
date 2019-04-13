@@ -82,15 +82,6 @@ class TestBaseSprite(TestCase):
         self.assertEqual(self.sprite.position.x, 0)
         self.assertEqual(self.sprite.position.y, 1.5)
 
-    def test_center_accessors(self):
-        self.sprite.center.x = 20
-        self.assertEqual(self.sprite.position.x, 20)
-        self.assertEqual(self.sprite.position.y, 0)
-
-        self.sprite.center.y = 15
-        self.assertEqual(self.sprite.position.x, 20)
-        self.assertEqual(self.sprite.position.y, 15)
-
     def test_left_top(self):
         self.assertEqual(self.sprite.left.top, Vector(-0.5, -0.5))
 
