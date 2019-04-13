@@ -99,8 +99,9 @@ def test_scene_change_thrashing():
         if parent.count > 0 and engine.current_scene != parent:
             return True
 
-    failer = Failer(fail=fail, message="ParentScene should not be counting while a child exists.")
-    engine = GameEngine(ParentScene, systems=[Updater(time_step=0.001), failer])
+    engine = GameEngine(ParentScene,
+                        systems=[Updater(time_step=0.001), Failer], fail=fail,
+                        message="ParentScene should not be counting while a child exists.")
     engine.run()
 
 
@@ -115,8 +116,8 @@ def test_scene_change_no_new():
         def change(self):
             return super().change()
 
-    failer = Failer(fail=lambda n: False, message="Will only time out.")
-    with GameEngine(Scene, systems=[Updater, failer]) as ge:
+    with GameEngine(Scene, systems=[Updater, Failer], fail=lambda n: False,
+                    message="Will only time out.") as ge:
         ge.run()
 
 
@@ -176,7 +177,8 @@ def test_change_scene_event():
     class Tester(System):
         listening = False
 
-        def activate(self, engine):
+        def on_idle(self, idle: events.Idle, signal):
+            engine = idle.engine
             if self.listening:
                 assert isinstance(engine.current_scene, SecondScene)
                 assert len(engine.scenes) == 2
@@ -186,6 +188,9 @@ def test_change_scene_event():
             self.listening = True
 
     with GameEngine(FirstScene, systems=[Updater, Tester]) as ge:
+        def extend(event):
+            event.engine = ge
+        ge.register(events.Idle, extend)
         ge.run()
 
     pause_was_run.assert_called()
@@ -210,7 +215,7 @@ def test_replace_scene_event():
     class TestFailer(Failer):
 
         def __init__(self, engine):
-            super().__init__(fail=self.fail, message="Will not call")
+            super().__init__(fail=self.fail, message="Will not call", engine=engine)
             self.first_scene_ended = False
 
         def on_scene_stopped(self, event, signal):
@@ -241,8 +246,7 @@ def test_stop_scene_event():
             assert event.scene is self
             test_function()
 
-    failer = Failer(fail=lambda x: False, message="Will only time out.")
-    with GameEngine(TestScene, systems=[Updater, failer]) as ge:
+    with GameEngine(TestScene, systems=[Updater, Failer], fail=lambda x: False, message="Will only time out.") as ge:
         ge.run()
 
     test_function.assert_called()
@@ -284,5 +288,20 @@ def test_event_extension():
         def event_extension(self, event):
             event.test_value = "Red"
 
-    with GameEngine(TestScene, systems=[Updater, Failer(message="Will only time out.", fail=lambda x: False)]) as ge:
+    with GameEngine(TestScene, systems=[Updater, Failer], message="Will only time out.", fail=lambda x: False) as ge:
+        ge.run()
+
+
+def test_idle():
+    """This test confirms that Idle events work."""
+    was_called = False
+
+    class TestSystem(System):
+
+        def on_idle(self, event: events.Idle, signal):
+            global was_called
+            was_called = True
+            signal(events.Quit())
+
+    with GameEngine(BaseScene, systems=[TestSystem, Failer], fail=lambda x: False, message="Can only time out.") as ge:
         ge.run()

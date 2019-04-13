@@ -38,6 +38,7 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         self.event_extensions: DefaultDict[List[Callable[[Any], None]]] = defaultdict(list)
         self.running = False
         self.entered = False
+        self._last_idle_time = None
 
         # Systems
         self.systems_classes = systems
@@ -82,17 +83,18 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
 
     def start(self):
         self.running = True
+        self._last_idle_time = time.monotonic()
         self.activate({"scene_class": self.first_scene,
                        "kwargs": self.scene_kwargs})
 
     def main_loop(self):
         while self.running:
             time.sleep(0)
-            for system in self.systems:
-                for event in system.activate(self):
-                    self.signal(event)
-                    while self.events:
-                        self.publish()
+            now = time.monotonic()
+            self.signal(events.Idle(now - self._last_idle_time))
+            self._last_idle_time = now
+            while self.events:
+                self.publish()
             self.manage_scene()
 
     def activate(self, next_scene: dict):
