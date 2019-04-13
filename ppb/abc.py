@@ -1,33 +1,13 @@
 from typing import Type, Container, Tuple, Iterable
 
 
-class Canvas(object):
-
-    def __init__(self, width: int, height: int, **kwargs):
-        self.width = width  # type: int
-        self.height = height  # type: int
-
-    def fill(self, color) -> 'Canvas':
-        raise NotImplementedError
-
-    @property
-    def rect(self) -> 'Rectangle':
-        raise NotImplementedError
-
-    def copy(self) -> 'Canvas':
-        raise NotImplementedError
-
-    def blit(self, canvas: 'Canvas', position: tuple):
-        raise NotImplementedError
-
-
 class Engine(object):
 
     def __init__(self):
         self.mouse = {"x": 0, "y": 0, 1: 0, 2: 0, 3: 0}  # type: dict
         # Consider making mouse an object.
-        self.keys = []  # type: Container
-        self.display = None  # type: Canvas
+        self.keys = []
+        self.display = None
 
     def __enter__(self):
         raise NotImplementedError
@@ -46,7 +26,7 @@ class GameObject(object):
         raise NotImplementedError
 
     @property
-    def image(self) -> 'Canvas':
+    def image(self):
         raise NotImplementedError
 
     @property
