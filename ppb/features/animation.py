@@ -45,6 +45,15 @@ class Animation:
     def _clock(self):
         return type(self).clock()
 
+    @property
+    def filename(self):
+        return self._filename
+
+    @filename.setter
+    def filename(self, value):
+        self._filename = value
+        self._compile_filename()
+
     def _compile_filename(self):
         match = FILE_PATTERN.search(self._filename)
         start, end = match.groups()
