@@ -14,15 +14,19 @@ def test_frames():
     anim = FakeAnimation("{2..5}", 1)
 
     time = 0
+    assert anim.current_frame == 0
     assert str(anim) == '2'
 
     time = 1
+    assert anim.current_frame == 1
     assert str(anim) == '3'
 
     time = 3
+    assert anim.current_frame == 3
     assert str(anim) == '5'
 
     time = 4
+    assert anim.current_frame == 0
     assert str(anim) == '2'
 
 
