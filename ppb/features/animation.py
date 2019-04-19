@@ -16,6 +16,10 @@ class Animation:
     clock = time.monotonic
 
     def __init__(self, filename, frames_per_second):
+        """
+        * filename: A path containing a {2..4} indicator the frame number
+        * frames_per_second: The number of frames to show each second
+        """
         self._filename = filename
         self.frames_per_second = frames_per_second
 
@@ -29,6 +33,7 @@ class Animation:
     def __repr__(self):
         return f"{type(self).__name__}({self._filename!r}, {self.frames_per_second!r})"
 
+    # Do we need pickle/copy dunders?
     def copy(self):
         return type(self)(self._filename, self.frames_per_second)
 
@@ -72,6 +77,9 @@ class Animation:
 
     @property
     def current_frame(self):
+        """
+        Compute the number of the current frame (0-indexed)
+        """
         if not self._pause_level:
             return (
                 int((self._clock() + self._offset) * self.frames_per_second)
@@ -88,10 +96,15 @@ class Animation:
     _prop_name = None
 
     def __get__(self, obj, type=None):
+        if obj is None:
+            return self
         v = vars(obj)
         if self._prop_name not in v:
             v[self._prop_name] = self.copy()
         return v[self._prop_name]
+
+    # Don't need __set__() or __delete__(), additional accesses will be via
+    # __dict__ directly.
 
     def __set_name__(self, owner, name):
         self._prop_name = name
