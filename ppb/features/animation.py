@@ -13,12 +13,13 @@ class Animation:
     """
     An "image" that actually rotates through numbered files at the specified rate.
     """
+    # Override this to change the clock used for frames.
     clock = time.monotonic
 
     def __init__(self, filename, frames_per_second):
         """
-        * filename: A path containing a {2..4} indicator the frame number
-        * frames_per_second: The number of frames to show each second
+        :param str filename: A path containing a ``{2..4}`` indicating the frame number
+        :param number frames_per_second: The number of frames to show each second
         """
         self._filename = filename
         self.frames_per_second = frames_per_second
@@ -35,6 +36,10 @@ class Animation:
 
     # Do we need pickle/copy dunders?
     def copy(self):
+        """
+        Create a new Animation with the same filename and framerate. Pause
+        status and starting time are reset.
+        """
         return type(self)(self._filename, self.frames_per_second)
 
     def _clock(self):
@@ -56,12 +61,18 @@ class Animation:
         ]
 
     def pause(self):
+        """
+        Pause the animation.
+        """
         if not self._pause_level:
             self._paused_time = self._clock() + self._offset
             self._paused_frame = self.current_frame
         self._pause_level += 1
 
     def unpause(self):
+        """
+        Unpause the animation.
+        """
         self._pause_level -= 1
         if not self._pause_level:
             self._offset = self._paused_time - self._clock()
@@ -89,6 +100,9 @@ class Animation:
             return self._paused_frame
 
     def __str__(self):
+        """
+        Get the current frame path.
+        """
         return self._frames[self.current_frame]
 
     # This is so that if you assign an Animation to a class, instances will get
