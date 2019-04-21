@@ -82,3 +82,4 @@ first game in a few hours, and continue exploring beyond that.
    events
    scenes
    sprites
+   features/index
