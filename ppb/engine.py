@@ -23,6 +23,7 @@ from ppb.utils import LoggingMixin
 
 _ellipsis = type(...)
 
+
 class GameEngine(Engine, EventMixin, LoggingMixin):
 
     def __init__(self, first_scene: Type, *,
@@ -180,8 +181,8 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         self.scenes.pop()
 
     def start_scene(self, scene, kwargs):
-        if kwargs:
-            scene = scene(self, **kwargs)
+        if isinstance(scene, type):
+            scene = scene(self, **(kwargs or {}))
         self.scenes.append(scene)
         self.signal(events.SceneStarted())
 
