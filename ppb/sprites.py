@@ -128,9 +128,11 @@ class Side:
     def center(self, value):
         self.parent.position = self._mk_update_vector_center(value)
 
-    def _mk_update_vector_side(self, attribute, value):
+    def _mk_update_vector_side(self, attribute, value: Vector):
         """
-        Calculate the updated vector for the given corner
+        Calculate the updated vector, based on the given corner.
+
+        That is, handles the calculation for forms like sprite.top.left = vector
         """
         value = Vector(value)
         assert attribute != 'center'
@@ -152,7 +154,9 @@ class Side:
 
     def _mk_update_vector_center(self, value):
         """
-        Calculate the update vector for the midpoint of this side
+        Calculate the update vector, based on the given side.
+
+        That is, handles the calculation for forms like sprite.right = number
         """
         value = Vector(value)
         # Pretty similar to ._mk_update_vector_side()
