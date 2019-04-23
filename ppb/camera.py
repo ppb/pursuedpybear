@@ -98,7 +98,7 @@ class Camera(BaseSprite):
 
     def translate_to_frame(self, point: Vector) -> Vector:
         """
-        Converts a vector from PyGame to in-game coordinate space
+        Converts a vector from pixel-based window to in-game coordinate space
         """
         offset = (point - self.viewport_offset) * (1/self.pixel_ratio)
         loc = self.position + offset
@@ -106,7 +106,7 @@ class Camera(BaseSprite):
 
     def translate_to_viewport(self, point: Vector) -> Vector:
         """
-        Converts a vector from in-game to PyGame coordinate space
+        Converts a vector from in-game to pixel-based window coordinate space
         """
         point = point.update(y=-point.y)
         offset = (point - self.position) * self.pixel_ratio
