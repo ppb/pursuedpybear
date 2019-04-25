@@ -16,15 +16,17 @@ def test_camera_sets_height():
     # NotSet will be a flag so we have a sentinel value
     assert cam.height is None
 
-    scene_started_event = SceneStarted(None)
-    scene_started_event.aspect_ratio = 2  # The width should be twice the height.
-    # Not true in normal contexts, but easier to test.
-    cam.__event__(scene_started_event, lambda x: None)
+    # The renderer will call this and pass in the physical aspect ratio.
+    # The camera can use that ratio and it's viewport definition to determine
+    # its aspect ratio.
+    cam.set_aspect_ratio(2)
     assert cam.height == 5
 
 
 def test_camera_change_frame_dimensions():
     """Test setting the dimensions at various points in the Camera lifetime."""
+    # TODO: This looks more like a test suite to me.
+    # Will probably break them into individual functions later.
 
     # Setting the height before the camera knows the aspect ratio.
     cam = Camera()
@@ -35,33 +37,33 @@ def test_camera_change_frame_dimensions():
     assert cam.height == 10
     assert cam.width == 10
 
-    scene_started_event = SceneStarted(None)
-    scene_started_event.aspect_ratio = 2
-    cam.__event__(scene_started_event, lambda x: None)
+    cam.set_aspect_ratio(3)  # We want to use different values for this to make sure it really works.
     # The camera should remember what the last set value was and try to preserve that.
     assert cam.height == 10
-    assert cam.width == 20
+    assert cam.width == 30
 
 
     # Setting the width before the camera knows the aspect ratio.
     cam = Camera()
-    cam.width = 30
-    assert cam.width is 30
+    cam.width = 80
+    assert cam.width is 80
     assert cam.height is None  # Height is dynamically set. We didn't force it,
     # so we should still be none.
-    cam.__event__(scene_started_event, lambda x: None)
+    cam.set_aspect_ratio(4)
     # Same rule: Width changed last, so we preserve it.
-    assert cam.width == 30
-    assert cam.height == 15
+    assert cam.width == 80
+    assert cam.height == 20
 
 
     # Setting both height and width AFTER the camera knows the aspect ratio
-    cam.width = 20
-    assert cam.width == 20
-    assert cam.height == 10
+    cam = Camera()
+    cam.set_aspect_ratio(5)
+    cam.width = 500
+    assert cam.width == 500
+    assert cam.height == 100
 
     cam.height = 20
-    assert cam.width == 40
+    assert cam.width == 100
     assert cam.height == 20
 
 
@@ -72,7 +74,7 @@ def test_viewport_definition():
 
     All values are in percentage of the window or screen.
 
-    For now, a rectangle can just be
+    For now, a rectangle can just be a tuple.
     """
     cam = Camera()
 
@@ -84,7 +86,19 @@ def test_camera_frame_interaction():
     We want to have a tool to make determining if a particular Sprite is
     visible.
     """
-    pass
+    cam = Camera
+    cam.position = Vector(0, 0)
+    cam.set_aspect_ratio(1)
+
+    fully_in_frame_sprite = BaseSprite(position=Vector(0, 0))
+    partially_in_frame_sprite = BaseSprite(position=Vector(5, 0))
+    barely_in_frame_sprite = BaseSprite(position=Vector(5.4, 0))
+    not_in_frame_sprite = BaseSprite(position=Vector(6, 0))
+
+    assert cam.sprite_visible(fully_in_frame_sprite)
+    assert cam.sprite_visible(partially_in_frame_sprite)
+    assert cam.sprite_visible(barely_in_frame_sprite)
+    assert not cam.sprite_visible(not_in_frame_sprite)
 
 
 @pytest.mark.skip(reason="Old API, will be blown up with this PR.")
