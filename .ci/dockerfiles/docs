@@ -4,7 +4,6 @@ RUN apt update || true && \
     apt install -qq -y make && \
     rm -rf /var/cache/apt/*
 
-ADD requirements-docs.txt requirements.txt /
-RUN python3 -m pip install --upgrade-strategy eager -U -r requirements-docs.txt && \
-    python3 -m pip install --upgrade-strategy eager -U -r requirements.txt && \
+RUN python3 -m pip install --upgrade-strategy eager -U 'pygame' 'ppb-vector' 'dataclasses; python_version < "3.7"' && \
+    python3 -m pip install --upgrade-strategy eager -U 'sphinx' 'sphinx_rtd_theme' && \
     rm -rf ~/.cache/pip
