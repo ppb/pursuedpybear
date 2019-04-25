@@ -8,6 +8,7 @@ from ppb.events import SceneStarted
 
 def test_camera_sets_height():
     """Guarantee that the height is initially set dynamically."""
+
     cam = Camera()
 
     # Going to keep the default frame of 10 game units wide.
@@ -23,6 +24,9 @@ def test_camera_sets_height():
 
 
 def test_camera_change_frame_dimensions():
+    """Test setting the dimensions at various points in the Camera lifetime."""
+
+    # Setting the height before the camera knows the aspect ratio.
     cam = Camera()
     cam.height = 10
 
@@ -39,6 +43,7 @@ def test_camera_change_frame_dimensions():
     assert cam.width == 20
 
 
+    # Setting the width before the camera knows the aspect ratio.
     cam = Camera()
     cam.width = 30
     assert cam.width is 30
@@ -48,6 +53,16 @@ def test_camera_change_frame_dimensions():
     # Same rule: Width changed last, so we preserve it.
     assert cam.width == 30
     assert cam.height == 15
+
+
+    # Setting both height and width AFTER the camera knows the aspect ratio
+    cam.width = 20
+    assert cam.width == 20
+    assert cam.height == 10
+
+    cam.height = 20
+    assert cam.width == 40
+    assert cam.height == 20
 
 
 def test_viewport_definition():
