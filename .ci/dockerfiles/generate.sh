@@ -34,7 +34,7 @@ function template() {
     for requirement in requirements.txt "$@"; do
         REQS=()
         while read req; do
-            REQS+=("'$req'")
+            REQS+=("\"$req\"")
         done < ../../${requirement}
         CMDS+=("$PIP ${REQS[*]}")
     done
