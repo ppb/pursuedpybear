@@ -2,6 +2,6 @@ FROM python:3.6-windowsservercore-1809
 
 
 
-RUN ( C:\Python\python.exe -m pip install --upgrade-strategy eager -U 'pygame' 'ppb-vector' 'dataclasses; python_version < "3.7"' ) -and \
-    ( C:\Python\python.exe -m pip install --upgrade-strategy eager -U 'pytest' ) -and \
+RUN ( C:\Python\python.exe -m pip install --upgrade-strategy eager -U "pygame" "ppb-vector" "dataclasses; python_version < '3.7'" ) -and \
+    ( C:\Python\python.exe -m pip install --upgrade-strategy eager -U "pytest" ) -and \
     ( Remove-Item –path %LOCALAPPDATA%\pip\Cache -recurse -ErrorAction Ignore )
