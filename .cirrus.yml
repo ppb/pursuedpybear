@@ -13,7 +13,7 @@ docs_task:
   container:
     dockerfile: .ci/dockerfiles/docs
 
-  install_script: pip install -e .
+  install_script: pip install .
   script: make -C docs/ html
 
 
