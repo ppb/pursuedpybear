@@ -104,6 +104,9 @@ venv.bak/
 
 # End of https://www.gitignore.io/api/python
 
+# Files containing collected statistics
+*.csv
+
 
 # Environment created by upload scripts.
 
