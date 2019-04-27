@@ -74,7 +74,7 @@ def test_viewport_definition():
 
     All values are in percentage of the window or screen.
 
-    For now, a rectangle can just be a tuple.
+    For now, a rectangle can just be a 4-tuple.
     """
     cam = Camera()
 
@@ -86,7 +86,7 @@ def test_camera_frame_interaction():
     We want to have a tool to make determining if a particular Sprite is
     visible.
     """
-    cam = Camera
+    cam = Camera()
     cam.position = Vector(0, 0)
     cam.set_aspect_ratio(1)
 

@@ -109,7 +109,7 @@ class BaseScene(Scene, EventMixin):
             setattr(self, k, v)
 
         self.game_objects = self.container_class()
-        self.main_camera = Camera(pixel_ratio=pixel_ratio)
+        self.main_camera = Camera()
 
         if set_up is not None:
             set_up(self)
