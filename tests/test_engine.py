@@ -1,9 +1,10 @@
+import dataclasses
 import unittest
 from unittest import mock
 
 from pygame import Surface
 
-from ppb import GameEngine, BaseScene
+from ppb import GameEngine, BaseScene, Vector
 from ppb import events
 from ppb.systems import System
 from ppb.systems import Updater
@@ -98,8 +99,9 @@ def test_scene_change_thrashing():
         if parent.count > 0 and engine.current_scene != parent:
             return True
 
-    failer = Failer(fail=fail, message="ParentScene should not be counting while a child exists.")
-    engine = GameEngine(ParentScene, systems=[Updater(time_step=0.001), failer])
+    engine = GameEngine(ParentScene,
+                        systems=[Updater(time_step=0.001), Failer], fail=fail,
+                        message="ParentScene should not be counting while a child exists.")
     engine.run()
 
 
@@ -114,8 +116,8 @@ def test_scene_change_no_new():
         def change(self):
             return super().change()
 
-    failer = Failer(fail=lambda n: False, message="Will only time out.")
-    with GameEngine(Scene, systems=[Updater, failer]) as ge:
+    with GameEngine(Scene, systems=[Updater, Failer], fail=lambda n: False,
+                    message="Will only time out.") as ge:
         ge.run()
 
 
@@ -175,7 +177,8 @@ def test_change_scene_event():
     class Tester(System):
         listening = False
 
-        def activate(self, engine):
+        def on_idle(self, idle: events.Idle, signal):
+            engine = idle.engine
             if self.listening:
                 assert isinstance(engine.current_scene, SecondScene)
                 assert len(engine.scenes) == 2
@@ -185,6 +188,53 @@ def test_change_scene_event():
             self.listening = True
 
     with GameEngine(FirstScene, systems=[Updater, Tester]) as ge:
+        def extend(event):
+            event.engine = ge
+        ge.register(events.Idle, extend)
+        ge.run()
+
+    pause_was_run.assert_called()
+    scene_start_called.assert_called()
+
+
+def test_change_scene_event_no_kwargs():
+
+    pause_was_run = mock.Mock()
+    scene_start_called = mock.Mock()
+
+    class FirstScene(BaseScene):
+
+        def on_update(self, event, signal):
+            signal(events.StartScene(new_scene=SecondScene))
+
+        def on_scene_paused(self, event, signal):
+            assert event.scene is self
+            pause_was_run()
+
+    class SecondScene(BaseScene):
+
+        def on_scene_started(self, event, signal):
+            assert event.scene == self
+            scene_start_called()
+            signal(events.Quit())
+
+    class Tester(System):
+        listening = False
+
+        def on_idle(self, idle: events.Idle, signal):
+            engine = idle.engine
+            if self.listening:
+                assert isinstance(engine.current_scene, SecondScene)
+                assert len(engine.scenes) == 2
+            return ()
+
+        def on_scene_paused(self, event, signal):
+            self.listening = True
+
+    with GameEngine(FirstScene, systems=[Updater, Tester]) as ge:
+        def extend(event):
+            event.engine = ge
+        ge.register(events.Idle, extend)
         ge.run()
 
     pause_was_run.assert_called()
@@ -209,7 +259,7 @@ def test_replace_scene_event():
     class TestFailer(Failer):
 
         def __init__(self, engine):
-            super().__init__(fail=self.fail, message="Will not call")
+            super().__init__(fail=self.fail, message="Will not call", engine=engine)
             self.first_scene_ended = False
 
         def on_scene_stopped(self, event, signal):
@@ -240,8 +290,7 @@ def test_stop_scene_event():
             assert event.scene is self
             test_function()
 
-    failer = Failer(fail=lambda x: False, message="Will only time out.")
-    with GameEngine(TestScene, systems=[Updater, failer]) as ge:
+    with GameEngine(TestScene, systems=[Updater, Failer], fail=lambda x: False, message="Will only time out.") as ge:
         ge.run()
 
     test_function.assert_called()
@@ -258,3 +307,80 @@ def test_flush_events():
     ge.flush_events()
 
     assert len(ge.events) == 0
+
+
+def test_event_extension():
+
+    @dataclasses.dataclass
+    class TestEvent:
+        pass
+
+
+    class TestScene(BaseScene):
+
+        def __init__(self, engine):
+            super().__init__(engine)
+            engine.register(TestEvent, self.event_extension)
+
+        def on_update(self, event, signal):
+            signal(TestEvent())
+            signal(events.Quit())
+
+        def on_test_event(self, event, signal):
+            assert event.test_value == "Red"
+
+        def event_extension(self, event):
+            event.test_value = "Red"
+
+    with GameEngine(TestScene, systems=[Updater, Failer], message="Will only time out.", fail=lambda x: False) as ge:
+        ge.run()
+
+
+def test_extending_all_events():
+
+    def all_extension(event):
+        event.test_value = "pursuedpybear"
+
+    @dataclasses.dataclass
+    class TestEvent:
+        pass
+
+
+    class TestScene(BaseScene):
+
+        def on_update(self, event, signal):
+            assert event.test_value == "pursuedpybear"
+
+        def on_mouse_motion(self, event, signal):
+            assert event.test_value == "pursuedpybear"
+
+        def on_test_event(self, event, signal):
+            assert event.test_value == "pursuedpybear"
+
+    ge = GameEngine(TestScene)
+    ge.start()  # We need test scene instantiated.
+    ge.register(..., all_extension)
+
+    ge.signal(events.Update(0.01))
+    ge.publish()
+
+    ge.signal(events.MouseMotion(Vector(0, 0), Vector(0, 0), Vector(0, 1), []))
+    ge.publish()
+
+    ge.signal(TestEvent())
+    ge.publish()
+
+
+def test_idle():
+    """This test confirms that Idle events work."""
+    was_called = False
+
+    class TestSystem(System):
+
+        def on_idle(self, event: events.Idle, signal):
+            global was_called
+            was_called = True
+            signal(events.Quit())
+
+    with GameEngine(BaseScene, systems=[TestSystem, Failer], fail=lambda x: False, message="Can only time out.") as ge:
+        ge.run()

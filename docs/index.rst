@@ -80,5 +80,7 @@ first game in a few hours, and continue exploring beyond that.
 
    starting
    events
+   clocks
    scenes
    sprites
+   features/index

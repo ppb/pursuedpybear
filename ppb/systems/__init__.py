@@ -20,16 +20,13 @@ class System(events.EventMixin):
     def __exit__(self, exc_type, exc_val, exc_tb):
         pass
 
-    def activate(self, engine):
-        return []
-
 
 from ppb.systems.pg import EventPoller as PygameEventPoller  # To not break old imports.
 
 
 class Renderer(System):
 
-    def __init__(self, resolution=default_resolution, window_title: str="PursuedPyBear", **kwargs):
+    def __init__(self, resolution=default_resolution, window_title: str="PursuedPyBear", target_frame_rate: int=30, **kwargs):
         self.resolution = resolution
         self.resources = {}
         self.window = None
@@ -37,6 +34,10 @@ class Renderer(System):
         self.pixel_ratio = None
         self.resized_images = {}
         self.old_resized_images = {}
+        self.render_clock = 0
+        self.render_ready = False
+        self.target_frame_rate = target_frame_rate
+        self.target_count = 1 / self.target_frame_rate
 
     def __enter__(self):
         pygame.init()
@@ -46,9 +47,18 @@ class Renderer(System):
     def __exit__(self, exc_type, exc_val, exc_tb):
         pygame.quit()
 
-    def activate(self, engine):
-        yield events.PreRender()
-        yield events.Render()
+    def on_idle(self, idle_event: events.Idle, signal):
+        self.render_clock += idle_event.time_delta
+        if self.render_ready:
+            self.render_ready = False
+            signal(events.Render())
+        elif self.render_clock >= self.target_count:
+            self.render_clock = 0
+            signal(events.PreRender())
+
+    def on_pre_render(self, pre_render_event, signal):
+        # Here to let the system flush responses to PreRender before rendering.
+        self.render_ready = True
 
     def on_render(self, render_event, signal):
         self.render_background(render_event.scene)
@@ -74,10 +84,11 @@ class Renderer(System):
         image_name = game_object.__image__()
         if image_name is flags.DoNotRender:
             return None
+        image_name = str(image_name)
         if image_name not in self.resources:
             self.register_renderable(game_object)
 
-        source_image = self.resources[game_object.image]
+        source_image = self.resources[image_name]
         resized_image = self.resize_image(source_image, game_object.size)
         rotated_image = self.rotate_image(resized_image, game_object.rotation)
         return rotated_image
@@ -103,7 +114,7 @@ class Renderer(System):
         self.resources[name] = resource
 
     def register_renderable(self, renderable):
-        image_name = renderable.__image__()
+        image_name = str(renderable.__image__())
         source_path = renderable.__resource_path__()
         self.register(source_path / image_name, image_name)
 
@@ -143,14 +154,15 @@ class Updater(System):
         self.time_step = time_step
 
     def __enter__(self):
-        self.start_time = time.time()
+        self.start_time = time.monotonic()
 
-    def activate(self, engine):
+    def on_idle(self, idle_event: events.Idle, signal):
         if self.last_tick is None:
-            self.last_tick = time.time()
-        this_tick = time.time()
+            self.last_tick = time.monotonic()
+        this_tick = time.monotonic()
         self.accumulated_time += this_tick - self.last_tick
         self.last_tick = this_tick
         while self.accumulated_time >= self.time_step:
+            # This might need to change for the Idle event system to signal _only_ once per idle event.
             self.accumulated_time += -self.time_step
-            yield events.Update(self.time_step)
+            signal(events.Update(self.time_step))
