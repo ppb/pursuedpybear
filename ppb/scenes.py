@@ -93,7 +93,8 @@ class GameObjectCollection(Collection):
             container.remove(myObject)
         """
         self.all.remove(game_object)
-        self.kinds[type(game_object)].remove(game_object)
+        for kind in type(game_object).mro():
+            self.kinds[kind].remove(game_object)
         for s in self.tags.values():
             s.discard(game_object)
 
