@@ -284,10 +284,12 @@ class CharacterSelectScene(CircularMenuScene):
 
 
 def auto():
-    return ppb.run(
-        starting_scene=MainScene,
-        scene_kwargs={'player': AISprite()},
-    )
+    with ppb.GameEngine(MainScene, scene_kwargs={'player': AISprite()}) as engine:
+        engine.start()  # Vrooom!
+        stats = engine.main_loop(collect_statistics=True)
+
+    with open('hugs_stats.csv', 'w') as file:
+        stats.to_csv(file)
 
 
 def main():
