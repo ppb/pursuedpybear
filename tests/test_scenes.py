@@ -17,6 +17,10 @@ class TestPlayer:
     pass
 
 
+class TestSubclassPlayer(TestPlayer):
+    pass
+
+
 class TestSprite:
     pass
 
@@ -26,9 +30,15 @@ def containers():
     yield BaseScene(Mock())
 
 
-@fixture()
-def player():
-    return TestPlayer()
+def players():
+    yield TestPlayer()
+    yield TestSubclassPlayer()
+
+
+def players_and_containers():
+    for player in players():
+        for container in containers():
+            yield player, container
 
 
 @fixture()
@@ -42,7 +52,7 @@ def scene():
     return BaseScene(engine)
 
 
-@mark.parametrize("container", containers())
+@mark.parametrize("player, container", players_and_containers())
 def test_add_methods(container, player, enemies):
     container.add(player)
     for group, sprite in zip(("red", "blue"), enemies):
@@ -52,7 +62,7 @@ def test_add_methods(container, player, enemies):
         assert enemy in container
 
 
-@mark.parametrize("container", containers())
+@mark.parametrize("player, container", players_and_containers())
 def test_get_methods(container, player, enemies):
 
     sprite = TestSprite()
@@ -90,14 +100,14 @@ def test_get_methods(container, player, enemies):
         container.get()
 
 
-@mark.parametrize("container", containers())
+@mark.parametrize("player, container", players_and_containers())
 def test_get_with_string_tags(container, player):
     """Test that addings a string instead of an array-like throws."""
     with raises(TypeError):
         container.add(player, "player")
 
 
-@mark.parametrize("container", containers())
+@mark.parametrize("player, container", players_and_containers())
 def test_remove_methods(container, player, enemies):
     container.add(player, ["test"])
     container.add(enemies[0], ["test"])
@@ -116,8 +126,9 @@ def test_remove_methods(container, player, enemies):
     assert enemies[1] in container
 
 
-@mark.parametrize("container", [GameObjectCollection()])
-def test_collection_methods(container, player, enemies):
+@mark.parametrize("player", players())
+def test_collection_methods(player, enemies):
+    container = GameObjectCollection()
     container.add(player)
     container.add(enemies[0])
 
