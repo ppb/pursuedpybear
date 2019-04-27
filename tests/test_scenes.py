@@ -71,30 +71,13 @@ def test_get_methods(container, player, enemies):
     container.add(enemies[1], ["red"])
     container.add(sprite)
 
-    enemy_set = set(container.get(kind=TestEnemy))
-    assert len(enemy_set) == 2
-    for enemy in enemies:
-        assert enemy in enemy_set
+    assert set(container.get(kind=TestEnemy)) == set(enemies)
+    assert set(container.get(kind=TestPlayer)) == {player}
+    assert set(container.get(kind=TestSprite)) == {sprite}
 
-    player_set = set(container.get(kind=TestPlayer))
-    assert len(player_set) == 1
-    assert player in player_set
+    assert set(container.get(tag="red")) == {player, enemies[1]}
 
-    sprite_set = set(container.get(kind=TestSprite))
-    assert len(sprite_set) == 1
-    assert sprite in sprite_set
-
-    red_set = set(container.get(tag="red"))
-    assert len(red_set) == 2
-    assert player in red_set
-    assert enemies[1] in red_set
-    assert enemies[0] not in red_set
-
-    null_set = set(container.get(tag="this doesn't exist"))
-    assert len(null_set) == 0
-    assert player not in null_set
-    assert enemies[0] not in null_set
-    assert enemies[1] not in null_set
+    assert set(container.get(tag="this doesn't exist")) == set()
 
     with raises(TypeError):
         container.get()
