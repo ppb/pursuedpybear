@@ -13,7 +13,7 @@ from typing import Union
 import ppb.events as events
 from ppb.abc import Engine
 from ppb.events import StartScene
-from ppb.events import EventMixin
+from ppb.events import TreeStructurePublisher
 from ppb.events import Quit
 from ppb.systems import PygameEventPoller
 from ppb.systems import Renderer
@@ -24,7 +24,7 @@ from ppb.utils import LoggingMixin
 _ellipsis = type(...)
 
 
-class GameEngine(Engine, EventMixin, LoggingMixin):
+class GameEngine(Engine, TreeStructurePublisher, LoggingMixin):
 
     def __init__(self, first_scene: Type, *,
                  systems=(Renderer, Updater, PygameEventPoller),
@@ -49,6 +49,12 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         self.systems_classes = systems
         self.systems = []
         self.exit_stack = ExitStack()
+
+    def __iter__(self):
+        for s in self.systems:
+            yield s
+        for s in self.scenes:
+            yield s
 
     @property
     def current_scene(self):
@@ -114,6 +120,9 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         self.events.append(event)
 
     def publish(self):
+        """
+        Publishes one event from the event queue.
+        """
         event = self.events.popleft()
         scene = self.current_scene
         event.scene = scene
@@ -121,14 +130,20 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         for callback in extensions:
             callback(event)
         self.__event__(event, self.signal)
-        for system in self.systems:
-            system.__event__(event, self.signal)
-        # Required for if we publish with no current scene.
-        # Should only happen when the last scene stops via event.
-        if scene is not None:
-            scene.__event__(event, self.signal)
-            for game_object in scene:
-                game_object.__event__(event, self.signal)
+
+    @property
+    def publish_targets(self):
+        """
+        Yields children who should receive event publication.
+
+        Expected results are all subsystems and the current scene.
+
+        Overrides the TreeStructurePublisher mixin publish_targets.
+        """
+        for s in self.systems:
+            yield s
+        if self.current_scene is not None:
+            yield self.current_scene
 
     def manage_scene(self):
         if self.current_scene is None:

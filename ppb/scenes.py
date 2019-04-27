@@ -12,7 +12,7 @@ from warnings import warn
 
 from ppb.abc import Scene
 from ppb.camera import Camera
-from ppb.events import EventMixin
+from ppb.events import TreeStructurePublisher
 
 
 class GameObjectCollection(Collection):
@@ -96,7 +96,7 @@ class GameObjectCollection(Collection):
             s.discard(game_object)
 
 
-class BaseScene(Scene, EventMixin):
+class BaseScene(Scene, TreeStructurePublisher):
     # Background color, in RGB, each channel is 0-255
     background_color: Sequence[int] = (0, 0, 100)
     container_class: Type = GameObjectCollection

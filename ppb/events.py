@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import logging
 import re
+from collections.abc import Iterable as IterableABC
 from typing import Any
 from typing import Collection
 from typing import Dict
@@ -26,6 +27,7 @@ __all__ = (
     'SceneStarted',
     'SceneStopped',
     'StopScene',
+    'TreeStructurePublisher',
     'Update',
 )
 
@@ -88,16 +90,22 @@ class EventMixin:
                     raise
 
 
-class TreeStructurePublisher(EventMixin):
-    publish_targets: Iterable['EventMixin'] = []
-    # Was "children" but realize there's some potential naming conflicts.
-    # This is a more explicit name.
+class TreeStructurePublisher(EventMixin, IterableABC):
+    """
+    A mixin to publish events to an iterable's children.
+    """
 
     def __event__(self, bag, fire_event):
         super().__event__(bag, fire_event)
 
         for child in self.publish_targets:
             child.__event__(bag, fire_event)
+
+    @property
+    def publish_targets(self):
+        """"""
+        for i in self:
+            yield i
 
 
 # Remember to define scene at the end so the pargs version of __init__() still works
