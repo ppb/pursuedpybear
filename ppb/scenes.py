@@ -124,6 +124,14 @@ class BaseScene(Scene, EventMixin):
         return (x for x in self.game_objects)
 
     @property
+    def kinds(self):
+        return self.game_objects.kinds
+
+    @property
+    def tags(self):
+        return self.game_objects.tags
+
+    @property
     def main_camera(self) -> Camera:
         return next(self.game_objects.get(tag="main_camera"))
 
