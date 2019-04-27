@@ -1,7 +1,7 @@
 from collections import defaultdict
 from collections import deque
 from contextlib import ExitStack
-from itertools import chain
+from itertools import chain, count
 import time
 from typing import Any
 from typing import Callable
@@ -9,6 +9,7 @@ from typing import DefaultDict
 from typing import List
 from typing import Type
 from typing import Union
+from typing import overload
 
 import ppb.events as events
 from ppb.abc import Engine
@@ -92,15 +93,47 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         self.activate({"scene_class": self.first_scene,
                        "kwargs": self.scene_kwargs})
 
-    def main_loop(self):
-        while self.running:
-            time.sleep(0)
-            now = time.monotonic()
-            self.signal(events.Idle(now - self._last_idle_time))
-            self._last_idle_time = now
+    @overload
+    def main_loop(self) -> None: pass
+
+    @overload
+    def main_loop(self, collect_statistics: True) -> 'pandas.DataFrame': pass
+
+    def main_loop(self, collect_statistics=False):
+        if collect_statistics:
+            import pandas as pd
+
+            columns = ['start', 'signal', 'events', 'scene']
+            stats = pd.DataFrame(columns=columns)
+
+            for column in columns:
+                # XXXTODO: Switch to {monotonic,perf_counter}_ns ?
+                stats[column] = stats[column].astype(float)
+
+        for frame in count():
+            if not self.running:
+                break
+
+            frame_start = time.monotonic()
+
+            self.signal(events.Idle(frame_start - self._last_idle_time))
+            self._last_idle_time = frame_start
+            signal_end = time.monotonic()
+
             while self.events:
                 self.publish()
+            events_end = time.monotonic()
+
             self.manage_scene()
+            scene_end = time.monotonic()
+
+            if collect_statistics:
+                stats.loc[frame] = [frame_start, signal_end, events_end, scene_end]
+
+            time.sleep(0)
+
+        if collect_statistics:
+            return stats
 
     def activate(self, next_scene: dict):
         scene = next_scene["scene_class"]
