@@ -34,8 +34,14 @@ function template() {
     for requirement in requirements.txt "$@"; do
         REQS=()
         while read req; do
-            REQS+=("'$req'")
+            case "$image" in
+                *:*-windowsservercore-*)
+                    REQS+=("'${req//\"/\`\"}'") ;;
+                *)
+                    REQS+=("'$req'") ;;
+            esac
         done < ../../${requirement}
+
         CMDS+=("$PIP ${REQS[*]}")
     done
     CMDS+=("$(postinstall $image)")
