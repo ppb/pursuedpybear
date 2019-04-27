@@ -164,10 +164,26 @@ class PlayerSprite(MotionMixin, MutantSprite, CircularRegion):
         real_speed = 3
         self.max_speed = base_speed + (real_speed - base_speed) * tanh(weight)
 
+
+class AISprite(PlayerSprite):
+    emoji = 'robot'
+
+    def on_update(self, update, signal):
+        """Automatically steer the bear towards the closest hooman."""
+        super().on_update(update, signal)
+
+        try:
+            self.target = min(update.scene.get(kind=RunnerSprite),
+                              key=lambda r: (r.position - self.position).length).position
+        except ValueError:
+            # When no hoomans are left
+            self.target = None
+
+
 class MainScene(ppb.BaseScene):
     runner_count = 10
 
-    def __init__(self, *p, **kw):
+    def __init__(self, *p, player=None, **kw):
         super().__init__(*p, background_color=(0, 100, 0), **kw)
 
         for _ in range(self.runner_count):
@@ -175,7 +191,7 @@ class MainScene(ppb.BaseScene):
                 random.uniform(self.main_camera.frame_left, self.main_camera.frame_right),
                 random.uniform(self.main_camera.frame_top, self.main_camera.frame_bottom),
             )))
-        self.player = PlayerSprite()
+        self.player = player if player is not None else PlayerSprite()
         self.add(self.player)
 
     def hug(self, runner):
@@ -267,9 +283,24 @@ class CharacterSelectScene(CircularMenuScene):
             self.running = False
 
 
-if __name__ == '__main__':
-    ppb.run(
+def auto():
+    return ppb.run(
+        starting_scene=MainScene,
+        scene_kwargs={'player': AISprite()},
+    )
+
+
+def main():
+    return ppb.run(
         starting_scene=CharacterSelectScene,
         # resolution=(700, 700),
         # window_title='Hug the Humans!',
     )
+
+
+if __name__ == '__main__':
+    from sys import argv
+    if len(argv) == 2 and argv[1] == "auto":
+        auto()
+    else:
+        main()
