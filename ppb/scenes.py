@@ -48,7 +48,9 @@ class GameObjectCollection(Collection):
         if isinstance(tags, (str, bytes)):
             raise TypeError("You passed a string instead of an iterable, this probably isn't what you intended.\n\nTry making it a tuple.")
         self.all.add(game_object)
-        self.kinds[type(game_object)].add(game_object)
+
+        for kind in type(game_object).mro():
+            self.kinds[kind].add(game_object)
         for tag in tags:
             self.tags[tag].add(game_object)
 
