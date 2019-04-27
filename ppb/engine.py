@@ -1,7 +1,7 @@
 from collections import defaultdict
 from collections import deque
 from contextlib import ExitStack
-from itertools import chain, count
+from itertools import chain
 import time
 from typing import Any
 from typing import Callable
@@ -89,7 +89,7 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
 
     def start(self):
         self.running = True
-        self._last_idle_time = time.monotonic()
+        self._last_idle_time = time.monotonic_ns()
         self.activate({"scene_class": self.first_scene,
                        "kwargs": self.scene_kwargs})
 
@@ -101,34 +101,35 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
 
     def main_loop(self, collect_statistics=False):
         if collect_statistics:
+            import numpy as np
             import pandas as pd
 
-            columns = ['start', 'signal', 'events', 'scene']
+            columns = ['signal', 'events', 'scene']
             stats = pd.DataFrame(columns=columns)
 
             for column in columns:
-                # XXXTODO: Switch to {monotonic,perf_counter}_ns ?
-                stats[column] = stats[column].astype(float)
+                stats[column] = stats[column].astype(np.int64)
 
-        for frame in count():
-            if not self.running:
-                break
+        NS_PER_SECOND = 1e9
 
-            frame_start = time.monotonic()
+        while self.running:
+            frame_start = time.monotonic_ns()
 
-            self.signal(events.Idle(frame_start - self._last_idle_time))
+            self.signal(
+                events.Idle((frame_start - self._last_idle_time)/NS_PER_SECOND)
+            )
             self._last_idle_time = frame_start
-            signal_end = time.monotonic()
+            signal_end = time.monotonic_ns()
 
             while self.events:
                 self.publish()
-            events_end = time.monotonic()
+            events_end = time.monotonic_ns()
 
             self.manage_scene()
-            scene_end = time.monotonic()
+            scene_end = time.monotonic_ns()
 
             if collect_statistics:
-                stats.loc[frame] = [frame_start, signal_end, events_end, scene_end]
+                stats.loc[frame_start] = [signal_end, events_end, scene_end]
 
             time.sleep(0)
 
