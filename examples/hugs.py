@@ -288,8 +288,8 @@ def auto():
         engine.start()  # Vrooom!
         stats = engine.main_loop(collect_statistics=True)
 
-    with open('hugs_stats.csv', 'w') as file:
-        stats.to_csv(file)
+    with open('hugs_stats.feather', 'wb') as file:
+        stats.to_feather(file)
 
 
 def main():
