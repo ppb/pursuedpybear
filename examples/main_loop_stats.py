@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 
@@ -36,8 +38,19 @@ def plot(df):
 
 def main(path=None):
     import sys
-    with open(path or sys.argv[1], 'r') as file:
-        df = pd.read_csv(file)
+    path = Path(path or sys.argv[1])
+
+    if path.suffix == '.csv':
+        with open(path, 'r') as file:
+            df = pd.read_csv(file)
+
+    elif path.suffix == '.feather':
+        with open(path, 'rb') as file:
+            df = pd.read_feather(file)
+
+    else:
+        raise ValueError("Please provide a path to a CSV or Feather file.")
+
 
     process(df)
 #    plot(df)
