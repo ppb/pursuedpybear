@@ -183,7 +183,9 @@ class AISprite(PlayerSprite):
             # Intercept is impossible
             return None
 
-        t = max((- b - math.sqrt(Δr))/a, (- b + math.sqrt(Δr))/a)
+        t = min(filter(lambda t: t >= 0,
+                       ((- b - math.sqrt(Δr))/a, (- b + math.sqrt(Δr))/a)))
+
         return other.position + t * other.velocity
 
     def on_update(self, update, signal):
