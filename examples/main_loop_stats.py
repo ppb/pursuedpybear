@@ -27,11 +27,11 @@ def plot(df):
     dims = {'kdims': 'time', 'vdims': 'time'}
     hv.opts.defaults(hv.opts.Area(fill_alpha=0.5))
 
-    signal_time = hv.Area(df['signal_time'], label='signal', **dims)
-    events_time = hv.Area(df['events_time'], label='events', **dims)
-    scene_time  = hv.Area(df['scene_time'],  label='scene',  **dims)
+    signal_time = hv.Area(df['signal_time'].values, label='signal', **dims)
+    events_time = hv.Area(df['events_time'].values, label='events', **dims)
+    scene_time  = hv.Area(df['scene_time'].values,  label='scene',  **dims)
 
-    overlay = (signal_time * events_time * scene_time)
+    overlay = hv.Area.stack(signal_time * events_time * scene_time)
     hv.renderer('matplotlib').show(overlay)
     return overlay
 
