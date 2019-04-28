@@ -168,13 +168,30 @@ class PlayerSprite(MotionMixin, MutantSprite, CircularRegion):
 class AISprite(PlayerSprite):
     emoji = 'robot'
 
+    def intercept(self, other):
+        δ = other.position - self.position
+        v_H = other.velocity
+
+        # Calling B and H the bear's and human's initial positions, t and I
+        # the time and position of intercept, s the bear's speed, we have:
+        # |BI| = t*s = |δ + t*v_H|; square to get a polynomial equation
+        # a t² + 2 b t + c
+        a = v_H*v_H - self.max_speed * self.max_speed
+        b, c = δ * v_H, δ * δ
+        Δr = b*b - a*c
+        if Δr < 0:
+            # Intercept is impossible
+            return None
+
+        t = max((- b - math.sqrt(Δr))/a, (- b + math.sqrt(Δr))/a)
+        return other.position + t * other.velocity
+
     def on_update(self, update, signal):
         """Automatically steer the bear towards the closest hooman."""
         super().on_update(update, signal)
 
         try:
-            targets = map(lambda c: c.position,
-                          update.scene.get(kind=RunnerSprite))
+            targets = map(self.intercept, update.scene.get(kind=RunnerSprite))
             self.target = min(targets,
                               key=lambda p: (p - self.position).length)
 
