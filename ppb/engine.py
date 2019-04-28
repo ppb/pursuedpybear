@@ -104,7 +104,8 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
             import numpy as np
             import pandas as pd
 
-            columns = ['signal', 'events', 'scene']
+            columns = ['start', 'signal', 'events', 'scene']
+            row_count = 0
             stats = pd.DataFrame(columns=columns)
 
             for column in columns:
@@ -129,7 +130,8 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
             scene_end = time.monotonic_ns()
 
             if collect_statistics:
-                stats.loc[frame_start] = [signal_end, events_end, scene_end]
+                stats.loc[row_count] = [frame_start, signal_end, events_end, scene_end]
+                row_count = row_count + 1
 
             time.sleep(0)
 
