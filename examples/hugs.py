@@ -173,8 +173,11 @@ class AISprite(PlayerSprite):
         super().on_update(update, signal)
 
         try:
-            self.target = min(update.scene.get(kind=RunnerSprite),
-                              key=lambda r: (r.position - self.position).length).position
+            targets = map(lambda c: c.position,
+                          update.scene.get(kind=RunnerSprite))
+            self.target = min(targets,
+                              key=lambda p: (p - self.position).length)
+
         except ValueError:
             # When no hoomans are left
             self.target = None
