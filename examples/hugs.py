@@ -192,14 +192,12 @@ class AISprite(PlayerSprite):
         """Automatically steer the bear towards the closest hooman."""
         super().on_update(update, signal)
 
-        try:
-            targets = map(self.intercept, update.scene.get(kind=RunnerSprite))
-            self.target = min(targets,
-                              key=lambda p: (p - self.position).length)
-
-        except ValueError:
-            # When no hoomans are left
-            self.target = None
+        targets = map(self.intercept, update.scene.get(kind=RunnerSprite))
+        self.target = min(
+            targets,
+            key=lambda p: (p - self.position).length,
+            default=None,
+        )
 
 
 class MainScene(ppb.BaseScene):
