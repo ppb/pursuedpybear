@@ -176,15 +176,15 @@ class AISprite(PlayerSprite):
         # the time and position of intercept, s the bear's speed, we have:
         # |BI| = t*s = |δ + t*v_H|; square to get a polynomial equation
         # a t² + 2 b t + c
-        a = v_H*v_H - self.max_speed * self.max_speed
+        a = v_H * v_H - self.max_speed * self.max_speed
         b, c = δ * v_H, δ * δ
-        Δr = b*b - a*c
-        if Δr < 0:
+        Δ = b*b - a*c
+        if Δ < 0:
             # Intercept is impossible
             return None
 
         t = min(filter(lambda t: t >= 0,
-                       ((- b - math.sqrt(Δr))/a, (- b + math.sqrt(Δr))/a)))
+                       ((- b - math.sqrt(Δ))/a, (- b + math.sqrt(Δ))/a)))
 
         return other.position + t * other.velocity
 
