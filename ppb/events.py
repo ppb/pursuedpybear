@@ -95,6 +95,9 @@ class TreeStructurePublisher(EventMixin, IterableABC):
     A mixin to publish events to an iterable's children.
     """
 
+    def __iter__(self):
+        return (x for x in [])
+
     def __event__(self, bag, fire_event):
         super().__event__(bag, fire_event)
 

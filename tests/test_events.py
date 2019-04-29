@@ -4,16 +4,18 @@ from pytest import raises
 from ppb.events import BadEventHandlerException
 from ppb.events import camel_to_snake
 from ppb.events import EventMixin
+from ppb.events import TreeStructurePublisher
 
 
-def test_eventmixin():
+@mark.parametrize("mixin", (EventMixin, TreeStructurePublisher))
+def test_eventmixin(mixin):
     passed_bag = None
     passed_fire = None
 
     class Spam:
         pass
 
-    class Eventable(EventMixin):
+    class Eventable(mixin):
         def on_spam(self, bag, fire_event):
             nonlocal passed_bag, passed_fire
             passed_fire = fire_event
@@ -29,7 +31,8 @@ def test_eventmixin():
     assert fire_event is passed_fire
 
 
-def test_event_mixin_with_bad_signature():
+@mark.parametrize("mixin", (EventMixin, TreeStructurePublisher))
+def test_event_mixin_with_bad_signature(mixin):
 
     class BadSpam:
         pass
@@ -39,7 +42,7 @@ def test_event_mixin_with_bad_signature():
         pass
 
 
-    class Eventable(EventMixin):
+    class Eventable(mixin):
         def on_spam(self, spam_event):
             pass
 
