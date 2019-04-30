@@ -89,7 +89,7 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
 
     def start(self):
         self.running = True
-        self._last_idle_time = time.monotonic_ns()
+        self._last_idle_time = time.monotonic()
         self.activate({"scene_class": self.first_scene,
                        "kwargs": self.scene_kwargs})
 
@@ -109,25 +109,21 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
             stats = pd.DataFrame(columns=columns)
 
             for column in columns:
-                stats[column] = stats[column].astype(np.int64)
-
-        NS_PER_SECOND = 1e9
+                stats[column] = stats[column].astype(float)
 
         while self.running:
-            frame_start = time.monotonic_ns()
+            frame_start = time.monotonic()
 
-            self.signal(
-                events.Idle((frame_start - self._last_idle_time)/NS_PER_SECOND)
-            )
+            self.signal(events.Idle(frame_start - self._last_idle_time))
             self._last_idle_time = frame_start
-            signal_end = time.monotonic_ns()
+            signal_end = time.monotonic()
 
             while self.events:
                 self.publish()
-            events_end = time.monotonic_ns()
+            events_end = time.monotonic()
 
             self.manage_scene()
-            scene_end = time.monotonic_ns()
+            scene_end = time.monotonic()
 
             if collect_statistics:
                 stats.loc[row_count] = [frame_start, signal_end, events_end, scene_end]

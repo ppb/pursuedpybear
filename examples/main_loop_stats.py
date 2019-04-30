@@ -8,18 +8,15 @@ import holoviews as hv
 hv.extension('bokeh')
 
 
-NS_PER_SECONDS = 1e9
-
-
 def process(df):
     columns = ['signal', 'events', 'scene']
     for start, end in zip(['start']+columns, columns):
         time_column = f"{end}_time"
-        df[time_column] = (df[end] - df[start]) / NS_PER_SECONDS
+        df[time_column] = df[end] - df[start]
 
     next_start = df['start'].shift(-1)
-    df['delta_time'] = (next_start - df['start']) / NS_PER_SECONDS
-    df['sleep_time'] = (next_start - df['scene']) / NS_PER_SECONDS
+    df['delta_time'] = next_start - df['start']
+    df['sleep_time'] = next_start - df['scene']
     df['fps'] = 1 / df['delta_time']
 
 
