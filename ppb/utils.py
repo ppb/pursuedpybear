@@ -1,3 +1,5 @@
+import contextlib
+import gc
 import logging
 import sys
 
@@ -48,3 +50,13 @@ class LoggingMixin:
 
         module_name = _get_module(file_name)
         return logging.getLogger(module_name)
+
+
+@contextlib.contextmanager
+def gc_disabled():
+    e = gc.isenabled()
+
+    gc.disable()
+    yield
+    if e:
+        gc.enable()

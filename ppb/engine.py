@@ -1,8 +1,7 @@
 from collections import defaultdict
 from collections import deque
 from contextlib import ExitStack
-from itertools import chain
-import time
+from itertools import chain, count
 from typing import Any
 from typing import Callable
 from typing import DefaultDict
@@ -10,6 +9,8 @@ from typing import List
 from typing import Type
 from typing import Union
 from typing import overload
+import gc
+import time
 
 import ppb.events as events
 from ppb.abc import Engine
@@ -19,7 +20,7 @@ from ppb.events import Quit
 from ppb.systems import PygameEventPoller
 from ppb.systems import Renderer
 from ppb.systems import Updater
-from ppb.utils import LoggingMixin
+from ppb.utils import LoggingMixin, gc_disabled
 
 
 _ellipsis = type(...)
@@ -104,32 +105,38 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
             import numpy as np
             import pandas as pd
 
-            columns = ['start', 'signal', 'events', 'scene']
-            row_count = 0
+            columns = ['start', 'signal', 'events', 'scene', 'gc', 'gc_unreachable']
             stats = pd.DataFrame(columns=columns)
 
             for column in columns:
                 stats[column] = stats[column].astype(float)
 
-        while self.running:
-            frame_start = time.monotonic()
+        with gc_disabled():
+            for frame_count in count():
+                if not self.running:
+                    break
 
-            self.signal(events.Idle(frame_start - self._last_idle_time))
-            self._last_idle_time = frame_start
-            signal_end = time.monotonic()
+                frame_start = time.monotonic()
 
-            while self.events:
-                self.publish()
-            events_end = time.monotonic()
+                self.signal(events.Idle(frame_start - self._last_idle_time))
+                self._last_idle_time = frame_start
+                signal_end = time.monotonic()
 
-            self.manage_scene()
-            scene_end = time.monotonic()
+                while self.events:
+                    self.publish()
+                events_end = time.monotonic()
 
-            if collect_statistics:
-                stats.loc[row_count] = [frame_start, signal_end, events_end, scene_end]
-                row_count = row_count + 1
+                self.manage_scene()
+                scene_end = time.monotonic()
 
-            time.sleep(0)
+                gc_unreachable = gc.collect() if frame_count % 100 == 99 else 0
+                gc_end = time.monotonic()
+
+                if collect_statistics:
+                    stats.loc[frame_count] = [frame_start, signal_end, events_end,
+                                              scene_end, gc_end, gc_unreachable]
+
+                time.sleep(0)
 
         if collect_statistics:
             return stats

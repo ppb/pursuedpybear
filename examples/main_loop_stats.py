@@ -9,14 +9,14 @@ hv.extension('bokeh')
 
 
 def process(df):
-    columns = ['signal', 'events', 'scene']
+    columns = ['signal', 'events', 'scene', 'gc']
     for start, end in zip(['start']+columns, columns):
         time_column = f"{end}_time"
         df[time_column] = df[end] - df[start]
 
     next_start = df['start'].shift(-1)
     df['delta_time'] = next_start - df['start']
-    df['sleep_time'] = next_start - df['scene']
+    df['sleep_time'] = next_start - df[columns[-1]]
     df['fps'] = 1 / df['delta_time']
 
 
@@ -51,7 +51,7 @@ def main(path=None):
 
     process(df)
 #    plot(df)
-    for column in ['signal', 'events', 'scene', 'sleep']:
+    for column in ['signal', 'events', 'scene', 'gc', 'sleep']:
         col = df[f"{column}_time"]
         print(f"{column} for {col.mean()}s, std. dev. {col.std()}s")
 
