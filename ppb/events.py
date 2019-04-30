@@ -5,7 +5,6 @@ from collections.abc import Iterable as IterableABC
 from typing import Any
 from typing import Collection
 from typing import Dict
-from typing import Iterable
 from typing import Set
 from typing import Type
 from typing import Union
@@ -96,17 +95,20 @@ class TreeStructurePublisher(EventMixin, IterableABC):
     """
 
     def __iter__(self):
-        return (x for x in [])
+        return (x for x in ())
 
     def __event__(self, bag, fire_event):
         super().__event__(bag, fire_event)
-
         for child in self.publish_targets:
             child.__event__(bag, fire_event)
 
     @property
     def publish_targets(self):
-        """"""
+        """
+        Yield targets for recursive publishing.
+
+        Default implementation is all objects contained in this object.
+        """
         for i in self:
             yield i
 

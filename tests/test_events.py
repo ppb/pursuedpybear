@@ -5,6 +5,7 @@ from ppb.events import BadEventHandlerException
 from ppb.events import camel_to_snake
 from ppb.events import EventMixin
 from ppb.events import TreeStructurePublisher
+from ppb.events import Update
 
 
 @mark.parametrize("mixin", (EventMixin, TreeStructurePublisher))
@@ -59,6 +60,31 @@ def test_event_mixin_with_bad_signature(mixin):
 
     exec = exception_info.value
     assert not isinstance(exec, BadEventHandlerException)
+
+
+def test_children_called():
+
+    class TestEventable(TreeStructurePublisher):
+        children = ()
+        called = False
+
+        def __init__(self, *children):
+            self.children = children
+
+        def __iter__(self):
+            return (c for c in self.children)
+
+        def __event__(self, bag, fire_event):
+            self.called = True
+            super().__event__(bag, fire_event)
+
+
+    test_children = [TestEventable(), TestEventable()]
+    test_parent = TestEventable(*test_children)
+    test_parent.__event__(Update(0.16), None)  # Bag and fire_event end up unused.
+    assert test_parent.called
+    for child in test_children:
+        assert child.called
 
 
 @mark.parametrize("text,expected", [
