@@ -102,14 +102,7 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
 
     def main_loop(self, collect_statistics=False):
         if collect_statistics:
-            import numpy as np
-            import pandas as pd
-
-            columns = ['start', 'signal', 'events', 'scene', 'gc', 'gc_unreachable']
-            stats = pd.DataFrame(columns=columns)
-
-            for column in columns:
-                stats[column] = stats[column].astype(float)
+            stats = []
 
         with gc_disabled():
             for frame_count in count():
@@ -133,12 +126,21 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
                 gc_end = time.monotonic()
 
                 if collect_statistics:
-                    stats.loc[frame_count] = [frame_start, signal_end, events_end,
-                                              scene_end, gc_end, gc_unreachable]
+                    stats.append((frame_start, signal_end, events_end,
+                                  scene_end, gc_end, gc_unreachable))
 
                 time.sleep(0)
 
         if collect_statistics:
+            import numpy as np
+            import pandas as pd
+
+            columns = ['start', 'signal', 'events', 'scene', 'gc', 'gc_unreachable']
+            stats = pd.DataFrame(stats, columns=columns)
+
+            for column in columns:
+                stats[column] = stats[column].astype(float)
+
             return stats
 
     def activate(self, next_scene: dict):
