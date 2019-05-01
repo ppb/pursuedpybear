@@ -132,16 +132,9 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
                 time.sleep(0)
 
         if collect_statistics:
-            import numpy as np
             import pandas as pd
-
-            columns = ['start', 'signal', 'events', 'scene', 'gc', 'gc_unreachable']
-            stats = pd.DataFrame(stats, columns=columns)
-
-            for column in columns:
-                stats[column] = stats[column].astype(float)
-
-            return stats
+            return pd.DataFrame(stats, columns=['start', 'signal', 'events',
+                                                'scene', 'gc', 'gc_unreachable'])
 
     def activate(self, next_scene: dict):
         scene = next_scene["scene_class"]
