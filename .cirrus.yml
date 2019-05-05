@@ -1,20 +1,15 @@
-dockerfiles_task:
-  skip: $CIRRUS_BRANCH =~ '.*\.tmp'
-  container:
-    image: ellerbrock/alpine-bash-git
-
-  script:
-    - ./.ci/dockerfiles/generate.sh
-    - git diff --exit-code
-
-
 docs_task:
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
   container:
-    dockerfile: .ci/dockerfiles/docs
+    image: python:3.7-slim
 
-  install_script: pip install -e .
-  script: make -C docs/ html
+  install_script:
+    - apt update || true ; apt install -qq -y make
+    - pip install --upgrade-strategy eager -U -r requirements-docs.txt
+    - pip install .
+
+  script:
+    - make -C docs/ html
 
 
 Linux_task:
@@ -22,10 +17,19 @@ Linux_task:
   allow_failures: $CIRRUS_TASK_NAME =~ '.*-rc-.*'
   container:
     matrix:
-      - dockerfile: .ci/dockerfiles/python_3.6-slim
-      - dockerfile: .ci/dockerfiles/python_3.7-slim
-      - dockerfile: .ci/dockerfiles/python_3.8-rc-slim
-      - dockerfile: .ci/dockerfiles/pypy_3.6-slim
+      - image: python:3.6-slim
+      - image: python:3.7-slim
+      - image: python:3.8-rc-slim
+      - image: pypy:3.6-slim
+
+  install_script:
+    - >-
+      if command -v pypy3 >/dev/null || python3 -c 'import sys; exit(sys.implementation.version.releaselevel == "final")'; then
+        apt update || true;
+        apt install -qq -y pkgconf libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libsdl1.2-dev libsmpeg-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev libfreetype6-dev gcc
+      fi
+    - pip install --upgrade-strategy eager -U -r requirements-tests.txt
+    - pip install .
 
   script:
     - command -v pypy3 >/dev/null && export PY=pypy3
@@ -51,7 +55,7 @@ macOS_task:
     - pyenv global ${PYTHON}
     - pyenv rehash
     - pip install --upgrade-strategy eager -U -r requirements-tests.txt
-    - pip install -e .
+    - pip install .
 
   script:
     - python3 --version
@@ -64,8 +68,12 @@ Windows_task:
   windows_container:
     os_version: 2019
     matrix:
-      - dockerfile: .ci/dockerfiles/python_3.6-windowsservercore-1809
-      - dockerfile: .ci/dockerfiles/python_3.7-windowsservercore-1809
+      - image: python:3.6-windowsservercore-1809
+      - image: python:3.7-windowsservercore-1809
+
+  install_script:
+    - C:\Python\python.exe -m pip install --upgrade-strategy eager -U -r requirements-tests.txt
+    - C:\Python\python.exe -m pip install .
 
   script:
     - C:\Python\python.exe --version
