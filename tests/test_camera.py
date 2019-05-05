@@ -30,20 +30,20 @@ def test_camera_translate_to_frame():
     cam = Camera(viewport=(0, 0, 800, 600), pixel_ratio=80)
     assert cam.position == Vector(0, 0)
     assert cam.translate_to_frame(Vector(400, 300)) == Vector(0, 0)
-    assert cam.translate_to_frame(Vector(560, 220)) == Vector(2, -1)
+    assert cam.translate_to_frame(Vector(560, 220)) == Vector(2, 1)
     cam.position = Vector(5, 5)
-    assert cam.translate_to_frame(Vector(400, 300)) == Vector(5, 5)
-    assert cam.translate_to_frame(Vector(560, 220)) == Vector(7, 4)
+    assert cam.translate_to_frame(Vector(400, 300)) == Vector(5, -5)
+    assert cam.translate_to_frame(Vector(560, 220)) == Vector(7, -4)
 
 
 def test_camera_translate_to_viewport():
     cam = Camera(viewport=(0, 0, 800, 600), pixel_ratio=80)
     assert cam.position == Vector(0, 0)
     assert cam.translate_to_viewport(Vector(0, 0)) == Vector(400, 300)
-    assert cam.translate_to_viewport(Vector(2, -1)) == Vector(560, 220)
+    assert cam.translate_to_viewport(Vector(2, 1)) == Vector(560, 220)
     cam.position = Vector(5, 5)
-    assert cam.translate_to_viewport(Vector(5, 5)) == Vector(400, 300)
-    assert cam.translate_to_viewport(Vector(7, 4)) == Vector(560, 220)
+    assert cam.translate_to_viewport(Vector(5, -5)) == Vector(400, 300)
+    assert cam.translate_to_viewport(Vector(7, -4)) == Vector(560, 220)
 
 
 def test_sprite_in_viewport():
