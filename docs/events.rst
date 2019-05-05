@@ -25,6 +25,9 @@ These are core events from hardware and the engine itself.
 .. autoclass:: ppb.events.PreRender
    :members:
 
+.. autoclass:: ppb.events.Idle
+   :members:
+
 .. autoclass:: ppb.events.Render
    :members:
 

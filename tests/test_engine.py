@@ -197,6 +197,50 @@ def test_change_scene_event():
     scene_start_called.assert_called()
 
 
+def test_change_scene_event_no_kwargs():
+
+    pause_was_run = mock.Mock()
+    scene_start_called = mock.Mock()
+
+    class FirstScene(BaseScene):
+
+        def on_update(self, event, signal):
+            signal(events.StartScene(new_scene=SecondScene))
+
+        def on_scene_paused(self, event, signal):
+            assert event.scene is self
+            pause_was_run()
+
+    class SecondScene(BaseScene):
+
+        def on_scene_started(self, event, signal):
+            assert event.scene == self
+            scene_start_called()
+            signal(events.Quit())
+
+    class Tester(System):
+        listening = False
+
+        def on_idle(self, idle: events.Idle, signal):
+            engine = idle.engine
+            if self.listening:
+                assert isinstance(engine.current_scene, SecondScene)
+                assert len(engine.scenes) == 2
+            return ()
+
+        def on_scene_paused(self, event, signal):
+            self.listening = True
+
+    with GameEngine(FirstScene, systems=[Updater, Tester]) as ge:
+        def extend(event):
+            event.engine = ge
+        ge.register(events.Idle, extend)
+        ge.run()
+
+    pause_was_run.assert_called()
+    scene_start_called.assert_called()
+
+
 def test_replace_scene_event():
 
     class FirstScene(BaseScene):
