@@ -6,7 +6,7 @@ docs_task:
   install_script:
     - apt update || true ; apt install -qq -y make
     - pip install --upgrade-strategy eager -U -r requirements-docs.txt
-    - pip install -e .
+    - pip install .
 
   script:
     - make -C docs/ html
@@ -29,7 +29,7 @@ Linux_task:
         apt install -qq -y pkgconf libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libsdl1.2-dev libsmpeg-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev libfreetype6-dev gcc
       fi
     - pip install --upgrade-strategy eager -U -r requirements-tests.txt
-    - pip install -e .
+    - pip install .
 
   script:
     - command -v pypy3 >/dev/null && export PY=pypy3
@@ -55,7 +55,7 @@ macOS_task:
     - pyenv global ${PYTHON}
     - pyenv rehash
     - pip install --upgrade-strategy eager -U -r requirements-tests.txt
-    - pip install -e .
+    - pip install .
 
   script:
     - python3 --version
@@ -73,7 +73,7 @@ Windows_task:
 
   install_script:
     - C:\Python\python.exe -m pip install --upgrade-strategy eager -U -r requirements-tests.txt
-    - C:\Python\python.exe -m pip install -e .
+    - C:\Python\python.exe -m pip install .
 
   script:
     - C:\Python\python.exe --version
