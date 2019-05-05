@@ -1,10 +1,28 @@
 import time
 from typing import Callable
 
+from hypothesis import strategies as st
+
+from ppb import Vector
 from ppb.engine import GameEngine
 from ppb.events import Idle
 from ppb.events import Quit
 from ppb.systems import System
+
+
+def integer_vectors(min_value=None, max_value=None):
+    return st.builds(
+        Vector,
+        st.integers(min_value=min_value, max_value=max_value),
+        st.integers(min_value=min_value, max_value=max_value),
+    )
+
+def vectors(max_magnitude=1e75):
+    return st.builds(
+        Vector,
+        st.floats(min_value=-max_magnitude, max_value=max_magnitude),
+        st.floats(min_value=-max_magnitude, max_value=max_magnitude),
+    )
 
 
 class Failer(System):

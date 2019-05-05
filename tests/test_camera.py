@@ -1,21 +1,30 @@
+from hypothesis import given, note, strategies as st
+
 from ppb import BaseSprite
 from ppb import Vector
 from ppb.camera import Camera
+from ppb.testutils import integer_vectors, vectors
 
 
-def test_camera_move():
-    cam = Camera()
-    cam.position = Vector(500, 500)
-    assert cam.position == Vector(500, 500)
-    cam.position += Vector(100, 100)
-    assert cam.position == Vector(600, 600)
+ONE_K = 1024
+ONE_M = ONE_K * ONE_K
 
 
-def test_camera_viewport():
-    cam = Camera(viewport=(0, 0, 800, 600))
-    assert cam.point_in_viewport(Vector(400, 400))
-    assert not cam.point_in_viewport(Vector(900, 600))
-    assert cam.viewport_offset == Vector(400, 300)
+def cameras():
+    return st.builds(
+        lambda offset, diagonal: Camera(viewport=(*offset, *(offset+diagonal))),
+        integer_vectors(min_value=-ONE_M, max_value=ONE_M),
+        integer_vectors(min_value=2, max_value=ONE_M),
+    )
+
+
+@given(diagonal=integer_vectors(min_value=2, max_value=ONE_M))
+def test_camera_viewport(diagonal: Vector):
+    x, y = diagonal
+    cam = Camera(viewport=(0, 0, x, y))
+    assert cam.point_in_viewport(0.5 * diagonal)
+    assert not cam.point_in_viewport(diagonal + (100, 100))
+    assert cam.viewport_offset == 0.5 * diagonal
 
 
 def test_camera_point_in_viewport_not_at_origin():
@@ -24,6 +33,13 @@ def test_camera_point_in_viewport_not_at_origin():
     assert cam.point_in_viewport(Vector(899, 300))
     assert not cam.point_in_viewport(Vector(50, 50))
     assert not cam.point_in_viewport(Vector(901, 600))
+
+
+@given(cam=cameras(), v=vectors())
+def test_camera_roundtrip_frame_viewport(cam: Camera, v: Vector):
+    """Check that Camera.translate_to_{frame,viewport} are inverse of one another."""
+    assert cam.translate_to_frame(cam.translate_to_viewport(v)).isclose(v)
+    assert cam.translate_to_viewport(cam.translate_to_frame(v)).isclose(v)
 
 
 def test_camera_translate_to_frame():
