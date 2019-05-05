@@ -31,8 +31,18 @@ function template() {
     preinstall="$1"; shift
     PIP="$(py $image) -m pip install --upgrade-strategy eager -U"
     CMDS=()
-    for requirement in "$@" requirements.txt; do
-        CMDS+=("$PIP -r $requirement")
+    for requirement in requirements.txt "$@"; do
+        REQS=()
+        while read req; do
+            case "$image" in
+                *:*-windowsservercore-*)
+                    REQS+=("'${req//\"/\`\"}'") ;;
+                *)
+                    REQS+=("'$req'") ;;
+            esac
+        done < ../../${requirement}
+
+        CMDS+=("$PIP ${REQS[*]}")
     done
     CMDS+=("$(postinstall $image)")
 
@@ -41,7 +51,6 @@ FROM ${image}
 
 ${preinstall}
 
-ADD $@ requirements.txt /
 $(run $image "${CMDS[@]}")
 EOF
 }
