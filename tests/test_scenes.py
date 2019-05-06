@@ -4,6 +4,9 @@ from pytest import fixture
 from pytest import mark
 from pytest import raises
 
+from ppb import events
+from ppb.engine import GameEngine
+from ppb.sprites import BaseSprite
 from ppb.scenes import BaseScene
 from ppb.camera import Camera
 from ppb.scenes import GameObjectCollection
@@ -131,6 +134,20 @@ def test_collection_methods(container, player, enemies):
     # Test __iter__
     for game_object in container:
         assert game_object is player or game_object is enemies[0]
+
+
+def test_events_published_to_children():
+    scene = BaseScene(Mock(spec=GameEngine))
+
+    class TestSprite(BaseSprite):
+        was_called = False
+
+        def on_update(self, event, signal):
+            self.was_called = True
+
+    sprite = TestSprite()
+    scene.add(sprite)
+    scene.__event__(events.Update(0.16), lambda x: None)
 
 
 def test_main_camera(scene):
