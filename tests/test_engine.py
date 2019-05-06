@@ -66,22 +66,6 @@ def test_scene_change_thrashing():
     engine.run()
 
 
-def test_scene_change_no_new():
-
-    class Scene(BaseScene):
-
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            self.running = False
-
-        def change(self):
-            return super().change()
-
-    with GameEngine(Scene, systems=[Updater, Failer], fail=lambda n: False,
-                    message="Will only time out.") as ge:
-        ge.run()
-
-
 def test_signal():
 
     engine = GameEngine(BaseScene, systems=[Quitter])
