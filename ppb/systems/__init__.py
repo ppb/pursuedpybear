@@ -82,6 +82,8 @@ class Renderer(System):
             self.register_renderable(game_object)
 
         source_image = self.resources[image_name]
+        if game_object.size <= 0:
+            return None
         resized_image = self.resize_image(source_image, game_object.size)
         rotated_image = self.rotate_image(resized_image, game_object.rotation)
         return rotated_image
@@ -134,12 +136,8 @@ class Renderer(System):
         values = [width, height]
         short_side_index = width > height
         target = self.pixel_ratio * game_unit_size
-        if target > 0:
-            ratio = values[short_side_index] / target
-            returnTup = tuple(round(value / ratio) for value in values)
-        else:
-            returnTup = tuple(round(value/self.pixel_ratio) for value in values)
-        return returnTup
+        ratio = values[short_side_index] / target
+        return tuple(round(value / ratio) for value in values)
 
 
 class Updater(System):
