@@ -30,7 +30,6 @@ class TestEngine(unittest.TestCase):
         engine.start()
         self.assertIs(engine.current_scene, mock_scene)
 
-
 def test_scene_change_thrashing():
 
     class ChildScene(BaseScene):
