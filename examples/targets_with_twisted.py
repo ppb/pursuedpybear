@@ -60,6 +60,12 @@ class TargetCounter(object):
     def count(self, request):
         return str(len(list(self.engine.current_scene.get(tag='target'))))
 
+    @classmethod
+    def web_server(cls, reactor, engine, description):
+        ep = endpoints.serverFromString(reactor, description)
+        counter = cls(engine)
+        return ep.listen(Site(counter.app.resource()))
+
 
 class Bullet(MoverMixin, ppb.BaseSprite):
     velocity = Vector(0, 2)
@@ -95,26 +101,34 @@ class GameScene(ppb.BaseScene):
         for x in (-3, -1.5, 0, 1.5, 3):
             self.add(Target(pos=Vector(x, 1.875)), tags=['target'])
 
+
+class _FinishLoop(Exception):
+    pass
+
+
 @defer.inlineCallbacks
-def main(reactor):
-    engine = ppb.make_engine(starting_scene=GameScene)
+def twisted_engine_loop(engine):
     def run_one_iteration(engine):
         if not engine.running:
-            raise SystemError(engine)
+            raise _FinishLoop(engine)
         engine.run_one_iteration()
     loop = task.LoopingCall(run_one_iteration, engine)
-    ## Run a web server
-    description = "tcp:8080"
-    ep = endpoints.serverFromString(reactor, description)
-    counter = TargetCounter(engine)
-    ep.listen(Site(counter.app.resource()))
-    ## End run a wen runserver
     engine.start()
     with engine:
         try:
             yield loop.start(0.001)
-        except SystemError:
+        except _FinishLoop:
             pass
+
+
+def main(reactor):
+    engine = ppb.make_engine(starting_scene=GameScene)
+    TargetCounter.web_server(
+        reactor=reactor,
+        engine=engine,
+        description="tcp:8080"
+    )
+    return twisted_engine_loop(engine)
 
 if __name__ == "__main__":
     import sys
