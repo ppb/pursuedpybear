@@ -134,8 +134,12 @@ class Renderer(System):
         values = [width, height]
         short_side_index = width > height
         target = self.pixel_ratio * game_unit_size
-        ratio = values[short_side_index] / target
-        return tuple(round(value / ratio) for value in values)
+        if target > 0:
+            ratio = values[short_side_index] / target
+            returnTup = tuple(round(value / ratio) for value in values)
+        else:
+            returnTup = tuple(round(value/self.pixel_ratio) for value in values)
+        return returnTup
 
 
 class Updater(System):
