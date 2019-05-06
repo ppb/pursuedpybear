@@ -8,7 +8,7 @@ from ppb.sprites import BaseSprite
 
 
 def run(setup: Callable[[BaseScene], None]=None, *, log_level=logging.WARNING,
-        starting_scene=BaseScene):
+        starting_scene=BaseScene, title="PursuedPyBear"):
     """
     Run a small game.
 
@@ -27,7 +27,8 @@ def run(setup: Callable[[BaseScene], None]=None, *, log_level=logging.WARNING,
         "resolution": (800, 600),
         "scene_kwargs": {
             "set_up": setup,
-        }
+        },
+        "window_title": title,
     }
 
     with GameEngine(starting_scene, **kwargs) as eng:
