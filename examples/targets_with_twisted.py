@@ -115,22 +115,22 @@ def twisted_engine_loop(engine):
         engine.run_one_iteration()
     loop = task.LoopingCall(run_one_iteration, engine)
     engine.start()
-    with engine:
-        try:
-            yield loop.start(0.001)
-        except _FinishLoop:
-            pass
+    try:
+        yield loop.start(0.001)
+    except _FinishLoop:
+        pass
 ######### End of "non-game-specific code" ###########
 
 
+@defer.inlineCallbacks
 def main(reactor):
-    engine = ppb.make_engine(starting_scene=GameScene)
-    TargetCounter.web_server(
-        reactor=reactor,
-        engine=engine,
-        description="tcp:8080"
-    )
-    return twisted_engine_loop(engine)
+    with ppb.make_engine(starting_scene=GameScene) as engine:
+        TargetCounter.web_server(
+            reactor=reactor,
+            engine=engine,
+            description="tcp:8080"
+        )
+        yield twisted_engine_loop(engine)
 
 if __name__ == "__main__":
     import sys
