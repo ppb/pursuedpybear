@@ -98,7 +98,11 @@ class GameScene(ppb.BaseScene):
 @defer.inlineCallbacks
 def main(reactor):
     engine = ppb.make_engine(starting_scene=GameScene)
-    loop = task.LoopingCall(engine.run_one_iteration)
+    def run_one_iteration(engine):
+        if not engine.running:
+            raise SystemError(engine)
+        engine.run_one_iteration()
+    loop = task.LoopingCall(run_one_iteration, engine)
     ## Run a web server
     description = "tcp:8080"
     ep = endpoints.serverFromString(reactor, description)
@@ -107,7 +111,10 @@ def main(reactor):
     ## End run a wen runserver
     engine.start()
     with engine:
-        yield loop.start(0.001)
+        try:
+            yield loop.start(0.001)
+        except SystemError:
+            pass
 
 if __name__ == "__main__":
     import sys
