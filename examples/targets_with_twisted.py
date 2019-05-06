@@ -105,6 +105,7 @@ def main(reactor):
     counter = TargetCounter(engine)
     ep.listen(Site(counter.app.resource()))
     ## End run a wen runserver
+    engine.start()
     with engine:
         yield loop.start(0.001)
 
