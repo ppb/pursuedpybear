@@ -99,11 +99,12 @@ class GameScene(ppb.BaseScene):
 def main(reactor):
     engine = ppb.make_engine(starting_scene=GameScene)
     loop = task.LoopingCall(engine.run_one_iteration)
-    engine.start()
+    ## Run a web server
     description = "tcp:8080"
     ep = endpoints.serverFromString(reactor, description)
     counter = TargetCounter(engine)
     ep.listen(Site(counter.app.resource()))
+    ## End run a wen runserver
     with engine:
         yield loop.start(0.001)
 
