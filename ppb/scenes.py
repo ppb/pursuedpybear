@@ -48,7 +48,9 @@ class GameObjectCollection(Collection):
         if isinstance(tags, (str, bytes)):
             raise TypeError("You passed a string instead of an iterable, this probably isn't what you intended.\n\nTry making it a tuple.")
         self.all.add(game_object)
-        self.kinds[type(game_object)].add(game_object)
+
+        for kind in type(game_object).mro():
+            self.kinds[kind].add(game_object)
         for tag in tags:
             self.tags[tag].add(game_object)
 
@@ -91,7 +93,8 @@ class GameObjectCollection(Collection):
             container.remove(myObject)
         """
         self.all.remove(game_object)
-        self.kinds[type(game_object)].remove(game_object)
+        for kind in type(game_object).mro():
+            self.kinds[kind].remove(game_object)
         for s in self.tags.values():
             s.discard(game_object)
 
@@ -119,6 +122,14 @@ class BaseScene(Scene, TreeStructurePublisher):
 
     def __iter__(self) -> Iterator:
         return (x for x in self.game_objects)
+
+    @property
+    def kinds(self):
+        return self.game_objects.kinds
+
+    @property
+    def tags(self):
+        return self.game_objects.tags
 
     @property
     def main_camera(self) -> Camera:
