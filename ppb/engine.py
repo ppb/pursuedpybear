@@ -100,7 +100,6 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
             self._last_idle_time = now
             while self.events:
                 self.publish()
-            self.manage_scene()
 
     def activate(self, next_scene: dict):
         scene = next_scene["scene_class"]
