@@ -35,7 +35,6 @@ class Renderer(System):
         self.resized_images = {}
         self.old_resized_images = {}
         self.render_clock = 0
-        self.render_ready = False
         self.target_frame_rate = target_frame_rate
         self.target_count = 1 / self.target_frame_rate
 
@@ -49,16 +48,10 @@ class Renderer(System):
 
     def on_idle(self, idle_event: events.Idle, signal):
         self.render_clock += idle_event.time_delta
-        if self.render_ready:
-            self.render_ready = False
-            signal(events.Render())
-        elif self.render_clock >= self.target_count:
-            self.render_clock = 0
+        if self.render_clock > self.target_count:
             signal(events.PreRender())
-
-    def on_pre_render(self, pre_render_event, signal):
-        # Here to let the system flush responses to PreRender before rendering.
-        self.render_ready = True
+            signal(events.Render())
+            self.render_clock = 0
 
     def on_render(self, render_event, signal):
         self.render_background(render_event.scene)
