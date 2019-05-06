@@ -16,7 +16,7 @@ class Blob(ppb.BaseSprite):
     def on_update(self, event: events.Update, signal):
         intent_vector = self.target - self.position
         self.position += intent_vector.scale(self.speed * event.time_delta)
-        self.rotation = math.degrees(math.atan2(intent_vector.y, intent_vector.x)) + 90
+        self.rotation = math.degrees(math.atan2(intent_vector.y, intent_vector.x)) - 90
 
 
 def setup(scene):

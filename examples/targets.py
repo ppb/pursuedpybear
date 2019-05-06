@@ -16,6 +16,7 @@ class Player(MoverMixin, ppb.BaseSprite):
     # and adding it on press and subtracting it on release.
     left_vector = Vector(-1, 0)
     right_vector = Vector(1, 0)
+    _rotation = 180
 
     def on_key_pressed(self, event, signal):
         if event.key in (keycodes.A, keycodes.Left):
@@ -44,6 +45,7 @@ class Player(MoverMixin, ppb.BaseSprite):
 
 class Bullet(MoverMixin, ppb.BaseSprite):
     velocity = Vector(0, 2)
+    _rotation = 180
 
     def on_update(self, update, signal):
         super().on_update(update, signal)  # Execute movement
