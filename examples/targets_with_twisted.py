@@ -102,6 +102,7 @@ class GameScene(ppb.BaseScene):
             self.add(Target(pos=Vector(x, 1.875)), tags=['target'])
 
 
+######### This is "non-game-specific code" ###########
 class _FinishLoop(Exception):
     pass
 
@@ -119,6 +120,7 @@ def twisted_engine_loop(engine):
             yield loop.start(0.001)
         except _FinishLoop:
             pass
+######### End of "non-game-specific code" ###########
 
 
 def main(reactor):
