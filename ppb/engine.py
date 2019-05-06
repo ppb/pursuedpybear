@@ -95,14 +95,13 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
     def main_loop(self):
         while self.running:
             time.sleep(0)
-            now = time.monotonic()
-            self.run_one_iteration(now)
+            self.run_one_iteration()
 
-    def run_one_iteration(self, now):
-        if not self.running or not self.entered:
-            raise ValueError("Cannot run before things have started".
-                             self.started,
+    def run_one_iteration(self):
+        if not self.entered:
+            raise ValueError("Cannot run before things have started",
                              self.entered)
+        now = time.monotonic()
         self.signal(events.Idle(now - self._last_idle_time))
         self._last_idle_time = now
         while self.events:
