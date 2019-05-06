@@ -21,3 +21,4 @@ Name | Email | Twitter |
 [Andrew Schamp](https://github.com/schamp/) | | [schamp](https://twitter.com/schamp)
 [Dillon Omane](https://github.com/dillonko) | [Dillon_KO](dillonko84@gmail.com)
 [Nicolas Braud-Santoni](https://nicolas.braud-santoni.eu) | | |
+[Zack OConnor](https://github.com/ZackOConnor)| (zackary.oconnor@gmail.com)| |
