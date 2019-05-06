@@ -30,41 +30,6 @@ class TestEngine(unittest.TestCase):
         engine.start()
         self.assertIs(engine.current_scene, mock_scene)
 
-def test_scene_change_thrashing():
-
-    class ChildScene(BaseScene):
-        count = 0
-        def on_update(self, event, signal):
-            print(f"Child")
-            self.running = False
-
-    class ParentScene(BaseScene):
-        count = 0
-        fired = False
-
-        def on_update(self, event, signal):
-            if not self.fired:
-                self.next = ChildScene
-                self.fired = True
-            else:
-                self.count += 1
-            print(f"Parent {self.count}")
-            if self.count >= 5:
-                self.running = False
-
-    def fail(engine):
-        try:
-            parent = engine.scenes[0]
-        except IndexError:
-            return False
-        if parent.count > 0 and engine.current_scene != parent:
-            return True
-
-    engine = GameEngine(ParentScene,
-                        systems=[Updater(time_step=0.001), Failer], fail=fail,
-                        message="ParentScene should not be counting while a child exists.")
-    engine.run()
-
 
 def test_signal():
 
