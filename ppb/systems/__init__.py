@@ -35,7 +35,6 @@ class Renderer(System):
         self.resized_images = {}
         self.old_resized_images = {}
         self.render_clock = 0
-        self.render_ready = False
         self.target_frame_rate = target_frame_rate
         self.target_count = 1 / self.target_frame_rate
 
@@ -49,16 +48,10 @@ class Renderer(System):
 
     def on_idle(self, idle_event: events.Idle, signal):
         self.render_clock += idle_event.time_delta
-        if self.render_ready:
-            self.render_ready = False
-            signal(events.Render())
-        elif self.render_clock >= self.target_count:
-            self.render_clock = 0
+        if self.render_clock > self.target_count:
             signal(events.PreRender())
-
-    def on_pre_render(self, pre_render_event, signal):
-        # Here to let the system flush responses to PreRender before rendering.
-        self.render_ready = True
+            signal(events.Render())
+            self.render_clock = 0
 
     def on_render(self, render_event, signal):
         self.render_background(render_event.scene)
@@ -89,6 +82,8 @@ class Renderer(System):
             self.register_renderable(game_object)
 
         source_image = self.resources[image_name]
+        if game_object.size <= 0:
+            return None
         resized_image = self.resize_image(source_image, game_object.size)
         rotated_image = self.rotate_image(resized_image, game_object.rotation)
         return rotated_image
@@ -134,8 +129,8 @@ class Renderer(System):
         return resized_image
 
     def rotate_image(self, image, rotation):
-        """Rotates image counter-clockwise {rotation} degrees."""
-        return pygame.transform.rotate(image, -rotation)
+        """Rotates image clockwise {rotation} degrees."""
+        return pygame.transform.rotate(image, rotation)
 
     def target_resolution(self, width, height, game_unit_size):
         values = [width, height]

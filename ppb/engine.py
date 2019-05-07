@@ -119,22 +119,19 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
                     self.publish()
                 events_end = time.monotonic()
 
-                self.manage_scene()
-                scene_end = time.monotonic()
-
                 gc_unreachable = gc.collect() if frame_count % 100 == 99 else 0
                 gc_end = time.monotonic()
 
                 if collect_statistics:
                     stats.append((frame_start, signal_end, events_end,
-                                  scene_end, gc_end, gc_unreachable))
+                                  gc_end, gc_unreachable))
 
                 time.sleep(0)
 
         if collect_statistics:
             import pandas as pd
             return pd.DataFrame(stats, columns=['start', 'signal', 'events',
-                                                'scene', 'gc', 'gc_unreachable'])
+                                                'gc', 'gc_unreachable'])
 
     def activate(self, next_scene: dict):
         scene = next_scene["scene_class"]
@@ -163,16 +160,6 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
             scene.__event__(event, self.signal)
             for game_object in scene:
                 game_object.__event__(event, self.signal)
-
-    def manage_scene(self):
-        if self.current_scene is None:
-            self.running = False
-            return None
-        scene_running, next_scene = self.current_scene.change()
-        if not scene_running:
-            self.scenes.pop()
-        if next_scene:
-            self.activate(next_scene)
 
     def on_start_scene(self, event: StartScene, signal: Callable[[Any], None]):
         """
