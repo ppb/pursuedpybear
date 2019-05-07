@@ -82,6 +82,8 @@ class Renderer(System):
             self.register_renderable(game_object)
 
         source_image = self.resources[image_name]
+        if game_object.size <= 0:
+            return None
         resized_image = self.resize_image(source_image, game_object.size)
         rotated_image = self.rotate_image(resized_image, game_object.rotation)
         return rotated_image
