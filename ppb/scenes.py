@@ -141,18 +141,6 @@ class BaseScene(Scene, EventMixin):
             self.game_objects.remove(camera)
         self.game_objects.add(value, tags=["main_camera"])
 
-    def change(self) -> Tuple[bool, dict]:
-        """
-        Default case, override in subclass as necessary.
-        """
-        next = self.next
-        self.next = None
-        if self.next or not self.running:
-            message = "The Scene.change interface is deprecated. Use the events commands instead."
-            warn(message, DeprecationWarning)
-
-        return self.running, {"scene_class": next}
-
     def add(self, game_object: Hashable, tags: Iterable=())-> None:
         """
         Add a game_object to the scene.

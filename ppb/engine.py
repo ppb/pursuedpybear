@@ -100,7 +100,6 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
             self._last_idle_time = now
             while self.events:
                 self.publish()
-            self.manage_scene()
 
     def activate(self, next_scene: dict):
         scene = next_scene["scene_class"]
@@ -129,16 +128,6 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
             scene.__event__(event, self.signal)
             for game_object in scene:
                 game_object.__event__(event, self.signal)
-
-    def manage_scene(self):
-        if self.current_scene is None:
-            self.running = False
-            return None
-        scene_running, next_scene = self.current_scene.change()
-        if not scene_running:
-            self.scenes.pop()
-        if next_scene:
-            self.activate(next_scene)
 
     def on_start_scene(self, event: StartScene, signal: Callable[[Any], None]):
         """
