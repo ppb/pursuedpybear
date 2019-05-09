@@ -14,13 +14,16 @@ docs_task:
 
 Linux_task:
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
-  allow_failures: $CIRRUS_TASK_NAME =~ '.*-rc-.*'
-  container:
+  allow_failures: $IMAGE =~ '.*-rc-.*'
+  env:
     matrix:
-      - image: python:3.6-slim
-      - image: python:3.7-slim
-      - image: python:3.8-rc-slim
-      - image: pypy:3.6-slim
+      - IMAGE: python:3.6-slim
+      - IMAGE: python:3.7-slim
+      - IMAGE: python:3.8-rc-slim
+      - IMAGE: pypy:3.6-slim
+
+  container:
+    image: $IMAGE
 
   install_script:
     - >-
@@ -64,12 +67,15 @@ macOS_task:
 
 Windows_task:
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
-  allow_failures: $CIRRUS_TASK_NAME =~ '.*-rc-.*'
+  allow_failures: $IMAGE =~ '.*-rc-.*'
   windows_container:
     os_version: 2019
+    image: $IMAGE
+
+  env:
     matrix:
-      - image: python:3.6-windowsservercore-1809
-      - image: python:3.7-windowsservercore-1809
+      - IMAGE: python:3.6-windowsservercore-1809
+      - IMAGE: python:3.7-windowsservercore-1809
 
   install_script:
     - C:\Python\python.exe -m pip install --upgrade-strategy eager -U -r requirements-tests.txt
