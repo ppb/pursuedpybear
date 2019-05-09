@@ -77,6 +77,7 @@ first game in a few hours, and continue exploring beyond that.
    :maxdepth: 2
    :caption: Contents:
 
+   getting-started
    tutorials/index
    howto/index
    reference/index

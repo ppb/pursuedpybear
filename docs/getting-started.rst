@@ -1,0 +1,94 @@
+Getting Started
+===================
+
+If you're here, I expect you have worked with Python a little bit, so have a
+working version of Python 3.6 or later on your machine. If not, this isn't a
+great resource for that. Consider the
+`Python.org tutorial<https://docs.python.org/3/tutorial/index.html>` or
+`automate the boring stuff <http://automatetheboringstuff.com/>` to get running.
+
+Once you have a working Python install, you're going to want to make a new
+folder. Open your shell (Terminal on Mac, CMD or Powershell on Windows, your
+favorite tool on Linux) and run::
+
+   mkdir path/to/my_game
+   cd path/to/my_game
+
+my_game can be any path you'd like, and the name can be anything you'd like.
+We cd into it so we have a place to work.
+
+The next step we're going to do is set up a virtual environment. Python 3.6
+comes with a tool to create them, so in your terminal again::
+
+   python3 -m venv .venv
+
+This creates a new python environment that we'll use to make our game.
+To make the next few steps easier, we'll want to activate our virtual
+environment. This is different on Windows than anywhere else, so make sure to
+use the right command.
+
+Windows::
+
+   .venv/bin/activate.bat
+
+Other::
+
+   source .venv/bin/activate
+
+After you've done this, your shell prompt should include ``(.venv)``. We're
+ready for installing ``ppb``::
+
+   pip install ppb
+
+You should see a few libraries get put together in your terminal, and when
+you have a prompt again, we're ready to go! So the next step is to make a new
+file. If you're using an IDE, open your game folder in that and make a new file
+called ``main.py``. If you're using a plain text editor, you'll want to open a
+new file and save it as ``main.py``.
+
+In your code file, add this::
+
+   import ppb
+
+
+   ppb.run()
+
+If you run this, you should have a window!
+
+Your window will be 800 pixels wide and 600 pixels tall, and if you click the x
+button, it should close.
+
+Now let's add a sprite. Sprites are game objects that can often move and are
+drawn to the screen. Add the following code after your ``import``. Note that
+``ppb.run`` has a new parameter::
+
+   import ppb
+
+
+   class Player(ppb.BaseSprite):
+       pass
+
+
+   def setup(scene):
+       scene.add(Player())
+
+
+   ppb.run(setup=setup)
+
+When you run this, you should have the same window with a colored square in the
+middle.
+
+At this point, if you have a png on your computer, you can move it into your
+project folder and call it ``player.png``. Rerun the file to see your character
+on screen!
+
+Our sprite is currently static, but let's change that. Inside your ``Player``
+class, we're going to add a function and some class attributes::
+
+   class Player(ppb.BaseSprite):
+       velocity = ppb.Vector(0, 1)
+
+       def on_update(update_event, signal):
+           self.position += self.velocity * update_event.time_delta
+
+Now, your sprite should fly off screen.
