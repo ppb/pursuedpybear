@@ -67,7 +67,7 @@ macOS_task:
     - pytest
 
 task:
-  name "Windows $IMAGE"
+  name: "Windows $IMAGE"
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
   allow_failures: $IMAGE =~ '.*-rc-.*'
   windows_container:
