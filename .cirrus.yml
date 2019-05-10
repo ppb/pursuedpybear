@@ -12,7 +12,8 @@ docs_task:
     - make -C docs/ html
 
 
-Linux_task:
+task:
+  name: "Linux $IMAGE"
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
   allow_failures: $IMAGE =~ '.*-rc-.*'
   env:
@@ -65,7 +66,8 @@ macOS_task:
     - pip list
     - pytest
 
-Windows_task:
+task:
+  name "Windows $IMAGE"
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
   allow_failures: $IMAGE =~ '.*-rc-.*'
   windows_container:
