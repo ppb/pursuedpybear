@@ -4,38 +4,41 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-import holoviews as hv
-hv.extension('bokeh')
-
+COLUMNS = ('signal', 'events', 'gc')
 
 def process(df):
-    columns = ['signal', 'events', 'scene', 'gc']
-    for start, end in zip(['start']+columns, columns):
+    for start, end in zip(['start']+list(COLUMNS), COLUMNS):
         time_column = f"{end}_time"
         df[time_column] = df[end] - df[start]
 
     next_start = df['start'].shift(-1)
     df['delta_time'] = next_start - df['start']
-    df['sleep_time'] = next_start - df[columns[-1]]
+    df['sleep_time'] = next_start - df[COLUMNS[-1]]
     df['fps'] = 1 / df['delta_time']
 
 
-def plot(df):
-    dims = {'kdims': 'time', 'vdims': 'time'}
-    hv.opts.defaults(hv.opts.Area(fill_alpha=0.5))
+def plot(df, show=True):
+    import matplotlib
+    import matplotlib.pyplot as plt
+    import seaborn as sns
 
-    signal_time = hv.Area(df['signal_time'].values, label='signal', **dims)
-    events_time = hv.Area(df['events_time'].values, label='events', **dims)
-    scene_time  = hv.Area(df['scene_time'].values,  label='scene',  **dims)
+    ax = df.plot.area(
+        stacked=True, alpha=0.5, title="Per-phase execution times",
+        y=[f"{c}_time" for c in COLUMNS],
+    )
 
-    overlay = hv.Area.stack(signal_time * events_time * scene_time)
-    hv.renderer('matplotlib').show(overlay)
-    return overlay
-
+    if show:
+        plt.show()
 
 def main(path=None):
     import sys
-    path = Path(path or sys.argv[1])
+
+    if path is not None:
+        path = Path(path)
+    elif len(sys.argv) >= 2:
+        path = Path(sys.argv[1])
+    else:
+        path = Path(__name__).parent / 'hugs_stats.feather'
 
     if path.suffix == '.csv':
         with open(path, 'r') as file:
@@ -50,15 +53,14 @@ def main(path=None):
 
 
     process(df)
-#    plot(df)
-    for column in ['signal', 'events', 'scene', 'gc', 'sleep']:
+    for column in list(COLUMNS) + ['sleep']:
         col = df[f"{column}_time"]
         print(f"{column} for {col.mean()}s, std. dev. {col.std()}s")
 
     delta_time = df['delta_time']
     print(f"Output frame every {delta_time.mean()}s, std. dev. {delta_time.std()}s")
 
-    return df
+    return plot(df)
 
 
 if __name__ == "__main__":
