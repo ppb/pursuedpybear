@@ -17,35 +17,56 @@ def process(df):
     df['fps'] = 1 / df['delta_time']
 
 
-def plot(df, show=True):
-    import matplotlib
-    import matplotlib.pyplot as plt
-    import seaborn as sns
-
-    ax = df.plot.area(
+def phases(df):
+    return df.plot.area(
         stacked=True, alpha=0.5, title="Per-phase execution times",
         y=[f"{c}_time" for c in COLUMNS],
     )
 
+
+
+def plot(df, plotgen, *, show=False, save=None):
+    import matplotlib
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+
     if show:
+        plotgen(df)
         plt.show()
 
-def main(path=None):
-    import sys
+    if save is not None:
+        plotgen(df)
+        plt.savefig(save)
 
-    if path is not None:
-        path = Path(path)
-    elif len(sys.argv) >= 2:
-        path = Path(sys.argv[1])
-    else:
-        path = Path(__name__).parent / 'hugs_stats.feather'
 
-    if path.suffix == '.csv':
-        with open(path, 'r') as file:
+def cli(args=None):
+    from pathlib import Path
+    from argparse import ArgumentParser, FileType
+
+    parser = ArgumentParser()
+    parser.add_argument('--phase-out', '-p', dest='phase',
+                        type=Path,
+                        help="Save the phase timing chart.")
+
+    parser.add_argument('--show', '-s',
+                        action="store_true",
+                        help="Display the charts before saving.")
+
+    parser.add_argument('data', type=Path,
+                        default=Path(__name__).parent / 'hugs_stats.feather')
+
+    return parser.parse_args(args)
+
+
+def main(args=None):
+    opts = cli(args)
+
+    if opts.data.suffix == '.csv':
+        with open(opts.data, 'r') as file:
             df = pd.read_csv(file)
 
-    elif path.suffix == '.feather':
-        with open(path, 'rb') as file:
+    elif opts.data.suffix == '.feather':
+        with open(opts.data, 'rb') as file:
             df = pd.read_feather(file)
 
     else:
@@ -60,7 +81,7 @@ def main(path=None):
     delta_time = df['delta_time']
     print(f"Output frame every {delta_time.mean()}s, std. dev. {delta_time.std()}s")
 
-    return plot(df)
+    plot(df, phases, show=opts.show, save=opts.phase)
 
 
 if __name__ == "__main__":
