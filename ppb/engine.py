@@ -100,9 +100,11 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
     @overload
     def main_loop(self, collect_statistics: True) -> 'pandas.DataFrame': pass
 
-    def main_loop(self, collect_statistics=False):
+    def main_loop(self, *, target_fps=120, collect_statistics=False):
         if collect_statistics:
             stats = []
+
+        inter_frame = 1.0 / float(target_fps)
 
         with gc_disabled():
             for frame_count in count():
@@ -126,7 +128,10 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
                     stats.append((frame_start, signal_end, events_end,
                                   gc_end, gc_unreachable))
 
-                time.sleep(0)
+                now = time.monotonic()
+                delta = inter_frame - (now - frame_start)
+                if delta > 0:
+                    time.sleep(delta)
 
         if collect_statistics:
             import pandas as pd
