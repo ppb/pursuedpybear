@@ -17,6 +17,13 @@ def process(df):
     df['fps'] = 1 / df['delta_time']
 
 
+def frames(df):
+    return df.plot.area(
+        stacked=False, alpha=0.5, title="Interframe times",
+        y=['delta_time', 'sleep_time'],
+    )
+
+
 def phases(df):
     return df.plot.area(
         stacked=True, alpha=0.5, title="Per-phase execution times",
@@ -45,6 +52,10 @@ def cli(args=None):
 
     parser = ArgumentParser()
     parser.add_argument('--phase-out', '-p', dest='phase',
+                        type=Path,
+                        help="Save the phase timing chart.")
+
+    parser.add_argument('--frame-out', '-f', dest='frame',
                         type=Path,
                         help="Save the phase timing chart.")
 
@@ -82,6 +93,7 @@ def main(args=None):
     print(f"Output frame every {delta_time.mean()}s, std. dev. {delta_time.std()}s")
 
     plot(df, phases, show=opts.show, save=opts.phase)
+    plot(df, frames, show=opts.show, save=opts.frame)
 
 
 if __name__ == "__main__":
