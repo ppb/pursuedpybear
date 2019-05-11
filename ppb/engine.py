@@ -1,14 +1,16 @@
 from collections import defaultdict
 from collections import deque
 from contextlib import ExitStack
-from itertools import chain
-import time
+from itertools import chain, count
 from typing import Any
 from typing import Callable
 from typing import DefaultDict
 from typing import List
 from typing import Type
 from typing import Union
+from typing import overload
+import gc
+import time
 
 import ppb.events as events
 from ppb.abc import Engine
@@ -18,7 +20,7 @@ from ppb.events import Quit
 from ppb.systems import PygameEventPoller
 from ppb.systems import Renderer
 from ppb.systems import Updater
-from ppb.utils import LoggingMixin
+from ppb.utils import LoggingMixin, gc_disabled
 
 
 _ellipsis = type(...)
@@ -92,14 +94,49 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         self.activate({"scene_class": self.first_scene,
                        "kwargs": self.scene_kwargs})
 
-    def main_loop(self):
-        while self.running:
-            time.sleep(0)
-            now = time.monotonic()
-            self.signal(events.Idle(now - self._last_idle_time))
-            self._last_idle_time = now
-            while self.events:
-                self.publish()
+    @overload
+    def main_loop(self) -> None: pass
+
+    @overload
+    def main_loop(self, collect_statistics: True) -> 'pandas.DataFrame': pass
+
+    def main_loop(self, *, target_fps=120, collect_statistics=False):
+        if collect_statistics:
+            stats = []
+
+        inter_frame = 1.0 / float(target_fps)
+
+        with gc_disabled():
+            for frame_count in count():
+                if not self.running:
+                    break
+
+                frame_start = time.monotonic()
+
+                self.signal(events.Idle(frame_start - self._last_idle_time))
+                self._last_idle_time = frame_start
+                signal_end = time.monotonic()
+
+                while self.events:
+                    self.publish()
+                events_end = time.monotonic()
+
+                gc_unreachable = gc.collect() if frame_count % 100 == 99 else 0
+                gc_end = time.monotonic()
+
+                if collect_statistics:
+                    stats.append((frame_start, signal_end, events_end,
+                                  gc_end, gc_unreachable))
+
+                now = time.monotonic()
+                delta = inter_frame - (now - frame_start)
+                if delta > 0:
+                    time.sleep(delta)
+
+        if collect_statistics:
+            import pandas as pd
+            return pd.DataFrame(stats, columns=['start', 'signal', 'events',
+                                                'gc', 'gc_unreachable'])
 
     def activate(self, next_scene: dict):
         scene = next_scene["scene_class"]
