@@ -46,6 +46,16 @@ def plot(df, plotgen, *, show=False, save=None):
         plt.savefig(save)
 
 
+def print_stats(df):
+    for column in list(COLUMNS) + ['sleep']:
+        col = df[f"{column}_time"]
+        print(f"{column} for {col.mean()}s, std. dev. {col.std()}s")
+
+    delta_time = df['delta_time']
+    print(f"Output frame every {1000 * delta_time.mean()}ms ({1/delta_time.mean()} fps), "
+          f"std. dev. {1000 * delta_time.std()}ms")
+
+
 def cli(args=None):
     from pathlib import Path
     from argparse import ArgumentParser, FileType
@@ -85,12 +95,8 @@ def main(args=None):
 
 
     process(df)
-    for column in list(COLUMNS) + ['sleep']:
-        col = df[f"{column}_time"]
-        print(f"{column} for {col.mean()}s, std. dev. {col.std()}s")
 
-    delta_time = df['delta_time']
-    print(f"Output frame every {delta_time.mean()}s, std. dev. {delta_time.std()}s")
+    print_stats(df)
 
     plot(df, phases, show=opts.show, save=opts.phase)
     plot(df, frames, show=opts.show, save=opts.frame)
