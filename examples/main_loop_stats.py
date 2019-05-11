@@ -49,7 +49,8 @@ def plot(df, plotgen, *, show=False, save=None):
 def print_stats(df):
     for column in list(COLUMNS) + ['sleep']:
         col = df[f"{column}_time"]
-        print(f"{column} for {col.mean()}s, std. dev. {col.std()}s")
+        print(f"{column} for {1_000_000 * col.mean()}us, "
+              f"std. dev. {1_000_000 * col.std()}us.")
 
     delta_time = df['delta_time']
     print(f"Output frame every {1000 * delta_time.mean()}ms ({1/delta_time.mean()} fps), "
