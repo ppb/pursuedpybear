@@ -1,4 +1,5 @@
 from inspect import getfile
+from os.path import realpath
 from pathlib import Path
 from typing import Union
 
@@ -293,8 +294,9 @@ class BaseSprite(EventMixin, Rotatable):
 
     def __resource_path__(self):
         if self.resource_path is None:
-            if type(self).__module__ == '__main__':
-                self.resource_path = Path.cwd().resolve()
-            else:
-                self.resource_path = Path(getfile(type(self))).resolve().parent
+            try:
+                file_path = Path(getfile(type(self))).resolve().parent
+            except TypeError:
+                file_path = Path.cwd().resolve()
+            self.resource_path = file_path
         return self.resource_path
