@@ -7,9 +7,12 @@ class Spam(FieldMixin):
     class Fields:
         eggs: str
         foo = BarProperty()
+
+Basically, what this does is let you keep property descriptors off the class and
+apply them to class values.
 """
 
-__all__ = 'FieldMixin', 'iterfields', 'typefield', 'conversionfield'
+__all__ = 'FieldMixin', 'iterfields', 'typefield', 'conversionfield',  # 'virtualfield'
 
 
 def _annotations_to_fields(annos):
@@ -17,7 +20,7 @@ def _annotations_to_fields(annos):
     Converts an annotations dict into a fields dict
     """
     return {
-        name: field(anno)
+        name: typefield(anno)
         for name, anno in annos.items()
         if isinstance(anno, type)  # Skip complex annotations
     }
@@ -63,8 +66,7 @@ class FieldMixin:
         for cls in type(self).mro():
             if hasattr(cls, '__fields__'):
                 if name in cls.__fields__:
-                    # TODO: Actually run the set
-                    cls.__fields__[name](self, value)
+                    cls.__fields__[name].__set__(self, value)
                     return
         else:
             super().__setattr__(name, value)
@@ -73,7 +75,6 @@ class FieldMixin:
         for cls in type(self).mro():
             if hasattr(cls, '__fields__'):
                 if name in cls.__fields__:
-                    # TODO: Actually run the get
                     return cls.__fields__[name].__get__(self)
         else:
             super().__getattribute__(name)
@@ -82,8 +83,7 @@ class FieldMixin:
         for cls in type(self).mro():
             if hasattr(cls, '__fields__'):
                 if name in cls.__fields__:
-                    # TODO: Actually run the del
-                    ...
+                    cls.__fields__[name].__delete__(self)
                     return
         else:
             super().__delattr__(name)
