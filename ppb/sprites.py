@@ -1,8 +1,5 @@
 from inspect import getfile
-from numbers import Number
-from os.path import realpath
 from pathlib import Path
-from typing import Dict, Iterable, Sequence
 from typing import Union
 
 from ppb import Vector
@@ -296,5 +293,8 @@ class BaseSprite(EventMixin, Rotatable):
 
     def __resource_path__(self):
         if self.resource_path is None:
-            self.resource_path = Path(realpath(getfile(type(self)))).absolute().parent
+            if type(self).__module__ == '__main__':
+                self.resource_path = Path.cwd().resolve()
+            else:
+                self.resource_path = Path(getfile(type(self))).resolve().parent
         return self.resource_path
