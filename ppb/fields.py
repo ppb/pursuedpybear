@@ -9,20 +9,26 @@ class Spam(FieldMixin):
         foo = BarProperty()
 """
 
-__all__ = 'FieldMixin', 'iterfields',  # 'field', 'virtualfield'
+__all__ = 'FieldMixin', 'iterfields', 'field', 'conversionfield'
 
 
 def _annotations_to_fields(annos):
     """
     Converts an annotations dict into a fields dict
     """
+    return {
+        name: field(anno)
+        for name, anno in annos.items()
+        if isinstance(anno, type)  # Skip complex annotations
+    }
 
 
 class FieldMixin:
     """
     Mixin that implements all the field magic
     """
-    def __init_subclass__(cls, **_):
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
         # If new fields are defined, make a __fields__
         if hasattr(cls, 'Fields') and isinstance(cls.Fields, type):
             fieldbag = cls.Fields
@@ -50,7 +56,7 @@ class FieldMixin:
                 if name in cls.__fields__:
                     # TODO: Actually run the set
                     ...
-                    break
+                    return
         else:
             super().__setattr__(name, value)
 
@@ -59,8 +65,7 @@ class FieldMixin:
             if hasattr(cls, '__fields__'):
                 if name in cls.__fields__:
                     # TODO: Actually run the get
-                    ...
-                    break
+                    return ...
         else:
             super().__getattribute__(name)
 
@@ -70,9 +75,45 @@ class FieldMixin:
                 if name in cls.__fields__:
                     # TODO: Actually run the del
                     ...
-                    break
+                    return
         else:
             super().__delattr__(name)
+
+
+class field:
+    def __init__(self, type):
+        self.type = type
+
+    def __get__(self, instance, owner):
+        return instance.__dict__[self.key]
+
+    def __set__(self, instance, value):
+        if not isinstance(value, self.type):
+            value = self.type(value)
+        instance.__dict__[self.key] = value
+
+    def __delete__(self, instance):
+        del instance.__dict__[self.key]
+
+    def __set_name__(self, owner, name):
+        self.key = name
+
+
+class conversionfield:
+    def __init__(self, converter):
+        self.converter = converter
+
+    def __get__(self, instance, owner):
+        return instance.__dict__[self.key]
+
+    def __set__(self, instance, value):
+        instance.__dict__[self.key] = self.converter(value)
+
+    def __delete__(self, instance):
+        del instance.__dict__[self.key]
+
+    def __set_name__(self, owner, name):
+        self.key = name
 
 
 def iterfields(object):
