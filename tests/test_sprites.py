@@ -325,3 +325,14 @@ def test_rotatable_base_sprite():
 
     test_sprite.rotate(1)
     assert test_sprite.rotation == 1
+
+
+def test_sprite_in_main():
+    class TestSprite(BaseSprite):
+        pass
+
+    TestSprite.__module__ = '__main__'
+
+    s = TestSprite()
+
+    assert s.__resource_path__()  # We don't care what it is, as long as it's something
