@@ -9,7 +9,7 @@ class Spam(FieldMixin):
         foo = BarProperty()
 """
 
-__all__ = 'FieldMixin', 'iterfields', 'field', 'conversionfield'
+__all__ = 'FieldMixin', 'iterfields', 'typefield', 'conversionfield'
 
 
 def _annotations_to_fields(annos):
@@ -34,28 +34,37 @@ class FieldMixin:
             fieldbag = cls.Fields
             del cls.Fields
 
-            if hasattr(cls, '__annotations__'):
+            if hasattr(fieldbag, '__annotations__'):
                 # In this order so that assigned values override annotations
-                cls.__fields__ = _annotations_to_fields(cls.__annotations__)
+                cls.__fields__ = _annotations_to_fields(fieldbag.__annotations__)
                 cls.__fields__.update(vars(fieldbag))
             else:
                 cls.__fields__ = vars(fieldbag)
 
-            # TODO: Update the __annotations__ of cls
+            # Re-call __set_name__ to correct the owner
+            for name, field in cls.__fields__.items():
+                field.__set_name__(cls, name)
+
+            if not hasattr(cls, '__annotations__'):
+                cls.__annotations__ = {}
+            if hasattr(fieldbag, '__annotations__'):
+                cls.__annotations__.update(fieldbag.__annotations__)
+            # For now, not synthesizing annotations from field()
 
         # Run any fields on values defined on the class level
         varsdict = vars(cls)
-        for name, _ in iterfields(cls):
+        for name, field in iterfields(cls):
             if name in varsdict:
-                # TODO: Actually run the set
-                varsdict[name] = ...(varsdict[name])
+                # This is kind of an abuse of the interface and I hope it
+                # doesn't blow up in an obscure way.
+                field.__set__(cls, varsdict[name])
 
     def __setattr__(self, name, value):
         for cls in type(self).mro():
             if hasattr(cls, '__fields__'):
                 if name in cls.__fields__:
                     # TODO: Actually run the set
-                    ...
+                    cls.__fields__[name](self, value)
                     return
         else:
             super().__setattr__(name, value)
@@ -65,7 +74,7 @@ class FieldMixin:
             if hasattr(cls, '__fields__'):
                 if name in cls.__fields__:
                     # TODO: Actually run the get
-                    return ...
+                    return cls.__fields__[name].__get__(self)
         else:
             super().__getattribute__(name)
 
@@ -80,7 +89,12 @@ class FieldMixin:
             super().__delattr__(name)
 
 
-class field:
+class typefield:
+    """
+    A field that coerces to the given type, if it's not already the type.
+
+        spam = typefield(Foo)
+    """
     def __init__(self, type):
         self.type = type
 
@@ -100,6 +114,15 @@ class field:
 
 
 class conversionfield:
+    """
+    @conversionfield
+    def spam(value):
+        return float(value) % 360
+
+    spam = conversion field(lambda value: float(value) % 360)
+
+    A field that runs the given converter on set
+    """
     def __init__(self, converter):
         self.converter = converter
 
