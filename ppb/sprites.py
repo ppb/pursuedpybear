@@ -1,5 +1,4 @@
 from inspect import getfile
-from os.path import realpath
 from pathlib import Path
 from typing import Union
 
