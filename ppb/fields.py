@@ -40,7 +40,7 @@ def _build_fields_dict(cls, fieldbag):
         rv = _annotations_to_fields(fieldbag.__annotations__)
         rv.update(_iter_nonspecial_props(fieldbag))
     else:
-        rv = vars(fieldbag)
+        rv = dict(_iter_nonspecial_props(fieldbag))
 
     # Re-call __set_name__ to correct the owner
     for name, field in rv.items():
@@ -146,7 +146,10 @@ class typefield:
         self.__annotation__ = type
 
     def __get__(self, instance, owner):
-        return instance.__dict__[self.key]
+        try:
+            return instance.__dict__[self.key]
+        except KeyError:
+            raise AttributeError
 
     def __set__(self, instance, value):
         if not isinstance(value, self.type):
@@ -185,7 +188,10 @@ class conversionfield:
             self.__annotation__ = sig.return_value
 
     def __get__(self, instance, owner):
-        return instance.__dict__[self.key]
+        try:
+            return instance.__dict__[self.key]
+        except KeyError:
+            raise AttributeError
 
     def __set__(self, instance, value):
         instance.__dict__[self.key] = self.converter(value)
