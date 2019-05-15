@@ -11,6 +11,8 @@ class Spam(FieldMixin):
 Basically, what this does is let you keep property descriptors off the class and
 apply them to class values.
 """
+import inspect
+
 
 __all__ = 'FieldMixin', 'iterfields', 'typefield', 'conversionfield',  # 'virtualfield'
 
@@ -26,6 +28,37 @@ def _annotations_to_fields(annos):
     }
 
 
+def _build_fields_dict(cls, fieldbag):
+    if hasattr(fieldbag, '__annotations__'):
+        # In this order so that assigned values override annotations
+        rv = _annotations_to_fields(fieldbag.__annotations__)
+        rv.update(vars(fieldbag))
+    else:
+        rv = vars(fieldbag)
+
+    # Re-call __set_name__ to correct the owner
+    for name, field in rv.items():
+        field.__set_name__(cls, name)
+
+    return rv
+
+
+def _build_annotations(cls, fieldbag):
+    if hasattr(cls, '__annotations__'):
+        rv = cls.__annotations__
+    else:
+        rv = {}
+    if hasattr(fieldbag, '__annotations__'):
+        rv.update(fieldbag.__annotations__)
+
+    for name, field in vars(fieldbag).items():
+        # Explicit annotations override annotations inferred from fields
+        # This is reverse from above
+        if hasattr(field, '__annotation__') and name not in rv:
+            rv[name] = field.__annotation__
+    return rv
+
+
 class FieldMixin:
     """
     Mixin that implements all the field magic
@@ -37,22 +70,8 @@ class FieldMixin:
             fieldbag = cls.Fields
             del cls.Fields
 
-            if hasattr(fieldbag, '__annotations__'):
-                # In this order so that assigned values override annotations
-                cls.__fields__ = _annotations_to_fields(fieldbag.__annotations__)
-                cls.__fields__.update(vars(fieldbag))
-            else:
-                cls.__fields__ = vars(fieldbag)
-
-            # Re-call __set_name__ to correct the owner
-            for name, field in cls.__fields__.items():
-                field.__set_name__(cls, name)
-
-            if not hasattr(cls, '__annotations__'):
-                cls.__annotations__ = {}
-            if hasattr(fieldbag, '__annotations__'):
-                cls.__annotations__.update(fieldbag.__annotations__)
-            # For now, not synthesizing annotations from field()
+            cls.__fields__ = _build_fields_dict(cls, fieldbag)
+            cls.__annotations__ = _build_annotations(cls, fieldbag)
 
         # Run any fields on values defined on the class level
         varsdict = vars(cls)
@@ -89,6 +108,22 @@ class FieldMixin:
             super().__delattr__(name)
 
 
+def iterfields(object):
+    """
+    Generates pairs of (name:str, field:object)
+    """
+    if not isinstance(object, type):
+        object = type(object)
+
+    seen_names = set()
+    for cls in object.mro():
+        if hasattr(cls, '__fields__'):
+            for name, field in cls.__fields__.items():
+                if name not in seen_names:
+                    yield name, field
+                    seen_names.add(name)
+
+
 class typefield:
     """
     A field that coerces to the given type, if it's not already the type.
@@ -97,6 +132,7 @@ class typefield:
     """
     def __init__(self, type):
         self.type = type
+        self.__annotation__ = type
 
     def __get__(self, instance, owner):
         return instance.__dict__[self.key]
@@ -125,6 +161,9 @@ class conversionfield:
     """
     def __init__(self, converter):
         self.converter = converter
+        sig = inspect.signature(converter)
+        if sig.return_value is not inspect.Signature.empty:
+            self.__annotation__ = sig.return_value
 
     def __get__(self, instance, owner):
         return instance.__dict__[self.key]
@@ -137,19 +176,3 @@ class conversionfield:
 
     def __set_name__(self, owner, name):
         self.key = name
-
-
-def iterfields(object):
-    """
-    Generates pairs of (name:str, field:object)
-    """
-    if not isinstance(object, type):
-        object = type(object)
-
-    seen_names = set()
-    for cls in object.mro():
-        if hasattr(cls, '__fields__'):
-            for name, field in cls.__fields__.items():
-                if name not in seen_names:
-                    yield name, field
-                    seen_names.add(name)
