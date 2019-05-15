@@ -42,8 +42,6 @@ def _build_fields_dict(cls, fieldbag):
     else:
         rv = vars(fieldbag)
 
-    print(rv)
-
     # Re-call __set_name__ to correct the owner
     for name, field in rv.items():
         field.__set_name__(cls, name)
@@ -89,6 +87,11 @@ class FieldMixin:
                 # doesn't blow up in an obscure way.
                 field.__set_class__(cls, varsdict[name])
 
+    def __init__(self, **fields):
+        super().__init__()
+        for name, value in fields.items():
+            setattr(self, name, value)
+
     def __setattr__(self, name, value):
         for cls in type(self).mro():
             if hasattr(cls, '__fields__'):
@@ -102,9 +105,9 @@ class FieldMixin:
         for cls in type(self).mro():
             if hasattr(cls, '__fields__'):
                 if name in cls.__fields__:
-                    return cls.__fields__[name].__get__(self)
+                    return cls.__fields__[name].__get__(self, cls)
         else:
-            super().__getattribute__(name)
+            return super().__getattribute__(name)
 
     def __delattr__(self, name):
         for cls in type(self).mro():
