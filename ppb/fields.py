@@ -44,7 +44,8 @@ def _build_fields_dict(cls, fieldbag):
 
     # Re-call __set_name__ to correct the owner
     for name, field in rv.items():
-        field.__set_name__(cls, name)
+        if hasattr(field, '__set_name__'):
+            field.__set_name__(cls, name)
 
     return rv
 
