@@ -14,7 +14,7 @@ apply them to class values.
 import inspect
 
 
-__all__ = 'FieldMixin', 'iterfields', 'typefield', 'conversionfield',  # 'virtualfield'
+__all__ = 'FieldMixin', 'iterfields', 'typefield', 'conversionfield',  'virtualfield'
 
 
 def _annotations_to_fields(annos):
@@ -176,3 +176,18 @@ class conversionfield:
 
     def __set_name__(self, owner, name):
         self.key = name
+
+
+class virtualfield(property):
+    """
+    A fully synthetic field.
+
+    Use exactly like property.
+    """
+
+    @property
+    def __annotation__(self):
+        if getattr(self, 'fget', None):
+            sig = inspect.signature(self.fget)
+            if sig.return_value is not inspect.Signature.empty:
+                return sig.return_value
