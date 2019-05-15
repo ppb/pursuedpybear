@@ -1,4 +1,5 @@
 from unittest import TestCase
+from unittest.mock import patch
 
 from ppb import BaseSprite, Vector
 from ppb.sprites import Rotatable
@@ -328,11 +329,15 @@ def test_rotatable_base_sprite():
 
 
 def test_sprite_in_main():
+    """
+    Test that Sprite.__resource_path__ returns a meaningful value inside
+    REPLs where __main__ doesn't have a file.
+    """
     class TestSprite(BaseSprite):
         pass
 
-    TestSprite.__module__ = '__main__'
-
     s = TestSprite()
 
-    assert s.__resource_path__()  # We don't care what it is, as long as it's something
+    with patch("ppb.sprites.getfile", side_effect=TypeError):
+        # This patch simulates what happens when TestSprite was defined in the REPL
+        assert s.__resource_path__()  # We don't care what it is, as long as it's something
