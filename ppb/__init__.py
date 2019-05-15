@@ -12,12 +12,14 @@ def _make_kwargs(setup):
         "resolution": (800, 600),
         "scene_kwargs": {
             "set_up": setup,
-        }
+        },
+        "window_title": title,
+
     }
     return kwargs
 
 def run(setup: Callable[[BaseScene], None]=None, *, log_level=logging.WARNING,
-        starting_scene=BaseScene):
+        starting_scene=BaseScene, title="PursuedPyBear"):
     """
     Run a small game.
 

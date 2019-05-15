@@ -73,14 +73,11 @@ ppb is about filing off the rough edges so that the joy of creation and
 discovery are both emphasized. A new user should be able to build their
 first game in a few hours, and continue exploring beyond that.
 
-
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   starting
-   events
-   clocks
-   scenes
-   sprites
-   features/index
+   tutorials/index
+   howto/index
+   reference/index
+   discussion/index

@@ -82,6 +82,8 @@ class Renderer(System):
             self.register_renderable(game_object)
 
         source_image = self.resources[image_name]
+        if game_object.size <= 0:
+            return None
         resized_image = self.resize_image(source_image, game_object.size)
         rotated_image = self.rotate_image(resized_image, game_object.rotation)
         return rotated_image
@@ -127,8 +129,8 @@ class Renderer(System):
         return resized_image
 
     def rotate_image(self, image, rotation):
-        """Rotates image counter-clockwise {rotation} degrees."""
-        return pygame.transform.rotate(image, -rotation)
+        """Rotates image clockwise {rotation} degrees."""
+        return pygame.transform.rotate(image, rotation)
 
     def target_resolution(self, width, height, game_unit_size):
         values = [width, height]
