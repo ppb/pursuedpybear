@@ -95,9 +95,10 @@ class FieldMixin:
         # Run any fields on values defined on the class level
         varsdict = vars(cls)
         for name, field in iterfields(cls):
-            if name in varsdict:
-                # This is kind of an abuse of the interface and I hope it
-                # doesn't blow up in an obscure way.
+            if name in varsdict and hasattr(field, '__set_class__'):
+                # This is to get around problems with naively running __set__ on
+                # the class.
+                # (Namely, that cls.__dict__ is read-only)
                 field.__set_class__(cls, varsdict[name])
 
     def __init__(self, **fields):
