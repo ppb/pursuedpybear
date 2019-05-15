@@ -3,10 +3,22 @@ Field declaration system.
 
 This allows applying coercion and other code to both instances and subclasses.
 
-class Spam(FieldMixin):
-    class Fields:
-        eggs: str
-        foo = BarProperty()
+    class Spam(FieldMixin):
+        class Fields:
+            eggs: str
+            foo = typefield(int)
+
+            @conversionfield
+            def spam(value):
+                return value + 1
+
+            @virtualfield
+            def quux(self):
+                return ...
+
+Also adds keyword-based value initialization:
+
+    >>> s = Spam(foo=42)
 
 Basically, what this does is let you keep property descriptors off the class and
 apply them to class values.
@@ -68,7 +80,7 @@ def _build_annotations(cls, fieldbag):
 
 class FieldMixin:
     """
-    Mixin that implements all the field magic
+    Mixin that implements all the field magic.
     """
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
@@ -140,7 +152,7 @@ class typefield:
     """
     A field that coerces to the given type, if it's not already the type.
 
-        spam = typefield(Foo)
+        spam = typefield(float)
     """
     def __init__(self, type):
         self.type = type
