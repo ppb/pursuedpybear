@@ -95,9 +95,9 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
     def main_loop(self):
         while self.running:
             time.sleep(0)
-            self.run_one_iteration()
+            self.loop_once()
 
-    def run_one_iteration(self):
+    def loop_once(self):
         if not self.entered:
             raise ValueError("Cannot run before things have started",
                              self.entered)

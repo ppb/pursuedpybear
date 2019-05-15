@@ -109,11 +109,11 @@ class _FinishLoop(Exception):
 
 @defer.inlineCallbacks
 def twisted_engine_loop(engine):
-    def run_one_iteration(engine):
+    def loop_once(engine):
         if not engine.running:
             raise _FinishLoop(engine)
-        engine.run_one_iteration()
-    loop = task.LoopingCall(run_one_iteration, engine)
+        engine.loop_once()
+    loop = task.LoopingCall(loop_once, engine)
     engine.start()
     try:
         yield loop.start(0.001)
