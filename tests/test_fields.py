@@ -1,4 +1,4 @@
-from ppb.fields import FieldMixin, typefield
+from ppb.fields import FieldMixin, typefield, conversionfield
 
 
 def test_basic_annotation():
@@ -13,6 +13,8 @@ def test_basic_annotation():
 
     assert Spam.foo == '42'
     assert Eggs.foo == '38'
+
+    assert Spam.__annotations__['foo'] == str
 
 
 def test_assign_on_init():
@@ -43,6 +45,8 @@ def test_get_set_del():
     del s.foo
     assert not hasattr(s, 'foo')
 
+    assert Spam.__annotations__['foo'] == str
+
 
 def test_typefield():
     class Spam(FieldMixin):
@@ -55,6 +59,27 @@ def test_typefield():
 
     s.foo = 42
     assert s.foo == '42'
+
+    del s.foo
+    assert not hasattr(s, 'foo')
+
+
+def test_conversionfield():
+    class Spam(FieldMixin):
+        class Fields:
+            @conversionfield
+            def foo(value) -> float:
+                return float(value) % 360
+
+    s = Spam()
+
+    assert not hasattr(s, 'foo')
+
+    s.foo = 42
+    assert s.foo == 42.0
+
+    s.foo = 400
+    assert s.foo == 40.0
 
     del s.foo
     assert not hasattr(s, 'foo')

@@ -184,8 +184,8 @@ class conversionfield:
     def __init__(self, converter):
         self.converter = converter
         sig = inspect.signature(converter)
-        if sig.return_value is not inspect.Signature.empty:
-            self.__annotation__ = sig.return_value
+        if sig.return_annotation is not inspect.Signature.empty:
+            self.__annotation__ = sig.return_annotation
 
     def __get__(self, instance, owner):
         try:
@@ -217,8 +217,8 @@ class virtualfield(property):
     def __annotation__(self):
         if getattr(self, 'fget', None):
             sig = inspect.signature(self.fget)
-            if sig.return_value is not inspect.Signature.empty:
-                return sig.return_value
+            if sig.return_annotation is not inspect.Signature.empty:
+                return sig.return_annotation
 
     def __set_class__(self, cls, value):
         pass
