@@ -28,13 +28,21 @@ def _annotations_to_fields(annos):
     }
 
 
+def _iter_nonspecial_props(obj):
+    for name, value in vars(obj).items():
+        if not name.startswith('_'):
+            yield name, value
+
+
 def _build_fields_dict(cls, fieldbag):
     if hasattr(fieldbag, '__annotations__'):
         # In this order so that assigned values override annotations
         rv = _annotations_to_fields(fieldbag.__annotations__)
-        rv.update(vars(fieldbag))
+        rv.update(_iter_nonspecial_props(fieldbag))
     else:
         rv = vars(fieldbag)
+
+    print(rv)
 
     # Re-call __set_name__ to correct the owner
     for name, field in rv.items():
@@ -53,7 +61,7 @@ def _build_annotations(cls, fieldbag):
 
     for name, field in vars(fieldbag).items():
         # Explicit annotations override annotations inferred from fields
-        # This is reverse from above
+        # This is reverse of the fields themselves
         if hasattr(field, '__annotation__') and name not in rv:
             rv[name] = field.__annotation__
     return rv
@@ -79,7 +87,7 @@ class FieldMixin:
             if name in varsdict:
                 # This is kind of an abuse of the interface and I hope it
                 # doesn't blow up in an obscure way.
-                field.__set__(cls, varsdict[name])
+                field.__set_class__(cls, varsdict[name])
 
     def __setattr__(self, name, value):
         for cls in type(self).mro():
@@ -140,7 +148,15 @@ class typefield:
     def __set__(self, instance, value):
         if not isinstance(value, self.type):
             value = self.type(value)
+
         instance.__dict__[self.key] = value
+
+    def __set_class__(self, cls, value):
+        if not isinstance(value, self.type):
+            value = self.type(value)
+
+        setattr(cls, self.key, value)
+        # We don't use setattr() in most places to avoid weird recursion problems
 
     def __delete__(self, instance):
         del instance.__dict__[self.key]
@@ -171,6 +187,9 @@ class conversionfield:
     def __set__(self, instance, value):
         instance.__dict__[self.key] = self.converter(value)
 
+    def __set_class__(self, cls, value):
+        setattr(cls, self.key, self.converter(value))
+
     def __delete__(self, instance):
         del instance.__dict__[self.key]
 
@@ -191,3 +210,6 @@ class virtualfield(property):
             sig = inspect.signature(self.fget)
             if sig.return_value is not inspect.Signature.empty:
                 return sig.return_value
+
+    def __set_class__(self, cls, value):
+        pass
