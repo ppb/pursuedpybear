@@ -59,7 +59,6 @@ def _build_fields_dict(cls, fieldbag):
         rv = dict(_iter_nonspecial_props(fieldbag))
 
     # Mask off descriptors, so field mechanisms don't prevent it from working
-    print(cls, vars(cls), list(_iter_nonspecial_props(cls)))
     for name, value in _iter_nonspecial_props(cls):
         if _is_descriptor(value):
             rv[name] = None
