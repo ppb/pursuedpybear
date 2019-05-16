@@ -3,7 +3,7 @@ import sys
 import numbers
 import math
 
-__all__ = 'LoggingMixin',
+__all__ = 'LoggingMixin', 'FauxFloat',
 
 
 # Dictionary mapping file names -> module names
@@ -81,6 +81,12 @@ class FauxFloat(numbers.Real):
 
     def __floordiv__(self, other):
         return float(self).__floordiv__(other)
+
+    def __ge__(self, other):
+        return float(self).__ge__(other)
+
+    def __gt__(self, other):
+        return float(self).__gt__(other)
 
     def __le__(self, other):
         return float(self).__le__(other)
