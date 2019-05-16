@@ -199,7 +199,7 @@ def test_field_override():
     assert e.foo == "foobar"
 
 
-# @pytest.mark.xfail
+@pytest.mark.xfail
 def test_class_update():
     class Spam(FieldMixin):
         class Fields:
