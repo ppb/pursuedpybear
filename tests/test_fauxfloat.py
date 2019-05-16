@@ -23,7 +23,7 @@ def get_thingy(num):
 @pytest.mark.parametrize(
     "operation",
     [
-        float, abs, bool, math.ceil, math.floor, math.trunc, operator.neg,
+        float, abs, bool, int, math.ceil, math.floor, math.trunc, operator.neg,
         operator.pos,
     ],
 )
