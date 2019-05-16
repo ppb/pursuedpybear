@@ -46,6 +46,10 @@ def _iter_nonspecial_props(obj):
             yield name, value
 
 
+def _is_descriptor(thing):
+    return hasattr(thing, '__get__') or hasattr(thing, '__set__') or hasattr(thing, '__delete__')
+
+
 def _build_fields_dict(cls, fieldbag):
     if hasattr(fieldbag, '__annotations__'):
         # In this order so that assigned values override annotations
@@ -53,6 +57,12 @@ def _build_fields_dict(cls, fieldbag):
         rv.update(_iter_nonspecial_props(fieldbag))
     else:
         rv = dict(_iter_nonspecial_props(fieldbag))
+
+    # Mask off descriptors, so field mechanisms don't prevent it from working
+    print(cls, vars(cls), list(_iter_nonspecial_props(cls)))
+    for name, value in _iter_nonspecial_props(cls):
+        if _is_descriptor(value):
+            rv[name] = None
 
     # Re-call __set_name__ to correct the owner
     for name, field in rv.items():
@@ -88,9 +98,11 @@ class FieldMixin:
         if hasattr(cls, 'Fields') and isinstance(cls.Fields, type):
             fieldbag = cls.Fields
             del cls.Fields
+        else:
+            fieldbag = type('Fields', (), {})
 
-            cls.__fields__ = _build_fields_dict(cls, fieldbag)
-            cls.__annotations__ = _build_annotations(cls, fieldbag)
+        cls.__fields__ = _build_fields_dict(cls, fieldbag)
+        cls.__annotations__ = _build_annotations(cls, fieldbag)
 
         # Run any fields on values defined on the class level
         varsdict = vars(cls)
@@ -107,28 +119,23 @@ class FieldMixin:
             setattr(self, name, value)
 
     def __setattr__(self, name, value):
-        for cls in type(self).mro():
-            if hasattr(cls, '__fields__'):
-                if name in cls.__fields__:
-                    cls.__fields__[name].__set__(self, value)
-                    return
+        _, field = findfield(self, name)
+        if field is not None:
+            field.__set__(self, value)
         else:
             super().__setattr__(name, value)
 
     def __getattribute__(self, name):
-        for cls in type(self).mro():
-            if hasattr(cls, '__fields__'):
-                if name in cls.__fields__:
-                    return cls.__fields__[name].__get__(self, cls)
+        cls, field = findfield(self, name)
+        if field is not None:
+            return field.__get__(self, cls)
         else:
             return super().__getattribute__(name)
 
     def __delattr__(self, name):
-        for cls in type(self).mro():
-            if hasattr(cls, '__fields__'):
-                if name in cls.__fields__:
-                    cls.__fields__[name].__delete__(self)
-                    return
+        _, field = findfield(self, name)
+        if field is not None:
+            field.__delete__(self)
         else:
             super().__delattr__(name)
 
@@ -147,6 +154,14 @@ def iterfields(object):
                 if name not in seen_names:
                     yield name, field
                     seen_names.add(name)
+
+
+def findfield(object, name):
+    for cls in type(object).mro():
+        if hasattr(cls, '__fields__'):
+            if name in cls.__fields__:
+                return cls, cls.__fields__[name]
+    return None, None
 
 
 class typefield:

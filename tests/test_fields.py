@@ -125,3 +125,17 @@ def test_virtualfield_noset():
 
     with pytest.raises(AttributeError):
         s.foo = 'foobar'
+
+
+def test_field_override():
+    class Spam(FieldMixin):
+        class Fields:
+            foo: str
+
+    class Eggs(Spam):
+        @property
+        def foo(self) -> str:
+            return "foobar"
+
+    e = Eggs()
+    assert e.foo == "foobar"
