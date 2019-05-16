@@ -18,6 +18,19 @@ def test_basic_annotation():
     assert Spam.__annotations__['foo'] == str
 
 
+def test_instance_fallthru():
+    class Spam(FieldMixin):
+        class Fields:
+            foo: str
+
+        foo = 42
+
+    s = Spam()
+
+    assert Spam.foo == '42'
+    assert s.foo == '42'
+
+
 def test_assign_on_init():
     class Spam(FieldMixin):
         class Fields:
@@ -54,6 +67,26 @@ def test_typefield():
         class Fields:
             foo = typefield(str)
 
+        foo = 38
+
+    s = Spam()
+
+    assert s.foo == '38'
+
+    s.foo = 42
+    assert s.foo == '42'
+
+    del s.foo
+    assert s.foo == '38'
+
+    assert Spam.__annotations__['foo'] == str
+
+
+def test_typefield_nodefault():
+    class Spam(FieldMixin):
+        class Fields:
+            foo = typefield(str)
+
     s = Spam()
 
     assert not hasattr(s, 'foo')
@@ -68,6 +101,31 @@ def test_typefield():
 
 
 def test_conversionfield():
+    class Spam(FieldMixin):
+        class Fields:
+            @conversionfield
+            def foo(value) -> float:
+                return float(value) % 360
+
+        foo = 380
+
+    s = Spam()
+
+    assert s.foo == 20.0
+
+    s.foo = 42
+    assert s.foo == 42.0
+
+    s.foo = 400
+    assert s.foo == 40.0
+
+    del s.foo
+    assert s.foo == 20.0
+
+    assert Spam.__annotations__['foo'] == float
+
+
+def test_conversionfield_nodefault():
     class Spam(FieldMixin):
         class Fields:
             @conversionfield
@@ -139,3 +197,22 @@ def test_field_override():
 
     e = Eggs()
     assert e.foo == "foobar"
+
+
+# @pytest.mark.xfail
+def test_class_update():
+    class Spam(FieldMixin):
+        class Fields:
+            foo: str
+
+        foo = 42
+
+    s = Spam()
+
+    assert Spam.foo == '42'
+    assert s.foo == '42'
+
+    Spam.foo = 38
+
+    assert Spam.foo == '38'
+    assert s.foo == '38'

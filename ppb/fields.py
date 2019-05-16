@@ -174,10 +174,7 @@ class typefield:
         self.__annotation__ = type
 
     def __get__(self, instance, owner):
-        try:
-            return instance.__dict__[self.key]
-        except KeyError:
-            raise AttributeError
+        return object.__getattribute__(instance, self.key)
 
     def __set__(self, instance, value):
         if not isinstance(value, self.type):
@@ -216,10 +213,7 @@ class conversionfield:
             self.__annotation__ = sig.return_annotation
 
     def __get__(self, instance, owner):
-        try:
-            return instance.__dict__[self.key]
-        except KeyError:
-            raise AttributeError
+        return object.__getattribute__(instance, self.key)
 
     def __set__(self, instance, value):
         instance.__dict__[self.key] = self.converter(value)
