@@ -8,7 +8,7 @@ perfect mathematical solution, and must be solved through simulations.
 """
 
 import logging
-from ppb import BaseSprite, GameEngine, BaseScene, Vector
+from ppb import BaseSprite, make_engine, BaseScene, Vector
 from ppb.features.twophase import TwoPhaseMixin, TwoPhaseSystem
 
 
@@ -48,16 +48,8 @@ def setup(scene):
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
 
-    kwargs = {
-        "resolution": (800, 600),
-        "scene_kwargs": {
-            "set_up": setup,
-        },
-        "window_title": "PursuedPyBear",
-    }
-
     # Not good practice, https://github.com/ppb/pursuedpybear/issues/263
-    eng = GameEngine(BaseScene, **kwargs)
+    eng = make_engine(setup)
     eng.systems_classes += (TwoPhaseSystem,)
     with eng:
         eng.run()
