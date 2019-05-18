@@ -8,7 +8,7 @@ perfect mathematical solution, and must be solved through simulations.
 """
 
 import logging
-from ppb import BaseSprite, make_engine, BaseScene, Vector
+from ppb import BaseSprite, make_engine, Vector
 from ppb.features.twophase import TwoPhaseMixin, TwoPhaseSystem
 
 
