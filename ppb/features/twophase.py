@@ -46,5 +46,6 @@ class TwoPhaseMixin(EventMixin):
         Commit changes previously staged.
         """
         changes, self.__staged_changes = self.__staged_changes, {}
-        for name, value in changes.items():
-            setattr(self, name, value)
+        if changes:
+            for name, value in changes.items():
+                setattr(self, name, value)
