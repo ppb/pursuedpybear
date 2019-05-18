@@ -95,11 +95,17 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
     def main_loop(self):
         while self.running:
             time.sleep(0)
-            now = time.monotonic()
-            self.signal(events.Idle(now - self._last_idle_time))
-            self._last_idle_time = now
-            while self.events:
-                self.publish()
+            self.loop_once()
+
+    def loop_once(self):
+        if not self.entered:
+            raise ValueError("Cannot run before things have started",
+                             self.entered)
+        now = time.monotonic()
+        self.signal(events.Idle(now - self._last_idle_time))
+        self._last_idle_time = now
+        while self.events:
+            self.publish()
 
     def activate(self, next_scene: dict):
         scene = next_scene["scene_class"]

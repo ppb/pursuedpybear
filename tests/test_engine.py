@@ -37,6 +37,14 @@ def test_signal():
     engine.run()
     assert not engine.running
 
+def test_signal_once():
+
+    engine = GameEngine(BaseScene, systems=[Quitter])
+    with engine:
+        engine.start()
+        engine.loop_once()
+    assert not engine.running
+
 
 def test_contexts():
     class FakeRenderer(System):

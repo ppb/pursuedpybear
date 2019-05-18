@@ -7,6 +7,17 @@ from ppb.scenes import BaseScene
 from ppb.sprites import BaseSprite
 
 
+def _make_kwargs(setup, title):
+    kwargs = {
+        "resolution": (800, 600),
+        "scene_kwargs": {
+            "set_up": setup,
+        },
+        "window_title": title,
+
+    }
+    return kwargs
+
 def run(setup: Callable[[BaseScene], None]=None, *, log_level=logging.WARNING,
         starting_scene=BaseScene, title="PursuedPyBear"):
     """
@@ -23,13 +34,10 @@ def run(setup: Callable[[BaseScene], None]=None, *, log_level=logging.WARNING,
     """
     logging.basicConfig(level=log_level)
 
-    kwargs = {
-        "resolution": (800, 600),
-        "scene_kwargs": {
-            "set_up": setup,
-        },
-        "window_title": title,
-    }
-
-    with GameEngine(starting_scene, **kwargs) as eng:
+    with GameEngine(starting_scene, **_make_kwargs(setup, title)) as eng:
         eng.run()
+
+
+def make_engine(setup: Callable[[BaseScene], None]=None, *,
+                starting_scene=BaseScene, title="PursedPyBear"):
+    return GameEngine(starting_scene, **_make_kwargs(setup, title))
