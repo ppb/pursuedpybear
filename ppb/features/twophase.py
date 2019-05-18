@@ -41,7 +41,7 @@ class TwoPhaseMixin(EventMixin):
             self.__staged_changes = {}
         self.__staged_changes.update(kwargs)
 
-    def do_commit(self, event, signal):
+    def on_commit(self, event, signal):
         """
         Commit changes previously staged.
         """
