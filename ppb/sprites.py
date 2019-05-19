@@ -4,6 +4,7 @@ from typing import Union
 
 from ppb import Vector
 from ppb.events import EventMixin
+from ppb.utils import FauxFloat
 
 import ppb_vector.vector2
 
@@ -17,7 +18,7 @@ error_message = "'{klass}' object does not have attribute '{attribute}'"
 side_attribute_error_message = error_message.format
 
 
-class Side:
+class Side(FauxFloat):
     sides = {
         LEFT: ('x', -1),
         RIGHT: ('x', 1),
@@ -33,51 +34,20 @@ class Side:
         return f"Side({self.parent!r}, {self.side!r})"
 
     def __str__(self):
-        return str(self.value)
-
-    def __add__(self, other):
-        return self.value + other
-
-    def __radd__(self, other):
-        return other + self.value
-
-    def __sub__(self, other):
-        return self.value - other
-
-    def __rsub__(self, other):
-        return other - self.value
-
-    def __eq__(self, other):
-        return self.value == other
-
-    def __le__(self, other):
-        return self.value <= other
-
-    def __ge__(self, other):
-        return self.value >= other
-
-    def __ne__(self, other):
-        return self.value != other
-
-    def __gt__(self, other):
-        return self.value > other
-
-    def __lt__(self, other):
-        return self.value < other
+        return str(float(self))
 
     def _lookup_side(self, side):
         dimension, sign = self.sides[side]
         return dimension, sign * self.parent._offset_value
 
-    @property
-    def value(self):
+    def __float__(self):
         dimension, offset = self._lookup_side(self.side)
         return self.parent.position[dimension] + offset
 
     @property
     def top(self):
         self._attribute_gate(TOP, [TOP, BOTTOM])
-        return Vector(self.value, self.parent.top.value)
+        return Vector(float(self), float(self.parent.top))
 
     @top.setter
     def top(self, value):
@@ -87,7 +57,7 @@ class Side:
     @property
     def bottom(self):
         self._attribute_gate(BOTTOM, [TOP, BOTTOM])
-        return Vector(self.value, self.parent.bottom.value)
+        return Vector(float(self), float(self.parent.bottom))
 
     @bottom.setter
     def bottom(self, value):
@@ -97,7 +67,7 @@ class Side:
     @property
     def left(self):
         self._attribute_gate(LEFT, [LEFT, RIGHT])
-        return Vector(self.parent.left.value, self.value)
+        return Vector(float(self.parent.left), float(self))
 
     @left.setter
     def left(self, value):
@@ -107,7 +77,7 @@ class Side:
     @property
     def right(self):
         self._attribute_gate(RIGHT, [LEFT, RIGHT])
-        return Vector(self.parent.right.value, self.value)
+        return Vector(float(self.parent.right), float(self))
 
     @right.setter
     def right(self, value):
@@ -117,9 +87,9 @@ class Side:
     @property
     def center(self):
         if self.side in (TOP, BOTTOM):
-            return Vector(self.parent.center.x, self.value)
+            return Vector(self.parent.center.x, float(self))
         else:
-            return Vector(self.value, self.parent.center.y)
+            return Vector(float(self), self.parent.center.y)
 
     @center.setter
     def center(self, value):
