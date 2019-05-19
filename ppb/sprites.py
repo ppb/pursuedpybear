@@ -21,8 +21,8 @@ class Side:
     sides = {
         LEFT: ('x', -1),
         RIGHT: ('x', 1),
-        TOP: ('y', -1),
-        BOTTOM: ('y', 1)
+        TOP: ('y', 1),
+        BOTTOM: ('y', -1)
     }
 
     def __init__(self, parent: 'BaseSprite', side: str):
