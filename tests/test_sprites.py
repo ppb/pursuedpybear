@@ -60,31 +60,31 @@ class TestBaseSprite(TestCase):
         self.assertEqual(self.sprite.position.y, 0)
 
     def test_top(self):
-        self.assertEqual(self.sprite.top, -0.5)
-        self.assertEqual(self.wide_sprite.top, 1)
+        self.assertEqual(self.sprite.top, 0.5)
+        self.assertEqual(self.wide_sprite.top, 3)
 
         self.sprite.top = 0
         self.assertEqual(self.sprite.position.x, 0)
-        self.assertEqual(self.sprite.position.y, 0.5)
+        self.assertEqual(self.sprite.position.y, -0.5)
 
         self.sprite.top += 2
         self.assertEqual(self.sprite.position.x, 0)
-        self.assertEqual(self.sprite.position.y, 2.5)
+        self.assertEqual(self.sprite.position.y, 1.5)
 
     def test_bottom(self):
-        self.assertEqual(self.sprite.bottom, 0.5)
-        self.assertEqual(self.wide_sprite.bottom, 3)
+        self.assertEqual(self.sprite.bottom, -0.5)
+        self.assertEqual(self.wide_sprite.bottom, 1)
 
         self.sprite.bottom = 0
         self.assertEqual(self.sprite.position.x, 0)
-        self.assertEqual(self.sprite.position.y, -0.5)
+        self.assertEqual(self.sprite.position.y, 0.5)
 
         self.sprite.bottom += 2
         self.assertEqual(self.sprite.position.x, 0)
-        self.assertEqual(self.sprite.position.y, 1.5)
+        self.assertEqual(self.sprite.position.y, 2.5)
 
     def test_left_top(self):
-        self.assertEqual(self.sprite.left.top, Vector(-0.5, -0.5))
+        self.assertEqual(self.sprite.left.top, Vector(-0.5, 0.5))
 
         self.sprite.left.top = (2, 2)
         self.assertEqual(self.sprite.left.top, Vector(2, 2))
@@ -95,10 +95,10 @@ class TestBaseSprite(TestCase):
         result = self.sprite.left.top + (3, 3)
         self.assertEqual(result, Vector(7, 7))
 
-        self.assertEqual(self.sprite.position, Vector(4.5, 4.5))
+        self.assertEqual(self.sprite.position, Vector(4.5, 3.5))
 
     def test_left_bottom(self):
-        self.assertEqual(self.sprite.left.bottom, Vector(-0.5, 0.5))
+        self.assertEqual(self.sprite.left.bottom, Vector(-0.5, -0.5))
 
         self.sprite.left.bottom = (1, 2)
         self.assertEqual(self.sprite.left.bottom, Vector(1, 2))
@@ -109,7 +109,7 @@ class TestBaseSprite(TestCase):
         result = self.sprite.left.bottom + (3, 2)
         self.assertEqual(result, Vector(6, 5))
 
-        self.assertEqual(self.sprite.position, Vector(3.5, 2.5))
+        self.assertEqual(self.sprite.position, Vector(3.5, 3.5))
 
     def test_left_center(self):
         self.assertEqual(self.sprite.left.center, Vector(-0.5, 0))
@@ -126,7 +126,7 @@ class TestBaseSprite(TestCase):
         self.assertEqual(self.sprite.position, Vector(3.5, 2))
 
     def test_right_bottom(self):
-        self.assertEqual(self.sprite.right.bottom, Vector(0.5, 0.5))
+        self.assertEqual(self.sprite.right.bottom, Vector(0.5, -0.5))
 
         self.sprite.right.bottom = (1, 1)
         self.assertEqual(self.sprite.right.bottom, Vector(1, 1))
@@ -137,10 +137,10 @@ class TestBaseSprite(TestCase):
         result = self.sprite.right.bottom + (2, 3)
         self.assertEqual(result, Vector(5, 5))
 
-        self.assertEqual(self.sprite.position, Vector(2.5, 1.5))
+        self.assertEqual(self.sprite.position, Vector(2.5, 2.5))
 
     def test_right_top(self):
-        self.assertEqual(self.sprite.right.top, Vector(0.5, -0.5))
+        self.assertEqual(self.sprite.right.top, Vector(0.5, 0.5))
 
         self.sprite.right.top = (1, 1)
         self.assertEqual(self.sprite.right.top, Vector(1, 1))
@@ -151,7 +151,7 @@ class TestBaseSprite(TestCase):
         result = self.sprite.right.top + (2, 3)
         self.assertEqual(result, Vector(5, 5))
 
-        self.assertEqual(self.sprite.position, Vector(2.5, 2.5))
+        self.assertEqual(self.sprite.position, Vector(2.5, 1.5))
 
     def test_right_center(self):
         self.assertEqual(self.sprite.right.center, Vector(0.5, 0))
@@ -184,7 +184,7 @@ class TestBaseSprite(TestCase):
         self.assertRaises(AttributeError, setattr, self.sprite.right, "left", Vector(1, 1))
 
     def test_top_left(self):
-        self.assertEqual(self.sprite.top.left, Vector(-0.5, -0.5))
+        self.assertEqual(self.sprite.top.left, Vector(-0.5, 0.5))
 
         self.sprite.top.left = (2, 2)
         self.assertEqual(self.sprite.top.left, Vector(2, 2))
@@ -195,10 +195,10 @@ class TestBaseSprite(TestCase):
         result = self.sprite.top.left + (3, 3)
         self.assertEqual(result, Vector(7, 7))
 
-        self.assertEqual(self.sprite.position, Vector(4.5, 4.5))
+        self.assertEqual(self.sprite.position, Vector(4.5, 3.5))
 
     def test_top_right(self):
-        self.assertEqual(self.sprite.top.right, Vector(0.5, -0.5))
+        self.assertEqual(self.sprite.top.right, Vector(0.5, 0.5))
 
         self.sprite.top.right = (1, 1)
         self.assertEqual(self.sprite.top.right, Vector(1, 1))
@@ -209,10 +209,10 @@ class TestBaseSprite(TestCase):
         result = self.sprite.top.right + (2, 3)
         self.assertEqual(result, Vector(5, 5))
 
-        self.assertEqual(self.sprite.position, Vector(2.5, 2.5))
+        self.assertEqual(self.sprite.position, Vector(2.5, 1.5))
 
     def test_top_center(self):
-        self.assertEqual(self.sprite.top.center, Vector(0, -0.5))
+        self.assertEqual(self.sprite.top.center, Vector(0, 0.5))
 
         self.sprite.top.center = (1, 1)
         self.assertEqual(self.sprite.top.center, Vector(1, 1))
@@ -226,7 +226,7 @@ class TestBaseSprite(TestCase):
         self.assertRaises(AttributeError, setattr, self.sprite.top, "bottom", Vector(1, 1))
 
     def test_bottom_left(self):
-        self.assertEqual(self.sprite.bottom.left, Vector(-0.5, 0.5))
+        self.assertEqual(self.sprite.bottom.left, Vector(-0.5, -0.5))
 
         self.sprite.bottom.left = (2, 2)
         self.assertEqual(self.sprite.bottom.left, Vector(2, 2))
@@ -237,10 +237,10 @@ class TestBaseSprite(TestCase):
         result = self.sprite.bottom.left + (3, 3)
         self.assertEqual(result, Vector(7, 7))
 
-        self.assertEqual(self.sprite.position, Vector(4.5, 3.5))
+        self.assertEqual(self.sprite.position, Vector(4.5, 4.5))
 
     def test_bottom_right(self):
-        self.assertEqual(self.sprite.bottom.right, Vector(0.5, 0.5))
+        self.assertEqual(self.sprite.bottom.right, Vector(0.5, -0.5))
 
         self.sprite.bottom.right = (1, 1)
         self.assertEqual(self.sprite.bottom.right, Vector(1, 1))
@@ -251,10 +251,10 @@ class TestBaseSprite(TestCase):
         result = self.sprite.bottom.right + (2, 3)
         self.assertEqual(result, Vector(5, 5))
 
-        self.assertEqual(self.sprite.position, Vector(2.5, 1.5))
+        self.assertEqual(self.sprite.position, Vector(2.5, 2.5))
 
     def test_bottom_center(self):
-        self.assertEqual(self.sprite.bottom.center, Vector(0, 0.5))
+        self.assertEqual(self.sprite.bottom.center, Vector(0, -0.5))
 
         self.sprite.bottom.center = (1, 1)
         self.assertEqual(self.sprite.bottom.center, Vector(1, 1))
