@@ -6,6 +6,7 @@ from ppb import Vector
 from ppb.sprites import BaseSprite
 from ppb.flags import DoNotRender
 
+
 class Camera(BaseSprite):
 
     image = DoNotRender
@@ -108,6 +109,4 @@ class Camera(BaseSprite):
         """
         Converts a vector from in-game to pixel-based window coordinate space
         """
-        point = point.update(y=-point.y)
-        offset = (point - self.position) * self.pixel_ratio
-        return self.viewport_offset + offset
+        return Vector(point.x - self.frame_left, self.frame_top - point.y) * self.pixel_ratio
