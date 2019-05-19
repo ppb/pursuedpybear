@@ -49,15 +49,14 @@ class Renderer(System):
     def on_idle(self, idle_event: events.Idle, signal):
         self.render_clock += idle_event.time_delta
         if self.render_clock > self.target_count:
+            self.pre_render_updates(idle_event.scene)
             signal(events.PreRender())
             signal(events.Render())
             self.render_clock = 0
 
     def on_render(self, render_event, signal):
-        self.render_background(render_event.scene)
         camera = render_event.scene.main_camera
-        camera.viewport_width, camera.viewport_height = self.resolution
-        self.pixel_ratio = camera.pixel_ratio
+        self.render_background(render_event.scene)
 
         self.old_resized_images = self.resized_images
         self.resized_images = {}
@@ -69,6 +68,11 @@ class Renderer(System):
             rectangle = self.prepare_rectangle(resource, game_object, camera)
             self.window.blit(resource, rectangle)
         pygame.display.update()
+
+    def pre_render_updates(self, scene):
+        camera = scene.main_camera
+        camera.viewport_width, camera.viewport_height = self.resolution
+        self.pixel_ratio = camera.pixel_ratio
 
     def render_background(self, scene):
         self.window.fill(scene.background_color)
