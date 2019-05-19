@@ -272,7 +272,7 @@ class BaseSprite(EventMixin, Rotatable):
 
     @top.setter
     def top(self, value):
-        self.position = Vector(self.position.x, value + self._offset_value)
+        self.position = Vector(self.position.x, value - self._offset_value)
 
     @property
     def bottom(self):
@@ -280,7 +280,7 @@ class BaseSprite(EventMixin, Rotatable):
 
     @bottom.setter
     def bottom(self, value):
-        self.position = Vector(self.position.x, value - self._offset_value)
+        self.position = Vector(self.position.x, value + self._offset_value)
 
     @property
     def _offset_value(self):
