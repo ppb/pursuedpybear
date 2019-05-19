@@ -42,8 +42,16 @@ def test_camera_translate_to_viewport():
     assert cam.translate_to_viewport(Vector(0, 0)) == Vector(400, 300)
     assert cam.translate_to_viewport(Vector(2, 1)) == Vector(560, 220)
     cam.position = Vector(5, 5)
-    assert cam.translate_to_viewport(Vector(5, -5)) == Vector(400, 300)
-    assert cam.translate_to_viewport(Vector(7, -4)) == Vector(560, 220)
+    assert cam.translate_to_viewport(Vector(5, 5)) == Vector(400, 300)
+    assert cam.translate_to_viewport(Vector(7, 4)) == Vector(560, 380)
+
+
+def test_camera_translate_to_viewport_2():
+    cam = Camera(viewport=(0, 0, 800, 600), pixel_ratio=1)
+    assert cam.position == Vector(0, 0)
+    assert cam.translate_to_viewport(Vector(0, 0)) == Vector(400, 300)
+    assert cam.translate_to_viewport(Vector(100, 100)) == Vector(500, 200)
+    assert cam.translate_to_viewport(Vector(-150, -500)) == Vector(250, 800)
 
 
 def test_sprite_in_viewport():
