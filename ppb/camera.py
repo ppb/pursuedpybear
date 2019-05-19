@@ -35,11 +35,11 @@ class Camera(BaseSprite):
 
     @property
     def frame_top(self) -> Number:
-        return self.position.y - self.half_height
+        return self.position.y + self.half_height
 
     @property
     def frame_bottom(self) -> Number:
-        return self.position.y + self.half_height
+        return self.position.y - self.half_height
 
     @property
     def frame_left(self) -> Number:
