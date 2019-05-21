@@ -2,7 +2,7 @@ from ppb import BaseSprite
 from ppb import Vector
 from ppb.camera import Camera
 
-from hypothesis import given
+from hypothesis import given, assume
 import hypothesis.strategies as st
 
 
@@ -103,3 +103,33 @@ def test_transfromation_roundtrip(vp_width, vp_height, pixel_ratio, cam_x, cam_y
 
     assert cam.translate_to_viewport(cam.translate_to_frame(point)) == point
     assert cam.translate_to_frame(cam.translate_to_viewport(point)) == point
+
+
+@given(
+    vp_width=st.integers(min_value=1),
+    vp_height=st.integers(min_value=1),
+    pixel_ratio=st.floats(min_value=1, allow_nan=False, allow_infinity=False),
+    cam_x=st.floats(allow_nan=False, allow_infinity=False),
+    cam_y=st.floats(allow_nan=False, allow_infinity=False),
+    point_x=st.floats(allow_nan=False, allow_infinity=False),
+    point_y=st.floats(allow_nan=False, allow_infinity=False),
+    delta_x=st.floats(allow_nan=False, allow_infinity=False),
+    delta_y=st.floats(allow_nan=False, allow_infinity=False),
+)
+def test_transfromation_movement(
+    vp_width, vp_height, pixel_ratio, cam_x, cam_y, point_x, point_y, delta_x, delta_y,
+):
+    cam = Camera(
+        viewport=(0, 0, vp_width, vp_height),
+        pixel_ratio=pixel_ratio,
+    )
+    cam.position = Vector(cam_x, cam_y)
+    point = Vector(point_x, point_y)
+    delta = Vector(delta_x, delta_y)
+
+    assume(delta.length != 0)
+
+    point_moved = point + delta
+
+    assert (cam.translate_to_frame(point_moved) - cam.translate_to_frame(point)).length / delta.length == pixel_ratio
+    assert delta.length / (cam.translate_to_viewport(point_moved) - cam.translate_to_viewport(point)).length == pixel_ratio
