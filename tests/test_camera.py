@@ -2,6 +2,9 @@ from ppb import BaseSprite
 from ppb import Vector
 from ppb.camera import Camera
 
+from hypothesis import given
+import hypothesis.strategies as st
+
 
 def test_camera_move():
     cam = Camera()
@@ -79,3 +82,24 @@ def test_viewport_change_affects_frame_height():
     assert cam.frame_left == -5
     cam.viewport_width = 400
     assert cam.frame_left == -2.5
+
+
+@given(
+    vp_width=st.integers(min_value=1),
+    vp_height=st.integers(min_value=1),
+    pixel_ratio=st.floats(min_value=1, allow_nan=False, allow_infinity=False),
+    cam_x=st.floats(allow_nan=False, allow_infinity=False),
+    cam_y=st.floats(allow_nan=False, allow_infinity=False),
+    point_x=st.floats(allow_nan=False, allow_infinity=False),
+    point_y=st.floats(allow_nan=False, allow_infinity=False),
+)
+def test_transfromation_roundtrip(vp_width, vp_height, pixel_ratio, cam_x, cam_y, point_x, point_y):
+    cam = Camera(
+        viewport=(0, 0, vp_width, vp_height),
+        pixel_ratio=pixel_ratio,
+    )
+    cam.position = Vector(cam_x, cam_y)
+    point = Vector(point_x, point_y)
+
+    assert cam.translate_to_viewport(cam.translate_to_frame(point)) == point
+    assert cam.translate_to_frame(cam.translate_to_viewport(point)) == point
