@@ -32,6 +32,10 @@ def test_camera_point_in_viewport_not_at_origin():
 def test_camera_translate_to_frame():
     cam = Camera(viewport=(0, 0, 800, 600), pixel_ratio=80)
     assert cam.position == Vector(0, 0)
+    assert cam.frame_top == 3.75
+    assert cam.frame_bottom == -3.75
+    assert cam.frame_left == -5
+    assert cam.frame_right == 5
     assert cam.translate_to_frame(Vector(400, 300)) == Vector(0, 0)
     assert cam.translate_to_frame(Vector(560, 220)) == Vector(2, 1)
     cam.position = Vector(5, 5)
