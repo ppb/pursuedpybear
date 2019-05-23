@@ -1,3 +1,5 @@
+from math import isclose
+
 from ppb import BaseSprite
 from ppb import Vector
 from ppb.camera import Camera
@@ -39,8 +41,8 @@ def test_camera_translate_to_frame():
     assert cam.translate_to_frame(Vector(400, 300)) == Vector(0, 0)
     assert cam.translate_to_frame(Vector(560, 220)) == Vector(2, 1)
     cam.position = Vector(5, 5)
-    assert cam.translate_to_frame(Vector(400, 300)) == Vector(5, -5)
-    assert cam.translate_to_frame(Vector(560, 220)) == Vector(7, -4)
+    assert cam.translate_to_frame(Vector(400, 300)) == Vector(5, 5)
+    assert cam.translate_to_frame(Vector(560, 220)) == Vector(7, 6)
 
 
 def test_camera_translate_to_viewport():
@@ -105,8 +107,8 @@ def test_transfromation_roundtrip(vp_width, vp_height, pixel_ratio, cam_x, cam_y
     cam.position = Vector(cam_x, cam_y)
     point = Vector(point_x, point_y)
 
-    assert cam.translate_to_viewport(cam.translate_to_frame(point)) == point
-    assert cam.translate_to_frame(cam.translate_to_viewport(point)) == point
+    assert cam.translate_to_viewport(cam.translate_to_frame(point)).isclose(point, abs_tol=1e-5)
+    assert cam.translate_to_frame(cam.translate_to_viewport(point)).isclose(point, abs_tol=1e-5)
 
 
 @given(
@@ -135,5 +137,7 @@ def test_transfromation_movement(
 
     point_moved = point + delta
 
-    assert (cam.translate_to_frame(point_moved) - cam.translate_to_frame(point)).length / delta.length == pixel_ratio
-    assert delta.length / (cam.translate_to_viewport(point_moved) - cam.translate_to_viewport(point)).length == pixel_ratio
+    diff = cam.translate_to_frame(point_moved) - cam.translate_to_frame(point)
+    assert isclose(diff.length / delta.length, pixel_ratio)
+    diff = cam.translate_to_viewport(point_moved) - cam.translate_to_viewport(point)
+    assert isclose(delta.length / diff.length, pixel_ratio)

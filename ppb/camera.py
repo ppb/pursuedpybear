@@ -101,11 +101,15 @@ class Camera(BaseSprite):
         """
         Converts a vector from pixel-based window to in-game coordinate space
         """
+        # 1. Scale from pixels to game unites
         scaled = point / self.pixel_ratio
-        return Vector(self.frame_left + scaled.x, self.frame_top - point.y)
+        # 2. Reposition relative to frame edges
+        return Vector(self.frame_left + scaled.x, self.frame_top - scaled.y)
 
     def translate_to_viewport(self, point: Vector) -> Vector:
         """
         Converts a vector from in-game to pixel-based window coordinate space
         """
+        # 1. Reposition based on frame edges
+        # 2. Scale from game units to pixels
         return Vector(point.x - self.frame_left, self.frame_top - point.y) * self.pixel_ratio
