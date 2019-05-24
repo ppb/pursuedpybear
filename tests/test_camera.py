@@ -95,7 +95,7 @@ def test_viewport_change_affects_frame_height():
     vp_width=st.integers(min_value=1),
     vp_height=st.integers(min_value=1),
     pixel_ratio=st.floats(min_value=1, max_value=1e5, allow_nan=False, allow_infinity=False),
-    cam_pos=vectors(),
+    cam_pos=vectors(1e15),  # Set low to prevent loss-of-precision problems about frame size
     point=vectors(),
 )
 @example(vp_width=2, vp_height=2, pixel_ratio=1.0, cam_pos=Vector(0.0, 0.0), point=Vector(0.0, 0.0))
@@ -108,7 +108,7 @@ def test_transfromation_roundtrip(vp_width, vp_height, pixel_ratio, cam_pos, poi
 
     note(f"frame: ({cam.frame_left}, {cam.frame_bottom}) -> ({cam.frame_right}, {cam.frame_top})")
 
-    # Some underflow/loss of resolution problems
+    # Some underflow/loss of precision problems
     assume(cam.frame_left != cam.frame_right)
     assume(cam.frame_top != cam.frame_bottom)
 
@@ -118,13 +118,13 @@ def test_transfromation_roundtrip(vp_width, vp_height, pixel_ratio, cam_pos, poi
     note(f"point->frame: {point_frame}")
     point_viewport = cam.translate_to_viewport(point_frame)
     note(f"point->frame->viewport: {point_viewport}")
-    assert point_viewport.isclose(point, rel_tol=1e-5)
+    assert point_viewport.isclose(point, rel_tol=1e-5, rel_to=[cam.position])
 
     point_viewport = cam.translate_to_viewport(point)
     note(f"point->viewport: {point_viewport}")
     point_frame = cam.translate_to_frame(point_viewport)
     note(f"point->viewport->frame: {point_frame}")
-    assert point_frame.isclose(point, rel_tol=1e-5)
+    assert point_frame.isclose(point, rel_tol=1e-5, rel_to=[cam.position])
 
 
 @given(
