@@ -99,7 +99,7 @@ def test_viewport_change_affects_frame_height():
     point_x=st.floats(allow_nan=False, allow_infinity=False),
     point_y=st.floats(allow_nan=False, allow_infinity=False),
 )
-@example(vp_width=1, vp_height=1, pixel_ratio=1.0, cam_x=0.0, cam_y=0.0, point_x=0.0, point_y=0.0)
+@example(vp_width=2, vp_height=2, pixel_ratio=1.0, cam_x=0.0, cam_y=0.0, point_x=0.0, point_y=0.0)
 def test_transfromation_roundtrip(vp_width, vp_height, pixel_ratio, cam_x, cam_y, point_x, point_y):
     cam = Camera(
         viewport=(0, 0, vp_width, vp_height),
@@ -123,7 +123,7 @@ def test_transfromation_roundtrip(vp_width, vp_height, pixel_ratio, cam_x, cam_y
 
     point_viewport = cam.translate_to_viewport(point)
     note(f"point->viewport: {point_viewport}")
-    point_frame = cam.translate_to_viewport(point_viewport)
+    point_frame = cam.translate_to_frame(point_viewport)
     note(f"point->viewport->frame: {point_frame}")
     assert point_frame.isclose(point, rel_tol=1e-5)
 
