@@ -6,6 +6,7 @@ from ppb.camera import Camera
 
 from hypothesis import given, assume, note, example
 import hypothesis.strategies as st
+from .utils import vectors
 
 
 def test_camera_move():
@@ -94,25 +95,23 @@ def test_viewport_change_affects_frame_height():
     vp_width=st.integers(min_value=1),
     vp_height=st.integers(min_value=1),
     pixel_ratio=st.floats(min_value=1, max_value=1e5, allow_nan=False, allow_infinity=False),
-    cam_x=st.floats(allow_nan=False, allow_infinity=False),
-    cam_y=st.floats(allow_nan=False, allow_infinity=False),
-    point_x=st.floats(allow_nan=False, allow_infinity=False),
-    point_y=st.floats(allow_nan=False, allow_infinity=False),
+    cam_pos=vectors(),
+    point=vectors(),
 )
-@example(vp_width=2, vp_height=2, pixel_ratio=1.0, cam_x=0.0, cam_y=0.0, point_x=0.0, point_y=0.0)
-def test_transfromation_roundtrip(vp_width, vp_height, pixel_ratio, cam_x, cam_y, point_x, point_y):
+@example(vp_width=2, vp_height=2, pixel_ratio=1.0, cam_pos=Vector(0.0, 0.0), point=Vector(0.0, 0.0))
+def test_transfromation_roundtrip(vp_width, vp_height, pixel_ratio, cam_pos, point):
     cam = Camera(
         viewport=(0, 0, vp_width, vp_height),
         pixel_ratio=pixel_ratio,
     )
-    cam.position = Vector(cam_x, cam_y)
-    point = Vector(point_x, point_y)
+    cam.position = cam_pos
+
+    note(f"frame: ({cam.frame_left}, {cam.frame_bottom}) -> ({cam.frame_right}, {cam.frame_top})")
 
     # Some underflow/loss of resolution problems
     assume(cam.frame_left != cam.frame_right)
     assume(cam.frame_top != cam.frame_bottom)
 
-    note(f"frame: ({cam.frame_left}, {cam.frame_bottom}) -> ({cam.frame_right}, {cam.frame_top})")
     note(f"point: {point}")
 
     point_frame = cam.translate_to_frame(point)
@@ -132,26 +131,18 @@ def test_transfromation_roundtrip(vp_width, vp_height, pixel_ratio, cam_x, cam_y
     vp_width=st.integers(min_value=1),
     vp_height=st.integers(min_value=1),
     pixel_ratio=st.floats(min_value=1, max_value=1e5, allow_nan=False, allow_infinity=False),
-    cam_x=st.floats(allow_nan=False, allow_infinity=False),
-    cam_y=st.floats(allow_nan=False, allow_infinity=False),
-    point_x=st.floats(allow_nan=False, allow_infinity=False),
-    point_y=st.floats(allow_nan=False, allow_infinity=False),
-    delta_x=st.floats(allow_nan=False, allow_infinity=False),
-    delta_y=st.floats(allow_nan=False, allow_infinity=False),
+    cam_pos=vectors(),
+    point=vectors(),
+    delta=vectors(),
 )
 def test_transfromation_movement(
-    vp_width, vp_height, pixel_ratio, cam_x, cam_y, point_x, point_y, delta_x, delta_y,
+    vp_width, vp_height, pixel_ratio, cam_pos, point, delta,
 ):
     cam = Camera(
         viewport=(0, 0, vp_width, vp_height),
         pixel_ratio=pixel_ratio,
     )
-    cam.position = Vector(cam_x, cam_y)
-    point = Vector(point_x, point_y)
-    delta = Vector(delta_x, delta_y)
-
-    note(f"point: {point}")
-    note(f"delta: {delta}")
+    cam.position = cam_pos
 
     assume(delta.length != 0)
 
@@ -163,7 +154,7 @@ def test_transfromation_movement(
 
     diff = cam.translate_to_frame(point_moved) - cam.translate_to_frame(point)
     note(f"frame diff: {diff}")
-    assert isclose(delta.length / diff.length, pixel_ratio, rel_tol=1e-5)
+    assert isclose(delta.length, pixel_ratio * diff.length, rel_tol=1e-5)
     diff = cam.translate_to_viewport(point_moved) - cam.translate_to_viewport(point)
     note(f"viewport diff: {diff}")
-    assert isclose(diff.length / delta.length, pixel_ratio, rel_tol=1e-5)
+    assert isclose(diff.length, pixel_ratio * delta.length, rel_tol=1e-5)
