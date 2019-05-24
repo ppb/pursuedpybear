@@ -4,7 +4,7 @@ from ppb import BaseSprite
 from ppb import Vector
 from ppb.camera import Camera
 
-from hypothesis import given, assume
+from hypothesis import given, assume, note, example
 import hypothesis.strategies as st
 
 
@@ -93,12 +93,13 @@ def test_viewport_change_affects_frame_height():
 @given(
     vp_width=st.integers(min_value=1),
     vp_height=st.integers(min_value=1),
-    pixel_ratio=st.floats(min_value=1, allow_nan=False, allow_infinity=False),
+    pixel_ratio=st.floats(min_value=1, max_value=1e5, allow_nan=False, allow_infinity=False),
     cam_x=st.floats(allow_nan=False, allow_infinity=False),
     cam_y=st.floats(allow_nan=False, allow_infinity=False),
     point_x=st.floats(allow_nan=False, allow_infinity=False),
     point_y=st.floats(allow_nan=False, allow_infinity=False),
 )
+@example(vp_width=1, vp_height=1, pixel_ratio=1.0, cam_x=0.0, cam_y=0.0, point_x=0.0, point_y=0.0)
 def test_transfromation_roundtrip(vp_width, vp_height, pixel_ratio, cam_x, cam_y, point_x, point_y):
     cam = Camera(
         viewport=(0, 0, vp_width, vp_height),
@@ -107,14 +108,30 @@ def test_transfromation_roundtrip(vp_width, vp_height, pixel_ratio, cam_x, cam_y
     cam.position = Vector(cam_x, cam_y)
     point = Vector(point_x, point_y)
 
-    assert cam.translate_to_viewport(cam.translate_to_frame(point)).isclose(point, abs_tol=1e-5)
-    assert cam.translate_to_frame(cam.translate_to_viewport(point)).isclose(point, abs_tol=1e-5)
+    # Some underflow/loss of resolution problems
+    assume(cam.frame_left != cam.frame_right)
+    assume(cam.frame_top != cam.frame_bottom)
+
+    note(f"frame: ({cam.frame_left}, {cam.frame_bottom}) -> ({cam.frame_right}, {cam.frame_top})")
+    note(f"point: {point}")
+
+    point_frame = cam.translate_to_frame(point)
+    note(f"point->frame: {point_frame}")
+    point_viewport = cam.translate_to_viewport(point_frame)
+    note(f"point->frame->viewport: {point_viewport}")
+    assert point_viewport.isclose(point, rel_tol=1e-5)
+
+    point_viewport = cam.translate_to_viewport(point)
+    note(f"point->viewport: {point_viewport}")
+    point_frame = cam.translate_to_viewport(point_viewport)
+    note(f"point->viewport->frame: {point_frame}")
+    assert point_frame.isclose(point, rel_tol=1e-5)
 
 
 @given(
     vp_width=st.integers(min_value=1),
     vp_height=st.integers(min_value=1),
-    pixel_ratio=st.floats(min_value=1, allow_nan=False, allow_infinity=False),
+    pixel_ratio=st.floats(min_value=1, max_value=1e5, allow_nan=False, allow_infinity=False),
     cam_x=st.floats(allow_nan=False, allow_infinity=False),
     cam_y=st.floats(allow_nan=False, allow_infinity=False),
     point_x=st.floats(allow_nan=False, allow_infinity=False),
@@ -133,11 +150,20 @@ def test_transfromation_movement(
     point = Vector(point_x, point_y)
     delta = Vector(delta_x, delta_y)
 
+    note(f"point: {point}")
+    note(f"delta: {delta}")
+
     assume(delta.length != 0)
 
     point_moved = point + delta
 
+    assume(point_moved != point)  # This will happen when delta is too small to make an effect
+
+    note(f"point moved: {point_moved}")
+
     diff = cam.translate_to_frame(point_moved) - cam.translate_to_frame(point)
-    assert isclose(diff.length / delta.length, pixel_ratio)
+    note(f"frame diff: {diff}")
+    assert isclose(delta.length / diff.length, pixel_ratio, rel_tol=1e-5)
     diff = cam.translate_to_viewport(point_moved) - cam.translate_to_viewport(point)
-    assert isclose(delta.length / diff.length, pixel_ratio)
+    note(f"viewport diff: {diff}")
+    assert isclose(diff.length / delta.length, pixel_ratio, rel_tol=1e-5)
