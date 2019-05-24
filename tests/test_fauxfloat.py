@@ -45,11 +45,30 @@ def test_unary_ops(operation, num):
     num=st.floats(allow_nan=False, allow_infinity=False),
     other=st.floats(allow_nan=False, allow_infinity=False),
 )
-def test_binary_ops(operation, num, other):
+def test_binary_ops_float(operation, num, other):
     t = get_thingy(num)
 
     assert operation(t, other) == operation(num, other)
     assert operation(other, t) == operation(other, num)
+
+
+@pytest.mark.parametrize(
+    "operation",
+    [
+        operator.lt, operator.le, operator.eq, operator.ne, operator.ge,
+        operator.gt, operator.add, operator.mul, operator.sub,
+    ],
+)
+@given(
+    num=st.floats(allow_nan=False, allow_infinity=False),
+    other=st.floats(allow_nan=False, allow_infinity=False),
+)
+def test_binary_ops_thingy(operation, num, other):
+    t = get_thingy(num)
+    o = get_thingy(other)
+
+    assert operation(t, o) == operation(num, o)
+    assert operation(o, t) == operation(o, num)
 
 
 @pytest.mark.parametrize(
