@@ -48,28 +48,37 @@ NON_ZERO_OPS = [
         operator.gt, operator.add, operator.mul, operator.sub,
     ] + NON_ZERO_OPS,
 )
+@pytest.mark.parametrize(
+    "num_type, other_type", [
+        (RealFauxFloat, float), (float, RealFauxFloat),
+        (RealFauxFloat, RealFauxFloat),
+    ],
+)
 @given(
     num=st.floats(allow_nan=False, allow_infinity=False),
     other=st.floats(allow_nan=False, allow_infinity=False),
 )
-def test_binary_ops(operation, num, other):
+def test_binary_ops(operation, num, num_type, other, other_type):
     if(operation in NON_ZERO_OPS):
-        assume(num != 0 and other != 0)
+        assume(other != 0)
 
-    t = RealFauxFloat(num)
-    assert operation(t, other) == operation(num, other)
-    assert operation(other, t) == operation(other, num)
+    assert operation(num_type(num), other_type(other)) == operation(num, other)
 
 
+@pytest.mark.parametrize(
+    "base_type, exponent_type", [
+        (RealFauxFloat, float), (float, RealFauxFloat),
+        (RealFauxFloat, RealFauxFloat),
+    ],
+)
 @given(
     base=st.floats(allow_nan=False, allow_infinity=False, min_value=-1e20, max_value=1e20),
     exponent=st.floats(allow_nan=False, allow_infinity=False, min_value=-10, max_value=10),
 )
-def test_pow(base, exponent):
+def test_pow(base, base_type, exponent, exponent_type):
     assume(base != 0 and exponent != 0)
 
-    assert operator.pow(RealFauxFloat(base), exponent) == operator.pow(base, exponent)
-    assert operator.pow(base, RealFauxFloat(exponent)) == operator.pow(base, exponent)
+    assert operator.pow(base_type(base), exponent_type(exponent)) == operator.pow(base, exponent)
 
 
 @given(
