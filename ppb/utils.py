@@ -57,7 +57,7 @@ class FauxFloat(numbers.Real):
     When applied to a class that implements __float__, provides the full suite
     of number-related special methods.
 
-    While this mixin doesn't do anything about it, you should consider makiing
+    While this mixin doesn't do anything about it, you should consider making
     your class immutable. Odd things could potentially happen otherwise.
     """
 
