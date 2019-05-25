@@ -37,39 +37,26 @@ def test_unary_ops(operation, num: float):
     assert operation(RealFauxFloat(num)) == operation(num)
 
 
+NON_ZERO_OPS = [
+    operator.floordiv, operator.mod, operator.truediv,
+]
+
+
 @pytest.mark.parametrize(
-    "operation",
-    [
+    "operation", [
         operator.lt, operator.le, operator.eq, operator.ne, operator.ge,
         operator.gt, operator.add, operator.mul, operator.sub,
-    ],
+    ] + NON_ZERO_OPS,
 )
 @given(
     num=st.floats(allow_nan=False, allow_infinity=False),
     other=st.floats(allow_nan=False, allow_infinity=False),
 )
 def test_binary_ops(operation, num, other):
+    if(operation in NON_ZERO_OPS):
+        assume(num != 0 and other != 0)
+
     t = RealFauxFloat(num)
-
-    assert operation(t, other) == operation(num, other)
-    assert operation(other, t) == operation(other, num)
-
-
-@pytest.mark.parametrize(
-    "operation",
-    [
-        operator.floordiv, operator.mod, operator.truediv,
-    ],
-)
-@given(
-    num=st.floats(allow_nan=False, allow_infinity=False),
-    other=st.floats(allow_nan=False, allow_infinity=False),
-)
-def test_binary_ops_nonzero(operation, num, other):
-    assume(num != 0)
-    assume(other != 0)
-    t = RealFauxFloat(num)
-
     assert operation(t, other) == operation(num, other)
     assert operation(other, t) == operation(other, num)
 
