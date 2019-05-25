@@ -11,7 +11,6 @@ from typing import Type
 from typing import Union
 
 import ppb.events as events
-from ppb.abc import Engine
 from ppb.events import StartScene
 from ppb.events import EventMixin
 from ppb.events import Quit
@@ -24,7 +23,7 @@ from ppb.utils import LoggingMixin
 _ellipsis = type(...)
 
 
-class GameEngine(Engine, EventMixin, LoggingMixin):
+class GameEngine(EventMixin, LoggingMixin):
 
     def __init__(self, first_scene: Type, *,
                  systems=(Renderer, Updater, PygameEventPoller),
