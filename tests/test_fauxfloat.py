@@ -1,5 +1,6 @@
 import math
 import operator
+import typing
 
 from ppb.utils import FauxFloat
 
@@ -9,12 +10,16 @@ from hypothesis import given, assume
 import hypothesis.strategies as st
 
 
-def get_thingy(num):
-    class Thingy(FauxFloat):
-        def __float__(self):
-            return num
+class RealFauxFloat(FauxFloat):
+    """From the Modern Numerical Methods Real Fake Book."""
+    num: float
 
-    return Thingy()
+    def __init__(self, num: typing.SupportsFloat):
+        self.num = float(num)
+
+    def __float__(self):
+        return self.num
+
 
 
 # The use of parametrize() over st.sampled_from() is deliberate.
@@ -28,10 +33,8 @@ def get_thingy(num):
     ],
 )
 @given(num=st.floats(allow_nan=False, allow_infinity=False))
-def test_unary_ops(operation, num):
-    t = get_thingy(num)
-
-    assert operation(t) == operation(num)
+def test_unary_ops(operation, num: float):
+    assert operation(RealFauxFloat(num)) == operation(num)
 
 
 @pytest.mark.parametrize(
@@ -46,7 +49,7 @@ def test_unary_ops(operation, num):
     other=st.floats(allow_nan=False, allow_infinity=False),
 )
 def test_binary_ops(operation, num, other):
-    t = get_thingy(num)
+    t = RealFauxFloat(num)
 
     assert operation(t, other) == operation(num, other)
     assert operation(other, t) == operation(other, num)
@@ -65,7 +68,7 @@ def test_binary_ops(operation, num, other):
 def test_binary_ops_nonzero(operation, num, other):
     assume(num != 0)
     assume(other != 0)
-    t = get_thingy(num)
+    t = RealFauxFloat(num)
 
     assert operation(t, other) == operation(num, other)
     assert operation(other, t) == operation(other, num)
@@ -78,8 +81,8 @@ def test_binary_ops_nonzero(operation, num, other):
 def test_pow(base, exponent):
     assume(base != 0 and exponent != 0)
 
-    assert operator.pow(get_thingy(base), exponent) == operator.pow(base, exponent)
-    assert operator.pow(base, get_thingy(exponent)) == operator.pow(base, exponent)
+    assert operator.pow(RealFauxFloat(base), exponent) == operator.pow(base, exponent)
+    assert operator.pow(base, RealFauxFloat(exponent)) == operator.pow(base, exponent)
 
 
 @given(
@@ -87,4 +90,4 @@ def test_pow(base, exponent):
     digits=st.integers() | st.none(),
 )
 def test_round(num, digits):
-    assert round(get_thingy(num), digits) == round(num, digits)
+    assert round(RealFauxFloat(num), digits) == round(num, digits)
