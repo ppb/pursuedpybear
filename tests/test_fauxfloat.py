@@ -26,11 +26,11 @@ class RealFauxFloat(FauxFloat):
 
 
 @pytest.mark.parametrize(
-    "operation",
-    [
+    "operation", [
         float, abs, bool, int, math.ceil, math.floor, math.trunc, operator.neg,
         operator.pos,
     ],
+    ids=lambda op: op.__name__,
 )
 @given(num=st.floats(allow_nan=False, allow_infinity=False))
 def test_unary_ops(operation, num: float):
@@ -47,6 +47,7 @@ NON_ZERO_OPS = [
         operator.lt, operator.le, operator.eq, operator.ne, operator.ge,
         operator.gt, operator.add, operator.mul, operator.sub,
     ] + NON_ZERO_OPS,
+    ids=lambda op: op.__name__,
 )
 @pytest.mark.parametrize(
     "num_type, other_type", [
