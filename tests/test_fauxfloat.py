@@ -22,9 +22,11 @@ class RealFauxFloat(FauxFloat):
 
 
 
-# The use of parametrize() over st.sampled_from() is deliberate.
-
-
+# The use of pytest.mark.parametrize is prefered to st.sampled_from for
+# operators and datatypes for 2 reasons:
+# - It guarantees the parameter space is explored exhaustively.
+# - It instantiates multiple tests, whose names encode the parameters, such as
+#   test_binary_ops[RealFauxFloat-float-lt]
 @pytest.mark.parametrize(
     "operation", [
         float, abs, bool, int, math.ceil, math.floor, math.trunc, operator.neg,
