@@ -50,20 +50,20 @@ NON_ZERO_OPS = [
     ids=lambda op: op.__name__,
 )
 @pytest.mark.parametrize(
-    "num_type, other_type", [
+    "left_type, right_type", [
         (RealFauxFloat, float), (float, RealFauxFloat),
         (RealFauxFloat, RealFauxFloat),
     ],
 )
 @given(
-    num=st.floats(allow_nan=False, allow_infinity=False),
-    other=st.floats(allow_nan=False, allow_infinity=False),
+    left=st.floats(allow_nan=False, allow_infinity=False),
+    right=st.floats(allow_nan=False, allow_infinity=False),
 )
-def test_binary_ops(operation, num, num_type, other, other_type):
+def test_binary_ops(operation, left, left_type, right, right_type):
     if(operation in NON_ZERO_OPS):
-        assume(other != 0)
+        assume(right != 0)
 
-    assert operation(num_type(num), other_type(other)) == operation(num, other)
+    assert operation(left_type(left), right_type(right)) == operation(left, right)
 
 
 @pytest.mark.parametrize(
