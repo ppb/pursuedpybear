@@ -6,7 +6,7 @@ from ppb import Vector
 from ppb.events import EventMixin
 from ppb.utils import FauxFloat
 
-import ppb_vector.vector2
+import ppb_vector
 
 
 TOP = "top"
@@ -217,7 +217,7 @@ class BaseSprite(EventMixin, Rotatable):
         return self.position
 
     @center.setter
-    def center(self, value: ppb_vector.vector2.VectorLike):
+    def center(self, value: ppb_vector.VectorLike):
         self.position = Vector(value)
 
     @property
