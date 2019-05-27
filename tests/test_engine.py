@@ -2,6 +2,8 @@ import dataclasses
 import unittest
 from unittest import mock
 
+import pytest
+
 from pygame import Surface
 
 from ppb import GameEngine, BaseScene, Vector
@@ -36,6 +38,7 @@ def test_signal():
     engine = GameEngine(BaseScene, systems=[Quitter])
     engine.run()
     assert not engine.running
+
 
 def test_signal_once():
 
@@ -79,7 +82,7 @@ def test_change_scene_event():
     class FirstScene(BaseScene):
 
         def on_update(self, event, signal):
-            signal(events.StartScene(new_scene=SecondScene(ge)))
+            signal(events.StartScene(new_scene=SecondScene()))
 
         def on_scene_paused(self, event, signal):
             assert event.scene is self
@@ -164,7 +167,7 @@ def test_replace_scene_event():
     class FirstScene(BaseScene):
 
         def on_update(self, event, signal):
-            signal(events.ReplaceScene(new_scene=SecondScene(ge)))
+            signal(events.ReplaceScene(new_scene=SecondScene()))
 
         def on_scene_stopped(self, event, signal):
             assert event.scene is self
@@ -233,11 +236,10 @@ def test_event_extension():
     class TestEvent:
         pass
 
+    class TestSystem(System):
 
-    class TestScene(BaseScene):
-
-        def __init__(self, engine):
-            super().__init__(engine)
+        def __init__(self, *, engine, **_):
+            super().__init__(engine=engine, **_)
             engine.register(TestEvent, self.event_extension)
 
         def on_update(self, event, signal):
@@ -250,7 +252,7 @@ def test_event_extension():
         def event_extension(self, event):
             event.test_value = "Red"
 
-    with GameEngine(TestScene, systems=[Updater, Failer], message="Will only time out.", fail=lambda x: False) as ge:
+    with GameEngine(BaseScene, systems=[TestSystem, Updater, Failer], message="Will only time out.", fail=lambda x: False) as ge:
         ge.run()
 
 

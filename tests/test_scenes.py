@@ -27,7 +27,7 @@ class TestSprite:
 
 def containers():
     yield GameObjectCollection()
-    yield BaseScene(Mock())
+    yield BaseScene()
 
 
 def players():
@@ -48,8 +48,7 @@ def enemies():
 
 @fixture()
 def scene():
-    engine = Mock()
-    return BaseScene(engine)
+    return BaseScene()
 
 
 @mark.parametrize("player, container", players_and_containers())
@@ -147,8 +146,8 @@ def test_class_attrs():
     class BackgroundScene(BaseScene):
         background_color = (0, 4, 2)
 
-    scene = BackgroundScene(Mock())
+    scene = BackgroundScene()
     assert scene.background_color == (0, 4, 2)
 
-    scene = BackgroundScene(Mock(), background_color=(2, 4, 0))
+    scene = BackgroundScene(background_color=(2, 4, 0))
     assert scene.background_color == (2, 4, 0)

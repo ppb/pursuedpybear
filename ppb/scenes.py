@@ -101,11 +101,10 @@ class BaseScene(EventMixin):
     background_color: Sequence[int] = (0, 0, 100)
     container_class: Type = GameObjectCollection
 
-    def __init__(self, engine, *,
+    def __init__(self, *,
                  set_up: Callable = None, pixel_ratio: Number = 64,
                  **kwargs):
         super().__init__()
-        self.engine = engine
         for k, v in kwargs.items():
             setattr(self, k, v)
 
