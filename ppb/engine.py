@@ -112,7 +112,7 @@ class GameEngine(EventMixin, LoggingMixin):
             return
         args = next_scene.get("args", [])
         kwargs = next_scene.get("kwargs", {})
-        self.scenes.append(scene(self, *args, **kwargs))
+        self.scenes.append(scene(*args, **kwargs))
 
     def signal(self, event):
         self.events.append(event)
@@ -176,7 +176,7 @@ class GameEngine(EventMixin, LoggingMixin):
 
     def start_scene(self, scene, kwargs):
         if isinstance(scene, type):
-            scene = scene(self, **(kwargs or {}))
+            scene = scene(**(kwargs or {}))
         self.scenes.append(scene)
         self.signal(events.SceneStarted())
 
