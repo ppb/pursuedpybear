@@ -39,6 +39,7 @@ def test_signal():
     engine.run()
     assert not engine.running
 
+
 def test_signal_once():
 
     engine = GameEngine(BaseScene, systems=[Quitter])
@@ -229,18 +230,16 @@ def test_flush_events():
     assert len(ge.events) == 0
 
 
-@pytest.mark.xfail
 def test_event_extension():
 
     @dataclasses.dataclass
     class TestEvent:
         pass
 
+    class TestSystem(System):
 
-    class TestScene(BaseScene):
-
-        def __init__(self):
-            super().__init__()
+        def __init__(self, *, engine, **_):
+            super().__init__(engine=engine, **_)
             engine.register(TestEvent, self.event_extension)
 
         def on_update(self, event, signal):
@@ -253,7 +252,7 @@ def test_event_extension():
         def event_extension(self, event):
             event.test_value = "Red"
 
-    with GameEngine(TestScene, systems=[Updater, Failer], message="Will only time out.", fail=lambda x: False) as ge:
+    with GameEngine(BaseScene, systems=[TestSystem, Updater, Failer], message="Will only time out.", fail=lambda x: False) as ge:
         ge.run()
 
 
