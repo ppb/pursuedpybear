@@ -1,7 +1,7 @@
 import logging
+
 import ppb
-from ppb import Vector
-from ppb import keycodes
+from ppb import keycodes, Vector
 
 
 class MoverMixin(ppb.BaseSprite):
