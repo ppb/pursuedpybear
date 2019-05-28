@@ -27,7 +27,7 @@ class FlagMeta(type):
     """
     Metaclass for Flag. You probably want that instead.
     """
-    def __new__(mcls, *p, abstract=False, **kw):
+    def __new__(mcls, *p, abstract=False, **kw):  # noqa: N804
         cls = super().__new__(mcls, *p, **kw)
         if abstract:
             cls._instance = ...

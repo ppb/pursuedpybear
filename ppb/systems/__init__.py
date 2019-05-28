@@ -21,12 +21,14 @@ class System(events.EventMixin):
         pass
 
 
-from ppb.systems.pg import EventPoller as PygameEventPoller  # To not break old imports.
+# This import is here for backwards-compatibility reasons.
+from ppb.systems.pg import EventPoller as PygameEventPoller  # noqa: E402,F401,I202
 
 
 class Renderer(System):
 
-    def __init__(self, resolution=default_resolution, window_title: str="PursuedPyBear", target_frame_rate: int=30, **kwargs):
+    def __init__(self, resolution=default_resolution,
+                 window_title: str = "PursuedPyBear", target_frame_rate: int = 30, **kwargs):
         self.resolution = resolution
         self.resources = {}
         self.window = None
@@ -121,7 +123,7 @@ class Renderer(System):
         # TODO: Pygame specific code To be abstracted somehow.
         key = (image, game_unit_size)
         resized_image = self.old_resized_images.get(key)
-        if  resized_image is None:
+        if resized_image is None:
             height = image.get_height()
             width = image.get_width()
             target_resolution = self.target_resolution(width,
@@ -162,6 +164,7 @@ class Updater(System):
         self.accumulated_time += this_tick - self.last_tick
         self.last_tick = this_tick
         while self.accumulated_time >= self.time_step:
-            # This might need to change for the Idle event system to signal _only_ once per idle event.
+            # This might need to change for the Idle event system
+            # to signal _only_ once per idle event.
             self.accumulated_time += -self.time_step
             signal(events.Update(self.time_step))

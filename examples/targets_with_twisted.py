@@ -1,14 +1,12 @@
-import logging
-import ppb
-from ppb import Vector
-from ppb import keycodes
-from twisted.internet import defer
-from twisted.internet import task
-from twisted.internet import endpoints
-from twisted.web.server import Site
-import klein
 from dataclasses import dataclass
 from typing import Any
+
+import klein
+from twisted.internet import defer, endpoints, task
+from twisted.web.server import Site
+
+import ppb
+from ppb import keycodes, Vector
 
 
 class MoverMixin(ppb.BaseSprite):
@@ -45,7 +43,7 @@ class Player(MoverMixin, ppb.BaseSprite):
     def _fire_bullet(self, scene):
         scene.add(
             Bullet(pos=self.position),
-            tags=['bullet']
+            tags=['bullet'],
         )
 
 
@@ -74,7 +72,7 @@ class Bullet(MoverMixin, ppb.BaseSprite):
         super().on_update(update, signal)  # Execute movement
 
         scene = update.scene
-        
+
         if self.position.y > scene.main_camera.frame_bottom:
             scene.remove(self)
         else:
@@ -102,7 +100,7 @@ class GameScene(ppb.BaseScene):
             self.add(Target(pos=Vector(x, 1.875)), tags=['target'])
 
 
-######### This is "non-game-specific code" ###########
+# This is "non-game-specific code"
 class _FinishLoop(Exception):
     pass
 
@@ -119,7 +117,7 @@ def twisted_engine_loop(engine):
         yield loop.start(0.001)
     except _FinishLoop:
         pass
-######### End of "non-game-specific code" ###########
+# End of "non-game-specific code"
 
 
 @defer.inlineCallbacks
@@ -128,9 +126,10 @@ def main(reactor):
         TargetCounter.web_server(
             reactor=reactor,
             engine=engine,
-            description="tcp:8080"
+            description="tcp:8080",
         )
         yield twisted_engine_loop(engine)
+
 
 if __name__ == "__main__":
     import sys

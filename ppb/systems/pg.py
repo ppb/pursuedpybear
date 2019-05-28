@@ -3,11 +3,11 @@ from typing import Dict
 import pygame
 
 import ppb.buttons as buttons
-from ppb import Vector
 from ppb import events
 from ppb import keycodes as keys
-from ppb.systems import System  # TODO: Be aware of circular imports
+from ppb import Vector
 from ppb.systems import default_resolution
+from ppb.systems import System  # TODO: Be aware of circular imports
 
 
 class EventPoller(System):
@@ -130,7 +130,7 @@ class EventPoller(System):
         pygame.KMOD_LMETA: keys.SuperLeft,
         pygame.KMOD_RMETA: keys.SuperRight,
         pygame.KMOD_NUM: keys.NumLock,
-        pygame.KMOD_CAPS: keys.CapsLock
+        pygame.KMOD_CAPS: keys.CapsLock,
     }
 
     def __new__(cls, *args, **kwargs):
@@ -141,7 +141,7 @@ class EventPoller(System):
                 pygame.MOUSEBUTTONDOWN: "button_pressed",
                 pygame.MOUSEBUTTONUP: "button_released",
                 pygame.KEYDOWN: "key_pressed",
-                pygame.KEYUP: "key_released"
+                pygame.KEYUP: "key_released",
             }
         return super().__new__(cls)
 
@@ -170,9 +170,9 @@ class EventPoller(System):
         screen_position = Vector(*event.pos)
         camera = scene.main_camera
         scene_position = camera.translate_to_frame(screen_position)
-        delta = Vector(*event.rel) * (1/camera.pixel_ratio)
+        delta = Vector(*event.rel) * (1 / camera.pixel_ratio)
         buttons = {
-            self.button_map[btn+1]
+            self.button_map[btn + 1]
             for btn, value in enumerate(event.buttons)
             if value
         }

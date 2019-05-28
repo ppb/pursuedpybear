@@ -4,7 +4,7 @@ from unittest import mock
 
 from pygame import Surface
 
-from ppb import GameEngine, BaseScene, Vector
+from ppb import BaseScene, GameEngine, Vector
 from ppb import events
 from ppb.systems import System
 from ppb.systems import Updater
@@ -36,6 +36,7 @@ def test_signal():
     engine = GameEngine(BaseScene, systems=[Quitter])
     engine.run()
     assert not engine.running
+
 
 def test_signal_once():
 
@@ -208,7 +209,8 @@ def test_stop_scene_event():
             assert event.scene is self
             test_function()
 
-    with GameEngine(TestScene, systems=[Updater, Failer], fail=lambda x: False, message="Will only time out.") as ge:
+    with GameEngine(TestScene, systems=[Updater, Failer],
+                    fail=lambda x: False, message="Will only time out.") as ge:
         ge.run()
 
     test_function.assert_called()
@@ -233,7 +235,6 @@ def test_event_extension():
     class TestEvent:
         pass
 
-
     class TestScene(BaseScene):
 
         def __init__(self, engine):
@@ -250,7 +251,8 @@ def test_event_extension():
         def event_extension(self, event):
             event.test_value = "Red"
 
-    with GameEngine(TestScene, systems=[Updater, Failer], message="Will only time out.", fail=lambda x: False) as ge:
+    with GameEngine(TestScene, systems=[Updater, Failer],
+                    message="Will only time out.", fail=lambda x: False) as ge:
         ge.run()
 
 
@@ -262,7 +264,6 @@ def test_extending_all_events():
     @dataclasses.dataclass
     class TestEvent:
         pass
-
 
     class TestScene(BaseScene):
 
@@ -300,5 +301,6 @@ def test_idle():
             was_called = True
             signal(events.Quit())
 
-    with GameEngine(BaseScene, systems=[TestSystem, Failer], fail=lambda x: False, message="Can only time out.") as ge:
+    with GameEngine(BaseScene, systems=[TestSystem, Failer],
+                    fail=lambda x: False, message="Can only time out.") as ge:
         ge.run()

@@ -13,7 +13,7 @@ from ppb.events import Quit
 def test_quitter(loop_count):
     quitter = testutil.Quitter(loop_count=loop_count)
     signal_mock = Mock()
-    for i in range(loop_count):
+    for _ in range(loop_count):
         quitter.__event__(Idle(.01), signal_mock)
     signal_mock.assert_called_once()
     assert len(signal_mock.call_args[0]) == 1
@@ -29,7 +29,8 @@ def test_failer_immediate():
 
 
 def test_failer_timed():
-    failer = testutil.Failer(fail=lambda e: False, message="Should time out", run_time=0.1, engine=None)
+    failer = testutil.Failer(fail=lambda e: False, message="Should time out",
+                             run_time=0.1, engine=None)
 
     start_time = monotonic()
 

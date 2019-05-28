@@ -1,8 +1,8 @@
 import math
 
 import ppb
-from ppb.features.animation import Animation
 import ppb.events as events
+from ppb.features.animation import Animation
 
 
 class Blob(ppb.BaseSprite):

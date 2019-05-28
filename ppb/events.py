@@ -1,6 +1,6 @@
-from dataclasses import dataclass
 import logging
 import re
+from dataclasses import dataclass
 from typing import Any
 from typing import Collection
 from typing import Dict
@@ -8,10 +8,10 @@ from typing import Set
 from typing import Type
 from typing import Union
 
+from ppb import Vector
 from ppb.abc import Scene
 from ppb.buttons import MouseButton
 from ppb.keycodes import KeyCode
-from ppb import Vector
 
 __all__ = (
     'StartScene',
@@ -31,6 +31,7 @@ __all__ = (
 boundaries_finder = re.compile('(.)([A-Z][a-z]+)')
 boundaries_finder_2 = re.compile('([a-z0-9])([A-Z])')
 
+
 def camel_to_snake(txt):
     s1 = boundaries_finder.sub(r'\1_\2', txt)
     return boundaries_finder_2.sub(r'\1_\2', s1).lower()
@@ -46,9 +47,10 @@ class BadEventHandlerException(TypeError):
         article = ['a', 'an'][int(e_name.lower()[0] in "aeiou")]
 
         message = f"""
-{o_name}.{method}() signature incorrect, it should accept {article} {e_name} object and a signal function.
+The signature of {o_name}.{method}() is incorrect:
+it should accept {article} {e_name} object and a signal function.
 
-{e_name} is a dataclass that represents an event. Its attributes 
+{e_name} is a dataclass that represents an event. Its attributes
 tell you about the event.
 
 The signal function is a function you can call that accepts an event instance
