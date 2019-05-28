@@ -1,10 +1,10 @@
 import logging
 from typing import Callable
 
-from ppb_vector import Vector
 from ppb.engine import GameEngine
 from ppb.scenes import BaseScene
 from ppb.sprites import BaseSprite
+from ppb_vector import Vector
 
 __all__ = (
     # Shortcuts

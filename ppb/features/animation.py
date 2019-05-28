@@ -3,8 +3,8 @@ A system for producing animated sprites.
 
 Only supports frame-by-frame, not gif, apng, or full motion video.
 """
-import time
 import re
+import time
 
 FILE_PATTERN = re.compile(r'\{(\d+)\.\.(\d+)\}')
 

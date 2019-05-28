@@ -1,8 +1,8 @@
+import time
 from collections import defaultdict
 from collections import deque
 from contextlib import ExitStack
 from itertools import chain
-import time
 from typing import Any
 from typing import Callable
 from typing import DefaultDict
@@ -12,9 +12,7 @@ from typing import Union
 
 import ppb.events as events
 from ppb.abc import Engine
-from ppb.events import StartScene
-from ppb.events import EventMixin
-from ppb.events import Quit
+from ppb.events import EventMixin, Quit, StartScene
 from ppb.systems import PygameEventPoller
 from ppb.systems import Renderer
 from ppb.systems import Updater

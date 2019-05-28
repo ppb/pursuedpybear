@@ -1,6 +1,6 @@
-from dataclasses import dataclass
 import logging
 import re
+from dataclasses import dataclass
 from typing import Any
 from typing import Collection
 from typing import Dict
@@ -8,10 +8,10 @@ from typing import Set
 from typing import Type
 from typing import Union
 
+from ppb import Vector
 from ppb.abc import Scene
 from ppb.buttons import MouseButton
 from ppb.keycodes import KeyCode
-from ppb import Vector
 
 __all__ = (
     'StartScene',

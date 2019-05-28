@@ -1,9 +1,9 @@
-from typing import Sequence
 from numbers import Number
+from typing import Sequence
 
 from ppb import Vector
-from ppb.sprites import BaseSprite
 from ppb.flags import DoNotRender
+from ppb.sprites import BaseSprite
 
 
 class Camera(BaseSprite):

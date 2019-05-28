@@ -3,11 +3,11 @@ from typing import Dict
 import pygame
 
 import ppb.buttons as buttons
-from ppb import Vector
 from ppb import events
 from ppb import keycodes as keys
-from ppb.systems import System  # TODO: Be aware of circular imports
+from ppb import Vector
 from ppb.systems import default_resolution
+from ppb.systems import System  # TODO: Be aware of circular imports
 
 
 class EventPoller(System):

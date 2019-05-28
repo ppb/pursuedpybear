@@ -22,7 +22,7 @@ class System(events.EventMixin):
 
 
 # This import is here for backwards-compatibility reasons.
-from ppb.systems.pg import EventPoller as PygameEventPoller  # noqa: E402,F401
+from ppb.systems.pg import EventPoller as PygameEventPoller  # noqa: E402,F401,I202
 
 
 class Renderer(System):
