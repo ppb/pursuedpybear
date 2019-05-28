@@ -12,7 +12,9 @@ from typing import Union
 
 import ppb.events as events
 from ppb.abc import Engine
-from ppb.events import EventMixin, Quit, StartScene
+from ppb.events import EventMixin
+from ppb.events import Quit
+from ppb.events import StartScene
 from ppb.systems import PygameEventPoller
 from ppb.systems import Renderer
 from ppb.systems import Updater

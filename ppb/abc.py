@@ -1,4 +1,6 @@
-from typing import Iterable, Tuple, Type
+from typing import Iterable
+from typing import Tuple
+from typing import Type
 
 
 class Engine(object):

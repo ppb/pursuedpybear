@@ -3,7 +3,9 @@ import operator
 import typing
 
 import pytest
-from hypothesis import assume, given, strategies as st
+from hypothesis import assume
+from hypothesis import given
+from hypothesis import strategies as st
 
 from ppb.utils import FauxFloat
 

@@ -2,11 +2,14 @@ from dataclasses import dataclass
 from typing import Any
 
 import klein
-from twisted.internet import defer, endpoints, task
+from twisted.internet import defer
+from twisted.internet import endpoints
+from twisted.internet import task
 from twisted.web.server import Site
 
 import ppb
-from ppb import keycodes, Vector
+from ppb import keycodes
+from ppb import Vector
 
 
 class MoverMixin(ppb.BaseSprite):

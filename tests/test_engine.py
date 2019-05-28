@@ -4,8 +4,10 @@ from unittest import mock
 
 from pygame import Surface
 
-from ppb import BaseScene, GameEngine, Vector
+from ppb import BaseScene
 from ppb import events
+from ppb import GameEngine
+from ppb import Vector
 from ppb.systems import System
 from ppb.systems import Updater
 from ppb.testutils import Failer

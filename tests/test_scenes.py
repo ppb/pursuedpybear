@@ -5,7 +5,8 @@ from pytest import mark
 from pytest import raises
 
 from ppb.camera import Camera
-from ppb.scenes import BaseScene, GameObjectCollection
+from ppb.scenes import BaseScene
+from ppb.scenes import GameObjectCollection
 
 
 class TestEnemy:
