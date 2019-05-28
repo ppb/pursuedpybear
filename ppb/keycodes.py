@@ -48,7 +48,7 @@ class H(KeyCode):
     ""
 
 
-class I(KeyCode):
+class I(KeyCode):  # noqa: E742
     ""
 
 
@@ -72,7 +72,7 @@ class N(KeyCode):
     ""
 
 
-class O(KeyCode):
+class O(KeyCode):  # noqa: E742
     ""
 
 

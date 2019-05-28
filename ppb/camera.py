@@ -91,11 +91,12 @@ class Camera(BaseSprite):
         return vpx <= px <= (vpw + vpx) and vpy <= py <= (vph + vpy)
 
     def in_frame(self, sprite: BaseSprite) -> bool:
-        return (self.frame_left <= sprite.right and
-                self.frame_right >= sprite.left and
-                self.frame_top <= sprite.bottom and
-                self.frame_bottom >= sprite.top
-                )
+        return (
+            self.frame_left <= sprite.right and
+            self.frame_right >= sprite.left and
+            self.frame_top <= sprite.bottom and
+            self.frame_bottom >= sprite.top
+        )
 
     def translate_to_frame(self, point: Vector) -> Vector:
         """

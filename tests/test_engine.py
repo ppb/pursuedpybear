@@ -209,7 +209,8 @@ def test_stop_scene_event():
             assert event.scene is self
             test_function()
 
-    with GameEngine(TestScene, systems=[Updater, Failer], fail=lambda x: False, message="Will only time out.") as ge:
+    with GameEngine(TestScene, systems=[Updater, Failer],
+                    fail=lambda x: False, message="Will only time out.") as ge:
         ge.run()
 
     test_function.assert_called()
@@ -250,7 +251,8 @@ def test_event_extension():
         def event_extension(self, event):
             event.test_value = "Red"
 
-    with GameEngine(TestScene, systems=[Updater, Failer], message="Will only time out.", fail=lambda x: False) as ge:
+    with GameEngine(TestScene, systems=[Updater, Failer],
+                    message="Will only time out.", fail=lambda x: False) as ge:
         ge.run()
 
 
@@ -299,5 +301,6 @@ def test_idle():
             was_called = True
             signal(events.Quit())
 
-    with GameEngine(BaseScene, systems=[TestSystem, Failer], fail=lambda x: False, message="Can only time out.") as ge:
+    with GameEngine(BaseScene, systems=[TestSystem, Failer],
+                    fail=lambda x: False, message="Can only time out.") as ge:
         ge.run()
