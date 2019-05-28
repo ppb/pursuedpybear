@@ -2,12 +2,10 @@ import math
 import operator
 import typing
 
-from ppb.utils import FauxFloat
-
 import pytest
+from hypothesis import assume, given, strategies as st
 
-from hypothesis import given, assume
-import hypothesis.strategies as st
+from ppb.utils import FauxFloat
 
 
 class RealFauxFloat(FauxFloat):

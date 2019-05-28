@@ -4,7 +4,7 @@ from unittest import mock
 
 from pygame import Surface
 
-from ppb import GameEngine, BaseScene, Vector
+from ppb import BaseScene, GameEngine, Vector
 from ppb import events
 from ppb.systems import System
 from ppb.systems import Updater

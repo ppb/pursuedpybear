@@ -1,5 +1,7 @@
 import inspect
+
 import pytest
+
 from ppb.flags import Flag
 
 
