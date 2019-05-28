@@ -2,12 +2,12 @@ import math
 import operator
 import typing
 
-from ppb.utils import FauxFloat
-
 import pytest
+from hypothesis import assume
+from hypothesis import given
+from hypothesis import strategies as st
 
-from hypothesis import given, assume
-import hypothesis.strategies as st
+from ppb.utils import FauxFloat
 
 
 class RealFauxFloat(FauxFloat):
@@ -19,7 +19,6 @@ class RealFauxFloat(FauxFloat):
 
     def __float__(self):
         return self.num
-
 
 
 # The use of pytest.mark.parametrize is prefered to st.sampled_from for

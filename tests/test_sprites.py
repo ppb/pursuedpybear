@@ -1,7 +1,8 @@
 from unittest import TestCase
 from unittest.mock import patch
 
-from ppb import BaseSprite, Vector
+from ppb import BaseSprite
+from ppb import Vector
 from ppb.sprites import Rotatable
 
 

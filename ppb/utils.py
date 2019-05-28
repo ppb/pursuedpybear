@@ -1,9 +1,9 @@
 import logging
-import sys
-import numbers
 import math
+import numbers
+import sys
 
-__all__ = 'LoggingMixin', 'FauxFloat',
+__all__ = 'LoggingMixin', 'FauxFloat'
 
 
 # Dictionary mapping file names -> module names

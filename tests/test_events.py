@@ -20,7 +20,7 @@ def test_eventmixin():
             passed_bag = bag
 
     bag = Spam()
-    fire_event = lambda: None
+    def fire_event(): return None
 
     e = Eventable()
 
@@ -34,10 +34,8 @@ def test_event_mixin_with_bad_signature():
     class BadSpam:
         pass
 
-
     class Spam:
         pass
-
 
     class Eventable(EventMixin):
         def on_spam(self, spam_event):

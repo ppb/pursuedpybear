@@ -10,7 +10,7 @@ from ppb.systems import System
 class Failer(System):
 
     def __init__(self, *, fail: Callable[[GameEngine], bool], message: str,
-                 run_time: float=1, engine, **kwargs):
+                 run_time: float = 1, engine, **kwargs):
         super().__init__(**kwargs)
         self.fail = fail
         self.message = message

@@ -48,7 +48,7 @@ class H(KeyCode):
     ""
 
 
-class I(KeyCode):
+class I(KeyCode):  # noqa: E742
     ""
 
 
@@ -72,7 +72,7 @@ class N(KeyCode):
     ""
 
 
-class O(KeyCode):
+class O(KeyCode):  # noqa: E742
     ""
 
 
@@ -291,7 +291,7 @@ class AltLeft(KeyCode):
 class Backslash(KeyCode):
     """
     \\
-    
+
     Shift+\\ is | on american keyboards
     """
 
@@ -303,7 +303,7 @@ class Backspace(KeyCode):
 class BracketLeft(KeyCode):
     """
     [
-    
+
     Shift+[ is { on american keyboards
     """
 
@@ -311,7 +311,7 @@ class BracketLeft(KeyCode):
 class BracketRight(KeyCode):
     """
     ]
-    
+
     Shift+] is } on american keyboards
     """
 
@@ -323,7 +323,7 @@ class CapsLock(KeyCode):
 class Comma(KeyCode):
     """
     ,
-    
+
     Shift+, is < on american keyboards
     """
 
@@ -395,7 +395,7 @@ class Menu(KeyCode):
 class Minus(KeyCode):
     """
     -
-    
+
     Shift+- is _ on american keyboards
     """
 
@@ -415,7 +415,7 @@ class PageUp(KeyCode):
 class Pause(KeyCode):
     """
     Pause, generally lives next to Print Screen and Scroll Lock.
-    
+
     Also Break.
     """
 
@@ -423,7 +423,7 @@ class Pause(KeyCode):
 class Period(KeyCode):
     """
     .
-    
+
     Shift+. is > on american keyboards
     """
 
@@ -499,4 +499,4 @@ class Up(KeyCode):
 # Numpad codes (unified between pygame and pyglet)
 # 0 1 2 3 4 5 6 7 8 9 add begin decimal delete divide down end enter equals
 # f1 f2 f3 f4 home insert left minus multiply next page down page up period plus
-# prior right separator space subtract tab up 
+# prior right separator space subtract tab up

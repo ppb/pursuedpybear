@@ -2,11 +2,10 @@ from inspect import getfile
 from pathlib import Path
 from typing import Union
 
+import ppb_vector
 from ppb import Vector
 from ppb.events import EventMixin
 from ppb.utils import FauxFloat
-
-import ppb_vector
 
 
 TOP = "top"
@@ -23,7 +22,7 @@ class Side(FauxFloat):
         LEFT: ('x', -1),
         RIGHT: ('x', 1),
         TOP: ('y', -1),
-        BOTTOM: ('y', 1)
+        BOTTOM: ('y', 1),
     }
 
     def __init__(self, parent: 'BaseSprite', side: str):
@@ -133,7 +132,7 @@ class Side(FauxFloat):
 
         fields = {
             self_dimension: value[self_dimension] - self_offset,
-            attr_dimension: value[attr_dimension]
+            attr_dimension: value[attr_dimension],
         }
 
         return Vector(fields)

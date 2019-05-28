@@ -1,7 +1,8 @@
 import logging
+
 import ppb
-from ppb import Vector
 from ppb import keycodes
+from ppb import Vector
 
 
 class MoverMixin(ppb.BaseSprite):
@@ -39,7 +40,7 @@ class Player(MoverMixin, ppb.BaseSprite):
     def _fire_bullet(self, scene):
         scene.add(
             Bullet(pos=self.position),
-            tags=['bullet']
+            tags=['bullet'],
         )
 
 
@@ -51,7 +52,7 @@ class Bullet(MoverMixin, ppb.BaseSprite):
         super().on_update(update, signal)  # Execute movement
 
         scene = update.scene
-        
+
         if self.position.y > scene.main_camera.frame_bottom:
             scene.remove(self)
         else:
