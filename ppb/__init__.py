@@ -2,7 +2,7 @@ import logging
 from typing import Callable
 
 from ppb_vector import Vector
-from ppb.engine import GameEngine
+from ppb.engine import GameEngine  # noqa: I100
 from ppb.scenes import BaseScene
 from ppb.sprites import BaseSprite
 
