@@ -29,7 +29,8 @@ def test_failer_immediate():
 
 
 def test_failer_timed():
-    failer = testutil.Failer(fail=lambda e: False, message="Should time out", run_time=0.1, engine=None)
+    failer = testutil.Failer(fail=lambda e: False, message="Should time out",
+                             run_time=0.1, engine=None)
 
     start_time = monotonic()
 

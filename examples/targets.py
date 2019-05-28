@@ -51,7 +51,7 @@ class Bullet(MoverMixin, ppb.BaseSprite):
         super().on_update(update, signal)  # Execute movement
 
         scene = update.scene
-        
+
         if self.position.y > scene.main_camera.frame_bottom:
             scene.remove(self)
         else:

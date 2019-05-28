@@ -31,6 +31,7 @@ __all__ = (
 boundaries_finder = re.compile('(.)([A-Z][a-z]+)')
 boundaries_finder_2 = re.compile('([a-z0-9])([A-Z])')
 
+
 def camel_to_snake(txt):
     s1 = boundaries_finder.sub(r'\1_\2', txt)
     return boundaries_finder_2.sub(r'\1_\2', s1).lower()

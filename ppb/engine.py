@@ -40,7 +40,8 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         # Engine State
         self.scenes = []
         self.events = deque()
-        self.event_extensions: DefaultDict[Union[Type, _ellipsis], List[Callable[[Any], None]]] = defaultdict(list)
+        self.event_extensions: DefaultDict[Union[Type, _ellipsis],
+                                           List[Callable[[Any], None]]] = defaultdict(list)
         self.running = False
         self.entered = False
         self._last_idle_time = None

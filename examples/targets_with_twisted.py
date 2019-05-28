@@ -74,7 +74,7 @@ class Bullet(MoverMixin, ppb.BaseSprite):
         super().on_update(update, signal)  # Execute movement
 
         scene = update.scene
-        
+
         if self.position.y > scene.main_camera.frame_bottom:
             scene.remove(self)
         else:
@@ -131,6 +131,7 @@ def main(reactor):
             description="tcp:8080"
         )
         yield twisted_engine_loop(engine)
+
 
 if __name__ == "__main__":
     import sys

@@ -21,7 +21,6 @@ class RealFauxFloat(FauxFloat):
         return self.num
 
 
-
 # The use of pytest.mark.parametrize is prefered to st.sampled_from for
 # operators and datatypes for 2 reasons:
 # - It guarantees the parameter space is explored exhaustively.

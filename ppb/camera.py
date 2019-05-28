@@ -6,12 +6,13 @@ from ppb import Vector
 from ppb.sprites import BaseSprite
 from ppb.flags import DoNotRender
 
+
 class Camera(BaseSprite):
 
     image = DoNotRender
 
-    def __init__(self, viewport: Sequence[int]=(0, 0, 800, 600),
-                 pixel_ratio: float=64):
+    def __init__(self, viewport: Sequence[int] = (0, 0, 800, 600),
+                 pixel_ratio: float = 64):
         """
 
         viewport: A container of origin x, origin y, width, and
@@ -64,6 +65,7 @@ class Camera(BaseSprite):
     @property
     def half_width(self) -> float:
         return self.frame_width / 2
+
     @property
     def viewport_width(self) -> int:
         return self._viewport_width
@@ -82,12 +84,12 @@ class Camera(BaseSprite):
         self._viewport_height = value
         self.viewport_offset = Vector(self.viewport_width / 2, value / 2)
 
-    def point_in_viewport(self, point:Vector) -> bool:
+    def point_in_viewport(self, point: Vector) -> bool:
         px, py = point
         vpx, vpy = self.viewport_origin
         vpw = self.viewport_width
         vph = self.viewport_height
-        return vpx <= px <= (vpw+vpx) and vpy <= py <= (vph+vpy)
+        return vpx <= px <= (vpw + vpx) and vpy <= py <= (vph + vpy)
 
     def in_frame(self, sprite: BaseSprite) -> bool:
         return (self.frame_left <= sprite.right and
@@ -100,7 +102,7 @@ class Camera(BaseSprite):
         """
         Converts a vector from pixel-based window to in-game coordinate space
         """
-        offset = (point - self.viewport_offset) * (1/self.pixel_ratio)
+        offset = (point - self.viewport_offset) * (1 / self.pixel_ratio)
         loc = self.position + offset
         return loc.update(y=-loc.y)
 

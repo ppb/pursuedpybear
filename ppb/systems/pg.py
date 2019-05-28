@@ -170,9 +170,9 @@ class EventPoller(System):
         screen_position = Vector(*event.pos)
         camera = scene.main_camera
         scene_position = camera.translate_to_frame(screen_position)
-        delta = Vector(*event.rel) * (1/camera.pixel_ratio)
+        delta = Vector(*event.rel) * (1 / camera.pixel_ratio)
         buttons = {
-            self.button_map[btn+1]
+            self.button_map[btn + 1]
             for btn, value in enumerate(event.buttons)
             if value
         }

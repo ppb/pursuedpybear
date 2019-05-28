@@ -37,6 +37,7 @@ def test_signal():
     engine.run()
     assert not engine.running
 
+
 def test_signal_once():
 
     engine = GameEngine(BaseScene, systems=[Quitter])
@@ -233,7 +234,6 @@ def test_event_extension():
     class TestEvent:
         pass
 
-
     class TestScene(BaseScene):
 
         def __init__(self, engine):
@@ -262,7 +262,6 @@ def test_extending_all_events():
     @dataclasses.dataclass
     class TestEvent:
         pass
-
 
     class TestScene(BaseScene):
 

@@ -11,14 +11,18 @@ def test_docstring():
 
 
 def test_subclass():
-     class SpecialFlag(Flag, abstract=True): pass
-     class TestFlag(SpecialFlag): pass
+    class SpecialFlag(Flag, abstract=True):
+        pass
 
-     assert isinstance(TestFlag, SpecialFlag)
+    class TestFlag(SpecialFlag):
+        pass
+
+    assert isinstance(TestFlag, SpecialFlag)
 
 
 def test_instantiate():
-    class TestFlag(Flag): pass
+    class TestFlag(Flag):
+        pass
 
     with pytest.raises(TypeError):
         TestFlag()
@@ -28,18 +32,21 @@ def test_instantiate():
 
 
 def test_abstract_instantiate():
-     class SpecialFlag(Flag, abstract=True): pass
+    class SpecialFlag(Flag, abstract=True):
+        pass
 
-     with pytest.raises(TypeError):
+    with pytest.raises(TypeError):
         SpecialFlag()
 
 
 def test_comparison():
-     class FlagA(Flag): pass
-     class FlagB(Flag): pass
+    class FlagA(Flag):
+        pass
 
-     assert FlagA is FlagA
-     assert FlagB is not FlagA
-     assert FlagA == FlagA
-     assert FlagB != FlagA
+    class FlagB(Flag):
+        pass
 
+    assert FlagA is FlagA
+    assert FlagB is not FlagA
+    assert FlagA == FlagA
+    assert FlagB != FlagA

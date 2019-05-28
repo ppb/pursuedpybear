@@ -26,7 +26,7 @@ from ppb.systems.pg import EventPoller as PygameEventPoller  # To not break old 
 
 class Renderer(System):
 
-    def __init__(self, resolution=default_resolution, window_title: str="PursuedPyBear", target_frame_rate: int=30, **kwargs):
+    def __init__(self, resolution=default_resolution, window_title: str = "PursuedPyBear", target_frame_rate: int = 30, **kwargs):
         self.resolution = resolution
         self.resources = {}
         self.window = None
@@ -121,7 +121,7 @@ class Renderer(System):
         # TODO: Pygame specific code To be abstracted somehow.
         key = (image, game_unit_size)
         resized_image = self.old_resized_images.get(key)
-        if  resized_image is None:
+        if resized_image is None:
             height = image.get_height()
             width = image.get_width()
             target_resolution = self.target_resolution(width,
