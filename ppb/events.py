@@ -47,9 +47,10 @@ class BadEventHandlerException(TypeError):
         article = ['a', 'an'][int(e_name.lower()[0] in "aeiou")]
 
         message = f"""
-{o_name}.{method}() signature incorrect, it should accept {article} {e_name} object and a signal function.
+The signature of {o_name}.{method}() is incorrect:
+it should accept {article} {e_name} object and a signal function.
 
-{e_name} is a dataclass that represents an event. Its attributes 
+{e_name} is a dataclass that represents an event. Its attributes
 tell you about the event.
 
 The signal function is a function you can call that accepts an event instance
