@@ -52,7 +52,9 @@ def test_sprite_in_viewport():
     cam = Camera(viewport=(0, 0, 800, 600), pixel_ratio=80)
 
     class Thing(BaseSprite):
-        def __init__(self, position=Vector(2, 2)):
+        default_pos = Vector(2, 2)
+
+        def __init__(self, position=default_pos):
             super().__init__()
             self.size = 2
             self.position = position

@@ -13,7 +13,7 @@ from ppb.events import Quit
 def test_quitter(loop_count):
     quitter = testutil.Quitter(loop_count=loop_count)
     signal_mock = Mock()
-    for i in range(loop_count):
+    for _ in range(loop_count):
         quitter.__event__(Idle(.01), signal_mock)
     signal_mock.assert_called_once()
     assert len(signal_mock.call_args[0]) == 1
