@@ -1,4 +1,4 @@
-from typing import Type, Container, Tuple, Iterable
+from typing import Type, Tuple, Iterable
 
 
 class Engine(object):

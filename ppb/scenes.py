@@ -6,9 +6,7 @@ from typing import Hashable
 from typing import Iterable
 from typing import Iterator
 from typing import Sequence
-from typing import Tuple
 from typing import Type
-from warnings import warn
 
 from ppb.abc import Scene
 from ppb.camera import Camera

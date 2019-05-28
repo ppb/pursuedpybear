@@ -1,4 +1,3 @@
-import logging
 import ppb
 from ppb import Vector
 from ppb import keycodes

@@ -1,5 +1,4 @@
 from typing import Sequence
-from typing import Union
 from numbers import Number
 
 from ppb import Vector
