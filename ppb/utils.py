@@ -3,7 +3,7 @@ import sys
 import numbers
 import math
 
-__all__ = 'LoggingMixin', 'FauxFloat',
+__all__ = 'LoggingMixin', 'FauxFloat'
 
 
 # Dictionary mapping file names -> module names

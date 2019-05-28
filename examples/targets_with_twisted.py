@@ -44,7 +44,7 @@ class Player(MoverMixin, ppb.BaseSprite):
     def _fire_bullet(self, scene):
         scene.add(
             Bullet(pos=self.position),
-            tags=['bullet']
+            tags=['bullet'],
         )
 
 
@@ -127,7 +127,7 @@ def main(reactor):
         TargetCounter.web_server(
             reactor=reactor,
             engine=engine,
-            description="tcp:8080"
+            description="tcp:8080",
         )
         yield twisted_engine_loop(engine)
 

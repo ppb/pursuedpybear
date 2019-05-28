@@ -130,7 +130,7 @@ class EventPoller(System):
         pygame.KMOD_LMETA: keys.SuperLeft,
         pygame.KMOD_RMETA: keys.SuperRight,
         pygame.KMOD_NUM: keys.NumLock,
-        pygame.KMOD_CAPS: keys.CapsLock
+        pygame.KMOD_CAPS: keys.CapsLock,
     }
 
     def __new__(cls, *args, **kwargs):
@@ -141,7 +141,7 @@ class EventPoller(System):
                 pygame.MOUSEBUTTONDOWN: "button_pressed",
                 pygame.MOUSEBUTTONUP: "button_released",
                 pygame.KEYDOWN: "key_pressed",
-                pygame.KEYUP: "key_released"
+                pygame.KEYUP: "key_released",
             }
         return super().__new__(cls)
 

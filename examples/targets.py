@@ -39,7 +39,7 @@ class Player(MoverMixin, ppb.BaseSprite):
     def _fire_bullet(self, scene):
         scene.add(
             Bullet(pos=self.position),
-            tags=['bullet']
+            tags=['bullet'],
         )
 
 
