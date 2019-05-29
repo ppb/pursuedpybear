@@ -1,17 +1,17 @@
 from typing import Sequence
-from typing import Union
 from numbers import Number
 
 from ppb import Vector
 from ppb.sprites import BaseSprite
 from ppb.flags import DoNotRender
 
+
 class Camera(BaseSprite):
 
     image = DoNotRender
 
-    def __init__(self, viewport: Sequence[int]=(0, 0, 800, 600),
-                 pixel_ratio: float=64):
+    def __init__(self, viewport: Sequence[int] = (0, 0, 800, 600),
+                 pixel_ratio: float = 64):
         """
 
         viewport: A container of origin x, origin y, width, and
@@ -35,11 +35,11 @@ class Camera(BaseSprite):
 
     @property
     def frame_top(self) -> Number:
-        return self.position.y - self.half_height
+        return self.position.y + self.half_height
 
     @property
     def frame_bottom(self) -> Number:
-        return self.position.y + self.half_height
+        return self.position.y - self.half_height
 
     @property
     def frame_left(self) -> Number:
@@ -64,6 +64,7 @@ class Camera(BaseSprite):
     @property
     def half_width(self) -> float:
         return self.frame_width / 2
+
     @property
     def viewport_width(self) -> int:
         return self._viewport_width
@@ -82,7 +83,7 @@ class Camera(BaseSprite):
         self._viewport_height = value
         self.viewport_offset = Vector(self.viewport_width / 2, value / 2)
 
-    def point_in_viewport(self, point:Vector) -> bool:
+    def point_in_viewport(self, point: Vector) -> bool:
         px, py = point
         vpx, vpy = self.viewport_origin
         vpw = self.viewport_width
@@ -92,22 +93,23 @@ class Camera(BaseSprite):
     def in_frame(self, sprite: BaseSprite) -> bool:
         return (self.frame_left <= sprite.right and
                 self.frame_right >= sprite.left and
-                self.frame_top <= sprite.bottom and
-                self.frame_bottom >= sprite.top
+                self.frame_top >= sprite.bottom and
+                self.frame_bottom <= sprite.top
                 )
 
     def translate_to_frame(self, point: Vector) -> Vector:
         """
         Converts a vector from pixel-based window to in-game coordinate space
         """
-        offset = (point - self.viewport_offset) * (1/self.pixel_ratio)
-        loc = self.position + offset
-        return loc.update(y=-loc.y)
+        # 1. Scale from pixels to game unites
+        scaled = point / self.pixel_ratio
+        # 2. Reposition relative to frame edges
+        return Vector(self.frame_left + scaled.x, self.frame_top - scaled.y)
 
     def translate_to_viewport(self, point: Vector) -> Vector:
         """
         Converts a vector from in-game to pixel-based window coordinate space
         """
-        point = point.update(y=-point.y)
-        offset = (point - self.position) * self.pixel_ratio
-        return self.viewport_offset + offset
+        # 1. Reposition based on frame edges
+        # 2. Scale from game units to pixels
+        return Vector(point.x - self.frame_left, self.frame_top - point.y) * self.pixel_ratio

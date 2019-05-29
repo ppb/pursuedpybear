@@ -22,8 +22,8 @@ class Side(FauxFloat):
     sides = {
         LEFT: ('x', -1),
         RIGHT: ('x', 1),
-        TOP: ('y', -1),
-        BOTTOM: ('y', 1)
+        TOP: ('y', 1),
+        BOTTOM: ('y', -1)
     }
 
     def __init__(self, parent: 'BaseSprite', side: str):
@@ -242,7 +242,7 @@ class BaseSprite(EventMixin, Rotatable):
 
     @top.setter
     def top(self, value):
-        self.position = Vector(self.position.x, value + self._offset_value)
+        self.position = Vector(self.position.x, value - self._offset_value)
 
     @property
     def bottom(self):
@@ -250,7 +250,7 @@ class BaseSprite(EventMixin, Rotatable):
 
     @bottom.setter
     def bottom(self, value):
-        self.position = Vector(self.position.x, value - self._offset_value)
+        self.position = Vector(self.position.x, value + self._offset_value)
 
     @property
     def _offset_value(self):
