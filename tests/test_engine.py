@@ -1,10 +1,5 @@
 import dataclasses
-import unittest
 from unittest import mock
-
-import pytest
-
-from pygame import Surface
 
 from ppb import GameEngine, BaseScene, Vector
 from ppb import events
@@ -17,20 +12,13 @@ CONTINUE = True
 STOP = False
 
 
-@unittest.skip
-class TestEngine(unittest.TestCase):
-
-    def test_initialize(self):
-        pass
-
-    def test_start(self):
-        mock_scene = mock.Mock(spec=BaseScene)
-        mock_scene.background_color = (0, 0, 0)
-        mock_scene_class = mock.Mock(spec=BaseScene, return_value=mock_scene)
-        engine = GameEngine(mock_scene_class)
-        engine.display = mock.Mock(spec=Surface)
-        engine.start()
-        self.assertIs(engine.current_scene, mock_scene)
+def test_engine_initial_scene():
+    mock_scene = mock.Mock(spec=BaseScene)
+    mock_scene.background_color = (0, 0, 0)
+    mock_scene_class = mock.Mock(spec=BaseScene, return_value=mock_scene)
+    engine = GameEngine(mock_scene_class)
+    engine.start()
+    assert engine.current_scene is mock_scene
 
 
 def test_signal():
@@ -264,7 +252,6 @@ def test_extending_all_events():
     @dataclasses.dataclass
     class TestEvent:
         pass
-
 
     class TestScene(BaseScene):
 
