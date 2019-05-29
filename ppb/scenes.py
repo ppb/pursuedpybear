@@ -6,11 +6,8 @@ from typing import Hashable
 from typing import Iterable
 from typing import Iterator
 from typing import Sequence
-from typing import Tuple
 from typing import Type
-from warnings import warn
 
-from ppb.abc import Scene
 from ppb.camera import Camera
 from ppb.events import EventMixin
 
@@ -32,7 +29,7 @@ class GameObjectCollection(Collection):
     def __len__(self) -> int:
         return len(self.all)
 
-    def add(self, game_object: Hashable, tags: Iterable[Hashable]=()) -> None:
+    def add(self, game_object: Hashable, tags: Iterable[Hashable] = ()) -> None:
         """
         Add a game_object to the container.
 
@@ -54,7 +51,7 @@ class GameObjectCollection(Collection):
         for tag in tags:
             self.tags[tag].add(game_object)
 
-    def get(self, *, kind: Type=None, tag: Hashable=None, **_) -> Iterator:
+    def get(self, *, kind: Type = None, tag: Hashable = None, **_) -> Iterator:
         """
         Get an iterator of objects by kind or tag.
 
@@ -99,15 +96,15 @@ class GameObjectCollection(Collection):
             s.discard(game_object)
 
 
-class BaseScene(Scene, EventMixin):
+class BaseScene(EventMixin):
     # Background color, in RGB, each channel is 0-255
     background_color: Sequence[int] = (0, 0, 100)
     container_class: Type = GameObjectCollection
 
-    def __init__(self, engine, *,                 
-                 set_up: Callable=None, pixel_ratio: Number=64,
+    def __init__(self, *,
+                 set_up: Callable = None, pixel_ratio: Number = 64,
                  **kwargs):
-        super().__init__(engine)
+        super().__init__()
         for k, v in kwargs.items():
             setattr(self, k, v)
 

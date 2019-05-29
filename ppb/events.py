@@ -8,10 +8,6 @@ from typing import Set
 from typing import Type
 from typing import Union
 
-from ppb.abc import Scene
-from ppb.buttons import MouseButton
-from ppb.keycodes import KeyCode
-from ppb.vector import Vector
 
 __all__ = (
     'StartScene',
@@ -87,6 +83,12 @@ class EventMixin:
 
 # Remember to define scene at the end so the pargs version of __init__() still works
 
+from ppb.scenes import BaseScene
+from ppb.buttons import MouseButton
+from ppb.keycodes import KeyCode
+from ppb_vector import Vector
+
+
 @dataclass
 class ButtonPressed:
     """
@@ -95,7 +97,7 @@ class ButtonPressed:
     button: MouseButton
     position: Vector  # Scene position
     # TODO: Add frame position
-    scene: Scene = None
+    scene: BaseScene = None
 
 
 @dataclass
@@ -106,7 +108,7 @@ class ButtonReleased:
     button: MouseButton
     position: Vector  # Scene position
     # TODO: Add frame position
-    scene: Scene = None
+    scene: BaseScene = None
 
 
 @dataclass
@@ -127,23 +129,23 @@ class StartScene:
         * `signal(new_scene=StartScene(MyScene(player=player))`
         * `signal(new_scene=StartScene, kwargs={"player": player}`
     """
-    new_scene: Union[Scene, Type[Scene]]
+    new_scene: Union[BaseScene, Type[BaseScene]]
     kwargs: Dict[str, Any] = None
-    scene: Scene = None
+    scene: BaseScene = None
 
 
 @dataclass
 class KeyPressed:
     key: KeyCode
     mods: Set[KeyCode]
-    scene: Scene = None
+    scene: BaseScene = None
 
 
 @dataclass
 class KeyReleased:
     key: KeyCode
     mods: Set[KeyCode]
-    scene: Scene = None
+    scene: BaseScene = None
 
 
 @dataclass
@@ -153,7 +155,7 @@ class MouseMotion:
     screen_position: Vector
     delta: Vector
     buttons: Collection[MouseButton]
-    scene: Scene = None
+    scene: BaseScene = None
 
 
 @dataclass
@@ -161,7 +163,7 @@ class PreRender:
     """
     Fired before rendering.
     """
-    scene: Scene = None
+    scene: BaseScene = None
 
 
 @dataclass
@@ -171,7 +173,7 @@ class Quit:
 
     You may also fire this event to stop the engine.
     """
-    scene: Scene = None
+    scene: BaseScene = None
 
 
 @dataclass
@@ -179,7 +181,7 @@ class Render:
     """
     Fired at render.
     """
-    scene: Scene = None
+    scene: BaseScene = None
 
 
 @dataclass
@@ -200,9 +202,9 @@ class ReplaceScene:
         * `signal(new_scene=ReplaceScene(MyScene(player=player))`
         * `signal(new_scene=ReplaceScene, kwargs={"player": player}`
     """
-    new_scene: Union[Scene, Type[Scene]]
+    new_scene: Union[BaseScene, Type[BaseScene]]
     kwargs: Dict[str, Any] = None
-    scene: Scene = None
+    scene: BaseScene = None
 
 
 @dataclass
@@ -215,7 +217,7 @@ class SceneContinued:
 
     From the middle of the event lifetime that begins with SceneStarted.
     """
-    scene: Scene = None
+    scene: BaseScene = None
 
 
 @dataclass
@@ -227,7 +229,7 @@ class SceneStarted:
     scene lifetime, ended with SceneStopped, paused with ScenePaused, and
     resumed from a pause with SceneContinued.
     """
-    scene: Scene = None
+    scene: BaseScene = None
 
 
 @dataclass
@@ -240,7 +242,7 @@ class SceneStopped:
 
     The end of the scene lifetime, started with SceneStarted.
     """
-    scene: Scene = None
+    scene: BaseScene = None
 
 
 @dataclass
@@ -254,7 +256,7 @@ class ScenePaused:
 
     A middle event in the scene lifetime, started with SceneStarted.
     """
-    scene: Scene = None
+    scene: BaseScene = None
 
 
 @dataclass
@@ -268,7 +270,7 @@ class StopScene:
     If there is a paused scene on the stack, a SceneContinued event will be
     fired after the responses to the SceneStopped event.
     """
-    scene: Scene = None
+    scene: BaseScene = None
 
 
 @dataclass
@@ -277,7 +279,7 @@ class Idle:
     An engine plumbing event to pump timing information to subsystems.
     """
     time_delta: float
-    scene: Scene = None
+    scene: BaseScene = None
 
 
 @dataclass
@@ -286,4 +288,4 @@ class Update:
     Fired on game tick
     """
     time_delta: float
-    scene: Scene = None
+    scene: BaseScene = None
