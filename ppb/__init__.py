@@ -1,10 +1,17 @@
 import logging
 from typing import Callable
 
-from ppb.vector import Vector
+from ppb_vector import Vector
 from ppb.engine import GameEngine
 from ppb.scenes import BaseScene
 from ppb.sprites import BaseSprite
+
+__all__ = (
+    # Shortcuts
+    'Vector', 'BaseScene', 'BaseSprite',
+    # Local stuff
+    'run', 'make_engine',
+)
 
 
 def _make_kwargs(setup, title):
