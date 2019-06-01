@@ -107,7 +107,7 @@ class, we're going to add a function and some class attributes.
    class Player(ppb.BaseSprite):
        velocity = ppb.Vector(0, 1)
 
-       def on_update(update_event, signal):
+       def on_update(self, update_event, signal):
            self.position += self.velocity * update_event.time_delta
 
 Now, your sprite should fly off screen.
