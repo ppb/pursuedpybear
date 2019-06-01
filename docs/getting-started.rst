@@ -64,7 +64,7 @@ All Systems::
 You should see a few libraries get put together in your terminal, and when
 you have a prompt again, we're ready to go!
 
-A basic game
+A Basic Game
 ------------
 
 The next step is to make a new file. If you're using an IDE, open your game
@@ -131,3 +131,58 @@ class, we're going to add a function and some class attributes.
            self.position += self.velocity * update_event.time_delta
 
 Now, your sprite should fly off screen.
+
+Taking Control
+--------------
+
+This is cool, but most people expect a game to be something you can interact
+with. Let's use keyboard controls to move our ``Player`` around. First things
+first, we have some new things we want to import:
+
+``main.py``::
+
+   import ppb
+   from ppb import keycodes
+   from ppb.events import KeyPressed, KeyReleased
+
+These are the classes we'll want in the next section to work.
+
+The next step is we'll need to redo out ``Player`` class. Go ahead and delete
+it, and put this in its place:
+
+``main.py``::
+
+   class Player(ppb.BaseSprite):
+       direction = ppb.Vector(0, 0)
+       speed = 4
+
+       def on_update(self, update_event, signal):
+           self.position += self.direction * self.speed * update_event.time_delta
+
+This new ``Player`` moves a certain distance based on time, and a direction
+vector and its own speed. Right now, our direction is not anything (it's the
+zero-vector), but we'll change that in a moment. For now, go ahead and run the
+program a few times, changing the parameters to Vector and the speed and see
+what happens.
+
+Now that you're comfortable with the base mechanics of our new class, let's wire
+up our controls.
+
+First, we're going to define the four arrow keys as our controls. These can be
+set as class variables so we can change them later:
+
+``main.py``::
+
+   class Player(ppb.BaseSprite):
+       direction = ppb.Vector(0, 0)
+       speed = 4
+       left = keycodes.Left
+       right = keycodes.Right
+       up = keycodes.Up
+       down = keycodes.Down
+
+The ``keycodes`` module contains all of the keys on a US based keyboard. If you
+want different controls, you can look at the module documentation to find ones
+you prefer.
+
+Now, under our ``on_update`` function we're going to add two new event handlers.
