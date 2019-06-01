@@ -9,7 +9,9 @@ great resource for that. Consider the
 
 Once you have a working Python install, you're going to want to make a new
 folder. Open your shell (Terminal on Mac, CMD or Powershell on Windows, your
-favorite tool on Linux) and run::
+favorite tool on Linux) and run:
+
+All Systems::
 
    mkdir path/to/my_game
    cd path/to/my_game
@@ -18,7 +20,9 @@ my_game can be any path you'd like, and the name can be anything you'd like.
 We cd into it so we have a place to work.
 
 The next step we're going to do is set up a virtual environment. Python 3.6
-comes with a tool to create them, so in your terminal again::
+comes with a tool to create them, so in your terminal again:
+
+All Systems::
 
    python3 -m venv .venv
 
@@ -31,12 +35,14 @@ Windows::
 
    .venv/bin/activate.bat
 
-Other::
+Linux and Mac::
 
    source .venv/bin/activate
 
 After you've done this, your shell prompt should include ``(.venv)``. We're
-ready for installing ``ppb``::
+ready for installing ``ppb``:
+
+All Systems::
 
    pip install ppb
 
@@ -46,21 +52,32 @@ file. If you're using an IDE, open your game folder in that and make a new file
 called ``main.py``. If you're using a plain text editor, you'll want to open a
 new file and save it as ``main.py``.
 
-In your code file, add this::
+*Note: ``main.py`` is just being used as a convention and this file can be named
+anything. If you change the name you'll want to use the new name in further commands.*
+
+In your code file, add this:
+
+``main.py``::
 
    import ppb
 
 
    ppb.run()
 
-If you run this, you should have a window!
+Save your file, then run it from your shell:
 
-Your window will be 800 pixels wide and 600 pixels tall, and if you click the x
+All Systems::
+
+   python main.py
+
+You should have a window! It will be 800 pixels wide and 600 pixels tall, and if you click the x
 button, it should close.
 
 Now let's add a sprite. Sprites are game objects that can often move and are
 drawn to the screen. Add the following code after your ``import``. Note that
-``ppb.run`` has a new parameter::
+``ppb.run`` has a new parameter.
+
+``main.py``::
 
    import ppb
 
@@ -83,7 +100,9 @@ project folder and call it ``player.png``. Rerun the file to see your character
 on screen!
 
 Our sprite is currently static, but let's change that. Inside your ``Player``
-class, we're going to add a function and some class attributes::
+class, we're going to add a function and some class attributes.
+
+``main.py``::
 
    class Player(ppb.BaseSprite):
        velocity = ppb.Vector(0, 1)
