@@ -62,13 +62,18 @@ All Systems::
    pip install ppb
 
 You should see a few libraries get put together in your terminal, and when
-you have a prompt again, we're ready to go! So the next step is to make a new
-file. If you're using an IDE, open your game folder in that and make a new file
-called ``main.py``. If you're using a plain text editor, you'll want to open a
-new file and save it as ``main.py``.
+you have a prompt again, we're ready to go!
 
-*Note: ``main.py`` is just being used as a convention and this file can be named
-anything. If you change the name you'll want to use the new name in further commands.*
+A basic game
+------------
+
+The next step is to make a new file. If you're using an IDE, open your game
+folder in that and make a new file called ``main.py``. If you're using a plain
+text editor, you'll want to open a new file and save it as ``main.py``.
+
+*Note: ``main.py`` is just being used as a convention and this file can be
+named anything. If you change the name you'll want to use the new name in
+further commands.*
 
 In your code file, add this:
 
@@ -88,7 +93,7 @@ All Systems::
 You should have a window! It will be 800 pixels wide and 600 pixels tall, and if you click the x
 button, it should close.
 
-Now let's add a sprite. Sprites are game objects that can often move and are
+Now let's add a ``Sprite``. Sprites are game objects that can often move and are
 drawn to the screen. Add the following code after your ``import``. Note that
 ``ppb.run`` has a new parameter.
 
