@@ -1,11 +1,26 @@
 Getting Started
 ===================
 
-If you're here, I expect you have worked with Python a little bit, so have a
-working version of Python 3.6 or later on your machine. If not, this isn't a
-great resource for that. Consider the
-`Python.org tutorial<https://docs.python.org/3/tutorial/index.html>` or
-`automate the boring stuff <http://automatetheboringstuff.com/>` to get running.
+This guide will start by getting you a fresh virtual environment and installing
+ppb, then walk you through building a basic game (that will look a lot like our
+sample game targets.py).
+
+Prerequisites
+--------------
+
+Before you get started here, you should know the basics of Python. We use
+classes extensively in ppb, and you should be comfortable with them. Consider
+the `Python.org tutorial<https://docs.python.org/3/tutorial/index.html>` or
+`automate the boring stuff <http://automatetheboringstuff.com/>` to get started.
+
+Additionally, you need to have Python 3.6 or later on your machine. You can
+install this via `Python.org<https://www.python.org/downloads/>` or
+`Anaconda<https://www.anaconda.com/python-3-7-package-build-out-miniconda-release/>`
+whichever is more comfortable for you.
+
+
+Installing ppb
+--------------
 
 Once you have a working Python install, you're going to want to make a new
 folder. Open your shell (Terminal on Mac, CMD or Powershell on Windows, your
@@ -16,7 +31,7 @@ All Systems::
    mkdir path/to/my_game
    cd path/to/my_game
 
-my_game can be any path you'd like, and the name can be anything you'd like.
+``path/to/my_game`` can be any path you'd like, and the name can be anything you'd like.
 We cd into it so we have a place to work.
 
 The next step we're going to do is set up a virtual environment. Python 3.6
