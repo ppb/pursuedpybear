@@ -153,6 +153,7 @@ it, and put this in its place:
 ``main.py``::
 
    class Player(ppb.BaseSprite):
+       position = ppb.Vector(0, -3)
        direction = ppb.Vector(0, 0)
        speed = 4
 
@@ -174,15 +175,87 @@ set as class variables so we can change them later:
 ``main.py``::
 
    class Player(ppb.BaseSprite):
+       position = ppb.Vector(0, -3)
        direction = ppb.Vector(0, 0)
        speed = 4
        left = keycodes.Left
        right = keycodes.Right
-       up = keycodes.Up
-       down = keycodes.Down
 
 The ``keycodes`` module contains all of the keys on a US based keyboard. If you
 want different controls, you can look at the module documentation to find ones
 you prefer.
 
 Now, under our ``on_update`` function we're going to add two new event handlers.
+The snippet below doesn't include the class attributes we just defined, but
+don't worry, just add the new methods at the end of the class, beneath your
+``on_update`` method.
+
+``main.py``::
+
+   class Player(ppb.BaseSprite):
+
+
+       def on_key_pressed(self, key_event: KeyPressed, signal):
+           if key_event.key == self.left:
+               self.direction += ppb.Vector(-1, 0)
+           elif key_event.key == self.right:
+               self.direction += ppb.Vector(1, 0)
+
+       def on_key_released(self, key_event: KeyReleased, signal):
+           if key_event.key == self.left:
+               self.direction += ppb.Vector(1, 0)
+           elif key_event.key == self.right:
+               self.direction += ppb.Vector(-1, 0)
+
+So now, you should be able to move your player back and forth using the arrow
+keys. The next step will to make our player "shoot". I use shoot loosely here,
+your character can be throwing things, or blowing kisses, or anything, the only
+mechanic is we're going to have a new object start at the player, and fly up.
+
+First, we need a new class. We'll put it under ``Player``, but above ``setup``.
+
+
+``main.py``::
+
+   class Projectile(ppb.BaseSprite):
+      size = 0.25
+      direction = ppb.Vector(0, 1)
+      speed = 6
+
+      def on_update(self, update_event, signal):
+          if self.direction.x and self.direction.y:
+              direction = self.direction.normalize()
+          else:
+              direction = self.direction
+          self.position += direction * self.speed * update_event.time_delta
+
+If we wanted to, we could pull out this ``on_update`` function into a mixin that
+we could use with either of these classes, but I'm going to leave that as an
+exercise to the reader. Just like the player, we can put a square image in the
+same folder with the name ``projectile.png`` and it'll get rendered, or we can
+let the engine make a colored square for us.
+
+Let's go back to our player class. We're going to add a new button to the class
+attributes, then update the ``on_key_pressed`` method. Just like before, I've
+removed some code from the sample, you don't need to delete anything her, just
+add the new lines.
+
+``main.py``::
+
+   class Player(ppb.BaseSprite):
+
+       right = keycodes.Right
+       project = keycodes.Space
+
+       def on_key_pressed(self, key_event: KeyPressed, signal):
+           if key_event.key == self.left:
+               self.direction += ppb.Vector(-1, 0)
+           elif key_event.key == self.right:
+               self.direction += ppb.Vector(1, 0)
+           elif key_event.key == self.project:
+               key_event.scene.add(Projectile(position=self.position + ppb.Vector(0, 0.5)))
+
+Now, when you press the space bar, projectiles appear. They only appear once
+each time we press the space bar (unless your keyboard supports key repeats,
+then you'll see it shooting every so often). Now we need something to hit with
+our projectiles!
