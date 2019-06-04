@@ -208,7 +208,12 @@ don't worry, just add the new methods at the end of the class, beneath your
                self.direction += ppb.Vector(-1, 0)
 
 So now, you should be able to move your player back and forth using the arrow
-keys. The next step will to make our player "shoot". I use shoot loosely here,
+keys.
+
+Reaching Out
+------------
+
+The next step will to make our player "shoot". I use shoot loosely here,
 your character can be throwing things, or blowing kisses, or anything, the only
 mechanic is we're going to have a new object start at the player, and fly up.
 
