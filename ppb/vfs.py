@@ -1,11 +1,26 @@
 """
 Handles opening files from the Python "VFS".
 """
+import logging
+from pathlib import Path
+import sys
 try:
     import importlib.resources as impres
 except ImportError:
     # Backport
     import importlib_resources as impres
+
+logger = logging.getLogger(__name__)
+
+
+def _main_path():
+    main = sys.modules['__main__']
+    mainpath = getattr(main, '__file__')
+    if mainpath:
+        mainpath = Path(mainpath)
+        return mainpath.resolve().parent
+    else:
+        return Path.cwd()
 
 
 def _splitpath(filepath):
@@ -29,10 +44,21 @@ def open(filepath, *, encoding=None, errors='strict'):
     """
     modulename, filename = _splitpath(filepath)
 
-    if encoding is None:
-        return impres.open_binary(modulename, filename), filename
+    logger.debug("Opening %s (%s, %s)", filepath, modulename, filename)
+
+    if modulename == '__main__':
+        # __main__ never has __spec__, so it can't resolve
+        dirpath = _main_path()
+        filepath = dirpath / filename
+        if encoding is None:
+            return filepath.open('rb'), filename
+        else:
+            return filepath.open('rt', encoding=encoding, errors=errors), filename
     else:
-        return impres.open_text(modulename, filename, encoding, errors), filename
+        if encoding is None:
+            return impres.open_binary(modulename, filename), filename
+        else:
+            return impres.open_text(modulename, filename, encoding, errors), filename
 
 
 def exists(filepath):
@@ -40,12 +66,22 @@ def exists(filepath):
     Checks if the given resource exists and is a resources.
     """
     modulename, filename = _splitpath(filepath)
-    return impres.is_resource(modulename, filepath)
+    if modulename == '__main__':
+        # __main__ never has __spec__, so it can't resolve
+        dirpath = _main_path()
+        return (dirpath / filename).is_file()
+    else:
+        return impres.is_resource(modulename, filepath)
 
 
 def iterdir(modulepath):
     modname = modulepath.replace('/', '.')
-    yield from impres.contents(modname)
+    if modname == '__main__':
+        dirpath = _main_path()
+        for item in dirpath.iterdir():
+            yield item.name
+    else:
+        yield from impres.contents(modname)
 
 
 def walk(modulepath):
@@ -56,5 +92,6 @@ def walk(modulepath):
         fullname = f"{modulepath}/{name}"
         if exists(fullname):
             yield fullname
-        else:
+        elif modulepath != '__main__':
+            # Don't recurse from __main__, they should just be regular packages
             yield from walk(fullname)
