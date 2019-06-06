@@ -1,3 +1,4 @@
 pygame
 ppb-vector ~= 1.0a2
 dataclasses; python_version < "3.7"
+importlib_resources; python_version < "3.7"

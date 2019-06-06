@@ -93,5 +93,5 @@ def walk(modulepath):
         if exists(fullname):
             yield fullname
         elif modulepath != '__main__':
-            # Don't recurse from __main__, they should just be regular packages
+            # Don't recurse from __main__, that would be all installed packages.
             yield from walk(fullname)
