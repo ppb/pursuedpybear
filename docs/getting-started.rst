@@ -287,3 +287,23 @@ the ``Target``, we remove the ``Target`` and the ``Projectile``. We do this by
 accessing the scene that exists on all events in ppb, and using its ``get``
 method to find the projectiles. We also use a simplified circle collision, but
 other versions of collision can be more accurate, but left up to your research.
+
+Next, let's instantiate a few of our targets to test this.
+
+``main.py``::
+
+   def setup(scene):
+       scene.add(Player())
+
+       for x in range(-4, 5, 2):
+           scene.add(Target(position=ppb.Vector(x, 3))
+
+Now you can run your file and see what happens. You should be able to move back
+and forth near the bottom of the screen, and shoot toward the top, where your
+targets will disappear when hit by a bullet.
+
+Congratulations on making your first game.
+
+For next steps, you should explore other :doc:`tutorials </tutorials/index>`.
+Similarly, you can discover new events in the
+:doc:`event documentation</reference/events>`.
