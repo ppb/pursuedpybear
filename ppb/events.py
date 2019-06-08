@@ -11,7 +11,7 @@ from typing import Union
 from ppb.abc import Scene
 from ppb.buttons import MouseButton
 from ppb.keycodes import KeyCode
-from ppb.vector import Vector
+from ppb import Vector
 
 __all__ = (
     'StartScene',

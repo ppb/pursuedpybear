@@ -1,14 +1,12 @@
 from inspect import getfile
-from numbers import Number
-from os.path import realpath
 from pathlib import Path
-from typing import Dict, Iterable, Sequence
 from typing import Union
 
 from ppb import Vector
 from ppb.events import EventMixin
+from ppb.utils import FauxFloat
 
-import ppb_vector.vector2
+import ppb_vector
 
 
 TOP = "top"
@@ -20,7 +18,7 @@ error_message = "'{klass}' object does not have attribute '{attribute}'"
 side_attribute_error_message = error_message.format
 
 
-class Side:
+class Side(FauxFloat):
     sides = {
         LEFT: ('x', -1),
         RIGHT: ('x', 1),
@@ -36,51 +34,20 @@ class Side:
         return f"Side({self.parent!r}, {self.side!r})"
 
     def __str__(self):
-        return str(self.value)
-
-    def __add__(self, other):
-        return self.value + other
-
-    def __radd__(self, other):
-        return other + self.value
-
-    def __sub__(self, other):
-        return self.value - other
-
-    def __rsub__(self, other):
-        return other - self.value
-
-    def __eq__(self, other):
-        return self.value == other
-
-    def __le__(self, other):
-        return self.value <= other
-
-    def __ge__(self, other):
-        return self.value >= other
-
-    def __ne__(self, other):
-        return self.value != other
-
-    def __gt__(self, other):
-        return self.value > other
-
-    def __lt__(self, other):
-        return self.value < other
+        return str(float(self))
 
     def _lookup_side(self, side):
         dimension, sign = self.sides[side]
         return dimension, sign * self.parent._offset_value
 
-    @property
-    def value(self):
+    def __float__(self):
         dimension, offset = self._lookup_side(self.side)
         return self.parent.position[dimension] + offset
 
     @property
     def top(self):
         self._attribute_gate(TOP, [TOP, BOTTOM])
-        return Vector(self.value, self.parent.top.value)
+        return Vector(float(self), float(self.parent.top))
 
     @top.setter
     def top(self, value):
@@ -90,7 +57,7 @@ class Side:
     @property
     def bottom(self):
         self._attribute_gate(BOTTOM, [TOP, BOTTOM])
-        return Vector(self.value, self.parent.bottom.value)
+        return Vector(float(self), float(self.parent.bottom))
 
     @bottom.setter
     def bottom(self, value):
@@ -100,7 +67,7 @@ class Side:
     @property
     def left(self):
         self._attribute_gate(LEFT, [LEFT, RIGHT])
-        return Vector(self.parent.left.value, self.value)
+        return Vector(float(self.parent.left), float(self))
 
     @left.setter
     def left(self, value):
@@ -110,7 +77,7 @@ class Side:
     @property
     def right(self):
         self._attribute_gate(RIGHT, [LEFT, RIGHT])
-        return Vector(self.parent.right.value, self.value)
+        return Vector(float(self.parent.right), float(self))
 
     @right.setter
     def right(self, value):
@@ -120,9 +87,9 @@ class Side:
     @property
     def center(self):
         if self.side in (TOP, BOTTOM):
-            return Vector(self.parent.center.x, self.value)
+            return Vector(self.parent.center.x, float(self))
         else:
-            return Vector(self.value, self.parent.center.y)
+            return Vector(float(self), self.parent.center.y)
 
     @center.setter
     def center(self, value):
@@ -250,7 +217,7 @@ class BaseSprite(EventMixin, Rotatable):
         return self.position
 
     @center.setter
-    def center(self, value: ppb_vector.vector2.VectorLike):
+    def center(self, value: ppb_vector.VectorLike):
         self.position = Vector(value)
 
     @property
@@ -296,5 +263,9 @@ class BaseSprite(EventMixin, Rotatable):
 
     def __resource_path__(self):
         if self.resource_path is None:
-            self.resource_path = Path(realpath(getfile(type(self)))).absolute().parent
+            try:
+                file_path = Path(getfile(type(self))).resolve().parent
+            except TypeError:
+                file_path = Path.cwd().resolve()
+            self.resource_path = file_path
         return self.resource_path
