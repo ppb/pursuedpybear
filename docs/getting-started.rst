@@ -262,5 +262,28 @@ add the new lines.
 
 Now, when you press the space bar, projectiles appear. They only appear once
 each time we press the space bar (unless your keyboard supports key repeats,
-then you'll see it shooting every so often). Now we need something to hit with
+then you'll see it shooting every so often). Next we need something to hit with
 our projectiles!
+
+Something to Target
+-------------------
+
+We're going to start with the class like we did before. Below your Projectile
+class, add
+
+``main.py``::
+
+   class Target(ppb.BaseSprite):
+
+       def on_update(self, update_event, signal):
+           for p in update_event.scene.get(kind=Projectile):
+               if (p.position - self.position).length <= self.size:
+                   update_event.scene.remove(self)
+                   update_event.scene.remove(p)
+                   break
+
+This code will go through all of the ``Projectiles`` available, and if one is inside
+the ``Target``, we remove the ``Target`` and the ``Projectile``. We do this by
+accessing the scene that exists on all events in ppb, and using its ``get``
+method to find the projectiles. We also use a simplified circle collision, but
+other versions of collision can be more accurate, but left up to your research.

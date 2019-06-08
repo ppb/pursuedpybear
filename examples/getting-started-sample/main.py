@@ -46,6 +46,16 @@ class Projectile(ppb.BaseSprite):
         self.position += direction * self.speed * update_event.time_delta
 
 
+class Target(ppb.BaseSprite):
+
+    def on_update(self, update_event, signal):
+        for p in update_event.scene.get(kind=Projectile):
+            if (p.position - self.position).length <= self.size:
+                update_event.scene.remove(self)
+                update_event.scene.remove(p)
+                break
+
+
 def setup(scene):
     scene.add(Player())
 
