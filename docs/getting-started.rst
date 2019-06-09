@@ -71,7 +71,7 @@ The next step is to make a new file. If you're using an IDE, open your game
 folder in that and make a new file called ``main.py``. If you're using a plain
 text editor, you'll want to open a new file and save it as ``main.py``.
 
-*Note: ``main.py`` is just being used as a convention and this file can be
+*Note:* ``main.py`` *is just being used as a convention and this file can be
 named anything. If you change the name you'll want to use the new name in
 further commands.*
 
