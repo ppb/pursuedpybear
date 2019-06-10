@@ -261,8 +261,7 @@ add the new lines.
                key_event.scene.add(Projectile(position=self.position + ppb.Vector(0, 0.5)))
 
 Now, when you press the space bar, projectiles appear. They only appear once
-each time we press the space bar (unless your keyboard supports key repeats,
-then you'll see it shooting every so often). Next we need something to hit with
+each time we press the space bar. Next we need something to hit with
 our projectiles!
 
 Something to Target
