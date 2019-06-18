@@ -26,7 +26,7 @@ _ellipsis = type(...)
 class GameEngine(EventMixin, LoggingMixin):
 
     def __init__(self, first_scene: Type, *,
-                 systems=(Renderer, Updater, PygameEventPoller),
+                 basic_systems=(Renderer, Updater, PygameEventPoller),
                  scene_kwargs=None, **kwargs):
 
         super(GameEngine, self).__init__()
@@ -45,7 +45,7 @@ class GameEngine(EventMixin, LoggingMixin):
         self._last_idle_time = None
 
         # Systems
-        self.systems_classes = systems
+        self.systems_classes = basic_systems
         self.systems = []
         self.exit_stack = ExitStack()
 
