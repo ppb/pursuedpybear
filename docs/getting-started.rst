@@ -2,8 +2,8 @@ Getting Started
 ===================
 
 This guide will start by getting you a fresh virtual environment and installing
-ppb, then walk you through building a basic game (that will look a lot like our
-sample game targets.py).
+ppb.  It will then walk you through building a basic game that will look a lot like our
+sample game targets.py.
 
 Prerequisites
 --------------
@@ -28,7 +28,7 @@ favorite tool on Linux) and run:
 
 All Systems::
 
-   mkdir path/to/my_game
+   mkdir -p path/to/my_game
    cd path/to/my_game
 
 ``path/to/my_game`` can be any path you'd like, and the name can be anything you'd like.
@@ -91,7 +91,7 @@ All Systems::
    python main.py
 
 You should have a window! It will be 800 pixels wide and 600 pixels tall, and if you click the x
-button, it should close.
+button (or the red dot on MacOS), it should close.
 
 Now let's add a ``Sprite``. Sprites are game objects that can often move and are
 drawn to the screen. Add the following code after your ``import``. Note that
@@ -130,7 +130,7 @@ class, we're going to add a function and some class attributes.
        def on_update(self, update_event, signal):
            self.position += self.velocity * update_event.time_delta
 
-Now, your sprite should fly off screen.
+Now, your sprite should fly up off the screen.
 
 Taking Control
 --------------
@@ -295,7 +295,7 @@ Next, let's instantiate a few of our targets to test this.
        scene.add(Player())
 
        for x in range(-4, 5, 2):
-           scene.add(Target(position=ppb.Vector(x, 3))
+           scene.add(Target(position=ppb.Vector(x, 3)))
 
 Now you can run your file and see what happens. You should be able to move back
 and forth near the bottom of the screen, and shoot toward the top, where your
