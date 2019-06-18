@@ -228,7 +228,7 @@ First, we need a new class. We'll put it under ``Player``, but above ``setup``.
       speed = 6
 
       def on_update(self, update_event, signal):
-          if self.direction.x and self.direction.y:
+          if self.direction:
               direction = self.direction.normalize()
           else:
               direction = self.direction

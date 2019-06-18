@@ -39,7 +39,7 @@ class Projectile(ppb.BaseSprite):
     speed = 6
 
     def on_update(self, update_event, signal):
-        if self.direction.x and self.direction.y:
+        if self.direction:
             direction = self.direction.normalize()
         else:
             direction = self.direction
