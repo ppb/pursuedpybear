@@ -130,7 +130,7 @@ class, we're going to add a function and some class attributes.
        def on_update(self, update_event, signal):
            self.position += self.velocity * update_event.time_delta
 
-Now, your sprite should fall down and off the screen.
+Now, your sprite should fly up off the screen.
 
 Taking Control
 --------------
