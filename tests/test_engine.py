@@ -289,5 +289,5 @@ def test_idle():
             was_called = True
             signal(events.Quit())
 
-    with GameEngine(BaseScene, basic_systems=[TestSystem, Failer], fail=lambda x: False, message="Can only time out.") as ge:
+    with GameEngine(BaseScene, basic_systems=[Failer], systems=[TestSystem], fail=lambda x: False, message="Can only time out.") as ge:
         ge.run()
