@@ -163,11 +163,13 @@ it, and put this in its place:
 This new ``Player`` moves a certain distance based on time, and a direction
 vector and its own speed. Right now, our direction is not anything (it's the
 zero-vector), but we'll change that in a moment. For now, go ahead and run the
-program a few times, changing the parameters to Vector and the speed and see
-what happens.
+program a few times, changing the parameters to the ``direction`` ``Vector`` and
+the speed and see what happens. You can also modify ``position`` to see where
+you like your ship.
 
-Now that you're comfortable with the base mechanics of our new class, let's wire
-up our controls.
+Now that you're comfortable with the base mechanics of our new class, revert
+your changes to ``position``, ``speed``, and ``direction``. Then we can wire up
+our controls.
 
 First, we're going to define the four arrow keys as our controls. These can be
 set as class variables so we can change them later:
