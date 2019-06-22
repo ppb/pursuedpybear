@@ -242,22 +242,24 @@ let the engine make a colored square for us.
 
 Let's go back to our player class. We're going to add a new button to the class
 attributes, then update the ``on_key_pressed`` method. Just like before, I've
-removed some code from the sample, you don't need to delete anything her, just
-add the new lines.
+removed some code from the sample, you don't need to delete anything here, just
+add the new lines: The class attributes ``right`` and ``projector`` will go
+after the line about ``speed`` and the ``new elif`` will go inside your
+``on_key_pressed`` handler after the previous ``elif``.
 
 ``main.py``::
 
    class Player(ppb.BaseSprite):
 
        right = keycodes.Right
-       project = keycodes.Space
+       projector = keycodes.Space
 
        def on_key_pressed(self, key_event: KeyPressed, signal):
            if key_event.key == self.left:
                self.direction += ppb.Vector(-1, 0)
            elif key_event.key == self.right:
                self.direction += ppb.Vector(1, 0)
-           elif key_event.key == self.project:
+           elif key_event.key == self.projector:
                key_event.scene.add(Projectile(position=self.position + ppb.Vector(0, 0.5)))
 
 Now, when you press the space bar, projectiles appear. They only appear once
