@@ -49,6 +49,7 @@ class Bullet(MoverMixin, ppb.BaseSprite):
 
     def on_update(self, update, signal):
         super().on_update(update, signal)  # Execute movement
+
         scene = update.scene
         
         if self.position.y > scene.main_camera.frame_top:
@@ -81,5 +82,5 @@ class GameScene(ppb.BaseScene):
 if __name__ == "__main__":
     ppb.run(
         starting_scene=GameScene,
-        log_level=logging.ERROR,
+        log_level=logging.DEBUG,
     )
