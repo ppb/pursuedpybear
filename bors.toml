@@ -6,6 +6,7 @@ status = [
   "Windows python:3.7-windowsservercore-1809",
   "macOS PYTHON:3.6.8",
   "macOS PYTHON:3.7.2",
+  "pep517",
 ]
 
 delete_merged_branches = true
