@@ -20,7 +20,7 @@ def test_twophase():
             super().on_commit(event, signal)
             events.append(type(event))
 
-    with GameEngine(TestScene, systems=[TwoPhaseSystem, Quitter]) as engine:
+    with GameEngine(TestScene, basic_systems=[TwoPhaseSystem, Quitter]) as engine:
         engine.signal(Update(time_delta=0.1))
         engine.run()
 
