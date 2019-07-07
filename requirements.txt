@@ -1,3 +1,3 @@
-pygame
+pygame<2
 ppb-vector ~= 1.0a2
 dataclasses; python_version < "3.7"
