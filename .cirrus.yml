@@ -20,7 +20,7 @@ task:
     matrix:
       - IMAGE: python:3.6-slim
       - IMAGE: python:3.7-slim
-      - IMAGE: python:3.8-rc-slim
+      # - IMAGE: python:3.8-rc-slim
       - IMAGE: pypy:3.6-slim
 
   container:
