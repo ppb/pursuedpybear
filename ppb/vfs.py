@@ -30,6 +30,8 @@ def _main_path():
 
 
 def _splitpath(filepath):
+    if filepath.startswith('/'):
+        filepath = filepath[1:]
     if '/' in filepath:
         slashed, filename = filepath.rsplit('/', 1)
         modulename = slashed.replace('/', '.')

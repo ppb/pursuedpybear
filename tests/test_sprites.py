@@ -326,3 +326,18 @@ def test_rotatable_base_sprite():
 
     test_sprite.rotate(1)
     assert test_sprite.rotation == 1
+
+
+def test_sprite_in_main():
+    """
+    Test that Sprite.__resource_path__ returns a meaningful value inside
+    REPLs where __main__ doesn't have a file.
+    """
+    class TestSprite(BaseSprite):
+        pass
+
+    s = TestSprite()
+
+    with patch("ppb.sprites.getfile", side_effect=TypeError):
+        # This patch simulates what happens when TestSprite was defined in the REPL
+        assert s.__image__()  # We don't care what it is, as long as it's something

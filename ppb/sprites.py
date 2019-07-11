@@ -2,6 +2,7 @@ from inspect import getfile
 from pathlib import Path
 from typing import Union
 
+import ppb
 from ppb import Vector
 from ppb.events import EventMixin
 from ppb.utils import FauxFloat
@@ -258,5 +259,17 @@ class BaseSprite(EventMixin, Rotatable):
 
     def __image__(self):
         if self.image is None:
-            self.image = f"{type(self).__name__.lower()}.png"
+            klass = type(self)
+            prefix = Path(klass.__module__.replace('.', '/'))
+            try:
+                klassfile = getfile(klass)
+            except TypeError:
+                prefix = Path('.')
+            else:
+                if Path(klassfile).name != '__init__.py':
+                    prefix = prefix.parent
+            if prefix == Path('.'):
+                self.image = ppb.Image(f"{klass.__name__.lower()}.png")
+            else:
+                self.image = ppb.Image(f"{prefix!s}/{klass.__name__.lower()}.png")
         return self.image
