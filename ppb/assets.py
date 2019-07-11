@@ -18,9 +18,9 @@ class Asset:
     Meant to be subclassed.
     """
     def __init__(self, name):
-        self.name = name
+        self.name = str(name)
         self._finished = threading.Event()
-        _hint(name, self._finished_background)
+        _hint(self.name, self._finished_background)
 
     def _finished_background(self, fut):
         # Internal
