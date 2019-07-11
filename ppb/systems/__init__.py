@@ -1,11 +1,13 @@
 import random
 import time
+import logging
 
 import pygame
 
 import ppb.events as events
 import ppb.flags as flags
-import ppb.vfs as vfs
+
+logger = logging.getLogger(__name__)
 
 
 default_resolution = 800, 600
@@ -24,6 +26,22 @@ class System(events.EventMixin):
 
 
 from ppb.systems.pg import EventPoller as PygameEventPoller  # To not break old imports.
+from ppb.assets import Asset
+import io
+
+
+class Image(Asset):
+    def background_parse(self, data):
+        return pygame.image.load(io.BytesIO(data), self.name).convert_alpha()
+
+    def file_missing(self):
+        resource = pygame.Surface((70, 70))
+        random.seed(str(self.name))
+        r = random.randint(65, 255)
+        g = random.randint(65, 255)
+        b = random.randint(65, 255)
+        resource.fill((r, g, b))
+        return resource
 
 
 class Renderer(System):
@@ -80,14 +98,14 @@ class Renderer(System):
         self.window.fill(scene.background_color)
 
     def prepare_resource(self, game_object):
-        image_name = game_object.__image__()
-        if image_name is flags.DoNotRender:
+        image = game_object.__image__()
+        if image is flags.DoNotRender:
             return None
-        image_name = str(image_name)
-        if image_name not in self.resources:
-            self.register_renderable(game_object)
+        if isinstance(image, str):
+            logger.warn(f"Using string resources is deprecated, use ppb.Image instead. Got {image!r}")
+            image = Image(image)
 
-        source_image = self.resources[image_name]
+        source_image = image.load()
         if game_object.size <= 0:
             return None
         resized_image = self.resize_image(source_image, game_object.size)
@@ -98,26 +116,6 @@ class Renderer(System):
         rect = resource.get_rect()
         rect.center = camera.translate_to_viewport(game_object.position)
         return rect
-
-    def register(self, resource_path, name=None):
-        try:
-            fileobj, filename = vfs.open(str(resource_path))
-            resource = pygame.image.load(fileobj, filename).convert_alpha(self.window)
-        except (FileNotFoundError, pygame.error):
-            # Image didn't load, so either the name is bad or the file doesn't
-            # exist. Instead, we'll render a square with a random color.
-            resource = pygame.Surface((70, 70))
-            random.seed(str(resource_path))
-            r = random.randint(65, 255)
-            g = random.randint(65, 255)
-            b = random.randint(65, 255)
-            resource.fill((r, g, b))
-        name = name or resource_path
-        self.resources[name] = resource
-
-    def register_renderable(self, renderable):
-        image_name = str(renderable.__image__())
-        self.register(image_name, image_name)
 
     def resize_image(self, image, game_unit_size):
         # TODO: Pygame specific code To be abstracted somehow.
