@@ -260,12 +260,3 @@ class BaseSprite(EventMixin, Rotatable):
         if self.image is None:
             self.image = f"{type(self).__name__.lower()}.png"
         return self.image
-
-    def __resource_path__(self):
-        if self.resource_path is None:
-            try:
-                file_path = Path(getfile(type(self))).resolve().parent
-            except TypeError:
-                file_path = Path.cwd().resolve()
-            self.resource_path = file_path
-        return self.resource_path

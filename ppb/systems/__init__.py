@@ -5,6 +5,8 @@ import pygame
 
 import ppb.events as events
 import ppb.flags as flags
+import ppb.vfs as vfs
+
 
 default_resolution = 800, 600
 
@@ -99,8 +101,9 @@ class Renderer(System):
 
     def register(self, resource_path, name=None):
         try:
-            resource = pygame.image.load(str(resource_path)).convert_alpha(self.window)
-        except pygame.error:
+            fileobj, filename = vfs.open(str(resource_path))
+            resource = pygame.image.load(fileobj, filename).convert_alpha(self.window)
+        except (FileNotFoundError, pygame.error):
             # Image didn't load, so either the name is bad or the file doesn't
             # exist. Instead, we'll render a square with a random color.
             resource = pygame.Surface((70, 70))
@@ -114,14 +117,13 @@ class Renderer(System):
 
     def register_renderable(self, renderable):
         image_name = str(renderable.__image__())
-        source_path = renderable.__resource_path__()
-        self.register(source_path / image_name, image_name)
+        self.register(image_name, image_name)
 
     def resize_image(self, image, game_unit_size):
         # TODO: Pygame specific code To be abstracted somehow.
         key = (image, game_unit_size)
         resized_image = self.old_resized_images.get(key)
-        if  resized_image is None:
+        if resized_image is None:
             height = image.get_height()
             width = image.get_width()
             target_resolution = self.target_resolution(width,
