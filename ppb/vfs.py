@@ -1,5 +1,9 @@
 """
 Handles opening files from the Python "VFS".
+
+The VFS is the same file space that Python modules are imported from, so the
+module spam.eggs comes from spam/eggs.py, and you can load spam/foo.png that
+lives next to it.
 """
 import logging
 from pathlib import Path
@@ -7,7 +11,7 @@ import sys
 try:
     import importlib.resources as impres
 except ImportError:
-    # Backport
+    # Backport for Python 3.6
     import importlib_resources as impres
 
 logger = logging.getLogger(__name__)
@@ -20,6 +24,8 @@ def _main_path():
         mainpath = Path(mainpath)
         return mainpath.resolve().parent
     else:
+        # This primarily happens in REPL-ish situations, where __main__ isn't a
+        # script but a purely virtual namespace.
         return Path.cwd()
 
 
