@@ -14,18 +14,19 @@ __all__ = (
 )
 
 
-def _make_kwargs(setup, title):
+def _make_kwargs(setup, title, engine_opts):
     kwargs = {
         "resolution": (800, 600),
         "scene_kwargs": {
             "set_up": setup,
         },
         "window_title": title,
-
+        **engine_opts
     }
     return kwargs
 
-def run(setup: Callable[[BaseScene], None]=None, *, log_level=logging.WARNING,
+
+def run(setup: Callable[[BaseScene], None] = None, *, log_level=logging.WARNING,
         starting_scene=BaseScene, title="PursuedPyBear"):
     """
     Run a small game.
@@ -45,6 +46,7 @@ def run(setup: Callable[[BaseScene], None]=None, *, log_level=logging.WARNING,
         eng.run()
 
 
-def make_engine(setup: Callable[[BaseScene], None]=None, *,
-                starting_scene=BaseScene, title="PursedPyBear"):
-    return GameEngine(starting_scene, **_make_kwargs(setup, title))
+def make_engine(setup: Callable[[BaseScene], None] = None, *,
+                starting_scene=BaseScene, title="PursedPyBear",
+                **engine_opts):
+    return GameEngine(starting_scene, **_make_kwargs(setup, title, engine_opts))
