@@ -17,6 +17,7 @@ from ppb.events import Quit
 from ppb.systems import PygameEventPoller
 from ppb.systems import Renderer
 from ppb.systems import Updater
+from ppb.assets import AssetLoadingSystem
 from ppb.utils import LoggingMixin
 
 
@@ -26,7 +27,7 @@ _ellipsis = type(...)
 class GameEngine(EventMixin, LoggingMixin):
 
     def __init__(self, first_scene: Type, *,
-                 basic_systems=(Renderer, Updater, PygameEventPoller),
+                 basic_systems=(Renderer, Updater, PygameEventPoller, AssetLoadingSystem),
                  systems=(), scene_kwargs=None, **kwargs):
 
         super(GameEngine, self).__init__()

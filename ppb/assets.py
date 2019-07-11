@@ -6,10 +6,9 @@ import concurrent.futures
 import threading
 
 import ppb.vfs as vfs
+from ppb.systems import System
 
-
-_executor = concurrent.futures.ThreadPoolExecutor()
-_resources = {}  # maps resource names to futures
+__all__ = 'Asset', 'AssetLoadingSystem',
 
 
 class Asset:
@@ -21,18 +20,27 @@ class Asset:
     def __init__(self, name):
         self.name = name
         self._finished = threading.Event()
-        hint(name, self._finished_background)
+        _hint(name, self._finished_background)
 
     def _finished_background(self, fut):
         # Internal
         # Called in background thread
         try:
-            raw = fut.result()
-        except Exception:
-            # Don't do anything here, forward it to the main thread instead
-            pass
-        else:
-            self._data = self.background_parse(raw)
+            try:
+                raw = fut.result()
+            except FileNotFoundError:
+                if hasattr(self, 'file_missing'):
+                    self._data = self.file_missing()
+                else:
+                    raise
+            else:
+                self._data = self.background_parse(raw)
+        except Exception as exc:
+            # Save unhandled exceptions to be raised in the main thread
+            self._raise_error = exc
+        finally:
+            # This always needs to happen so the main thread isn't just blocked
+            self._finished.set()
 
     def background_parse(self, data):
         """
@@ -57,27 +65,52 @@ class Asset:
         Will block if not finished.
         """
         self._finished.wait(timeout)
-        return self._data
+        if hasattr(self, '_raise_error'):
+            raise self._raise_error
+        else:
+            return self._data
 
 
-def _load(filename):
-    with vfs.open(filename) as file:
-        return file.read()
+class AssetLoadingSystem(System):
+    def __init__(self, **_):
+        self._executor = concurrent.futures.ThreadPoolExecutor()
+        self._queue = {}  # maps names to futures
+
+    def __enter__(self):
+        # 1. Register ourselves as the hint provider
+        global _hint, _backlog
+        assert _hint is _default_hint
+        _hint = self._hint
+
+        # 2. Grab-n-clear the backlog (atomically?)
+        queue, _backlog = _backlog, []
+
+        # 3. Process the backlog
+        for filename, callback in queue:
+            self._hint(filename, callback)
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        # Reset the hint provider
+        global _hint
+        _hint = _default_hint
+
+    def _hint(self, filename, callback=None):
+        if filename not in self._queue:
+            self._queue[filename] = self._executor.submit(self._load, filename)
+        if callback is not None:
+            self._queue[filename].add_done_callback(callback)
+
+    @staticmethod
+    def _load(filename):
+        with vfs.open(filename) as file:
+            return file.read()
 
 
-def hint(filename, callback=None):
-    """
-    Hint that a resource will probably be needed
-    """
-    _resources[filename] = _executor.submit(_load, filename)
-    if callback is not None:
-        _resources[filename].add_done_callback(callback)
+_backlog = []
 
 
-def load(filename):
-    """
-    Get the contents of a resource
-    """
-    if filename not in _resources:
-        hint(filename)
-    return _resources[filename].result()
+def _default_hint(filename, callback=None):
+    _backlog.append((filename, callback))
+
+
+_hint = _default_hint
