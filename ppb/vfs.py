@@ -22,7 +22,7 @@ def _main_path():
     mainpath = getattr(main, '__file__')
     if mainpath:
         mainpath = Path(mainpath)
-        return mainpath.resolve().parent
+        return mainpath.absolute().parent
     else:
         # This primarily happens in REPL-ish situations, where __main__ isn't a
         # script but a purely virtual namespace.
