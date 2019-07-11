@@ -57,15 +57,15 @@ def open(filepath, *, encoding=None, errors='strict'):
         dirpath = _main_path()
         filepath = dirpath / filename
         if encoding is None:
-            return filepath.open('rb'), filename
+            return filepath.open('rb')
         else:
-            return filepath.open('rt', encoding=encoding, errors=errors), filename
+            return filepath.open('rt', encoding=encoding, errors=errors)
     else:
         try:
             if encoding is None:
-                return impres.open_binary(modulename, filename), filename
+                return impres.open_binary(modulename, filename)
             else:
-                return impres.open_text(modulename, filename, encoding, errors), filename
+                return impres.open_text(modulename, filename, encoding, errors)
         except FileNotFoundError:
             logger.warning("Did you forget __init__.py?")
             raise
