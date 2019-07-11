@@ -68,9 +68,17 @@ def open(filepath, *, encoding=None, errors='strict'):
                 return impres.open_binary(modulename, filename)
             else:
                 return impres.open_text(modulename, filename, encoding, errors)
-        except FileNotFoundError:
-            logger.warning("Did you forget __init__.py?")
+        except FileNotFoundError as exc:
+            # Package is importable, but either:
+            # * The file doesn't exist under it
+            # * The package is a namespace, and has no single location
+            if 'Package' in str(exc):  # "Package has no location ..."
+                logger.warning("Did you forget __init__.py?")
             raise
+        except ModuleNotFoundError:
+            # The package is not importable
+            # (This has to come after above to prevent multiple handlers)
+            raise FileNotFoundError(f"Directory for {filepath} not found")
 
 
 def exists(filepath):
