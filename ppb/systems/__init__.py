@@ -48,7 +48,6 @@ class Renderer(System):
 
     def __init__(self, resolution=default_resolution, window_title: str="PursuedPyBear", target_frame_rate: int=30, **kwargs):
         self.resolution = resolution
-        self.resources = {}
         self.window = None
         self.window_title = window_title
         self.pixel_ratio = None
