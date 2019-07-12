@@ -1,0 +1,91 @@
+Version 0.7.0
+
+Changed:
+* Only accept stable versions of ppb-vector
+
+Version 0.6.0
+
+New:
+* Added docs (ppb.readthedocs.io)
+* Sprite rotation
+* Idle event
+* Animation feature
+* Window Title added to run
+* ppb.make_engine added
+* ppb.loop_once
+* Scene.get now returns a sprite if it's super class is used for kind.
+
+Changed:
+* Do not support Python 3.8 or Pygame 2
+* Expect ppb-vector ~1
+* Systems API
+* Sides now act like floats for math
+* GameEngine accepts systems and basic systems
+* Flipped basis for Y axis (Y is now up)
+* Simplified the rendering event flow
+* Size 0 sprites now do not render instead of throwing an error.
+* You can now define sprites in the REPL
+* Camera objects fix their aspect ration before PreRender
+
+Version 0.5.1
+
+Changed:
+* Pin ppb-vector to <1
+
+Version: 0.5.0
+
+New:
+* MouseButton events
+* Key events
+* Add a title to the game window
+* Sprite scaling based on game unit size
+* Keycodes flags
+* New scene change mechanism that uses the event system
+
+Changed:
+* Scene defaults are now class attributes
+* Most Sprite defaults are now class attributes
+* Flags can now be type hinted properly
+* Scenes no longer infinitely respawn their child scenes if running is
+  True.
+* Fixed an issue with the frame being different dimensions to the
+  viewport.
+* Fixed a bug in the Camera.point_in_viewport function
+* Default pixel ratio is now 64:1 (64 pixels to 1 game unit)
+* New (better) run function
+* Other type hinting fixes
+
+Removed:
+* bb attribute removed from sprites
+
+0.4.1
+
+Changed:
+* System package actually comes with the package.
+
+0.4.0
+
+New:
+
+* Generic Subsystem API added
+
+Changed:
+
+* BaseSprite now renders
+
+0.3.0
+
+New:
+
+* BaseSprite added (positional and bounding box only)
+
+Changed:
+
+* Scene.change now returns True to continue running
+* Scene.change can return None for next_scene
+* Sprite.dirty no longer needs to be set by hand
+* Flickering on windows resolved
+
+0.2.0
+
+Complete overhaul, consider the start of the project.
