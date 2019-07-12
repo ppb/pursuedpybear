@@ -3,12 +3,15 @@ The asset loading system.
 """
 
 import concurrent.futures
+import logging
 import threading
 
 import ppb.vfs as vfs
 from ppb.systems import System
 
 __all__ = 'Asset', 'AssetLoadingSystem',
+
+logger = logging.getLogger(__name__)
 
 
 class Asset:
@@ -30,6 +33,7 @@ class Asset:
                 raw = fut.result()
             except FileNotFoundError:
                 if hasattr(self, 'file_missing'):
+                    logger.warning("File not found: %r", self.name)
                     self._data = self.file_missing()
                 else:
                     raise
