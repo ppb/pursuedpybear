@@ -68,6 +68,8 @@ class Asset:
 
         Will block if not finished.
         """
+        if _hint is _default_hint:
+            logger.warn(f"Waited on {self.name} before the engine began")
         self._finished.wait(timeout)
         if hasattr(self, '_raise_error'):
             raise self._raise_error
