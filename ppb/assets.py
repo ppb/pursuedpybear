@@ -25,6 +25,9 @@ class Asset:
         self._finished = threading.Event()
         _hint(self.name, self._finished_background)
 
+    def __repr__(self):
+        return f"<{type(self).__name__} name={self.name!r}>"
+
     def _finished_background(self, fut):
         # Internal
         # Called in background thread
@@ -69,7 +72,7 @@ class Asset:
         Will block if not finished.
         """
         if _hint is _default_hint:
-            logger.warn(f"Waited on {self.name} before the engine began")
+            logger.warn(f"Waited on {self!r} before the engine began")
         self._finished.wait(timeout)
         if hasattr(self, '_raise_error'):
             raise self._raise_error
