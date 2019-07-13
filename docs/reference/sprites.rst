@@ -1,3 +1,5 @@
+.. py:currentmodule:: ppb.sprites
+
 =================
 All About Sprites
 =================
