@@ -7,11 +7,16 @@ PursuedPyBear features a background, eager-loading asset system. The first time
 an asset is referenced, PPB starts reading and parsing it in a background
 thread.
 
+The data is kept in memory for the lifetime of the :py:class:`Asset`. When
+nothing is referencing it any more, the Python garbage collector will clean up
+the object and its data.
+
+
 General Asset Interface
 -----------------------
 
-All assets inherit from :py:class:`Asset`, as it provides essential connections
-with the background loading system.
+All assets inherit from :py:class:`Asset`. It handles the background loading
+system and the data logistics.
 
 .. autoclass:: ppb.assets.Asset
     :members:
@@ -24,6 +29,7 @@ with the background loading system.
 
         Called in the background thread.
 
+
 Concrete Assets
 ---------------
 
@@ -35,8 +41,10 @@ useful.
 
     Loads an image file and parses it into a form usable by the renderer.
 
+
 Asset Proxies
 -------------
+
 Asset Proxies are virtual assets that implement the interface but either
 delegate to other Assets or are completely virtual, such as
 :py:class:`ppb.features.animation.Animation`.
