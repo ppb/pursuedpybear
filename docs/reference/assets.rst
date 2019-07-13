@@ -1,3 +1,5 @@
+.. py:currentmodule:: ppb.assets
+
 Assets
 ======
 
@@ -12,7 +14,7 @@ All assets inherit from :py:class:`Asset`, as it provides essential connections
 with the background loading system.
 
 .. autoclass:: ppb.assets.Asset
-    :members: __init__
+    :members:
 
     .. method:: file_missing()
 
