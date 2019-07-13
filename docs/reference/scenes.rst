@@ -1,3 +1,5 @@
+.. py:currentmodule:: ppb.scenes
+
 ================
 All About Scenes
 ================
