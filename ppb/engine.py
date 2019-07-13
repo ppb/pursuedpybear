@@ -116,6 +116,11 @@ class GameEngine(EventMixin, LoggingMixin):
         self.scenes.append(scene(*args, **kwargs))
 
     def signal(self, event):
+        """
+        Add an event to the event queue.
+
+        Thread-safe.
+        """
         self.events.append(event)
 
     def publish(self):

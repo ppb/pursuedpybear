@@ -22,6 +22,7 @@ __all__ = (
     'SceneStopped',
     'StopScene',
     'Update',
+    'AssetLoaded',
 )
 
 boundaries_finder = re.compile('(.)([A-Z][a-z]+)')
@@ -289,3 +290,16 @@ class Update:
     """
     time_delta: float
     scene: BaseScene = None
+
+
+import ppb
+
+
+@dataclass
+class AssetLoaded:
+    """
+    Fired whenever an asset finished loading.
+    """
+    asset: 'ppb.assets.Asset'
+    total_loaded: int
+    total_queued: int

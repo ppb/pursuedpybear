@@ -6,8 +6,9 @@ import concurrent.futures
 import logging
 import threading
 
-import ppb.vfs as vfs
-from ppb.systems import System
+import ppb
+import ppb.vfs
+import ppb.systems
 
 __all__ = 'Asset', 'AssetLoadingSystem',
 
@@ -38,10 +39,14 @@ class Asset:
                 if hasattr(self, 'file_missing'):
                     logger.warning("File not found: %r", self.name)
                     self._data = self.file_missing()
+                    if _finished is not None:
+                        _finished(self)
                 else:
                     raise
             else:
                 self._data = self.background_parse(raw)
+                if _finished is not None:
+                    _finished(self)
         except Exception as exc:
             # Save unhandled exceptions to be raised in the main thread
             self._raise_error = exc
@@ -80,16 +85,17 @@ class Asset:
             return self._data
 
 
-class AssetLoadingSystem(System):
+class AssetLoadingSystem(ppb.systems.System):
     def __init__(self, **_):
         self._executor = concurrent.futures.ThreadPoolExecutor()
         self._queue = {}  # maps names to futures
 
     def __enter__(self):
         # 1. Register ourselves as the hint provider
-        global _hint, _backlog
+        global _hint, _finished, _backlog
         assert _hint is _default_hint
         _hint = self._hint
+        _finished = self._finished
 
         # 2. Grab-n-clear the backlog (atomically?)
         queue, _backlog = _backlog, []
@@ -111,8 +117,15 @@ class AssetLoadingSystem(System):
 
     @staticmethod
     def _load(filename):
-        with vfs.open(filename) as file:
+        with ppb.vfs.open(filename) as file:
             return file.read()
+
+    def _finished(self, asset):
+        self.engine.signal(ppb.events.AssetLoaded(
+            asset=asset,
+            total_loaded=...,
+            total_queued=...
+        ))
 
 
 _backlog = []
@@ -123,3 +136,4 @@ def _default_hint(filename, callback=None):
 
 
 _hint = _default_hint
+_finished = None
