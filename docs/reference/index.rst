@@ -12,6 +12,7 @@ decisions are made, see the discussion section.
    starting
    events
    clocks
+   assets
    scenes
    sprites
    features/index

@@ -49,9 +49,9 @@ class Asset:
             # This always needs to happen so the main thread isn't just blocked
             self._finished.set()
 
-    def background_parse(self, data):
+    def background_parse(self, data: bytes):
         """
-        Takes the bytes from the resource and returns the parsed data.
+        Takes the data loaded from the file and returns the parsed data.
 
         Subclasses probably want to override this.
 
@@ -65,11 +65,11 @@ class Asset:
         """
         return self._finished.is_set()
 
-    def load(self, timeout=None):
+    def load(self, timeout: float = None):
         """
         Gets the parsed data.
 
-        Will block if not finished.
+        Will block until the data is loaded.
         """
         if _hint is _default_hint:
             logger.warn(f"Waited on {self!r} before the engine began")
