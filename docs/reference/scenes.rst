@@ -7,7 +7,7 @@ transition at any time.
 
 .. autoclass:: ppb.BaseScene
    :members:
-   :exclude-members: change, container_class
+   :exclude-members: container_class
 
     .. autoattribute:: background_color
        
