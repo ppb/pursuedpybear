@@ -26,7 +26,7 @@ class System(ppb.eventlib.EventMixin):
         pass
 
 
-from ppb.systems.pg import EventPoller as PygameEventPoller  # To not break old imports.
+from ppb.systems.input import EventPoller as PygameEventPoller  # To not break old imports.
 from ppb.assets import Asset
 import io
 

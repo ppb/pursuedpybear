@@ -3,9 +3,9 @@ from typing import Dict
 import pygame
 
 import ppb.buttons as buttons
-from ppb import Vector
-from ppb import events
-from ppb import keycodes as keys
+from ppb_vector import Vector
+import ppb.events as events
+import ppb.keycodes as keys
 from ppb.systems import System  # TODO: Be aware of circular imports
 from ppb.systems import default_resolution
 
