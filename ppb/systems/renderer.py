@@ -7,9 +7,12 @@ import pygame
 import ppb.assets as assets
 import ppb.events as events
 import ppb.flags as flags
-import ppb.systems as systems
+from ppb.systems.base import System
 
 logger = logging.getLogger(__name__)
+
+
+DEFAULT_RESOLUTION = 800, 600
 
 
 class Image(assets.Asset):
@@ -26,9 +29,15 @@ class Image(assets.Asset):
         return resource
 
 
-class Renderer(systems.System):
+class Renderer(System):
 
-    def __init__(self, resolution=systems.default_resolution, window_title: str="PursuedPyBear", target_frame_rate: int=30, **kwargs):
+    def __init__(
+        self,
+        resolution=DEFAULT_RESOLUTION,
+        window_title: str = "PursuedPyBear",
+        target_frame_rate: int = 30,
+        **kwargs
+    ):
         self.resolution = resolution
         self.window = None
         self.window_title = window_title
