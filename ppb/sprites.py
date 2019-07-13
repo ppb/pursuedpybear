@@ -4,7 +4,7 @@ from typing import Union
 
 import ppb
 from ppb import Vector
-from ppb.events import EventMixin
+from ppb.eventlib import EventMixin
 from ppb.utils import FauxFloat
 
 import ppb_vector

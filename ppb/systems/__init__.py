@@ -4,6 +4,7 @@ import logging
 
 import pygame
 
+import ppb.eventlib
 import ppb.events as events
 import ppb.flags as flags
 
@@ -13,7 +14,7 @@ logger = logging.getLogger(__name__)
 default_resolution = 800, 600
 
 
-class System(events.EventMixin):
+class System(ppb.eventlib.EventMixin):
 
     def __init__(self, **_):
         pass
