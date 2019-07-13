@@ -210,11 +210,9 @@ class BaseSprite(EventMixin, Rotatable):
     The base Sprite class. All sprites should inherit from this (directly or
     indirectly).
     """
-    #: (str): The image file
+    #: (:py:class:`ppb.Image`): The image asset
     image = None
-    #: (pathlib.Path): The path that image is relative to
-    resource_path = None
-    #: (Vector): Location of the sprite
+    #: (:py:class:`ppb.Vector`): Location of the sprite
     position: Vector = Vector(0, 0)
     #: The width/height of the sprite (sprites are square)
     size: Union[int, float] = 1
