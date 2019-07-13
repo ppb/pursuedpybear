@@ -1,7 +1,7 @@
 import time
 import logging
 
-import ppb.eventlib
+import ppb.eventlib as eventlib
 import ppb.events as events
 
 logger = logging.getLogger(__name__)
@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 default_resolution = 800, 600
 
 
-class System(ppb.eventlib.EventMixin):
+class System(eventlib.EventMixin):
 
     def __init__(self, **_):
         pass
@@ -22,8 +22,8 @@ class System(ppb.eventlib.EventMixin):
         pass
 
 
-from ppb.systems.input import EventPoller
-from .renderer import Renderer
+from ppb.systems.inputs import EventPoller
+from .renderer import Renderer, Image
 
 
 class Updater(System):
