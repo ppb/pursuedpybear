@@ -12,7 +12,7 @@ from typing import Union
 
 import ppb.events as events
 from ppb.eventlib import EventMixin
-from ppb.systems import PygameEventPoller
+from ppb.systems import EventPoller
 from ppb.systems import Renderer
 from ppb.systems import Updater
 from ppb.assets import AssetLoadingSystem
@@ -25,7 +25,7 @@ _ellipsis = type(...)
 class GameEngine(EventMixin, LoggingMixin):
 
     def __init__(self, first_scene: Type, *,
-                 basic_systems=(Renderer, Updater, PygameEventPoller, AssetLoadingSystem),
+                 basic_systems=(Renderer, Updater, EventPoller, AssetLoadingSystem),
                  systems=(), scene_kwargs=None, **kwargs):
 
         super(GameEngine, self).__init__()

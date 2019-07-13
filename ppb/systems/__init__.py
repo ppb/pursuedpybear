@@ -22,7 +22,7 @@ class System(ppb.eventlib.EventMixin):
         pass
 
 
-from ppb.systems.input import EventPoller as PygameEventPoller  # To not break old imports.
+from ppb.systems.input import EventPoller
 from .renderer import Renderer
 
 
