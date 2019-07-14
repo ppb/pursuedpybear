@@ -6,9 +6,8 @@ import concurrent.futures
 import logging
 import threading
 
-import ppb
 import ppb.vfs
-import ppb.systems
+import ppb.systems.base as systems_base
 
 __all__ = 'Asset', 'AssetLoadingSystem',
 
@@ -85,8 +84,10 @@ class Asset:
             return self._data
 
 
-class AssetLoadingSystem(ppb.systems.System):
-    def __init__(self, **_):
+class AssetLoadingSystem(systems_base.System):
+    def __init__(self, *, engine, **_):
+        super().__init__(**_)
+        self.engine = engine
         self._executor = concurrent.futures.ThreadPoolExecutor()
         self._queue = {}  # maps names to futures
 
@@ -121,10 +122,14 @@ class AssetLoadingSystem(ppb.systems.System):
             return file.read()
 
     def _finished(self, asset):
+        statuses = [
+            fut.running()
+            for fut in self._queue.values()
+        ]
         self.engine.signal(ppb.events.AssetLoaded(
             asset=asset,
-            total_loaded=...,
-            total_queued=...
+            total_loaded=sum(not s for s in statuses),
+            total_queued=sum(s for s in statuses),
         ))
 
 

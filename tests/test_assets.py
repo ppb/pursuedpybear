@@ -1,16 +1,30 @@
 import pytest
 
 from ppb import GameEngine, BaseScene
+import ppb.events
 from ppb.assets import Asset, AssetLoadingSystem
+
+
+class AssetTestScene(BaseScene):
+    def on_asset_loaded(self, event, signal):
+        self.ale = event
+        signal(ppb.events.Quit())
 
 
 def test_loading():
     a = Asset('ppb/engine.py')
-    engine = GameEngine(BaseScene, basic_systems=[AssetLoadingSystem])
+    engine = GameEngine(AssetTestScene, basic_systems=[AssetLoadingSystem])
     with engine:
         engine.start()
+        ats = engine.current_scene
+
+        engine.main_loop()
 
         assert a.load()
+        print(vars(ats))
+        assert ats.ale.asset is a
+        assert ats.ale.total_loaded == 1
+        assert ats.ale.total_queued == 0
 
 
 # def test_loading_root():
