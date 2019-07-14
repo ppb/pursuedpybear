@@ -8,8 +8,8 @@ Scenes are the terrain where sprites act. Each game has multiple scenes and may
 transition at any time.
 
 .. autoclass:: ppb.BaseScene
-   :members:
-   :exclude-members: container_class
+    :members:
+    :exclude-members: container_class
 
     .. autoattribute:: background_color
        
