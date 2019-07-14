@@ -3,7 +3,7 @@ A system for two phase updates: Update, and Commit.
 """
 from dataclasses import dataclass
 from ppb.systems import System
-from ppb.events import EventMixin
+from ppb.eventlib import EventMixin
 
 __all__ = 'Commit',
 
