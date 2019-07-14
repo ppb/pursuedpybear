@@ -154,7 +154,7 @@ def test_transfromation_movement(
 
     diff = cam.translate_to_frame(point_moved) - cam.translate_to_frame(point)
     note(f"frame diff: {diff}")
-    assert isclose(delta.length, pixel_ratio * diff.length, rel_tol=1e-5)
+    assert isclose(delta.length, pixel_ratio * diff.length, rel_tol=1e-4)
     diff = cam.translate_to_viewport(point_moved) - cam.translate_to_viewport(point)
     note(f"viewport diff: {diff}")
-    assert isclose(diff.length, pixel_ratio * delta.length, rel_tol=1e-5)
+    assert isclose(diff.length, pixel_ratio * delta.length, rel_tol=1e-4)
