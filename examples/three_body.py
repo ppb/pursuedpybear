@@ -7,8 +7,8 @@ gravitaional to three celestial bodies produces a problem that does not have a
 perfect mathematical solution, and must be solved through simulations.
 """
 
-import logging
-from ppb import BaseSprite, make_engine, Vector
+import ppb
+from ppb import BaseSprite, Vector
 from ppb.features.twophase import TwoPhaseMixin, TwoPhaseSystem
 
 
@@ -46,10 +46,4 @@ def setup(scene):
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-
-    # Not good practice, https://github.com/ppb/pursuedpybear/issues/263
-    eng = make_engine(setup)
-    eng.systems_classes += (TwoPhaseSystem,)
-    with eng:
-        eng.run()
+    ppb.run(setup, systems=[TwoPhaseSystem])
