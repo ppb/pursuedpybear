@@ -1,7 +1,7 @@
 from typing import Sequence
 from numbers import Number
 
-from ppb import Vector
+from ppb_vector import Vector
 from ppb.sprites import BaseSprite
 from ppb.flags import DoNotRender
 
