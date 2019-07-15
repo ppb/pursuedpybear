@@ -172,7 +172,7 @@ def test_default_layer_named():
             "something_else": 2,
             "another": 3
         }
-        _default_layer = "our_default"
+        default_layer = "our_default"
 
     scene = LayeredScene()
 
@@ -186,9 +186,9 @@ def test_default_layer_set_layer():
 
     class LayeredScene(scenes.BaseScene):
         named_layers = ["background", "mobs", "particles"]
-        _default_layer = "particles"
+        default_layer = "particles"
 
     scene = LayeredScene()
 
     scene.default_layer = "mobs"
-    assert scene.default_layer == 1
+    assert scene.default_layer == "particles"
