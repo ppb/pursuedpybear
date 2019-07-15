@@ -8,6 +8,9 @@ class LayeredSprite:
         self.layer = layer
 
 
+class NoLayer: pass
+
+
 def test_layering_attribute():
 
     class LayeredScene(scenes.BaseScene):
@@ -64,3 +67,98 @@ def test_registered_layers():
     assert len(list(scene.get(layer="background"))) == 1
     assert len(list(scene.get(layer="enemies"))) == 3
     assert len(list(scene.get(layer=2))) == 1
+
+
+def test_registered_layers_no_value():
+
+    scene = scenes.BaseScene()
+
+    scene.define_layer("background")
+    scene.define_layer("mobs")
+    scene.define_layer("projectiles")
+    scene.define_layer("particles")
+
+    assert scene.layers == {
+                            "background": 0,
+                            "mobs": 1,
+                            "projectiles": 2,
+                            "particles": 3
+                            }
+
+    scene = scenes.BaseScene()
+    scene.define_layer("background")
+    scene.define_layer("mobs", 3)
+    scene.define_layer("projectiles")
+    scene.define_layer("back_particles", 2)
+    scene.define_layer("fore_particles")
+
+    assert scene.layers == {
+                            "background": 0,
+                            "back_particles": 2,
+                            "mobs": 3,
+                            "projectiles": 4,
+                            "fore_particles": 5
+                            }
+
+
+def test_layering_without_layer_attribute():
+
+    test_sprite = NoLayer()
+    scene = scenes.BaseScene()
+
+    scene.add(test_sprite)
+    for x in range(1, 6):
+        scene.add(LayeredSprite(x))
+
+    assert list(scene)[0] == test_sprite
+
+    scene = scenes.BaseScene()
+    scene.define_layer("background", 0)
+    scene.define_layer("foreground", 1)
+    for _ in range(2):
+        scene.add(LayeredSprite("background"))
+        scene.add(LayeredSprite("foreground"))
+
+    assert test_sprite in scene.get(layer="background")
+
+
+def test_named_layers_with_undefined_layer():
+    scene = scenes.BaseScene()
+
+    scene.define_layer("defined_layer", 2)
+    scene.define_layer("defined_layer_2", 4)
+
+    test_sprite = LayeredSprite("undefined_layer")
+    scene.add(test_sprite)
+    scene.add(LayeredSprite("defined_layer"))
+    scene.add(LayeredSprite("defined_layer_2"))
+
+    assert list(scene)[0] is test_sprite
+
+    scene.define_layer("undefined_layer", 6)
+
+    assert list(scene)[-1] is test_sprite
+
+
+def test_default_layer_named():
+
+    scene = scenes.BaseScene()
+    scene.define_layer("our_default", 5, default=True)
+    scene.define_layer("something_else", 2)
+    scene.define_layer("another", 2)
+
+    test_object = NoLayer()
+    scene.add(test_object)
+
+    assert list(scene.get(layer="our_default")) == [test_object]
+
+
+def test_default_layer_set_layer():
+
+    scene = scenes.BaseScene()
+    scene.define_layer("background")
+    scene.define_layer("mobs")
+    scene.define_layer("particles")
+
+    scene.default_layer = "mobs"
+    assert scene.default_layer == 1
