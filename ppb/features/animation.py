@@ -5,6 +5,7 @@ Only supports frame-by-frame, not gif, apng, or full motion video.
 """
 import time
 import re
+import ppb
 
 FILE_PATTERN = re.compile(r'\{(\d+)\.\.(\d+)\}')
 
@@ -65,7 +66,7 @@ class Animation:
             self._filename,
         )
         self._frames = [
-            template.format(n)
+            ppb.Image(template.format(n))
             for n in range(start, end + 1)
         ]
 
@@ -108,11 +109,11 @@ class Animation:
         else:
             return self._paused_frame
 
-    def __str__(self):
+    def load(self):
         """
         Get the current frame path.
         """
-        return self._frames[self.current_frame]
+        return self._frames[self.current_frame].load()
 
     # This is so that if you assign an Animation to a class, instances will get
     # their own copy, so their animations run independently.
