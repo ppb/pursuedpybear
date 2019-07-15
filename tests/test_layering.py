@@ -8,10 +8,11 @@ class LayeredSprite:
         self.layer = layer
 
 
-class NoLayer: pass
+class NoLayer:
+    pass
 
 
-def test_layering_attribute():
+def test_layering_attribute_ints():
 
     class LayeredScene(scenes.BaseScene):
 
@@ -21,7 +22,7 @@ def test_layering_attribute():
                 self.add(LayeredSprite(x))
 
     scene = LayeredScene()
-    for lower_sprite, higher_sprite in zip(scene, list(scene)[1:]):
+    for lower_sprite, higher_sprite in zip(scene.sprites(), list(scene.sprites())[1:]):
         if isinstance(lower_sprite, camera.Camera) or isinstance(higher_sprite, camera.Camera):
             continue
         assert lower_sprite.layer < higher_sprite.layer
