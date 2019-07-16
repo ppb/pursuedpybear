@@ -69,10 +69,16 @@ def test_missing_parse():
 
 
 def test_instance_condense():
+    class SubAsset(Asset):
+        pass
+
     a1 = Asset('ppb/engine.py')
     a2 = Asset('ppb/engine.py')
 
     a3 = Asset('ppb/scenes.py')
 
+    s1 = SubAsset('ppb/engine.py')
+
     assert a1 is a2
     assert a1 is not a3
+    assert a1 is not s1
