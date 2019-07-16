@@ -307,6 +307,6 @@ targets will disappear when hit by a bullet.
 
 Congratulations on making your first game.
 
-For next steps, you should explore other :doc:`tutorials </tutorials/index>`.
+For next steps, you should explore other :docs:`tutorials </tutorials/index>`.
 Similarly, you can discover new events in the
-:doc:`event documentation </reference/events>`.
+:docs:`event documentation </reference/events>`.
