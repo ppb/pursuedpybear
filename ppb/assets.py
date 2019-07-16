@@ -5,6 +5,7 @@ The asset loading system.
 import concurrent.futures
 import logging
 import threading
+import weakref
 
 import ppb.vfs as vfs
 from ppb.systems import System
@@ -14,12 +15,24 @@ __all__ = 'Asset', 'AssetLoadingSystem',
 logger = logging.getLogger(__name__)
 
 
+_asset_cache = weakref.WeakValueDictionary()
+
+
 class Asset:
     """
     A resource to be loaded from the filesystem and used.
 
     Meant to be subclassed.
     """
+    def __new__(cls, name):
+        clsname = f"{cls.__module__}:{cls.__qualname__}"
+        try:
+            return _asset_cache[(clsname, name)]
+        except KeyError:
+            inst = super().__new__(cls)
+            _asset_cache[(clsname, name)] = inst
+            return inst
+
     def __init__(self, name):
         self.name = str(name)
         self._finished = threading.Event()

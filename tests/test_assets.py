@@ -66,3 +66,13 @@ def test_missing_parse():
         engine.start()
 
         assert a.load() == "igotu"
+
+
+def test_instance_condense():
+    a1 = Asset('ppb/engine.py')
+    a2 = Asset('ppb/engine.py')
+
+    a3 = Asset('ppb/scenes.py')
+
+    assert a1 is a2
+    assert a1 is not a3
