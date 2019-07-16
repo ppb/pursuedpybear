@@ -1,7 +1,7 @@
 import time
 
 import ppb.events as events
-from ppb.systems.base import System
+from ppb.systemslib import System
 
 
 class Updater(System):

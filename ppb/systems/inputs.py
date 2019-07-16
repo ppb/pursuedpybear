@@ -6,7 +6,7 @@ import ppb.buttons as buttons
 from ppb_vector import Vector
 import ppb.events as events
 import ppb.keycodes as keys
-from ppb.systems.base import System
+from ppb.systemslib import System
 from ppb.systems.renderer import DEFAULT_RESOLUTION
 
 

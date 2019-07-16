@@ -7,7 +7,7 @@ import pygame
 import ppb.assets as assets
 import ppb.events as events
 import ppb.flags as flags
-from ppb.systems.base import System
+from ppb.systemslib import System
 
 logger = logging.getLogger(__name__)
 
