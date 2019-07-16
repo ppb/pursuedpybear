@@ -10,7 +10,7 @@ from typing import List
 from typing import Type
 from typing import Union
 
-import ppb.events as events
+from ppb import events
 from ppb.eventlib import EventMixin
 from ppb.systems import EventPoller
 from ppb.systems import Renderer

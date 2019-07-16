@@ -2,10 +2,10 @@ from typing import Dict
 
 import pygame
 
-import ppb.buttons as buttons
+from ppb import buttons
 from ppb_vector import Vector
-import ppb.events as events
-import ppb.keycodes as keys
+from ppb import events
+from ppb import keycodes as keys
 from ppb.systems.base import System
 from ppb.systems.renderer import DEFAULT_RESOLUTION
 

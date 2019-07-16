@@ -4,9 +4,9 @@ import random
 
 import pygame
 
-import ppb.assets as assets
-import ppb.events as events
-import ppb.flags as flags
+from ppb import assets
+from ppb import events
+from ppb import flags
 from ppb.systems.base import System
 
 logger = logging.getLogger(__name__)

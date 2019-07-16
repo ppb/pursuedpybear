@@ -7,7 +7,7 @@ import logging
 import threading
 
 import ppb.vfs
-import ppb.systems.base as systems_base
+from ppb.systems import base as systems_base
 
 __all__ = 'Asset', 'AssetLoadingSystem',
 

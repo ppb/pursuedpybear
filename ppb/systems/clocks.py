@@ -1,6 +1,6 @@
 import time
 
-import ppb.events as events
+from ppb import events
 from ppb.systems.base import System
 
 
