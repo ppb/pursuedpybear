@@ -11,10 +11,8 @@ from typing import Type
 from typing import Union
 
 import ppb.events as events
-from ppb.events import StartScene
-from ppb.events import EventMixin
-from ppb.events import Quit
-from ppb.systems import PygameEventPoller
+from ppb.eventlib import EventMixin
+from ppb.systems import EventPoller
 from ppb.systems import Renderer
 from ppb.systems import Updater
 from ppb.assets import AssetLoadingSystem
@@ -27,7 +25,7 @@ _ellipsis = type(...)
 class GameEngine(EventMixin, LoggingMixin):
 
     def __init__(self, first_scene: Type, *,
-                 basic_systems=(Renderer, Updater, PygameEventPoller, AssetLoadingSystem),
+                 basic_systems=(Renderer, Updater, EventPoller, AssetLoadingSystem),
                  systems=(), scene_kwargs=None, **kwargs):
 
         super(GameEngine, self).__init__()
@@ -135,7 +133,7 @@ class GameEngine(EventMixin, LoggingMixin):
             for game_object in scene:
                 game_object.__event__(event, self.signal)
 
-    def on_start_scene(self, event: StartScene, signal: Callable[[Any], None]):
+    def on_start_scene(self, event: events.StartScene, signal: Callable[[Any], None]):
         """
         Start a new scene. The current scene pauses.
         """
@@ -159,7 +157,7 @@ class GameEngine(EventMixin, LoggingMixin):
         self.stop_scene()
         self.start_scene(event.new_scene, event.kwargs)
 
-    def on_quit(self, quit_event: Quit, signal: Callable[[Any], None]):
+    def on_quit(self, quit_event: events.Quit, signal: Callable[[Any], None]):
         self.running = False
 
     def pause_scene(self):
