@@ -1,7 +1,7 @@
 """
 The asset loading system.
 """
-
+import abc
 import concurrent.futures
 import logging
 import threading
@@ -14,11 +14,31 @@ __all__ = 'Asset', 'AssetLoadingSystem',
 logger = logging.getLogger(__name__)
 
 
-class Asset:
+class AbstractAsset(abc.ABC):
+    """
+    The asset interface.
+
+    This defines the common interface for virtual assets, proxy assets, and
+    real/file assets.
+    """
+    @abc.abstractmethod
+    def load(self):
+        """
+        Get the data of this asset, in the appropriate form.
+        """
+
+    def is_loaded(self):
+        """
+        Returns if the data is ready now or if load() will block.
+        """
+        return True
+
+
+class Asset(AbstractAsset):
     """
     A resource to be loaded from the filesystem and used.
 
-    Meant to be subclassed.
+    Meant to be subclassed, but in specific ways.
     """
     def __init__(self, name):
         self.name = str(name)
