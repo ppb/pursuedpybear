@@ -6,7 +6,7 @@ import logging
 import re
 
 __all__ = (
-    'EventMixin',
+    'EventMixin', 'BadEventHandlerException',
 )
 
 boundaries_finder = re.compile('(.)([A-Z][a-z]+)')

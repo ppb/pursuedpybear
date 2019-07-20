@@ -65,25 +65,16 @@ the hard problems that they're free to do that.
 
 ## I Want To Code
 
-Thanks for considering code contributions! Check out the latest [ppb
-release project][projects]. The basic rundown is simple: The `To Do`
-column is all of the issues we have to solve before the next release.
-Right now, that list is chosen and broken down by the maintainers at the
-beginning of each release cycle.
-
-The `Wishlist` column is all of the tickets we'd really like to include,
-but aren't critical to the goals of the next release. It mostly gets
-filled by the maintainers, but important tickets with lots of discussion
-and things suggested by oversight team members will make it there too.
-
-The rest of the columns are for tracking, and a maintainer will move
-the tickets appropriately.
+Thanks for considering code contributions! The [new contributor label][new contributor]
+is a collection of issues we believe are suitable for people new to PPB.
+You are welcome to work on any issue you would like, we just think those
+are a good starting place for those that are unfamiliar with the code base.
 
 Now you need to [fork ppb][fork]. Once you've done that, go through
 either column and find a ticket you like. Start a branch, add your name
 to the [CONTRIBUTORS file][contributors], commit that change and open a PR:
 
-* Include "WORKING" in the title
+* Include "WIP" in the title or make a [draft pull request][draftpr]
 * Reference the issue you want to work on in the body of the PR.
 
 Now get to work! Some tickets have detailed instructions: A maintainer
@@ -92,11 +83,11 @@ Start working, try to solve the problem. If you get stuck, ask
 questions in your open PR. The maintainers and active contributors are
 here to help.
 
-Once you think it's ready, time to remove "Working" from the title. Now
-someone senior in the project will review. They'll either ask for
-changes or approve your PR. If you need to make changes, commit to your
-branch and push it up and it'll update the PR. Your reviewer will look
-again later.
+Once you think it's ready, time to remove "WIP" from the title or hit
+the "Ready for review" button. Now someone senior in the project will
+review. They'll either ask for changes or approve your PR. If you need
+to make changes, commit to your branch and push it up and it'll update
+the PR. Your reviewer will look again later.
 
 If you got accepted, your PR will make it into the project soon! Only a
 maintainer can merge your PR, so you'll need to wait. They may ask for
@@ -129,9 +120,11 @@ end you contribute to `ppb` by being part of its community.
 [covenant]: http://contributor-covenant.org/ "Contributor's Covenant"
 [discuss]: https://github.com/ppb/pursuedpybear/issues?q=is%3Aissue+is%3Aopen+label%3Adiscussion "PPB Discussions"
 [docs]: https://github.com/ppb/docs "PPB Docs"
+[draftpr]: https://github.blog/2019-02-14-introducing-draft-pull-requests/ "Introducing draft pull requests"
 [fork]: https://help.github.com/articles/fork-a-repo/ "Fork a repo"
 [goals]: https://github.com/ppb/pursuedpybear#guiding-principles "PPB Goals"
 [issues]: https://github.com/ppb/pursuedpybear/issues "PPB Issues"
+[new contributor]: https://github.com/ppb/pursuedpybear/labels/new%20contributor "Issues labeld New Contributor"
 [projects]: https://github.com/orgs/ppb/projects "PPB Projects"
 [readme]: https://github.com/pathunstrom/pursuedpybear/blob/master/README.md "PPB README"
 [tutorial]: https://github.com/ppb/tutorials "PPB Tutorials"

@@ -6,8 +6,9 @@ import concurrent.futures
 import logging
 import threading
 
-import ppb.vfs
-from ppb.systems import base as systems_base
+import ppb.vfs as vfs
+import ppb.events as events
+from ppb.systemslib import System
 
 __all__ = 'Asset', 'AssetLoadingSystem',
 
@@ -84,7 +85,7 @@ class Asset:
             return self._data
 
 
-class AssetLoadingSystem(systems_base.System):
+class AssetLoadingSystem(System):
     def __init__(self, *, engine, **_):
         super().__init__(**_)
         self.engine = engine
@@ -118,7 +119,7 @@ class AssetLoadingSystem(systems_base.System):
 
     @staticmethod
     def _load(filename):
-        with ppb.vfs.open(filename) as file:
+        with vfs.open(filename) as file:
             return file.read()
 
     def _finished(self, asset):
@@ -126,7 +127,7 @@ class AssetLoadingSystem(systems_base.System):
             fut.running()
             for fut in self._queue.values()
         ]
-        self.engine.signal(ppb.events.AssetLoaded(
+        self.engine.signal(events.AssetLoaded(
             asset=asset,
             total_loaded=sum(not s for s in statuses),
             total_queued=sum(s for s in statuses),

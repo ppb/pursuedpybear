@@ -3,10 +3,11 @@ from typing import Dict
 import pygame
 
 from ppb import buttons
+import ppb.buttons as buttons
 from ppb_vector import Vector
-from ppb import events
-from ppb import keycodes as keys
-from ppb.systems.base import System
+import ppb.events as events
+import ppb.keycodes as keys
+from ppb.systemslib import System
 from ppb.systems.renderer import DEFAULT_RESOLUTION
 
 
