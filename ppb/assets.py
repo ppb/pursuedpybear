@@ -29,7 +29,7 @@ class AbstractAsset(abc.ABC):
 
     def is_loaded(self):
         """
-        Returns if the data is ready now or if load() will block.
+        Returns if the data is ready now or if :py:meth:`load()` will block.
         """
         return True
 
