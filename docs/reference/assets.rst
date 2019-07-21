@@ -41,6 +41,11 @@ useful.
 
     Loads an image file and parses it into a form usable by the renderer.
 
+.. autoclass:: ppb.Sound
+
+    Loads and decodes an image file. Wave and Ogg Vorbis are supported.
+
+
 
 Asset Proxies
 -------------
