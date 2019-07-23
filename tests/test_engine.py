@@ -3,7 +3,7 @@ from unittest import mock
 
 from ppb import GameEngine, BaseScene, Vector
 from ppb import events
-from ppb.systems import System
+from ppb.systemslib import System
 from ppb.systems import Updater
 from ppb.testutils import Failer
 from ppb.testutils import Quitter

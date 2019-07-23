@@ -340,4 +340,4 @@ def test_sprite_in_main():
 
     with patch("ppb.sprites.getfile", side_effect=TypeError):
         # This patch simulates what happens when TestSprite was defined in the REPL
-        assert s.__resource_path__()  # We don't care what it is, as long as it's something
+        assert s.__image__()  # We don't care what it is, as long as it's something

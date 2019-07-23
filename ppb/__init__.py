@@ -5,10 +5,11 @@ from ppb_vector import Vector
 from ppb.engine import GameEngine
 from ppb.scenes import BaseScene
 from ppb.sprites import BaseSprite
+from ppb.systems import Image
 
 __all__ = (
     # Shortcuts
-    'Vector', 'BaseScene', 'BaseSprite',
+    'Vector', 'BaseScene', 'BaseSprite', 'Image',
     # Local stuff
     'run', 'make_engine',
 )

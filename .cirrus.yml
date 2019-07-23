@@ -9,6 +9,7 @@ docs_task:
     - pip install .
 
   script:
+    - make -C docs/ linkcheck
     - make -C docs/ html
 
 pep517_task:

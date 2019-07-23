@@ -2,11 +2,12 @@ from inspect import getfile
 from pathlib import Path
 from typing import Union
 
-from ppb import Vector
-from ppb.events import EventMixin
-from ppb.utils import FauxFloat
-
 import ppb_vector
+from ppb_vector import Vector
+
+import ppb
+from ppb.eventlib import EventMixin
+from ppb.utils import FauxFloat
 
 
 TOP = "top"
@@ -19,6 +20,9 @@ side_attribute_error_message = error_message.format
 
 
 class Side(FauxFloat):
+    """
+    Acts like a float, but also has a variety of accessors.
+    """
     sides = {
         LEFT: ('x', -1),
         RIGHT: ('x', 1),
@@ -45,7 +49,10 @@ class Side(FauxFloat):
         return self.parent.position[dimension] + offset
 
     @property
-    def top(self):
+    def top(self) -> Vector:
+        """
+        Get the corner vector
+        """
         self._attribute_gate(TOP, [TOP, BOTTOM])
         return Vector(float(self), float(self.parent.top))
 
@@ -55,7 +62,10 @@ class Side(FauxFloat):
         self.parent.position = self._mk_update_vector_side(TOP, value)
 
     @property
-    def bottom(self):
+    def bottom(self) -> Vector:
+        """
+        Get the corner vector
+        """
         self._attribute_gate(BOTTOM, [TOP, BOTTOM])
         return Vector(float(self), float(self.parent.bottom))
 
@@ -65,7 +75,10 @@ class Side(FauxFloat):
         self.parent.position = self._mk_update_vector_side(BOTTOM, value)
 
     @property
-    def left(self):
+    def left(self) -> Vector:
+        """
+        Get the corner vector
+        """
         self._attribute_gate(LEFT, [LEFT, RIGHT])
         return Vector(float(self.parent.left), float(self))
 
@@ -75,7 +88,10 @@ class Side(FauxFloat):
         self.parent.position = self._mk_update_vector_side(LEFT, value)
 
     @property
-    def right(self):
+    def right(self) -> Vector:
+        """
+        Get the corner vector
+        """
         self._attribute_gate(RIGHT, [LEFT, RIGHT])
         return Vector(float(self.parent.right), float(self))
 
@@ -85,7 +101,10 @@ class Side(FauxFloat):
         self.parent.position = self._mk_update_vector_side(RIGHT, value)
 
     @property
-    def center(self):
+    def center(self) -> Vector:
+        """
+        Get the midpoint vector
+        """
         if self.side in (TOP, BOTTOM):
             return Vector(self.parent.center.x, float(self))
         else:
@@ -152,12 +171,16 @@ class Rotatable:
     """
     _rotation = 0
     # This is necessary to make facing do the thing while also being adjustable.
+    #: The baseline vector, representing the "front" of the sprite
     basis = Vector(0, -1)
     # Considered making basis private, the only reason to do so is to
     # discourage people from relying on it as data.
 
     @property
     def facing(self):
+        """
+        The direction the "front" is facing
+        """
         return Vector(*self.basis).rotate(self.rotation).normalize()
 
     @facing.setter
@@ -166,6 +189,9 @@ class Rotatable:
 
     @property
     def rotation(self):
+        """
+        The amount the sprite is rotated, in degrees
+        """
         return self._rotation
 
     @rotation.setter
@@ -173,7 +199,9 @@ class Rotatable:
         self._rotation = value % 360
 
     def rotate(self, degrees):
-        """Rotate the sprite by a given angle (in degrees)."""
+        """
+        Rotate the sprite by a given angle (in degrees).
+        """
         self.rotation += degrees
 
 
@@ -181,17 +209,12 @@ class BaseSprite(EventMixin, Rotatable):
     """
     The base Sprite class. All sprites should inherit from this (directly or
     indirectly).
-
-    Attributes:
-    * image (str): The image file
-    * resource_path (pathlib.Path): The path that image is relative to
-    * position: Location of the sprite
-    * facing: The direction of the "top" of the sprite (rendering only)
-    * size: The width/height of the sprite (sprites are square)
     """
+    #: (:py:class:`ppb.Image`): The image asset
     image = None
-    resource_path = None
+    #: (:py:class:`ppb.Vector`): Location of the sprite
     position: Vector = Vector(0, 0)
+    #: The width/height of the sprite (sprites are square)
     size: Union[int, float] = 1
 
     def __init__(self, **kwargs):
@@ -214,6 +237,9 @@ class BaseSprite(EventMixin, Rotatable):
 
     @property
     def center(self) -> Vector:
+        """
+        The position of the center of the sprite
+        """
         return self.position
 
     @center.setter
@@ -222,6 +248,9 @@ class BaseSprite(EventMixin, Rotatable):
 
     @property
     def left(self) -> Side:
+        """
+        The left side
+        """
         return Side(self, LEFT)
 
     @left.setter
@@ -230,6 +259,9 @@ class BaseSprite(EventMixin, Rotatable):
 
     @property
     def right(self) -> Side:
+        """
+        The right side
+        """
         return Side(self, RIGHT)
 
     @right.setter
@@ -237,7 +269,10 @@ class BaseSprite(EventMixin, Rotatable):
         self.position = Vector(value - self._offset_value, self.position.y)
 
     @property
-    def top(self):
+    def top(self) -> Side:
+        """
+        The top side
+        """
         return Side(self, TOP)
 
     @top.setter
@@ -245,7 +280,10 @@ class BaseSprite(EventMixin, Rotatable):
         self.position = Vector(self.position.x, value - self._offset_value)
 
     @property
-    def bottom(self):
+    def bottom(self) -> Side:
+        """
+        The bottom side
+        """
         return Side(self, BOTTOM)
 
     @bottom.setter
@@ -258,14 +296,17 @@ class BaseSprite(EventMixin, Rotatable):
 
     def __image__(self):
         if self.image is None:
-            self.image = f"{type(self).__name__.lower()}.png"
-        return self.image
-
-    def __resource_path__(self):
-        if self.resource_path is None:
+            klass = type(self)
+            prefix = Path(klass.__module__.replace('.', '/'))
             try:
-                file_path = Path(getfile(type(self))).resolve().parent
+                klassfile = getfile(klass)
             except TypeError:
-                file_path = Path.cwd().resolve()
-            self.resource_path = file_path
-        return self.resource_path
+                prefix = Path('.')
+            else:
+                if Path(klassfile).name != '__init__.py':
+                    prefix = prefix.parent
+            if prefix == Path('.'):
+                self.image = ppb.Image(f"{klass.__name__.lower()}.png")
+            else:
+                self.image = ppb.Image(f"{prefix!s}/{klass.__name__.lower()}.png")
+        return self.image

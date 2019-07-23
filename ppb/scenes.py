@@ -9,7 +9,7 @@ from typing import Sequence
 from typing import Type
 
 from ppb.camera import Camera
-from ppb.events import EventMixin
+from ppb.eventlib import EventMixin
 
 
 class GameObjectCollection(Collection):

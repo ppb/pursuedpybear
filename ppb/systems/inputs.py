@@ -2,12 +2,13 @@ from typing import Dict
 
 import pygame
 
+from ppb import buttons
 import ppb.buttons as buttons
-from ppb import Vector
-from ppb import events
-from ppb import keycodes as keys
-from ppb.systems import System  # TODO: Be aware of circular imports
-from ppb.systems import default_resolution
+from ppb_vector import Vector
+import ppb.events as events
+import ppb.keycodes as keys
+from ppb.systemslib import System
+from ppb.systems.renderer import DEFAULT_RESOLUTION
 
 
 class EventPoller(System):
@@ -145,7 +146,7 @@ class EventPoller(System):
             }
         return super().__new__(cls)
 
-    def __init__(self, resolution=default_resolution, **kwargs):  # TODO: Resolve default locations
+    def __init__(self, resolution=DEFAULT_RESOLUTION, **kwargs):  # TODO: Resolve default locations
         self.offset = Vector(-0.5 * resolution[0],
                              -0.5 * resolution[1])
 
