@@ -1,4 +1,4 @@
-import ppb.eventlib as eventlib
+from ppb import eventlib
 
 
 class System(eventlib.EventMixin):

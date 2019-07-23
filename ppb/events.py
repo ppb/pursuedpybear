@@ -22,6 +22,7 @@ __all__ = (
     'SceneStopped',
     'StopScene',
     'Update',
+    'AssetLoaded',
 )
 
 # Remember to define scene at the end so the pargs version of __init__() still works
@@ -232,3 +233,16 @@ class Update:
     """
     time_delta: float
     scene: BaseScene = None
+
+
+import ppb
+
+
+@dataclass
+class AssetLoaded:
+    """
+    Fired whenever an asset finished loading.
+    """
+    asset: 'ppb.assets.Asset'
+    total_loaded: int
+    total_queued: int

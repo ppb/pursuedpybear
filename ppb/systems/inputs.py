@@ -2,6 +2,7 @@ from typing import Dict
 
 import pygame
 
+from ppb import buttons
 import ppb.buttons as buttons
 from ppb_vector import Vector
 import ppb.events as events
