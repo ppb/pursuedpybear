@@ -11,6 +11,11 @@ The data is kept in memory for the lifetime of the :py:class:`Asset`. When
 nothing is referencing it any more, the Python garbage collector will clean up
 the object and its data.
 
+:py:class:`Asset` instances are consolidated or "interned": if you ask for the
+same asset twice, you'll get the same instance back. Note that this is a
+performance optimization and should not be relied upon (do not do things like 
+``asset1 is asset2``).
+
 
 General Asset Interface
 -----------------------
@@ -30,6 +35,30 @@ system and the data logistics.
         Called in the background thread.
 
 
+Subclassing
+~~~~~~~~~~~
+
+:py:class:`Asset` makes specific assumptions and is only suitable for loading
+file-based assets. These make the consolidation, background-loading, and other
+aspects of :py:class:`Asset` possible.
+
+You should really only implement two methods:
+
+* :py:meth:`background_parse()`: This is called with the loaded data and returns
+  an object constructed from that data. This is called from a background thread
+  and its return value is accessible from :py:meth:`load()`
+
+  This is an excellent place for decompression, data parsing, and other tasks
+  needed to turn a pile of bytes into a useful data structure.
+
+* :py:meth:`file_missing()`: This is called if the asset is not found. Defining
+  this method surpresses :py:meth:`load()` from raising a
+  :py:exc:`FileNotFoundError` and will instead call this, and
+  :py:meth:`load()` will return what this returns.
+
+  For example, :py:class:`ppb.Image` uses this to produce the default square.
+
+
 Concrete Assets
 ---------------
 
@@ -47,15 +76,14 @@ useful.
 
 
 
-Asset Proxies
--------------
+Asset Proxies and Virtual Assets
+--------------------------------
 
-Asset Proxies are virtual assets that implement the interface but either
-delegate to other Assets or are completely virtual, such as
-:py:class:`ppb.features.animation.Animation`.
+Asset Proxies and Virtual Assets are assets that implement the interface but
+either delegate to other Assets or are completely synthesized.
 
-.. class:: Asset Proxy
+For example, :py:class:`ppb.features.animation.Animation` is an asset proxy that
+delegates to actual :py:class:`ppb.Image` instances.
 
-    .. method:: load()
-
-        Gets the parsed data from wherever this proxy gets its data.
+.. autoclass:: ppb.assets.AbstractAsset
+    :members:

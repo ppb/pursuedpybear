@@ -22,6 +22,7 @@ __all__ = (
     'SceneStopped',
     'StopScene',
     'Update',
+    'AssetLoaded',
 )
 
 # Remember to define scene at the end so the pargs version of __init__() still works
@@ -30,7 +31,7 @@ from ppb.scenes import BaseScene
 from ppb.buttons import MouseButton
 from ppb.keycodes import KeyCode
 from ppb_vector import Vector
-import ppb.assets
+import ppb
 
 
 @dataclass
@@ -240,4 +241,13 @@ class PlaySound:
     """
     Fire to start a sound playing.
     """
-    sound: ppb.assets.Asset
+    sound: 'ppb.assets.Asset'
+
+@dataclass
+class AssetLoaded:
+    """
+    Fired whenever an asset finished loading.
+    """
+    asset: 'ppb.assets.Asset'
+    total_loaded: int
+    total_queued: int

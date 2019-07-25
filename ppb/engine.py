@@ -10,7 +10,7 @@ from typing import List
 from typing import Type
 from typing import Union
 
-import ppb.events as events
+from ppb import events
 from ppb.eventlib import EventMixin
 from ppb.systems import EventPoller
 from ppb.systems import Renderer
@@ -115,6 +115,11 @@ class GameEngine(EventMixin, LoggingMixin):
         self.scenes.append(scene(*args, **kwargs))
 
     def signal(self, event):
+        """
+        Add an event to the event queue.
+
+        Thread-safe.
+        """
         self.events.append(event)
 
     def publish(self):
