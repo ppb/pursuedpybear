@@ -17,11 +17,11 @@ simple way.
 
 The entire system uses an event system which is as extensible as the
 rest of the system. Register new values to existing event types, and
-even overwrite the defaults. Adding a new event system is as simple as
-calling `Engine.signal` with a new datatype. Instead of a publisher
-system the engine knows everything in its own scope and only calls
-objects with appropriate callbacks. The most basic event is `Update`
-and your handlers should match the signature
+even overwrite the defaults. Adding a new event type to the system is as
+simple as raising an instance of your new event class with `Engine.signal`.
+Instead of a publisher system the engine knows everything in its own scope
+and only calls objects with appropriate callbacks. The most basic event is
+`Update` and your handlers should match the signature
 `on_update(self, update_event, signal)`.
 
 ## Guiding Principles
