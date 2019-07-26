@@ -1,14 +1,15 @@
 """
 The asset loading system.
 """
-
+import abc
 import concurrent.futures
 import logging
 import threading
 import weakref
 
 import ppb.vfs as vfs
-from ppb.systems import System
+import ppb.events as events
+from ppb.systemslib import System
 
 __all__ = 'Asset', 'AssetLoadingSystem',
 
@@ -18,11 +19,31 @@ logger = logging.getLogger(__name__)
 _asset_cache = weakref.WeakValueDictionary()
 
 
-class Asset:
+class AbstractAsset(abc.ABC):
+    """
+    The asset interface.
+
+    This defines the common interface for virtual assets, proxy assets, and
+    real/file assets.
+    """
+    @abc.abstractmethod
+    def load(self):
+        """
+        Get the data of this asset, in the appropriate form.
+        """
+
+    def is_loaded(self):
+        """
+        Returns if the data is ready now or if :py:meth:`load()` will block.
+        """
+        return True
+
+
+class Asset(AbstractAsset):
     """
     A resource to be loaded from the filesystem and used.
 
-    Meant to be subclassed.
+    Meant to be subclassed, but in specific ways.
     """
     def __new__(cls, name):
         clsname = f"{cls.__module__}:{cls.__qualname__}"
@@ -51,10 +72,14 @@ class Asset:
                 if hasattr(self, 'file_missing'):
                     logger.warning("File not found: %r", self.name)
                     self._data = self.file_missing()
+                    if _finished is not None:
+                        _finished(self)
                 else:
                     raise
             else:
                 self._data = self.background_parse(raw)
+                if _finished is not None:
+                    _finished(self)
         except Exception as exc:
             # Save unhandled exceptions to be raised in the main thread
             self._raise_error = exc
@@ -94,15 +119,18 @@ class Asset:
 
 
 class AssetLoadingSystem(System):
-    def __init__(self, **_):
+    def __init__(self, *, engine, **_):
+        super().__init__(**_)
+        self.engine = engine
         self._executor = concurrent.futures.ThreadPoolExecutor()
         self._queue = {}  # maps names to futures
 
     def __enter__(self):
         # 1. Register ourselves as the hint provider
-        global _hint, _backlog
+        global _hint, _finished, _backlog
         assert _hint is _default_hint
         _hint = self._hint
+        _finished = self._finished
 
         # 2. Grab-n-clear the backlog (atomically?)
         queue, _backlog = _backlog, []
@@ -127,6 +155,17 @@ class AssetLoadingSystem(System):
         with vfs.open(filename) as file:
             return file.read()
 
+    def _finished(self, asset):
+        statuses = [
+            fut.running()
+            for fut in self._queue.values()
+        ]
+        self.engine.signal(events.AssetLoaded(
+            asset=asset,
+            total_loaded=sum(not s for s in statuses),
+            total_queued=sum(s for s in statuses),
+        ))
+
 
 _backlog = []
 
@@ -136,3 +175,4 @@ def _default_hint(filename, callback=None):
 
 
 _hint = _default_hint
+_finished = None

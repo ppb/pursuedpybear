@@ -4,13 +4,13 @@ from typing import Callable
 from ppb.engine import GameEngine
 from ppb.events import Idle
 from ppb.events import Quit
-from ppb.systems import System
+from ppb.systemslib import System
 
 
 class Failer(System):
 
     def __init__(self, *, fail: Callable[[GameEngine], bool], message: str,
-                 run_time: float=1, engine, **kwargs):
+                 run_time: float = 1, engine, **kwargs):
         super().__init__(**kwargs)
         self.fail = fail
         self.message = message

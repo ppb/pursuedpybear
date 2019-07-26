@@ -2,12 +2,12 @@ from inspect import getfile
 from pathlib import Path
 from typing import Union
 
-import ppb
-from ppb import Vector
-from ppb.events import EventMixin
-from ppb.utils import FauxFloat
-
 import ppb_vector
+from ppb_vector import Vector
+
+import ppb
+from ppb.eventlib import EventMixin
+from ppb.utils import FauxFloat
 
 
 TOP = "top"
