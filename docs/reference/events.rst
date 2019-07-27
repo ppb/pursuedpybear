@@ -63,6 +63,9 @@ These "events" are more for code to call into the engine.
 .. autoclass:: ppb.events.StopScene
    :members:
 
+.. autoclass:: ppb.events.PlaySound
+   :members:
+
 
 Scene Transition Events
 =======================

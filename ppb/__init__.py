@@ -6,10 +6,11 @@ from ppb.engine import GameEngine
 from ppb.scenes import BaseScene
 from ppb.sprites import BaseSprite
 from ppb.systems import Image
+from ppb.systems import Sound
 
 __all__ = (
     # Shortcuts
-    'Vector', 'BaseScene', 'BaseSprite', 'Image',
+    'Vector', 'BaseScene', 'BaseSprite', 'Image', 'Sound'
     # Local stuff
     'run', 'make_engine',
 )
