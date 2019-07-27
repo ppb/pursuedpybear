@@ -1,3 +1,5 @@
+from itertools import islice
+
 import ppb.camera as camera
 import ppb.scenes as scenes
 
@@ -22,7 +24,7 @@ def test_layering_attribute():
                 self.add(LayeredSprite(x))
 
     scene = LayeredScene()
-    for lower_sprite, higher_sprite in zip(scene.sprite_layers(), list(scene.sprite_layers())[1:]):
+     for lower_sprite, higher_sprite in zip(scene.sprite_layers(), islice(scene.sprite_layers(), 1, None)):
         if isinstance(lower_sprite, camera.Camera) or isinstance(higher_sprite, camera.Camera):
             continue
         assert lower_sprite.layer < higher_sprite.layer
