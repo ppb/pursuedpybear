@@ -123,7 +123,9 @@ class AssetLoadingSystem(System):
         super().__init__(**_)
         self.engine = engine
         self._executor = concurrent.futures.ThreadPoolExecutor()
-        self._queue = {}  # maps names to futures
+        self._queue = weakref.WeakValueDictionary()  # maps names to futures
+        self._began = 0
+        self._ended = 0
 
     def __enter__(self):
         # 1. Register ourselves as the hint provider
@@ -146,10 +148,13 @@ class AssetLoadingSystem(System):
         _finished = None
 
     def _hint(self, filename, callback=None):
-        if filename not in self._queue:
-            self._queue[filename] = self._executor.submit(self._load, filename)
+        try:
+            fut = self._queue[filename]
+        except KeyError:
+            self._began += 1
+            fut = self._queue[filename] = self._executor.submit(self._load, filename)
         if callback is not None:
-            self._queue[filename].add_done_callback(callback)
+            fut.add_done_callback(callback)
 
     @staticmethod
     def _load(filename):
@@ -157,14 +162,11 @@ class AssetLoadingSystem(System):
             return file.read()
 
     def _finished(self, asset):
-        statuses = [
-            fut.running()
-            for fut in self._queue.values()
-        ]
+        self._ended += 1
         self.engine.signal(events.AssetLoaded(
             asset=asset,
-            total_loaded=sum(not s for s in statuses),
-            total_queued=sum(s for s in statuses),
+            total_loaded=self._ended,
+            total_queued=self._began - self._ended,
         ))
 
 
