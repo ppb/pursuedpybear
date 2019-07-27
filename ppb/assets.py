@@ -16,9 +16,6 @@ __all__ = 'Asset', 'AssetLoadingSystem',
 logger = logging.getLogger(__name__)
 
 
-_asset_cache = weakref.WeakValueDictionary()
-
-
 class AbstractAsset(abc.ABC):
     """
     The asset interface.
@@ -37,6 +34,9 @@ class AbstractAsset(abc.ABC):
         Returns if the data is ready now or if :py:meth:`load()` will block.
         """
         return True
+
+
+_asset_cache = weakref.WeakValueDictionary()
 
 
 class Asset(AbstractAsset):
