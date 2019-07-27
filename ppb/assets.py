@@ -5,6 +5,7 @@ import abc
 import concurrent.futures
 import logging
 import threading
+import weakref
 
 import ppb.vfs as vfs
 import ppb.events as events
@@ -13,6 +14,9 @@ from ppb.systemslib import System
 __all__ = 'Asset', 'AssetLoadingSystem',
 
 logger = logging.getLogger(__name__)
+
+
+_asset_cache = weakref.WeakValueDictionary()
 
 
 class AbstractAsset(abc.ABC):
@@ -41,6 +45,15 @@ class Asset(AbstractAsset):
 
     Meant to be subclassed, but in specific ways.
     """
+    def __new__(cls, name):
+        clsname = f"{cls.__module__}:{cls.__qualname__}"
+        try:
+            return _asset_cache[(clsname, name)]
+        except KeyError:
+            inst = super().__new__(cls)
+            _asset_cache[(clsname, name)] = inst
+            return inst
+
     def __init__(self, name):
         self.name = str(name)
         self._finished = threading.Event()
