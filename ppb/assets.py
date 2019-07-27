@@ -141,8 +141,9 @@ class AssetLoadingSystem(System):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         # Reset the hint provider
-        global _hint
+        global _hint, _finished
         _hint = _default_hint
+        _finished = None
 
     def _hint(self, filename, callback=None):
         if filename not in self._queue:
