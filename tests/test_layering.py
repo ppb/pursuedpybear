@@ -20,7 +20,7 @@ def test_layering_attribute():
 
         def __init__(self):
             super().__init__()
-            for x in range(5):
+            for x in range(-3, 3):
                 self.add(LayeredSprite(x))
 
     scene = LayeredScene()
@@ -57,18 +57,3 @@ def test_layering_without_layer_attribute():
         scene.add(LayeredSprite(x))
 
     assert list(scene.sprite_layers())[0] == test_sprite
-
-
-def test_set_default_layer():
-
-    class DefaultLayer(scenes.BaseScene):
-        default_layer = 3
-
-    scene = DefaultLayer()
-
-    scene.add(LayeredSprite(layer=1))
-    scene.add(LayeredSprite(layer=5))
-    test_sprite = NoLayer()
-    scene.add(test_sprite)
-
-    assert list(scene.sprite_layers)[1] is test_sprite
