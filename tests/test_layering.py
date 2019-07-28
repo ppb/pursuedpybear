@@ -40,11 +40,11 @@ def test_change_layer():
     for sprite in ones:
         scene.add(sprite)
 
-    assert list(scene.sprite_layers())[0] == test_sprite
+    assert list(scene.sprite_layers())[0] is test_sprite
 
     test_sprite.layer = 2
 
-    assert list(scene.sprite_layers())[-1] == test_sprite
+    assert list(scene.sprite_layers())[-1] is test_sprite
 
 
 def test_layering_without_layer_attribute():
@@ -56,4 +56,4 @@ def test_layering_without_layer_attribute():
     for x in range(1, 6):
         scene.add(LayeredSprite(x))
 
-    assert list(scene.sprite_layers())[0] == test_sprite
+    assert list(scene.sprite_layers())[0] is test_sprite
