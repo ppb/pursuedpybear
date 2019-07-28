@@ -10,7 +10,7 @@ from ppb.systems import Image
 
 __all__ = (
     # Shortcuts
-    'Vector', 'BaseScene', 'BaseSprite', 'Image',
+    'Vector', 'BaseScene', 'BaseSprite', 'Image', 'events',
     # Local stuff
     'run', 'make_engine',
 )
