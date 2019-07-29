@@ -1,7 +1,7 @@
 import logging
-import events
 from typing import Callable
 
+from ppb import events
 from ppb_vector import Vector
 from ppb.engine import GameEngine
 from ppb.scenes import BaseScene
