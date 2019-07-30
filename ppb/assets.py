@@ -5,6 +5,7 @@ import abc
 import concurrent.futures
 import logging
 import threading
+import weakref
 
 import ppb.vfs as vfs
 import ppb.events as events
@@ -35,12 +36,24 @@ class AbstractAsset(abc.ABC):
         return True
 
 
+_asset_cache = weakref.WeakValueDictionary()
+
+
 class Asset(AbstractAsset):
     """
     A resource to be loaded from the filesystem and used.
 
     Meant to be subclassed, but in specific ways.
     """
+    def __new__(cls, name):
+        clsname = f"{cls.__module__}:{cls.__qualname__}"
+        try:
+            return _asset_cache[(clsname, name)]
+        except KeyError:
+            inst = super().__new__(cls)
+            _asset_cache[(clsname, name)] = inst
+            return inst
+
     def __init__(self, name):
         self.name = str(name)
         self._finished = threading.Event()
@@ -110,7 +123,9 @@ class AssetLoadingSystem(System):
         super().__init__(**_)
         self.engine = engine
         self._executor = concurrent.futures.ThreadPoolExecutor()
-        self._queue = {}  # maps names to futures
+        self._queue = weakref.WeakValueDictionary()  # maps names to futures
+        self._began = 0
+        self._ended = 0
 
     def __enter__(self):
         # 1. Register ourselves as the hint provider
@@ -128,14 +143,18 @@ class AssetLoadingSystem(System):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         # Reset the hint provider
-        global _hint
+        global _hint, _finished
         _hint = _default_hint
+        _finished = None
 
     def _hint(self, filename, callback=None):
-        if filename not in self._queue:
-            self._queue[filename] = self._executor.submit(self._load, filename)
+        try:
+            fut = self._queue[filename]
+        except KeyError:
+            self._began += 1
+            fut = self._queue[filename] = self._executor.submit(self._load, filename)
         if callback is not None:
-            self._queue[filename].add_done_callback(callback)
+            fut.add_done_callback(callback)
 
     @staticmethod
     def _load(filename):
@@ -143,14 +162,11 @@ class AssetLoadingSystem(System):
             return file.read()
 
     def _finished(self, asset):
-        statuses = [
-            fut.running()
-            for fut in self._queue.values()
-        ]
+        self._ended += 1
         self.engine.signal(events.AssetLoaded(
             asset=asset,
-            total_loaded=sum(not s for s in statuses),
-            total_queued=sum(s for s in statuses),
+            total_loaded=self._ended,
+            total_queued=self._began - self._ended,
         ))
 
 

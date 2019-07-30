@@ -31,6 +31,7 @@ from ppb.scenes import BaseScene
 from ppb.buttons import MouseButton
 from ppb.keycodes import KeyCode
 from ppb_vector import Vector
+import ppb
 
 
 @dataclass
@@ -235,8 +236,12 @@ class Update:
     scene: BaseScene = None
 
 
-import ppb
-
+@dataclass
+class PlaySound:
+    """
+    Fire to start a sound playing.
+    """
+    sound: 'ppb.assets.Asset'
 
 @dataclass
 class AssetLoaded:

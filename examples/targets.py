@@ -2,6 +2,8 @@ import logging
 import ppb
 from ppb import Vector
 from ppb import keycodes
+from ppb import Sound
+from ppb.events import PlaySound
 
 
 class MoverMixin(ppb.BaseSprite):
@@ -18,13 +20,15 @@ class Player(MoverMixin, ppb.BaseSprite):
     right_vector = Vector(1, 0)
     _rotation = 180
 
+    fire_sound = Sound('laser1.ogg')
+
     def on_key_pressed(self, event, signal):
         if event.key in (keycodes.A, keycodes.Left):
             self.velocity += self.left_vector
         elif event.key in (keycodes.D, keycodes.Right):
             self.velocity += self.right_vector
         elif event.key is keycodes.Space:
-            self._fire_bullet(event.scene)
+            self._fire_bullet(event.scene, signal)
 
     def on_key_released(self, event, signal):
         if event.key in (keycodes.A, keycodes.Left):
@@ -34,9 +38,10 @@ class Player(MoverMixin, ppb.BaseSprite):
 
     def on_button_pressed(self, event, signal):
         if event.button is ppb.buttons.Primary:
-            self._fire_bullet(event.scene)
+            self._fire_bullet(event.scene, signal)
 
-    def _fire_bullet(self, scene):
+    def _fire_bullet(self, scene, signal):
+        signal(PlaySound(self.fire_sound))
         scene.add(
             Bullet(pos=self.position),
             tags=['bullet']
@@ -51,7 +56,7 @@ class Bullet(MoverMixin, ppb.BaseSprite):
         super().on_update(update, signal)  # Execute movement
 
         scene = update.scene
-        
+
         if self.position.y > scene.main_camera.frame_top:
             scene.remove(self)
         else:
