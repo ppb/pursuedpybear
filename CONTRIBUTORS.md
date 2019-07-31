@@ -27,3 +27,4 @@ Name | Email | Twitter |
 Halle Jones|HJones@aliacy.com||
 [Laura Gutierrez](https://github.com/lauraooq) | [laura.gutierrez@ooqia.com](laura.gutierrez@ooqia.com) | [lauraooq](https://twitter.com/lauraooqia)
 [Pamela McA'Nulty](https://github.com/PamelaM) | | [pmcanulty01](https://twitter.com/pmcanulty01)
+[Trenton Mason](https://github.com/BubbsTheSupreme) | <trenton.mason14@outlook.com> | [BubbsTheSupreme](https://twitter.com/BubbsTheSupreme)
