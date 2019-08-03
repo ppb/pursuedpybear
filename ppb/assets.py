@@ -2,6 +2,7 @@
 The asset loading system.
 """
 import abc
+import collections
 import concurrent.futures
 import logging
 import threading
@@ -60,7 +61,7 @@ class Asset(AbstractAsset):
         _hint(self.name, self._finished_background)
 
     def __repr__(self):
-        return f"<{type(self).__name__} name={self.name!r}>"
+        return f"<{type(self).__name__} name={self.name!r}{' loaded' if self.is_loaded() else ''}>"
 
     def _finished_background(self, fut):
         # Internal
@@ -127,6 +128,8 @@ class AssetLoadingSystem(System):
         self._began = 0
         self._ended = 0
 
+        self._event_queue = collections.deque()
+
     def __enter__(self):
         # 1. Register ourselves as the hint provider
         global _hint, _finished, _backlog
@@ -148,10 +151,12 @@ class AssetLoadingSystem(System):
         _finished = None
 
     def _hint(self, filename, callback=None):
+        print("hint", filename, callback)
+        self._began += 1
+        print("\t", self._began)
         try:
             fut = self._queue[filename]
         except KeyError:
-            self._began += 1
             fut = self._queue[filename] = self._executor.submit(self._load, filename)
         if callback is not None:
             fut.add_done_callback(callback)
@@ -163,11 +168,17 @@ class AssetLoadingSystem(System):
 
     def _finished(self, asset):
         self._ended += 1
-        self.engine.signal(events.AssetLoaded(
-            asset=asset,
-            total_loaded=self._ended,
-            total_queued=self._began - self._ended,
-        ))
+        print("finished", self._began, self._ended)
+        self._event_queue.append(asset)
+
+    def on_idle(self, event, signal):
+        while self._event_queue:
+            asset = self._event_queue.popleft()
+            signal(events.AssetLoaded(
+                asset=asset,
+                total_loaded=self._ended,
+                total_queued=self._began - self._ended,
+            ))
 
 
 _backlog = []
