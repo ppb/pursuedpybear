@@ -4,6 +4,7 @@ The asset loading system.
 import abc
 import collections
 import concurrent.futures
+from functools import partial
 import logging
 import threading
 import weakref
@@ -12,7 +13,7 @@ import ppb.vfs as vfs
 import ppb.events as events
 from ppb.systemslib import System
 
-__all__ = 'Asset', 'AssetLoadingSystem',
+__all__ = 'AbstractAsset', 'Asset', 'AssetLoadingSystem',
 
 logger = logging.getLogger(__name__)
 
@@ -82,6 +83,8 @@ class Asset(AbstractAsset):
                 if _finished is not None:
                     _finished(self)
         except Exception as exc:
+            import traceback
+            traceback.print_exc()
             # Save unhandled exceptions to be raised in the main thread
             self._raise_error = exc
         finally:
@@ -119,6 +122,21 @@ class Asset(AbstractAsset):
             return self._data
 
 
+def force_background_thread(func, *pargs, **kwargs):
+    """
+    Calls the given function from not the main thread.
+
+    If already not the main thread, calls it syncronously.
+
+    If this is the main thread, creates a new thread to call it.
+    """
+    if threading.current_thread() is threading.main_thread():
+        t = threading.Thread(target=func, args=pargs, kwargs=kwargs, daemon=True)
+        t.start()
+    else:
+        func(*pargs, **kwargs)
+
+
 class AssetLoadingSystem(System):
     def __init__(self, *, engine, **_):
         super().__init__(**_)
@@ -151,15 +169,15 @@ class AssetLoadingSystem(System):
         _finished = None
 
     def _hint(self, filename, callback=None):
-        print("hint", filename, callback)
         self._began += 1
-        print("\t", self._began)
         try:
             fut = self._queue[filename]
         except KeyError:
             fut = self._queue[filename] = self._executor.submit(self._load, filename)
         if callback is not None:
-            fut.add_done_callback(callback)
+            # There are circumstances where Future will call us syncronously
+            # In which case, redirect to a fresh background thread.
+            fut.add_done_callback(partial(force_background_thread, callback))
 
     @staticmethod
     def _load(filename):
@@ -168,7 +186,6 @@ class AssetLoadingSystem(System):
 
     def _finished(self, asset):
         self._ended += 1
-        print("finished", self._began, self._ended)
         self._event_queue.append(asset)
 
     def on_idle(self, event, signal):
