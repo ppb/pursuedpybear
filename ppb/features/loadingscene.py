@@ -13,12 +13,14 @@ class BaseLoadingScene(ppb.BaseScene):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        # Need this instantiated to maximize asset referencing coverage.
-        if isinstance(self.next_scene, type):
-            self.next_scene = self.next_scene()
+        self._finished = False
 
         for s in self.get_progress_sprites():
             self.add(s, tags=['progress'])
+
+        # Need this instantiated to maximize asset referencing coverage.
+        if isinstance(self.next_scene, type):
+            self.next_scene = self.next_scene()
 
         self.update_progress(0)
 
@@ -40,9 +42,10 @@ class BaseLoadingScene(ppb.BaseScene):
         self.update_progress(progress)
 
         # No more assets waiting to be loaded
-        # XXX: Should this be done in an on_idle, to allow other events to happen
-        #      to trigger more loads?
-        if event.total_loaded and event.total_queued == 0:
+        self._finished = bool(event.total_loaded and event.total_queued == 0)
+
+    def on_idle(self, event, signal):
+        if self._finished:
             signal(ppb.events.ReplaceScene(new_scene=self.next_scene))
 
     def update_progress(self, progress):
