@@ -184,3 +184,6 @@ class BaseScene(EventMixin):
             scene.remove(my_game_object)
         """
         self.game_objects.remove(game_object)
+
+    def sprite_layers(self):
+        return sorted(self, key=lambda s: getattr(s, "layer", 0))
