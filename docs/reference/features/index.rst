@@ -10,4 +10,5 @@ tools to have when making games.
    :caption: Included Features
 
    animation
+   collisions
    twophase
