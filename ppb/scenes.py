@@ -185,5 +185,16 @@ class BaseScene(EventMixin):
         """
         self.game_objects.remove(game_object)
 
-    def sprite_layers(self):
+    def sprite_layers(self) -> Iterator:
+        """
+        Return an iterator of the contained Sprites in ascending layer
+        order.
+
+        Sprites are part of a layer if they have a layer attribute equal to
+        that layer value. Sprites without a layer attribute are considered
+        layer 0.
+
+        This function exists primarily to assist the Renderer subsystem,
+        but will be left public for other creative uses.
+        """
         return sorted(self, key=lambda s: getattr(s, "layer", 0))
