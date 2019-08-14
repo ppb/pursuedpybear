@@ -40,7 +40,7 @@ def test_change_layer():
     for sprite in ones:
         scene.add(sprite)
 
-    assert list(filter(lambda s: not isinstance(s, camera.Camera), scene.sprite_layers()))[0] is test_sprite
+    assert next(filter(lambda s: not isinstance(s, camera.Camera), scene.sprite_layers())) is test_sprite
 
     test_sprite.layer = 2
 
@@ -56,4 +56,4 @@ def test_layering_without_layer_attribute():
     for x in range(1, 6):
         scene.add(LayeredSprite(x))
 
-    assert list(filter(lambda s: not isinstance(s, camera.Camera), scene.sprite_layers()))[0] is test_sprite
+    assert next(filter(lambda s: not isinstance(s, camera.Camera), scene.sprite_layers())) is test_sprite
