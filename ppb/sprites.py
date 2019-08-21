@@ -216,6 +216,8 @@ class BaseSprite(EventMixin, Rotatable):
     position: Vector = Vector(0, 0)
     #: The width/height of the sprite (sprites are square)
     size: Union[int, float] = 1
+    #: The layer a sprite exists on.
+    layer: int = 0
 
     def __init__(self, **kwargs):
         super().__init__()
