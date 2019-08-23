@@ -11,3 +11,4 @@ tools to have when making games.
 
    animation
    twophase
+   loadingscreen
