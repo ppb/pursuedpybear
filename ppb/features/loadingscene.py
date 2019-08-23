@@ -1,3 +1,8 @@
+"""
+The loadingscene feature provides base classes for loading screens.
+:py:class:`BaseLoadingScene` and its children all work by listening to the asset
+system and when all known assets are loaded, continuing on.
+"""
 import ppb
 
 
@@ -8,6 +13,7 @@ class BaseLoadingScene(ppb.BaseScene):
     """
     Handles the basics of a loading screen.
     """
+    #: The scene to transition to when loading is complete. May be a type or an instance.
     next_scene: "ppb.BaseScene"
 
     def __init__(self, **kwargs):
@@ -27,7 +33,7 @@ class BaseLoadingScene(ppb.BaseScene):
     def get_progress_sprites(self):
         """
         Initialize the sprites in the scene, yielding the ones that should be
-        tagged with `progress`.
+        tagged with ``progress``.
 
         Override me.
         """
@@ -63,10 +69,18 @@ class ProgressBarLoadingScene(BaseLoadingScene):
 
     Users should still override :py:meth:`get_progress_sprites()`.
     """
+    #: Image to use for sprites in the "loaded" state (left side)
     loaded_image: "ppb.Image"
+    #: Image to use for sprites in the "unloaded" state (right side)
     unloaded_image: "ppb.Image" = ppb.flags.DoNotRender
 
     def update_progress(self, progress):
+        """
+        Looks for sprites tagged ``progress`` and sets them to "loaded" or
+        "unloaded" based on the progress.
+
+        The "progress bar" is assumed to be horizontal going from left to right.
+        """
         bar = sorted(self.get(tag='progress'), key=lambda s: s.position.x)
 
         progress_index = progress * len(bar)
