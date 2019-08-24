@@ -19,6 +19,76 @@ error_message = "'{klass}' object does not have attribute '{attribute}'"
 side_attribute_error_message = error_message.format
 
 
+class BaseSprite(EventMixin):
+    """
+    The base Sprite class. All sprites should inherit from this (directly or
+    indirectly).
+
+    The things that define a BaseSprite:
+
+    * The __event__ protocol (see ppb.eventlib.EventMixin)
+    * A position vector
+    * A layer
+
+    BaseSprite provides an __init__ method that sets attributes based on kwargs
+    to make rapid prototyping easier.
+    """
+    #: (:py:class:`ppb.Vector`): Location of the sprite
+    position: Vector = Vector(0, 0)
+    #: The layer a sprite exists on.
+    layer: int = 0
+
+    def __init__(self, **kwargs):
+        super().__init__()
+
+        self.position = Vector(self.position)
+
+        # Initialize things
+        for k, v in kwargs.items():
+            # Abbreviations
+            if k == 'pos':
+                k = 'position'
+            # Castings
+            if k == 'position':
+                v = Vector(v)
+            setattr(self, k, v)
+
+        # Trigger some calculations
+        self.size = self.size
+
+
+class RenderableMixin:
+    """
+    A class implementing the API expected by ppb.systems.renderer.Renderer.
+
+    You should include RenderableMixin after BaseSprite in your parent class
+    definitions.
+    """
+    #: (:py:class:`ppb.Image`): The image asset
+    image = None  # TODO: Type hint appropriately
+
+    def __image__(self):
+        """
+        Returns the sprite's image attribute if provided, or sets a default
+        one.
+        """
+        if self.image is None:
+            klass = type(self)
+            prefix = Path(klass.__module__.replace('.', '/'))
+            try:
+                klassfile = getfile(klass)
+            except TypeError:
+                prefix = Path('.')
+            else:
+                if Path(klassfile).name != '__init__.py':
+                    prefix = prefix.parent
+            if prefix == Path('.'):
+                self.image = ppb.Image(f"{klass.__name__.lower()}.png")
+            else:
+                self.image = ppb.Image(f"{prefix!s}/{klass.__name__.lower()}.png")
+        return self.image
+
+
 class RotatableMixin:
     """
     A simple rotation mixin. Can be included with sprites.
@@ -275,51 +345,3 @@ class SquareShapeMixin:
     @property
     def _offset_value(self):
         return self.size / 2
-
-
-class BaseSprite(EventMixin, RotatableMixin):
-    """
-    The base Sprite class. All sprites should inherit from this (directly or
-    indirectly).
-    """
-    #: (:py:class:`ppb.Image`): The image asset
-    image = None
-    #: (:py:class:`ppb.Vector`): Location of the sprite
-    position: Vector = Vector(0, 0)
-    #: The layer a sprite exists on.
-    layer: int = 0
-
-    def __init__(self, **kwargs):
-        super().__init__()
-
-        self.position = Vector(self.position)
-
-        # Initialize things
-        for k, v in kwargs.items():
-            # Abbreviations
-            if k == 'pos':
-                k = 'position'
-            # Castings
-            if k == 'position':
-                v = Vector(v)
-            setattr(self, k, v)
-
-        # Trigger some calculations
-        self.size = self.size
-
-    def __image__(self):
-        if self.image is None:
-            klass = type(self)
-            prefix = Path(klass.__module__.replace('.', '/'))
-            try:
-                klassfile = getfile(klass)
-            except TypeError:
-                prefix = Path('.')
-            else:
-                if Path(klassfile).name != '__init__.py':
-                    prefix = prefix.parent
-            if prefix == Path('.'):
-                self.image = ppb.Image(f"{klass.__name__.lower()}.png")
-            else:
-                self.image = ppb.Image(f"{prefix!s}/{klass.__name__.lower()}.png")
-        return self.image

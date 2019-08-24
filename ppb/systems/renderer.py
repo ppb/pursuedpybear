@@ -15,6 +15,8 @@ logger = logging.getLogger(__name__)
 DEFAULT_RESOLUTION = 800, 600
 
 
+# TODO: Move Image out of the renderer so sprites can type hint
+#  appropriately.
 class Image(assets.Asset):
     def background_parse(self, data):
         return pygame.image.load(io.BytesIO(data), self.name).convert_alpha()
