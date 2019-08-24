@@ -18,18 +18,6 @@ class TestBaseSprite(TestCase):
         self.sprite = Sprite()
         self.wide_sprite = Sprite(size=2, pos=(2, 2))
 
-    def test_bottom(self):
-        self.assertEqual(self.sprite.bottom, -0.5)
-        self.assertEqual(self.wide_sprite.bottom, 1)
-
-        self.sprite.bottom = 0
-        self.assertEqual(self.sprite.position.x, 0)
-        self.assertEqual(self.sprite.position.y, 0.5)
-
-        self.sprite.bottom += 2
-        self.assertEqual(self.sprite.position.x, 0)
-        self.assertEqual(self.sprite.position.y, 2.5)
-
     def test_left_top(self):
         self.assertEqual(self.sprite.left.top, Vector(-0.5, 0.5))
 
@@ -273,6 +261,30 @@ def test_rotatable_base_sprite():
 
     test_sprite.rotate(1)
     assert test_sprite.rotation == 1
+
+
+@given(y=floats(allow_nan=False, allow_infinity=False))
+def test_sides_bottom(y):
+    sprite = Sprite(position=(0, y))
+    assert isclose(sprite.bottom, y - 0.5)
+
+
+# ints because the kinds of floats hypothesis generates aren't realistic
+# to our use case.
+@given(y=integers(max_value=10_000_000, min_value=-10_000_000))
+def test_sides_bottom_set(y):
+    sprite = Sprite()
+    sprite.bottom = y
+    assert sprite.bottom == y
+    assert sprite.position.y == y + 0.5
+
+
+@given(y=integers(max_value=10_000_000, min_value=-10_000_000))
+def test_sides_bottom_plus_equals(y):
+    sprite = Sprite()
+    sprite.bottom += y
+    assert sprite.bottom == y - 0.5
+    assert sprite.position.y == sprite.bottom + 0.5
 
 
 @given(x=floats(allow_nan=False, allow_infinity=False), y=floats(allow_nan=False, allow_infinity=False))
