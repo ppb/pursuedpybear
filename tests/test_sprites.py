@@ -19,20 +19,6 @@ class TestBaseSprite(TestCase):
         self.sprite = Sprite()
         self.wide_sprite = Sprite(size=2, pos=(2, 2))
 
-    def test_left_bottom(self):
-        self.assertEqual(self.sprite.left.bottom, Vector(-0.5, -0.5))
-
-        self.sprite.left.bottom = (1, 2)
-        self.assertEqual(self.sprite.left.bottom, Vector(1, 2))
-
-        self.sprite.left.bottom += (2, 1)
-        self.assertEqual(self.sprite.left.bottom, Vector(3, 3))
-
-        result = self.sprite.left.bottom + (3, 2)
-        self.assertEqual(result, Vector(6, 5))
-
-        self.assertEqual(self.sprite.position, Vector(3.5, 3.5))
-
     def test_left_center(self):
         self.assertEqual(self.sprite.left.center, Vector(-0.5, 0))
 
@@ -90,20 +76,6 @@ class TestBaseSprite(TestCase):
     def test_top_bottom(self):
         self.assertRaises(AttributeError, getattr, self.sprite.top, "bottom")
         self.assertRaises(AttributeError, setattr, self.sprite.top, "bottom", Vector(1, 1))
-
-    def test_bottom_left(self):
-        self.assertEqual(self.sprite.bottom.left, Vector(-0.5, -0.5))
-
-        self.sprite.bottom.left = (2, 2)
-        self.assertEqual(self.sprite.bottom.left, Vector(2, 2))
-
-        self.sprite.bottom.left += (2, 2)
-        self.assertEqual(self.sprite.bottom.left, Vector(4, 4))
-
-        result = self.sprite.bottom.left + (3, 3)
-        self.assertEqual(result, Vector(7, 7))
-
-        self.assertEqual(self.sprite.position, Vector(4.5, 4.5))
 
     def test_bottom_center(self):
         self.assertEqual(self.sprite.bottom.center, Vector(0, -0.5))
@@ -202,6 +174,60 @@ def test_sides_bottom_plus_equals(y):
     sprite.bottom += y
     assert sprite.bottom == y - 0.5
     assert sprite.position.y == sprite.bottom + 0.5
+
+
+@given(x=floats(allow_nan=False, allow_infinity=False), y=floats(allow_nan=False, allow_infinity=False))
+def test_sides_bottom_left(x, y):
+    sprite = Sprite(position=(x, y))
+    bottom_left = sprite.bottom.left
+    left_bottom = sprite.left.bottom
+    assert bottom_left == left_bottom
+    assert isclose(bottom_left.y, y - 0.5)
+    assert isclose(bottom_left.x, x - 0.5)
+
+
+# ints because the kinds of floats hypothesis generates aren't realistic
+# to our use case.
+@pytest.mark.parametrize("vector_type", [tuple, Vector])
+@given(x=integers(max_value=10_000_000, min_value=-10_000_000), y=integers(max_value=10_000_000, min_value=-10_000_000))
+def test_sides_bottom_left_set(x, y, vector_type):
+    sprite = Sprite()
+    sprite.bottom.left = vector_type((x, y))
+    bottom_left = sprite.bottom.left
+    left_bottom = sprite.left.bottom
+    assert bottom_left == left_bottom
+    assert bottom_left == Vector(x, y)
+    assert sprite.position == bottom_left + Vector(0.5, 0.5)
+
+    # duplicating to prove top.left and left.top are the same.
+    sprite = Sprite()
+    sprite.left.bottom = vector_type((x, y))
+    bottom_left = sprite.bottom.left
+    left_bottom = sprite.left.bottom
+    assert left_bottom == bottom_left
+    assert left_bottom == Vector(x, y)
+    assert sprite.position == left_bottom + Vector(0.5, 0.5)
+
+
+@pytest.mark.parametrize("vector_type", [tuple, Vector])
+@given(x=integers(max_value=10_000_000, min_value=-10_000_000), y=integers(max_value=10_000_000, min_value=-10_000_000))
+def test_sides_bottom_left_plus_equals(x, y, vector_type):
+    sprite = Sprite()
+    sprite.bottom.left += vector_type((x, y))
+    bottom_left = sprite.bottom.left
+    left_bottom = sprite.left.bottom
+    assert bottom_left == left_bottom
+    assert bottom_left == Vector(x - 0.5, y - 0.5)
+    assert sprite.position == bottom_left + Vector(0.5, 0.5)
+
+    # duplicating to prove bottom.left and left.bottom are the same.
+    sprite = Sprite()
+    sprite.bottom.left += vector_type((x, y))
+    bottom_left = sprite.bottom.left
+    left_bottom = sprite.left.bottom
+    assert left_bottom == bottom_left
+    assert left_bottom == Vector(x +- 0.5, y - 0.5)
+    assert sprite.position == left_bottom + Vector(0.5, 0.5)
 
 
 @given(x=floats(allow_nan=False, allow_infinity=False), y=floats(allow_nan=False, allow_infinity=False))
