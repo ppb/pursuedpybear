@@ -165,7 +165,7 @@ class Side(FauxFloat):
             raise AttributeError(message)
 
 
-class Rotatable:
+class RotatableMixin:
     """
     A simple rotation mixin. Can be included with sprites.
     """
@@ -205,7 +205,7 @@ class Rotatable:
         self.rotation += degrees
 
 
-class BaseSprite(EventMixin, Rotatable):
+class BaseSprite(EventMixin, RotatableMixin):
     """
     The base Sprite class. All sprites should inherit from this (directly or
     indirectly).

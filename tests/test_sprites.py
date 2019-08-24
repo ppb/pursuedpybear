@@ -2,7 +2,7 @@ from unittest import TestCase
 from unittest.mock import patch
 
 from ppb import BaseSprite, Vector
-from ppb.sprites import Rotatable
+from ppb.sprites import RotatableMixin
 
 
 class TestBaseSprite(TestCase):
@@ -287,30 +287,30 @@ def test_offset():
 
 
 def test_rotatable_instatiation():
-    rotatable = Rotatable()
+    rotatable = RotatableMixin()
     assert rotatable.rotation == 0
 
 
 def test_rotatable_subclass():
 
-    class TestRotatable(Rotatable):
+    class TestRotatableMixin(RotatableMixin):
         _rotation = 180
         basis = Vector(0, 1)
 
-    rotatable = TestRotatable()
+    rotatable = TestRotatableMixin()
     assert rotatable.rotation == 180
     assert rotatable.facing == Vector(0, -1)
 
 
 def test_rotatable_rotation_setter():
-    rotatable = Rotatable()
+    rotatable = RotatableMixin()
 
     rotatable.rotation = 405
     assert rotatable.rotation == 45
 
 
 def test_rotatable_rotate():
-    rotatable = Rotatable()
+    rotatable = RotatableMixin()
 
     assert rotatable.rotation == 0
     rotatable.rotate(180)
