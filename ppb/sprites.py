@@ -19,6 +19,46 @@ error_message = "'{klass}' object does not have attribute '{attribute}'"
 side_attribute_error_message = error_message.format
 
 
+class RotatableMixin:
+    """
+    A simple rotation mixin. Can be included with sprites.
+    """
+    _rotation = 0
+    # This is necessary to make facing do the thing while also being adjustable.
+    #: The baseline vector, representing the "front" of the sprite
+    basis = Vector(0, -1)
+    # Considered making basis private, the only reason to do so is to
+    # discourage people from relying on it as data.
+
+    @property
+    def facing(self):
+        """
+        The direction the "front" is facing
+        """
+        return Vector(*self.basis).rotate(self.rotation).normalize()
+
+    @facing.setter
+    def facing(self, value):
+        self.rotation = self.basis.angle(value)
+
+    @property
+    def rotation(self):
+        """
+        The amount the sprite is rotated, in degrees
+        """
+        return self._rotation
+
+    @rotation.setter
+    def rotation(self, value):
+        self._rotation = value % 360
+
+    def rotate(self, degrees):
+        """
+        Rotate the sprite by a given angle (in degrees).
+        """
+        self.rotation += degrees
+
+
 class Side(FauxFloat):
     """
     Acts like a float, but also has a variety of accessors.
@@ -163,46 +203,6 @@ class Side(FauxFloat):
             message = side_attribute_error_message(klass=name,
                                                    attribute=attribute)
             raise AttributeError(message)
-
-
-class RotatableMixin:
-    """
-    A simple rotation mixin. Can be included with sprites.
-    """
-    _rotation = 0
-    # This is necessary to make facing do the thing while also being adjustable.
-    #: The baseline vector, representing the "front" of the sprite
-    basis = Vector(0, -1)
-    # Considered making basis private, the only reason to do so is to
-    # discourage people from relying on it as data.
-
-    @property
-    def facing(self):
-        """
-        The direction the "front" is facing
-        """
-        return Vector(*self.basis).rotate(self.rotation).normalize()
-
-    @facing.setter
-    def facing(self, value):
-        self.rotation = self.basis.angle(value)
-
-    @property
-    def rotation(self):
-        """
-        The amount the sprite is rotated, in degrees
-        """
-        return self._rotation
-
-    @rotation.setter
-    def rotation(self, value):
-        self._rotation = value % 360
-
-    def rotate(self, degrees):
-        """
-        Rotate the sprite by a given angle (in degrees).
-        """
-        self.rotation += degrees
 
 
 class BaseSprite(EventMixin, RotatableMixin):
