@@ -47,20 +47,6 @@ class TestBaseSprite(TestCase):
 
         self.assertEqual(self.sprite.position, Vector(3.5, 2))
 
-    def test_right_bottom(self):
-        self.assertEqual(self.sprite.right.bottom, Vector(0.5, -0.5))
-
-        self.sprite.right.bottom = (1, 1)
-        self.assertEqual(self.sprite.right.bottom, Vector(1, 1))
-
-        self.sprite.right.bottom += (2, 1)
-        self.assertEqual(self.sprite.right.bottom, Vector(3, 2))
-
-        result = self.sprite.right.bottom + (2, 3)
-        self.assertEqual(result, Vector(5, 5))
-
-        self.assertEqual(self.sprite.position, Vector(2.5, 2.5))
-
     def test_right_center(self):
         self.assertEqual(self.sprite.right.center, Vector(0.5, 0))
 
@@ -118,20 +104,6 @@ class TestBaseSprite(TestCase):
         self.assertEqual(result, Vector(7, 7))
 
         self.assertEqual(self.sprite.position, Vector(4.5, 4.5))
-
-    def test_bottom_right(self):
-        self.assertEqual(self.sprite.bottom.right, Vector(0.5, -0.5))
-
-        self.sprite.bottom.right = (1, 1)
-        self.assertEqual(self.sprite.bottom.right, Vector(1, 1))
-
-        self.sprite.bottom.right += (2, 1)
-        self.assertEqual(self.sprite.bottom.right, Vector(3, 2))
-
-        result = self.sprite.bottom.right + (2, 3)
-        self.assertEqual(result, Vector(5, 5))
-
-        self.assertEqual(self.sprite.position, Vector(2.5, 2.5))
 
     def test_bottom_center(self):
         self.assertEqual(self.sprite.bottom.center, Vector(0, -0.5))
@@ -230,6 +202,60 @@ def test_sides_bottom_plus_equals(y):
     sprite.bottom += y
     assert sprite.bottom == y - 0.5
     assert sprite.position.y == sprite.bottom + 0.5
+
+
+@given(x=floats(allow_nan=False, allow_infinity=False), y=floats(allow_nan=False, allow_infinity=False))
+def test_sides_bottom_right(x, y):
+    sprite = Sprite(position=(x, y))
+    bottom_right = sprite.bottom.right
+    right_bottom = sprite.right.bottom
+    assert bottom_right == right_bottom
+    assert isclose(bottom_right.y, y - 0.5)
+    assert isclose(bottom_right.x, x + 0.5)
+
+
+# ints because the kinds of floats hypothesis generates aren't realistic
+# to our use case.
+@pytest.mark.parametrize("vector_type", [tuple, Vector])
+@given(x=integers(max_value=10_000_000, min_value=-10_000_000), y=integers(max_value=10_000_000, min_value=-10_000_000))
+def test_sides_bottom_right_set(x, y, vector_type):
+    sprite = Sprite()
+    sprite.bottom.right = vector_type((x, y))
+    bottom_right = sprite.bottom.right
+    right_bottom = sprite.right.bottom
+    assert bottom_right == right_bottom
+    assert bottom_right == Vector(x, y)
+    assert sprite.position == bottom_right + Vector(-0.5, 0.5)
+
+    # duplicating to prove top.left and left.top are the same.
+    sprite = Sprite()
+    sprite.right.bottom = vector_type((x, y))
+    bottom_right = sprite.bottom.right
+    right_bottom = sprite.right.bottom
+    assert right_bottom == bottom_right
+    assert right_bottom == Vector(x, y)
+    assert sprite.position == right_bottom + Vector(-0.5, 0.5)
+
+
+@pytest.mark.parametrize("vector_type", [tuple, Vector])
+@given(x=integers(max_value=10_000_000, min_value=-10_000_000), y=integers(max_value=10_000_000, min_value=-10_000_000))
+def test_sides_bottom_right_plus_equals(x, y, vector_type):
+    sprite = Sprite()
+    sprite.bottom.right += vector_type((x, y))
+    bottom_right = sprite.bottom.right
+    right_bottom = sprite.right.bottom
+    assert bottom_right == right_bottom
+    assert bottom_right == Vector(x + 0.5, y - 0.5)
+    assert sprite.position == bottom_right + Vector(-0.5, 0.5)
+
+    # duplicating to prove bottom.left and left.bottom are the same.
+    sprite = Sprite()
+    sprite.bottom.left += vector_type((x, y))
+    bottom_right = sprite.bottom.right
+    right_bottom = sprite.right.bottom
+    assert right_bottom == bottom_right
+    assert right_bottom == Vector(x + 0.5, y - 0.5)
+    assert sprite.position == right_bottom + Vector(-0.5, 0.5)
 
 
 @given(x=floats(allow_nan=False, allow_infinity=False), y=floats(allow_nan=False, allow_infinity=False))
