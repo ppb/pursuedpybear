@@ -74,8 +74,8 @@ class RenderableMixin:
     """
     A class implementing the API expected by ppb.systems.renderer.Renderer.
 
-    You should include RenderableMixin after BaseSprite in your parent class
-    definitions.
+    You should include RenderableMixin before BaseSprite in your parent
+    class definitions.
     """
     #: (:py:class:`ppb.Image`): The image asset
     image = None  # TODO: Type hint appropriately
@@ -293,7 +293,7 @@ class SquareShapeMixin:
     """
     A mixin that applies square shapes to sprites.
 
-    You should include SquareShapeMixin after ppb.sprites.BaseSprite in
+    You should include SquareShapeMixin before ppb.sprites.BaseSprite in
     your parent classes.
     """
     #: The width/height of the sprite (sprites are square)
@@ -367,7 +367,7 @@ class SquareShapeMixin:
         return self.size / 2
 
 
-class Sprite(BaseSprite, SquareShapeMixin, RenderableMixin, RotatableMixin):
+class Sprite(SquareShapeMixin, RenderableMixin, RotatableMixin, BaseSprite):
     """
     The default Sprite class.
 
