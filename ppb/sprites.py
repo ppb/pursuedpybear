@@ -70,7 +70,7 @@ class Side(FauxFloat):
         BOTTOM: ('y', -1)
     }
 
-    def __init__(self, parent: 'BaseSprite', side: str):
+    def __init__(self, parent: 'SquareShapeMixin', side: str):
         self.side = side
         self.parent = parent
 
@@ -205,37 +205,17 @@ class Side(FauxFloat):
             raise AttributeError(message)
 
 
-class BaseSprite(EventMixin, RotatableMixin):
+class SquareShapeMixin:
     """
-    The base Sprite class. All sprites should inherit from this (directly or
-    indirectly).
+    A mixin that applies square shapes to sprites.
+
+    You should include SquareShapeMixin after ppb.sprites.BaseSprite in
+    your parent classes.
     """
-    #: (:py:class:`ppb.Image`): The image asset
-    image = None
-    #: (:py:class:`ppb.Vector`): Location of the sprite
-    position: Vector = Vector(0, 0)
     #: The width/height of the sprite (sprites are square)
     size: Union[int, float] = 1
-    #: The layer a sprite exists on.
-    layer: int = 0
-
-    def __init__(self, **kwargs):
-        super().__init__()
-
-        self.position = Vector(self.position)
-
-        # Initialize things
-        for k, v in kwargs.items():
-            # Abbreviations
-            if k == 'pos':
-                k = 'position'
-            # Castings
-            if k == 'position':
-                v = Vector(v)
-            setattr(self, k, v)
-
-        # Trigger some calculations
-        self.size = self.size
+    #: Just here for typing and linting purposes. Your sprite should already have a position.
+    position: ppb_vector.Vector
 
     @property
     def center(self) -> Vector:
@@ -295,6 +275,37 @@ class BaseSprite(EventMixin, RotatableMixin):
     @property
     def _offset_value(self):
         return self.size / 2
+
+
+class BaseSprite(EventMixin, RotatableMixin):
+    """
+    The base Sprite class. All sprites should inherit from this (directly or
+    indirectly).
+    """
+    #: (:py:class:`ppb.Image`): The image asset
+    image = None
+    #: (:py:class:`ppb.Vector`): Location of the sprite
+    position: Vector = Vector(0, 0)
+    #: The layer a sprite exists on.
+    layer: int = 0
+
+    def __init__(self, **kwargs):
+        super().__init__()
+
+        self.position = Vector(self.position)
+
+        # Initialize things
+        for k, v in kwargs.items():
+            # Abbreviations
+            if k == 'pos':
+                k = 'position'
+            # Castings
+            if k == 'position':
+                v = Vector(v)
+            setattr(self, k, v)
+
+        # Trigger some calculations
+        self.size = self.size
 
     def __image__(self):
         if self.image is None:
