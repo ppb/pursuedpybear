@@ -1,17 +1,18 @@
 """
 ppb.flags contains singletons to communicate various things.
 
-Flags should be used like None and ... (Ellipsis):
-* compare against using `is`
+Flags should be used like ``None`` and ``...`` (Ellipsis):
+
+* compare against using ``is``
 * Do not instantiate new instances
 
-New flags can simply be defined by:
+New flags can simply be defined by::
 
     class MyFlag(Flag):
         "This is a flag to indicate a thing."
 
 
-New classes of flags (eg mouse buttons) can be defined as:
+New classes of flags (eg mouse buttons) can be defined as::
 
     class MyFlagType(Flag, abstract=True):
         "A group of indicators"

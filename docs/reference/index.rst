@@ -15,4 +15,5 @@ decisions are made, see the discussion section.
    assets
    scenes
    sprites
+   flags
    features/index
