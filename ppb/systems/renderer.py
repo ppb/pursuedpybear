@@ -71,7 +71,7 @@ class Renderer(System):
         self.old_resized_images = self.resized_images
         self.resized_images = {}
 
-        for game_object in render_event.scene:
+        for game_object in render_event.scene.sprite_layers():
             resource = self.prepare_resource(game_object)
             if resource is None:
                 continue
