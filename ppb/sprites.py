@@ -1,3 +1,12 @@
+"""
+Sprites are game objects.
+
+In ppb all sprites are built from composition via mixins or subclassing via
+traditional Python inheritance. Sprite is provided as a default expectation
+used in ppb.
+
+If you intend to build your own set of expectation, see BaseSprite.
+"""
 from inspect import getfile
 from pathlib import Path
 from typing import Union
@@ -70,6 +79,7 @@ class RenderableMixin:
     """
     #: (:py:class:`ppb.Image`): The image asset
     image = None  # TODO: Type hint appropriately
+    size = 1
 
     def __image__(self):
         """
