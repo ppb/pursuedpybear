@@ -1,6 +1,10 @@
 from unittest import TestCase
 from unittest.mock import patch
 
+from hypothesis import given
+from hypothesis.strategies import floats
+import pytest
+
 from ppb import BaseSprite as DeprecatedBaseSprite
 from ppb.sprites import *
 from ppb_vector import Vector
@@ -11,26 +15,6 @@ class TestBaseSprite(TestCase):
     def setUp(self):
         self.sprite = Sprite()
         self.wide_sprite = Sprite(size=2, pos=(2, 2))
-
-    def test_center(self):
-        self.assertEqual(self.sprite.center, self.sprite.position)
-
-        self.sprite.center = 1, 1
-        self.assertEqual(self.sprite.position.x, 1)
-        self.assertEqual(self.sprite.position.y, 1)
-        self.assertEqual(self.sprite.center, self.sprite.position)
-
-        self.sprite.center = Vector(2, 2)
-        self.assertEqual(self.sprite.position.x, 2)
-        self.assertEqual(self.sprite.position.y, 2)
-
-        self.sprite.center += -1, -1
-        self.assertEqual(self.sprite.position.x, 1)
-        self.assertEqual(self.sprite.position.y, 1)
-
-        self.sprite.center += 0, 1
-        self.assertEqual(self.sprite.position.x, 1)
-        self.assertEqual(self.sprite.position.y, 2)
 
     def test_left(self):
         self.assertEqual(self.sprite.left, -0.5)
@@ -323,6 +307,34 @@ def test_rotatable_base_sprite():
 
     test_sprite.rotate(1)
     assert test_sprite.rotation == 1
+
+
+@given(x=floats(allow_nan=False, allow_infinity=False), y=floats(allow_nan=False, allow_infinity=False))
+def test_sides_center_equals_position(x, y):
+    sprite = Sprite(position=(x, y))
+    assert sprite.center == sprite.position
+
+
+@pytest.mark.parametrize("vector_type", [tuple, Vector])
+@given(x=floats(allow_nan=False, allow_infinity=False), y=floats(allow_nan=False, allow_infinity=False))
+def test_sides_center_setting(x, y, vector_type):
+    sprite = Sprite()
+    sprite.center = vector_type((x, y))
+    assert sprite.center.x == x
+    assert sprite.center.y == y
+    assert sprite.position == sprite.center
+
+
+@given(x=floats(allow_nan=False, allow_infinity=False),
+       y=floats(allow_nan=False, allow_infinity=False),
+       delta_x=floats(allow_nan=False, allow_infinity=False),
+       delta_y=floats(allow_nan=False, allow_infinity=False))
+def test_center_plus_equals(x, y, delta_x, delta_y):
+    sprite = Sprite(position=(x, y))
+    sprite.center += delta_x, delta_y
+    assert sprite.position.x == x + delta_x
+    assert sprite.position.y == y + delta_y
+    assert sprite.position == sprite.center
 
 
 def test_sprite_in_main():
