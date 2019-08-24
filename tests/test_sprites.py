@@ -61,20 +61,6 @@ class TestBaseSprite(TestCase):
 
         self.assertEqual(self.sprite.position, Vector(2.5, 2.5))
 
-    def test_right_top(self):
-        self.assertEqual(self.sprite.right.top, Vector(0.5, 0.5))
-
-        self.sprite.right.top = (1, 1)
-        self.assertEqual(self.sprite.right.top, Vector(1, 1))
-
-        self.sprite.right.top += (2, 1)
-        self.assertEqual(self.sprite.right.top, Vector(3, 2))
-
-        result = self.sprite.right.top + (2, 3)
-        self.assertEqual(result, Vector(5, 5))
-
-        self.assertEqual(self.sprite.position, Vector(2.5, 1.5))
-
     def test_right_center(self):
         self.assertEqual(self.sprite.right.center, Vector(0.5, 0))
 
@@ -104,20 +90,6 @@ class TestBaseSprite(TestCase):
     def test_right_left(self):
         self.assertRaises(AttributeError, getattr, self.sprite.right, "left")
         self.assertRaises(AttributeError, setattr, self.sprite.right, "left", Vector(1, 1))
-
-    def test_top_right(self):
-        self.assertEqual(self.sprite.top.right, Vector(0.5, 0.5))
-
-        self.sprite.top.right = (1, 1)
-        self.assertEqual(self.sprite.top.right, Vector(1, 1))
-
-        self.sprite.top.right += (2, 1)
-        self.assertEqual(self.sprite.top.right, Vector(3, 2))
-
-        result = self.sprite.top.right + (2, 3)
-        self.assertEqual(result, Vector(5, 5))
-
-        self.assertEqual(self.sprite.position, Vector(2.5, 1.5))
 
     def test_top_center(self):
         self.assertEqual(self.sprite.top.center, Vector(0, 0.5))
@@ -415,6 +387,60 @@ def test_sides_top_left_plus_equals(x, y, vector_type):
     assert left_top == top_left
     assert left_top == Vector(x - 0.5, y + 0.5)
     assert sprite.position == left_top + Vector(0.5, -0.5)
+
+
+@given(x=floats(allow_nan=False, allow_infinity=False), y=floats(allow_nan=False, allow_infinity=False))
+def test_sides_top_right(x, y):
+    sprite = Sprite(position=(x, y))
+    top_right = sprite.top.right
+    right_top = sprite.right.top
+    assert top_right == right_top
+    assert isclose(top_right.y, y + 0.5)
+    assert isclose(top_right.x, x + 0.5)
+
+
+# ints because the kinds of floats hypothesis generates aren't realistic
+# to our use case.
+@pytest.mark.parametrize("vector_type", [tuple, Vector])
+@given(x=integers(max_value=10_000_000, min_value=-10_000_000), y=integers(max_value=10_000_000, min_value=-10_000_000))
+def test_sides_top_right_set(x, y, vector_type):
+    sprite = Sprite()
+    sprite.top.right = vector_type((x, y))
+    top_right = sprite.top.right
+    right_top = sprite.right.top
+    assert top_right == right_top
+    assert top_right == Vector(x, y)
+    assert sprite.position == top_right + Vector(-0.5, -0.5)
+
+    # duplicating to prove top.left and left.top are the same.
+    sprite = Sprite()
+    sprite.right.top = vector_type((x, y))
+    top_right = sprite.top.right
+    right_top = sprite.right.top
+    assert right_top == top_right
+    assert right_top == Vector(x, y)
+    assert sprite.position == right_top + Vector(-0.5, -0.5)
+
+
+@pytest.mark.parametrize("vector_type", [tuple, Vector])
+@given(x=integers(max_value=10_000_000, min_value=-10_000_000), y=integers(max_value=10_000_000, min_value=-10_000_000))
+def test_sides_top_right_plus_equals(x, y, vector_type):
+    sprite = Sprite()
+    sprite.top.right += vector_type((x, y))
+    top_right = sprite.top.right
+    right_top = sprite.right.top
+    assert top_right == right_top
+    assert top_right == Vector(x + 0.5, y + 0.5)
+    assert sprite.position == top_right + Vector(-0.5, -0.5)
+
+    # duplicating to prove top.left and left.top are the same.
+    sprite = Sprite()
+    sprite.top.left += vector_type((x, y))
+    top_right = sprite.top.right
+    right_top = sprite.right.top
+    assert right_top == top_right
+    assert right_top == Vector(x + 0.5, y + 0.5)
+    assert sprite.position == right_top + Vector(-0.5, -0.5)
 
 
 def test_sprite_in_main():
