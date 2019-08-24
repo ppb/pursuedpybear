@@ -1,6 +1,7 @@
 from math import isclose
 from unittest import TestCase
 from unittest.mock import patch
+import warnings
 
 from hypothesis import given
 from hypothesis.strategies import floats
@@ -403,3 +404,15 @@ def test_sprite_in_main():
     with patch("ppb.sprites.getfile", side_effect=TypeError):
         # This patch simulates what happens when TestSprite was defined in the REPL
         assert s.__image__()  # We don't care what it is, as long as it's something
+
+
+def test_deprecated_base_sprite_warns():
+    with warnings.catch_warnings(record=True) as w:
+        # Cause all warnings to always be triggered.
+        warnings.simplefilter("always")
+        # Trigger a warning.
+        sprite = DeprecatedBaseSprite()
+        # Verify some things
+        assert len(w) == 1
+        assert issubclass(w[-1].category, DeprecationWarning)
+        assert "deprecated" in str(w[-1].message)
