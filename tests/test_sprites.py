@@ -1,8 +1,10 @@
+from math import isclose
 from unittest import TestCase
 from unittest.mock import patch
 
 from hypothesis import given
 from hypothesis.strategies import floats
+from hypothesis.strategies import integers
 import pytest
 
 from ppb import BaseSprite as DeprecatedBaseSprite
@@ -15,18 +17,6 @@ class TestBaseSprite(TestCase):
     def setUp(self):
         self.sprite = Sprite()
         self.wide_sprite = Sprite(size=2, pos=(2, 2))
-
-    def test_left(self):
-        self.assertEqual(self.sprite.left, -0.5)
-        self.assertEqual(self.wide_sprite.left, 1)
-
-        self.sprite.left = 0
-        self.assertEqual(self.sprite.position.x, 0.5)
-        self.assertEqual(self.sprite.position.y, 0)
-
-        self.sprite.left += 2
-        self.assertEqual(self.sprite.position.x, 2.5)
-        self.assertEqual(self.sprite.position.y, 0)
 
     def test_right(self):
         self.assertEqual(self.sprite.right, 0.5)
@@ -336,6 +326,31 @@ def test_sides_center_plus_equals(x, y, delta_x, delta_y, vector_type):
     assert sprite.position.x == x + delta_x
     assert sprite.position.y == y + delta_y
     assert sprite.position == sprite.center
+
+
+@given(x=floats(allow_nan=False, allow_infinity=False))
+def test_sides_left(x):
+    sprite = Sprite(position=(x, 0))
+    assert isclose(sprite.left, x - 0.5)
+
+
+# ints because the kinds of floats hypothesis generates aren't realistic
+# to our use case.
+@given(x=integers(max_value=1_000_000, min_value=-1_000_000))
+def test_sides_set_left(x):
+    sprite = Sprite()
+    sprite.left = x
+    print(float(sprite.left))
+    assert sprite.left == x
+    assert sprite.position.x == x + 0.5
+
+
+@given(x=integers())
+def test_sides_plus_equals_left(x):
+    sprite = Sprite()
+    sprite.left += x
+    assert sprite.left == x - 0.5
+    assert sprite.position.x == sprite.left + 0.5
 
 
 def test_sprite_in_main():
