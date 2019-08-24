@@ -31,8 +31,9 @@ class BaseSprite(Sprite):
     ppb.sprites.BaseSprite.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, **kwargs):
         warnings.warn(self.__warning, DeprecationWarning)
+        super().__init__(**kwargs)
 
 
 def _make_kwargs(setup, title, engine_opts):
