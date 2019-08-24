@@ -6,25 +6,26 @@ from ppb import events
 from ppb_vector import Vector
 from ppb.engine import GameEngine
 from ppb.scenes import BaseScene
-from ppb.sprites import BaseSprite as OldBaseSprite
+from ppb.sprites import Sprite
 from ppb.systems import Image
 from ppb.systems import Sound
 
 __all__ = (
     # Shortcuts
-    'Vector', 'BaseScene', 'BaseSprite', 'Image', 'Sound', 'events',
+    'Vector', 'BaseScene', 'BaseSprite', 'Image', 'Sprite', 'Sound',
+    'events',
     # Local stuff
     'run', 'make_engine',
 )
 
 
-class BaseSprite(OldBaseSprite):
+class BaseSprite(Sprite):
     """
     A stub that raises a deprecation warning when a user uses
     ``ppb.BaseSprite.``
     """
     __warning = """Using ppb.BaseSprite is deprecated.
-    
+
     You probably want ppb.Sprite. If you're wanting to use BaseSprite and
     mixins to change what features your sprites have, import
     ppb.sprites.BaseSprite.
@@ -32,12 +33,6 @@ class BaseSprite(OldBaseSprite):
 
     def __init__(self, *args, **kwargs):
         warnings.warn(self.__warning, DeprecationWarning)
-
-
-class Sprite(OldBaseSprite):
-    """
-    A stub pointing to current functionality under the new name.
-    """
 
 
 def _make_kwargs(setup, title, engine_opts):

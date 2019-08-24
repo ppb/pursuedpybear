@@ -9,6 +9,13 @@ import ppb
 from ppb.eventlib import EventMixin
 from ppb.utils import FauxFloat
 
+__all__ = (
+    "BaseSprite",
+    "Sprite",
+    "RotatableMixin",
+    "SquareShapeMixin",
+    "RenderableMixin",
+)
 
 TOP = "top"
 BOTTOM = "bottom"
@@ -345,3 +352,18 @@ class SquareShapeMixin:
     @property
     def _offset_value(self):
         return self.size / 2
+
+
+class Sprite(BaseSprite, SquareShapeMixin, RenderableMixin, RotatableMixin):
+    """
+    The default Sprite class.
+
+    Sprite includes:
+
+    * BaseSprite
+    * SquareShapeMixin
+    * RenderableMixin
+    * RotatableMixin
+
+    New in 0.7.0: Use this in place of BaseSprite in your games.
+    """
