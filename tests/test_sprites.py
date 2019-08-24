@@ -1,5 +1,4 @@
 from math import isclose
-from unittest import TestCase
 from unittest.mock import patch
 import warnings
 
@@ -11,45 +10,6 @@ import pytest
 from ppb import BaseSprite as DeprecatedBaseSprite
 from ppb.sprites import *
 from ppb_vector import Vector
-
-
-class TestBaseSprite(TestCase):
-
-    def setUp(self):
-        self.sprite = Sprite()
-        self.wide_sprite = Sprite(size=2, pos=(2, 2))
-
-    def test_left_left(self):
-        self.assertRaises(AttributeError, getattr, self.sprite.left, "left")
-        self.assertRaises(AttributeError, setattr, self.sprite.left, "left", Vector(1, 1))
-
-    def test_left_right(self):
-        self.assertRaises(AttributeError, getattr, self.sprite.left, "right")
-        self.assertRaises(AttributeError, setattr, self.sprite.left, "right", Vector(1, 1))
-
-    def test_right_right(self):
-        self.assertRaises(AttributeError, getattr, self.sprite.right, "right")
-        self.assertRaises(AttributeError, setattr, self.sprite.right, "right", Vector(1, 1))
-
-    def test_right_left(self):
-        self.assertRaises(AttributeError, getattr, self.sprite.right, "left")
-        self.assertRaises(AttributeError, setattr, self.sprite.right, "left", Vector(1, 1))
-
-    def test_top_top(self):
-        self.assertRaises(AttributeError, getattr, self.sprite.top, "top")
-        self.assertRaises(AttributeError, setattr, self.sprite.top, "top", Vector(1, 1))
-
-    def test_top_bottom(self):
-        self.assertRaises(AttributeError, getattr, self.sprite.top, "bottom")
-        self.assertRaises(AttributeError, setattr, self.sprite.top, "bottom", Vector(1, 1))
-
-    def test_bottom_top(self):
-        self.assertRaises(AttributeError, getattr, self.sprite.bottom, "top")
-        self.assertRaises(AttributeError, setattr, self.sprite.bottom, "top", Vector(1, 1))
-
-    def test_bottom_bottom(self):
-        self.assertRaises(AttributeError, getattr, self.sprite.bottom, "bottom")
-        self.assertRaises(AttributeError, setattr, self.sprite.bottom, "bottom", Vector(1, 1))
 
 
 def test_class_attrs():
@@ -116,6 +76,15 @@ def test_rotatable_base_sprite():
 def test_sides_bottom(y):
     sprite = Sprite(position=(0, y))
     assert isclose(sprite.bottom, y - 0.5)
+
+
+def test_sides_bottom_invalid_access():
+    sprite = Sprite()
+    with pytest.raises(AttributeError):
+        unknown = sprite.bottom.bottom
+
+    with pytest.raises(AttributeError):
+        unknown = sprite.bottom.top
 
 
 # ints because the kinds of floats hypothesis generates aren't realistic
@@ -309,6 +278,16 @@ def test_sides_left(x):
     assert isclose(sprite.left, x - 0.5)
 
 
+
+def test_sides_left_invalid_access():
+    sprite = Sprite()
+    with pytest.raises(AttributeError):
+        unknown = sprite.left.right
+
+    with pytest.raises(AttributeError):
+        unknown = sprite.left.left
+
+
 # ints because the kinds of floats hypothesis generates aren't realistic
 # to our use case.
 @given(x=integers(max_value=10_000_000, min_value=-10_000_000))
@@ -364,6 +343,15 @@ def test_sides_right(x):
     assert isclose(sprite.right, x + 0.5)
 
 
+def test_sides_right_invalid_access():
+    sprite = Sprite()
+    with pytest.raises(AttributeError):
+        unknown = sprite.right.right
+
+    with pytest.raises(AttributeError):
+        unknown = sprite.right.left
+
+
 # ints because the kinds of floats hypothesis generates aren't realistic
 # to our use case.
 @given(x=integers(max_value=10_000_000, min_value=-10_000_000))
@@ -417,6 +405,15 @@ def test_sides_right_center_plus_equals(x, y, vector_type):
 def test_sides_top(y):
     sprite = Sprite(position=(0, y))
     assert isclose(sprite.top, y + 0.5)
+
+
+def test_sides_top_invalid_access():
+    sprite = Sprite()
+    with pytest.raises(AttributeError):
+        unknown = sprite.top.bottom
+
+    with pytest.raises(AttributeError):
+        unknown = sprite.top.top
 
 
 # ints because the kinds of floats hypothesis generates aren't realistic
