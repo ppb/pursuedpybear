@@ -325,13 +325,14 @@ def test_sides_center_setting(x, y, vector_type):
     assert sprite.position == sprite.center
 
 
+@pytest.mark.parametrize("vector_type", [tuple, Vector])
 @given(x=floats(allow_nan=False, allow_infinity=False),
        y=floats(allow_nan=False, allow_infinity=False),
        delta_x=floats(allow_nan=False, allow_infinity=False),
        delta_y=floats(allow_nan=False, allow_infinity=False))
-def test_center_plus_equals(x, y, delta_x, delta_y):
+def test_sides_center_plus_equals(x, y, delta_x, delta_y, vector_type):
     sprite = Sprite(position=(x, y))
-    sprite.center += delta_x, delta_y
+    sprite.center += vector_type((delta_x, delta_y))
     assert sprite.position.x == x + delta_x
     assert sprite.position.y == y + delta_y
     assert sprite.position == sprite.center
