@@ -18,18 +18,6 @@ class TestBaseSprite(TestCase):
         self.sprite = Sprite()
         self.wide_sprite = Sprite(size=2, pos=(2, 2))
 
-    def test_right(self):
-        self.assertEqual(self.sprite.right, 0.5)
-        self.assertEqual(self.wide_sprite.right, 3)
-
-        self.sprite.right = 0
-        self.assertEqual(self.sprite.position.x, -0.5)
-        self.assertEqual(self.sprite.position.y, 0)
-
-        self.sprite.right += 2
-        self.assertEqual(self.sprite.position.x, 1.5)
-        self.assertEqual(self.sprite.position.y, 0)
-
     def test_top(self):
         self.assertEqual(self.sprite.top, 0.5)
         self.assertEqual(self.wide_sprite.top, 3)
@@ -336,7 +324,7 @@ def test_sides_left(x):
 
 # ints because the kinds of floats hypothesis generates aren't realistic
 # to our use case.
-@given(x=integers(max_value=1_000_000, min_value=-1_000_000))
+@given(x=integers(max_value=10_000_000, min_value=-10_000_000))
 def test_sides_set_left(x):
     sprite = Sprite()
     sprite.left = x
@@ -345,12 +333,37 @@ def test_sides_set_left(x):
     assert sprite.position.x == x + 0.5
 
 
-@given(x=integers())
+@given(x=integers(max_value=10_000_000, min_value=-10_000_000))
 def test_sides_plus_equals_left(x):
     sprite = Sprite()
     sprite.left += x
     assert sprite.left == x - 0.5
     assert sprite.position.x == sprite.left + 0.5
+
+
+@given(x=floats(allow_nan=False, allow_infinity=False))
+def test_sides_right(x):
+    sprite = Sprite(position=(x, 0))
+    assert isclose(sprite.right, x + 0.5)
+
+
+# ints because the kinds of floats hypothesis generates aren't realistic
+# to our use case.
+@given(x=integers(max_value=10_000_000, min_value=-10_000_000))
+def test_sides_right_set(x):
+    sprite = Sprite()
+    sprite.right = x
+    print(float(sprite.left))
+    assert sprite.right == x
+    assert sprite.position.x == x - 0.5
+
+
+@given(x=integers(max_value=10_000_000, min_value=-10_000_000))
+def test_sides_right_plus_equals(x):
+    sprite = Sprite()
+    sprite.right += x
+    assert sprite.right == x + 0.5
+    assert sprite.position.x == sprite.right - 0.5
 
 
 def test_sprite_in_main():
