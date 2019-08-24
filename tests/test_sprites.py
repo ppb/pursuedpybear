@@ -12,10 +12,6 @@ class TestBaseSprite(TestCase):
         self.sprite = Sprite()
         self.wide_sprite = Sprite(size=2, pos=(2, 2))
 
-    def test_pos(self):
-        self.assertEqual(self.sprite.position, Vector(0, 0))
-        self.assertEqual(self.wide_sprite.position, Vector(2, 2))
-
     def test_center(self):
         self.assertEqual(self.sprite.center, self.sprite.position)
 
