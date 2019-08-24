@@ -1,15 +1,16 @@
 from unittest import TestCase
 from unittest.mock import patch
 
-from ppb import BaseSprite, Vector
-from ppb.sprites import RotatableMixin
+from ppb import BaseSprite as DeprecatedBaseSprite
+from ppb.sprites import *
+from ppb_vector import Vector
 
 
 class TestBaseSprite(TestCase):
 
     def setUp(self):
-        self.sprite = BaseSprite()
-        self.wide_sprite = BaseSprite(size=2, pos=(2, 2))
+        self.sprite = Sprite()
+        self.wide_sprite = Sprite(size=2, pos=(2, 2))
 
     def test_pos(self):
         self.assertEqual(self.sprite.position, Vector(0, 0))
@@ -280,7 +281,7 @@ def test_class_attrs():
 
 
 def test_offset():
-    class TestSprite(BaseSprite):
+    class TestSprite(Sprite):
         size = 1.1
 
     assert TestSprite().left < -0.5
@@ -322,7 +323,7 @@ def test_rotatable_rotate():
 
 
 def test_rotatable_base_sprite():
-    test_sprite = BaseSprite()
+    test_sprite = Sprite()
 
     test_sprite.rotate(1)
     assert test_sprite.rotation == 1
@@ -333,7 +334,7 @@ def test_sprite_in_main():
     Test that Sprite.__resource_path__ returns a meaningful value inside
     REPLs where __main__ doesn't have a file.
     """
-    class TestSprite(BaseSprite):
+    class TestSprite(Sprite):
         pass
 
     s = TestSprite()

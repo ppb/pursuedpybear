@@ -60,9 +60,6 @@ class BaseSprite(EventMixin):
                 v = Vector(v)
             setattr(self, k, v)
 
-        # Trigger some calculations
-        self.size = self.size
-
 
 class RenderableMixin:
     """
@@ -293,6 +290,12 @@ class SquareShapeMixin:
     size: Union[int, float] = 1
     #: Just here for typing and linting purposes. Your sprite should already have a position.
     position: ppb_vector.Vector
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        # Trigger some calculations
+        self.size = self.size
 
     @property
     def center(self) -> Vector:
