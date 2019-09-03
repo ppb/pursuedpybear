@@ -114,7 +114,7 @@ class Asset(AbstractAsset):
         Will block until the data is loaded.
         """
         if _hint is _default_hint:
-            logger.warn(f"Waited on {self!r} before the engine began")
+            logger.warning(f"Waited on {self!r} before the engine began")
         self._finished.wait(timeout)
         if hasattr(self, '_raise_error'):
             raise self._raise_error

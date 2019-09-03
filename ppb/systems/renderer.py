@@ -94,7 +94,7 @@ class Renderer(System):
         if image is flags.DoNotRender:
             return None
         if isinstance(image, str):
-            logger.warn(f"Using string resources is deprecated, use ppb.Image instead. Got {image!r}")
+            logger.warning(f"Using string resources is deprecated, use ppb.Image instead. Got {image!r}")
             image = Image(image)
 
         source_image = image.load()
