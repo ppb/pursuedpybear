@@ -17,7 +17,7 @@ Name | Email | Twitter |
 ---- | ----- | ------- |
 [Laura Hampton](https://github.com/lgh2) | [laura@laura-hampton.com](laura@laura-hampton.com) | [incunabulista](https://twitter.com/incunabulista)
 [Dimitris Maroulidis](https://github.com/dmaroulidis) | [dimitris@dimitrismaroulidis.com](mailto:dimitris@dimitrismaroulidis.com) | [dmaroulidis](https://twitter.com/dmaroulidis)
-[Jenny Li](https://github.com/imjennyli) | 
+[Jenny Li](https://github.com/imjennyli) |
 [Andrew Schamp](https://github.com/schamp/) | | [schamp](https://twitter.com/schamp)
 [Dillon Omane](https://github.com/dillonko) | [Dillon_KO](dillonko84@gmail.com)
 [Nicolas Braud-Santoni](https://nicolas.braud-santoni.eu) | | |
@@ -28,3 +28,4 @@ Halle Jones|HJones@aliacy.com||
 [Laura Gutierrez](https://github.com/lauraooq) | [laura.gutierrez@ooqia.com](laura.gutierrez@ooqia.com) | [lauraooq](https://twitter.com/lauraooqia)
 [Pamela McA'Nulty](https://github.com/PamelaM) | | [pmcanulty01](https://twitter.com/pmcanulty01)
 [Trenton Mason](https://github.com/BubbsTheSupreme) | <trenton.mason14@outlook.com> | [BubbsTheSupreme](https://twitter.com/BubbsTheSupreme)
+[Arul Prabakaran](https://github.com/arulprabakaran) | [arul.prabakaran@gmail.com](arul.prabakaran@gmail.com) | [arulpraba](https://twitter.com/arulpraba)
