@@ -6,7 +6,18 @@ from ppb_vector import Vector
 
 
 def test_circle_collider():
-    pass
+    sprite_1 = collision.CanCollideCircleMixin()
+    sprite_2 = collision.CanCollideCircleMixin()
+    assert sprite_1.collides_with(sprite_2)
+    assert sprite_2.collides_with(sprite_1)
+
+    sprite_1.position = Vector(3, 0)
+    assert not sprite_1.collides_with(sprite_2)
+    assert not sprite_2.collides_with(sprite_1)
+
+    sprite_1.position = Vector(2, 0)
+    assert sprite_1.collides_with(sprite_2)
+    assert sprite_2.collides_with(sprite_1)
 
 
 def test_square_collider():
