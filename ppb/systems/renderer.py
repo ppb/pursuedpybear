@@ -15,6 +15,8 @@ logger = logging.getLogger(__name__)
 DEFAULT_RESOLUTION = 800, 600
 
 
+# TODO: Move Image out of the renderer so sprites can type hint
+#  appropriately.
 class Image(assets.Asset):
     def background_parse(self, data):
         return pygame.image.load(io.BytesIO(data), self.name).convert_alpha()
@@ -71,7 +73,7 @@ class Renderer(System):
         self.old_resized_images = self.resized_images
         self.resized_images = {}
 
-        for game_object in render_event.scene:
+        for game_object in render_event.scene.sprite_layers():
             resource = self.prepare_resource(game_object)
             if resource is None:
                 continue
@@ -92,7 +94,7 @@ class Renderer(System):
         if image is flags.DoNotRender:
             return None
         if isinstance(image, str):
-            logger.warn(f"Using string resources is deprecated, use ppb.Image instead. Got {image!r}")
+            logger.warning(f"Using string resources is deprecated, use ppb.Image instead. Got {image!r}")
             image = Image(image)
 
         source_image = image.load()

@@ -1,6 +1,6 @@
 from math import isclose
 
-from ppb import BaseSprite
+from ppb import Sprite
 from ppb import Vector
 from ppb.camera import Camera
 
@@ -69,7 +69,7 @@ def test_sprite_in_viewport():
     # 80 is the legacy value.
     cam = Camera(viewport=(0, 0, 800, 600), pixel_ratio=80)
 
-    class Thing(BaseSprite):
+    class Thing(Sprite):
         def __init__(self, position=Vector(2, 2)):
             super().__init__()
             self.size = 2

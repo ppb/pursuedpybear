@@ -12,3 +12,4 @@ tools to have when making games.
    animation
    collisions
    twophase
+   loadingscreen
