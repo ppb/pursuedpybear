@@ -16,7 +16,7 @@ from ppb.systems import EventPoller
 from ppb.systems import Renderer
 from ppb.systems import Updater
 from ppb.systems import SoundController
-from ppb.assets import AssetLoadingSystem
+from ppb.assetlib import AssetLoadingSystem
 from ppb.utils import LoggingMixin
 
 

@@ -4,6 +4,9 @@ from typing import Callable
 
 from ppb import events
 from ppb_vector import Vector
+from ppb.assets import Circle
+from ppb.assets import Square
+from ppb.assets import Triangle
 from ppb.engine import GameEngine
 from ppb.scenes import BaseScene
 from ppb.sprites import Sprite
@@ -12,8 +15,8 @@ from ppb.systems import Sound
 
 __all__ = (
     # Shortcuts
-    'Vector', 'BaseScene', 'BaseSprite', 'Image', 'Sprite', 'Sound',
-    'events',
+    'Vector', 'BaseScene', 'BaseSprite', 'Circle', 'Image', 'Sprite',
+    'Square', 'Sound', 'Triangle', 'events',
     # Local stuff
     'run', 'make_engine',
 )
