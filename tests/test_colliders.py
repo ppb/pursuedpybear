@@ -2,14 +2,26 @@ from unittest.mock import Mock
 
 from ppb.events import Idle
 from ppb.features import collision
-from ppb.sprites import BaseSprite
+from ppb_vector import Vector
+
 
 def test_circle_collider():
     pass
 
 
 def test_square_collider():
-    pass
+    sprite_1 = collision.CanCollideSquareMixin(size=2)
+    sprite_2 = collision.CanCollideSquareMixin(size=1)
+    assert sprite_1.collides_with(sprite_2)
+    assert sprite_2.collides_with(sprite_1)
+
+    sprite_2.position = Vector(2, 0)
+    assert not sprite_1.collides_with(sprite_2)
+    assert not sprite_2.collides_with(sprite_1)
+
+    sprite_2.position = Vector(1.5, 0)
+    assert sprite_1.collides_with(sprite_2)
+    assert sprite_2.collides_with(sprite_1)
 
 
 def test_collide_checker_system():

@@ -3,7 +3,7 @@ A collision subsystem with various colliders available.
 """
 from itertools import combinations
 
-from ppb.sprites import BaseSprite
+from ppb.sprites import Sprite
 from ppb.systemslib import System
 
 
@@ -27,7 +27,7 @@ class CollidedWithMixin:
         """
 
 
-class CanCollideCircleMixin(CollidedWithMixin, BaseSprite):
+class CanCollideCircleMixin(CollidedWithMixin, Sprite):
     """
     Defines a circular region collider and provides a method to check for
     collision.
@@ -45,7 +45,7 @@ class CanCollideCircleMixin(CollidedWithMixin, BaseSprite):
         return distance <= collide_distance
 
 
-class CanCollideSquareMixin(CollidedWithMixin, BaseSprite):
+class CanCollideSquareMixin(CollidedWithMixin, Sprite):
     """
     Uses the defined square on a sprite to provide a method to check for
     collision.
