@@ -1,7 +1,7 @@
 """
 A collision subsystem with various colliders available.
 """
-from itertools import product
+from itertools import combinations
 
 from ppb.sprites import BaseSprite
 from ppb.systemslib import System
@@ -17,7 +17,7 @@ class CollidedWithMixin:
     you are using one of them.
     """
 
-    def collided_with(self, other):
+    def on_collided_with(self, other):
         """
         Another sprite has collided with this sprite.
 
@@ -27,7 +27,7 @@ class CollidedWithMixin:
         """
 
 
-class CanCollideCircleMixin(BaseSprite, CollidedWithMixin):
+class CanCollideCircleMixin(CollidedWithMixin, BaseSprite):
     """
     Defines a circular region collider and provides a method to check for
     collision.
@@ -45,9 +45,9 @@ class CanCollideCircleMixin(BaseSprite, CollidedWithMixin):
         return distance <= collide_distance
 
 
-class CanCollideSquareMixin(BaseSprite, CollidedWithMixin):
+class CanCollideSquareMixin(CollidedWithMixin, BaseSprite):
     """
-    Uses the defined square on a sprite to provid a method to check for
+    Uses the defined square on a sprite to provide a method to check for
     collision.
     """
 
@@ -85,19 +85,19 @@ class CollisionCheckerSystem(System):
     def on_idle(self, event, signal):
         if not self.primed:
             return
-        for s1, s2 in product(event.scene, event.scene):
+        for s1, s2 in combinations(event.scene, 2):
             if s1 is s2:
                 continue
             try:
                 if s1.collides_with(s2):
-                    s1.collided_with(s2)
-                    s2.collided_with(s1)
+                    s1.on_collided_with(s2)
+                    s2.on_collided_with(s1)
             except AttributeError as err:
                 if getattr(s1, "collides_with", None) and getattr(s2, "collides_with", None):
                     # Has to be collided_with or user code
                     error_target = None
-                    if getattr(s1, "collided_with", None) is not None:
-                        if getattr(s2, "collided_with", None) is not None:
+                    if getattr(s1, "on_collided_with", None) is not None:
+                        if getattr(s2, "on_collided_with", None) is not None:
                             # this is in user code, we want to raise this.
                             raise
                         else:
