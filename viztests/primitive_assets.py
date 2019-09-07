@@ -1,3 +1,9 @@
+"""
+Tests primitive asset types: Square, Circle, and Triangle.
+
+Should display a red square in the bottom left, a black triangle up, and a
+magenta circle bottom right.
+"""
 import ppb
 
 

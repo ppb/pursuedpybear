@@ -1,3 +1,5 @@
+from typing import Tuple
+
 from pygame import Surface
 from pygame import draw
 
@@ -28,17 +30,21 @@ def _create_surface(color):
 class Shape(AbstractAsset):
     """Shapes are drawing primitives that are good for rapid prototyping."""
 
-    def __init__(self, red, green, blue):
+    def __init__(self, red: int, green: int, blue: int):
         color = red, green, blue
         self._asset = _create_surface(color)
         self.modify_asset(color)
 
-    def load(self):
+    def load(self) -> Surface:
         """Return the underlying asset."""
         return self._asset
 
-    def modify_asset(self, color):
-        """To be handled by subclasses."""
+    def modify_asset(self, color: Tuple[int, int, int]) -> None:
+        """
+        Modify the raw asset to match the intended shape.
+
+        Must modify in place.
+        """
 
 
 class Square(Shape):
