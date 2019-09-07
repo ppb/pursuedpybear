@@ -23,6 +23,8 @@ class Image(assets.Asset):
 
     def file_missing(self):
         resource = pygame.Surface((70, 70))
+        # this algorithm can't produce black, so this is a safe colorkey.
+        resource.set_colorkey((0, 0, 0))
         random.seed(str(self.name))
         r = random.randint(65, 255)
         g = random.randint(65, 255)
