@@ -2,11 +2,11 @@ from typing import Sequence
 from numbers import Number
 
 from ppb_vector import Vector
-from ppb.sprites import BaseSprite
+from ppb.sprites import Sprite
 from ppb.flags import DoNotRender
 
 
-class Camera(BaseSprite):
+class Camera(Sprite):
 
     image = DoNotRender
 
@@ -90,7 +90,7 @@ class Camera(BaseSprite):
         vph = self.viewport_height
         return vpx <= px <= (vpw+vpx) and vpy <= py <= (vph+vpy)
 
-    def in_frame(self, sprite: BaseSprite) -> bool:
+    def in_frame(self, sprite: Sprite) -> bool:
         return (self.frame_left <= sprite.right and
                 self.frame_right >= sprite.left and
                 self.frame_top >= sprite.bottom and
