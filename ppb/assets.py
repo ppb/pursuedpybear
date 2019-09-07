@@ -20,11 +20,11 @@ def _create_surface(color):
     """
     Creates a surface for assets and sets the color key.
     """
-    asset = Surface(DEFAULT_SPRITE_RESOLUTION)
+    surface = Surface(DEFAULT_SPRITE_RESOLUTION)
     color_key = BLACK if color != BLACK else MAGENTA
-    asset.set_colorkey(color_key)
-    asset.fill(color_key)
-    return asset
+    surface.set_colorkey(color_key)
+    surface.fill(color_key)
+    return surface
 
 
 class Shape(AbstractAsset):
@@ -32,14 +32,14 @@ class Shape(AbstractAsset):
 
     def __init__(self, red: int, green: int, blue: int):
         color = red, green, blue
-        self._asset = _create_surface(color)
-        self.modify_asset(color)
+        self._surface = _create_surface(color)
+        self.modify_surface(color)
 
     def load(self) -> Surface:
         """Return the underlying asset."""
-        return self._asset
+        return self._surface
 
-    def modify_asset(self, color: Tuple[int, int, int]) -> None:
+    def modify_surface(self, color: Tuple[int, int, int]) -> None:
         """
         Modify the raw asset to match the intended shape.
 
@@ -52,8 +52,8 @@ class Square(Shape):
     A square image of a single color.
     """
 
-    def modify_asset(self, color):
-        self._asset.fill(color)
+    def modify_surface(self, color):
+        self._surface.fill(color)
 
 
 class Triangle(Shape):
@@ -61,8 +61,8 @@ class Triangle(Shape):
     A triangle image of a single color.
     """
 
-    def modify_asset(self, color):
-        draw.polygon(self._asset, color,
+    def modify_surface(self, color):
+        draw.polygon(self._surface, color,
                      [
                          (0, DEFAULT_SPRITE_SIZE),
                          (DEFAULT_SPRITE_SIZE / 2, 0),
@@ -75,6 +75,6 @@ class Circle(Shape):
     A circle image of a single color.
     """
 
-    def modify_asset(self, color):
+    def modify_surface(self, color):
         half = int(DEFAULT_SPRITE_SIZE / 2)
-        draw.circle(self._asset, color, (half, half), half)
+        draw.circle(self._surface, color, (half, half), half)
