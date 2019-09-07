@@ -1,3 +1,8 @@
+"""
+Tests that sprites drawn with the square primitive default rotate correctly.
+
+Verify that the square rotates and doesn't resize.
+"""
 import ppb
 
 
