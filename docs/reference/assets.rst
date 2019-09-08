@@ -23,7 +23,7 @@ General Asset Interface
 All assets inherit from :py:class:`Asset`. It handles the background loading
 system and the data logistics.
 
-.. autoclass:: ppb.assets.Asset
+.. autoclass:: ppb.assetlib.Asset
     :members:
 
     .. method:: file_missing()
@@ -85,5 +85,14 @@ either delegate to other Assets or are completely synthesized.
 For example, :py:class:`ppb.features.animation.Animation` is an asset proxy that
 delegates to actual :py:class:`ppb.Image` instances.
 
-.. autoclass:: ppb.assets.AbstractAsset
+.. autoclass:: ppb.assetlib.AbstractAsset
     :members:
+
+.. autoclass:: ppb.Circle
+
+
+.. autoclass:: ppb.Square
+
+
+.. autoclass:: ppb.Triangle
+

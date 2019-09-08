@@ -4,7 +4,7 @@ import random
 
 import pygame
 
-import ppb.assets as assets
+import ppb.assetlib as assets
 import ppb.events as events
 import ppb.flags as flags
 from ppb.systemslib import System
