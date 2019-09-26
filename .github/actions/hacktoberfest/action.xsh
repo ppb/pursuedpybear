@@ -12,6 +12,7 @@ HACKTOBERFEST_LABEL = "Hacktoberfest"
 if $GITHUB_EVENT['action'] == 'deleted':
     sys.exit()
 
+print($GITHUB_EVENT)
 
 issue_id = $GITHUB_EVENT['issue']['node_id']
 labels = {
