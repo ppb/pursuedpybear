@@ -1,0 +1,52 @@
+#~github~
+
+
+query get_label($repo: ID!, $name: String!) {
+  node(id: $repo) {
+    ... on Repository {
+      label(name: $name) {
+        id
+      }
+    }
+  }
+}
+
+
+mutation add_label($label: ID!, $target: ID!) {
+  addLabelsToLabelable(input: {
+    labelIds: [$label],
+    labelableId: $target
+  }) {
+    labelable {
+      ... on Node {
+        id
+      }
+      labels {
+        nodes {
+          id
+          name
+        }
+      }
+    }
+  }
+}
+
+
+mutation del_label($label: ID!, $target: ID!) {
+  removeLabelsFromLabelable(input: {
+    labelIds: [$label],
+    labelableId: $target
+  }) {
+    labelable {
+      ... on Node {
+        id
+      }
+      labels {
+        nodes {
+          id
+          name
+        }
+      }
+    }    
+  }
+}

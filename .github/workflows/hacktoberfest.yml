@@ -1,0 +1,12 @@
+name: Greetings
+
+on: [issues]
+
+jobs:
+  poke:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: ./.github/actions/hacktoberfest
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        label: new contributor

@@ -1,0 +1,12 @@
+name: Hacktoberfest Sync
+description: Keeps the hacktoberfest label synced with another one
+inputs:
+  GITHUB_TOKEN:
+    description: GitHub authentication token
+    required: true
+  label:
+    description: Label to follow
+    required: true
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
