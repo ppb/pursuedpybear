@@ -21,7 +21,7 @@ labels = {
     for l in $GITHUB_EVENT['issue']['labels']
 }
 
-has_followed = bool($INPUT['label'] in labels.values())
+has_followed = bool($INPUT['LABEL'] in labels.values())
 has_hacktoberfest = bool(HACKTOBERFEST_LABEL in labels.values())
 
 if has_followed == has_hacktoberfest:
