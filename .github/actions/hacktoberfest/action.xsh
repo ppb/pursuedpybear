@@ -1,4 +1,6 @@
 #!/usr/bin/xonsh
+$XONSH_SHOW_TRACEBACK = True
+
 import sys
 sys.path.insert(0, "/opt/action")
 
