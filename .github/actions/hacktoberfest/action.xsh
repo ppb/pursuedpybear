@@ -13,6 +13,10 @@ import urllib
 HACKTOBERFEST_LABEL = "Hacktoberfest"
 
 
+import gqlmod.providers
+assert gqlmod.providers.get_provider('github').token, "No token on provider"
+
+
 if $GITHUB_EVENT['action'] == 'rerequested':
     sys.exit("Cannot process a rerun request (original event is lost)")
 elif $GITHUB_EVENT['action'] == 'deleted':
@@ -30,10 +34,6 @@ print("Found labels", ', '.join(labels.values()))
 
 has_followed = bool($INPUT['LABEL'] in labels.values())
 has_hacktoberfest = bool(HACKTOBERFEST_LABEL in labels.values())
-
-
-import gqlmod.providers
-assert gqlmod.providers.get_provider('github').token, "No token on provider"
 
 
 if has_followed == has_hacktoberfest:
