@@ -6,7 +6,6 @@ sys.path.insert(0, "/opt/action")
 
 
 source /etc/xonshrc
-print(${...})
 import tags
 
 import urllib
