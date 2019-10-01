@@ -6,6 +6,8 @@ sys.path.insert(0, "/opt/action")
 source /etc/xonshrc
 import tags
 
+import urllib
+
 HACKTOBERFEST_LABEL = "Hacktoberfest"
 
 
@@ -41,7 +43,11 @@ if not has_followed and has_hacktoberfest:
 elif has_followed and not has_hacktoberfest:
     print(f"Adding label: {HACKTOBERFEST_LABEL}")
     # Add the hacktoberfest label
-    res = tags.get_label(repo=$GITHUB_EVENT['repository']['node_id'], name=HACKTOBERFEST_LABEL)
+    try:
+        res = tags.get_label(repo=$GITHUB_EVENT['repository']['node_id'], name=HACKTOBERFEST_LABEL)
+    except urllib.error.HTTPError as exc:
+        print(exc.read())
+        raise
     assert not res.errors, repr(res.errors)
     hack_label_id = res.data['node']['label']['id']
     res = tags.add_label(label=hack_label_id, target=issue_id)
