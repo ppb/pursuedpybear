@@ -31,6 +31,11 @@ print("Found labels", ', '.join(labels.values()))
 has_followed = bool($INPUT['LABEL'] in labels.values())
 has_hacktoberfest = bool(HACKTOBERFEST_LABEL in labels.values())
 
+
+import gqlmod.providers
+assert gqlmod.providers.get_provider('github').token, "No token on provider"
+
+
 if has_followed == has_hacktoberfest:
     print("No changes needed")
     sys.exit()
