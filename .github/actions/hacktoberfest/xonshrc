@@ -43,7 +43,7 @@ else:
     cm.__enter__()
     # This is only to avoid warnings at exit
     # (Odd construction to allow scope cleanup)
-    events.on_exit(lambda _func=cm.__exit__, **_: _func(None, None, None))
+    # events.on_exit(lambda _func=cm.__exit__, **_: _func(None, None, None))
     assert gqlmod.providers.get_provider('github').token == token, "Initializing provider failed"
     del cm
 
