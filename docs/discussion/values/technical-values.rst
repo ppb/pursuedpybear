@@ -30,7 +30,7 @@ regards to itself, and also in connection to the larger Python community.
 Open Endedness
 ++++++++++++++++
 
-I don't actually have a good summary of this.
+We believe in the creativity of people, students, hobbyists, and professionals. We want to limit that creativity as little as reasonably possible. Yes, ``ppb`` is a 2D sprite-based engine, and that is unlikely to change. But we want to make sure that no genre, no style, no skill level is favored over another.
 
 Progressive Reveal of Complexity
 +++++++++++++++++++++++++++++++++
