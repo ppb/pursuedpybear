@@ -15,7 +15,8 @@ Students First
 +++++++++++++++
 
 We are an education focused project. In *every* API decision that should be the
-first consideration.
+first consideration. This is not to say we're leaving experienced developers
+behind. Hobbyists and professionals should also feel at home with the API.
 
 By student, we mean children in a classroom, self taught folks picking up via
 books or the internet, or people following along to a live tutorial.
