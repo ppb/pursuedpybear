@@ -62,6 +62,3 @@ their work changed can often be difficult. Beyond that emotional cost, changes
 that break existing code makes old tutorials stale and would break our "No
 Apologies" value. So we work fairly hard to maintain old functionality for as
 long as possible, but will eventually need to be removed.
-
-We've chosen the Northern Hemisphere summer for the time we launch breaking
-changes.
