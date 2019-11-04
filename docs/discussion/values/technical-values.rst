@@ -28,6 +28,9 @@ The goal of No Apologies is to minimize students asking questions like "why does
 this work differently here versus there?" Our API should make sense both in
 regards to itself, and also in connection to the larger Python community.
 
+We want to avoid "warts" and "wats" and keep in line with the principle of
+least surprise.
+
 Open Endedness
 ++++++++++++++++
 
