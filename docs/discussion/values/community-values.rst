@@ -28,4 +28,7 @@ contempt culture.
 
 Strong opinions are fine. Every member of the core developers has strong
 opinions on software. Being opinionated is appreciated, but don't share your
-contempt for given software or tools here.
+contempt_ for given software or tools here.
+
+
+.. _contempt: https://blog.aurynn.com/2015/12/16-contempt-culture/
