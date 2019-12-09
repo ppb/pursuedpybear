@@ -597,3 +597,17 @@ def test_deprecated_base_sprite_warns():
         assert len(w) == 1
         assert issubclass(w[-1].category, DeprecationWarning)
         assert "deprecated" in str(w[-1].message)
+
+
+def test_rectangle_shape_mixin_center():
+    class TestSprite(RectangleShapeMixin, BaseSprite):
+        pass
+
+    test_sprite = TestSprite()
+
+    assert test_sprite.center == test_sprite.position
+
+    test_sprite.center = Vector(100, 100)
+
+    assert test_sprite.center == test_sprite.position
+    assert test_sprite.center == Vector(100, 100)

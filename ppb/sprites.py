@@ -23,6 +23,7 @@ __all__ = (
     "Sprite",
     "RotatableMixin",
     "SquareShapeMixin",
+    "RectangleShapeMixin",
     "RenderableMixin",
 )
 
@@ -373,6 +374,11 @@ class RectangleShapeMixin:
 
     You should include RectangleShapeMixin before your BaseSprite in your
     parent classes.
+
+    Classes derived from RectangleShapeMixin default to the same size and
+    shape as all ppb Sprites: A 1 game unit by 1 game unit square. Just set
+    the width and height in your constructor (Or as class attributes) to
+    change this default.
     """
     width: int = 1
     height: int = 1
@@ -415,6 +421,10 @@ class RectangleShapeMixin:
     @property
     def center(self) -> Vector:
         return self.position
+
+    @center.setter
+    def center(self, vector: Vector):
+        self.position = vector
 
 
 class Sprite(SquareShapeMixin, RenderableMixin, RotatableMixin, BaseSprite):
