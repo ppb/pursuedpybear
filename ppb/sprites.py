@@ -367,6 +367,56 @@ class SquareShapeMixin:
         return self.size / 2
 
 
+class RectangleShapeMixin:
+    """
+    A Mixin that provides a rectangular area to sprites.
+
+    You should include RectangleShapeMixin before your BaseSprite in your
+    parent classes.
+    """
+    width: int = 1
+    height: int = 1
+    # Following class properties for type hinting only. Your concrete sprite
+    # should already have one.
+    position: Vector
+
+    @property
+    def left(self) -> float:
+        return self.position.x - self.width / 2
+
+    @property
+    def right(self) -> float:
+        return self.position.x + self.width / 2
+
+    @property
+    def top(self) -> float:
+        return self.position.y + self.width / 2
+
+    @property
+    def bottom(self) -> float:
+        return self.position.y - self.width / 2
+
+    @property
+    def top_left(self) -> Vector:
+        return Vector(self.left, self.top)
+
+    @property
+    def top_right(self) -> Vector:
+        return Vector(self.right, self.top)
+
+    @property
+    def bottom_left(self) -> Vector:
+        return Vector(self.left, self.bottom)
+
+    @property
+    def bottom_right(self) -> Vector:
+        return Vector(self.right, self.bottom)
+
+    @property
+    def center(self) -> Vector:
+        return self.position
+
+
 class Sprite(SquareShapeMixin, RenderableMixin, RotatableMixin, BaseSprite):
     """
     The default Sprite class.
