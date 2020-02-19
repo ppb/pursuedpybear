@@ -1,17 +1,3 @@
-docs_task:
-  skip: $CIRRUS_BRANCH =~ '.*\.tmp'
-  container:
-    image: python:3.7
-
-  install_script:
-    - apt update || true ; apt install -qq -y make
-    - pip install --upgrade-strategy eager -U -r requirements-docs.txt
-    - pip install .
-
-  script:
-    - make -C docs/ linkcheck
-    - make -C docs/ html
-
 pep517_task:
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
   container:
@@ -24,6 +10,34 @@ pep517_task:
     - python3 -m pep517.check .
 
 
+build_task:
+  container:
+    image: python:3
+  setup_script:
+    - pip install bork
+  script:
+    - bork build
+  dist_artifacts:
+    path: "dist/**"
+
+
+docs_task:
+  skip: $CIRRUS_BRANCH =~ '.*\.tmp'
+  container:
+    image: python:3.7-slim
+
+  depends_on:
+    - build
+
+  install_script:
+    - apt update || true ; apt install -qq -y make
+    - pip install --upgrade-strategy eager -U -r requirements-docs.txt
+    - pip install dist/ppb-*.whl
+
+  script:
+    - make -C docs/ linkcheck
+    - make -C docs/ html
+
 task:
   name: "Linux $IMAGE"
   alias: Tests
@@ -31,13 +45,16 @@ task:
   allow_failures: $IMAGE =~ '.*-rc-.*'
   env:
     matrix:
-      - IMAGE: python:3.6
-      - IMAGE: python:3.7
-      # - IMAGE: python:3.8
+      - IMAGE: python:3.6-slim
+      - IMAGE: python:3.7-slim
+      # - IMAGE: python:3.8-slim
       - IMAGE: pypy:3.6
 
   container:
     image: $IMAGE
+
+  depends_on:
+    - build
 
   install_script:
     - >-
@@ -46,7 +63,7 @@ task:
         apt install -qq -y pkgconf libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libsdl1.2-dev libsmpeg-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev libfreetype6-dev gcc
       fi
     - pip install --upgrade-strategy eager -U -r requirements-tests.txt
-    - pip install .
+    - pip install dist/ppb-*.whl
 
   script:
     - command -v pypy3 >/dev/null && export PY=pypy3
@@ -64,6 +81,8 @@ macOS_task:
     matrix:
       - PYTHON: 3.6.8
       - PYTHON: 3.7.2
+  depends_on:
+    - build
   install_script:
     # Per the pyenv homebrew recommendations.
     # https://github.com/pyenv/pyenv/wiki#suggested-build-environment
@@ -73,7 +92,7 @@ macOS_task:
     - pyenv global ${PYTHON}
     - pyenv rehash
     - pip install --upgrade-strategy eager -U -r requirements-tests.txt
-    - pip install .
+    - pip install dist/ppb-*.whl
 
   script:
     - python3 --version
@@ -91,12 +110,12 @@ task:
 
   env:
     matrix:
-      - IMAGE: python:3.6-windowsservercore-1809
-      - IMAGE: python:3.7-windowsservercore-1809
+      - IMAGE: python:3.6-windowsservercore
+      - IMAGE: python:3.7-windowsservercore
 
   install_script:
     - C:\Python\python.exe -m pip install --upgrade-strategy eager -U -r requirements-tests.txt
-    - C:\Python\python.exe -m pip install .
+    - C:\Python\python.exe -m pip install dist/ppb-*.whl
 
   script:
     - C:\Python\python.exe --version
@@ -104,16 +123,6 @@ task:
     - C:\Python\python.exe -m pytest
 
 
-build_task:
-  container:
-    image: python:3
-  setup_script:
-    - pip install bork
-  script:
-    - bork build
-  dist_artifacts:
-    path: "dist/**"
- 
 
 upload_task:
   only_if: $CIRRUS_BRANCH == $CIRRUS_DEFAULT_BRANCH || $CIRRUS_RELEASE != ''
