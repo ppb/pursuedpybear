@@ -6,10 +6,10 @@ except ImportError:
     mixer = None
 
 from ppb.systemslib import System
-from ppb import assets
+from ppb import assetlib
 
 
-class Sound(assets.Asset):
+class Sound(assetlib.Asset):
     def background_parse(self, data):
         if mixer is not None:
             snd = mixer.Sound(file=io.BytesIO(data))

@@ -2,8 +2,8 @@ import pytest
 
 from ppb import GameEngine, BaseScene
 import ppb.events
-import ppb.assets
-from ppb.assets import Asset, AssetLoadingSystem
+import ppb.assetlib
+from ppb.assetlib import Asset, AssetLoadingSystem
 from ppb.testutils import Failer
 
 
@@ -13,7 +13,7 @@ def clean_assets():
     Cleans out the global state of the asset system, so that we start fresh every
     test.
     """
-    ppb.assets._backlog = []
+    ppb.assetlib._backlog = []
 
 
 class AssetTestScene(BaseScene):
