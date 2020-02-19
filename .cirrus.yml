@@ -66,7 +66,7 @@ macOS_task:
     # Per the pyenv homebrew recommendations.
     # https://github.com/pyenv/pyenv/wiki#suggested-build-environment
     # - xcode-select --install  # Unnecessary on Cirrus
-    - brew install openssl readline sqlite3 xz zlib
+    - brew install openssl readline sqlite3 xz zlib pyenv
     - pyenv install ${PYTHON}
     - pyenv global ${PYTHON}
     - pyenv rehash
