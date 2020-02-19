@@ -48,7 +48,7 @@ task:
       - IMAGE: python:3.6-slim
       - IMAGE: python:3.7-slim
       # - IMAGE: python:3.8-slim
-      - IMAGE: pypy:3.6
+      - IMAGE: pypy:3.6-slim
 
   container:
     image: $IMAGE
@@ -63,7 +63,12 @@ task:
         apt install -qq -y pkgconf libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libsdl1.2-dev libsmpeg-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev libfreetype6-dev gcc
       fi
     - pip install --upgrade-strategy eager -U -r requirements-tests.txt
-    - python .ci/install-wheels.py
+    - >-
+      if command -v pypy3 >/dev/null; then
+        pypy3 .ci/install-wheels.py
+      else
+        python .ci/install-wheels.py
+      fi
 
   script:
     - command -v pypy3 >/dev/null && export PY=pypy3
