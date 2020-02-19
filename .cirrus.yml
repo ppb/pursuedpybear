@@ -65,7 +65,7 @@ macOS_task:
   install_script:
     # Per the pyenv homebrew recommendations.
     # https://github.com/pyenv/pyenv/wiki#suggested-build-environment
-    - xcode-select --install
+    # - xcode-select --install  # Unnecessary on Cirrus
     - brew install openssl readline sqlite3 xz zlib
     - pyenv install ${PYTHON}
     - pyenv global ${PYTHON}
