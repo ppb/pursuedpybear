@@ -26,6 +26,7 @@ pep517_task:
 
 task:
   name: "Linux $IMAGE"
+  alias: Tests
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
   allow_failures: $IMAGE =~ '.*-rc-.*'
   env:
@@ -54,6 +55,7 @@ task:
     - pytest
 
 macOS_task:
+  alias: Tests
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
   osx_instance:
     image: catalina-base
@@ -80,6 +82,7 @@ macOS_task:
 
 task:
   name: "Windows $IMAGE"
+  alias: Tests
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
   allow_failures: $IMAGE =~ '.*-rc-.*'
   windows_container:
@@ -99,3 +102,36 @@ task:
     - C:\Python\python.exe --version
     - C:\Python\python.exe -m pip list
     - C:\Python\python.exe -m pytest
+
+
+build_task:
+  container:
+    image: python:3
+  setup_script:
+    - pip install bork
+  script:
+    - bork build
+  dist_artifacts:
+    path: "dist/**"
+ 
+
+upload_task:
+  only_if: $CIRRUS_BRANCH == $CIRRUS_DEFAULT_BRANCH || $CIRRUS_RELEASE != ''
+  depends_on:
+    - build
+    - docs
+    - pep517
+    - Tests
+  env:
+    TWINE_TEST_TOKEN: "..."
+    TWINE_PROD_TOKEN: "..."
+    GITHUB_TOKEN: "..."
+
+  container:
+    image: xonsh/xonsh:slim
+
+  install_script:
+    - pip install twine
+
+  script:
+    - xonsh .ci/upload.xsh
