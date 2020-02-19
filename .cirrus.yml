@@ -32,7 +32,7 @@ docs_task:
   install_script:
     - apt update || true ; apt install -qq -y make
     - pip install --upgrade-strategy eager -U -r requirements-docs.txt
-    - pip install dist/ppb-*.whl
+    - python .ci/install-wheels.py
 
   script:
     - make -C docs/ linkcheck
@@ -63,7 +63,7 @@ task:
         apt install -qq -y pkgconf libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libsdl1.2-dev libsmpeg-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev libfreetype6-dev gcc
       fi
     - pip install --upgrade-strategy eager -U -r requirements-tests.txt
-    - pip install $(find dist -name ppb-*.whl)
+    - python .ci/install-wheels.py
 
   script:
     - command -v pypy3 >/dev/null && export PY=pypy3
@@ -92,7 +92,7 @@ macOS_task:
     - pyenv global ${PYTHON}
     - pyenv rehash
     - pip install --upgrade-strategy eager -U -r requirements-tests.txt
-    - pip install $(find dist -name ppb-*.whl)
+    - python .ci/install-wheels.py
 
   script:
     - python3 --version
@@ -115,7 +115,7 @@ task:
 
   install_script:
     - C:\Python\python.exe -m pip install --upgrade-strategy eager -U -r requirements-tests.txt
-    - C:\Python\python.exe -m pip install dist/ppb-*.whl
+    - C:\Python\python.exe .ci/install-wheels.py
 
   script:
     - C:\Python\python.exe --version
