@@ -6,7 +6,7 @@ from urllib.request import urlopen
 import zipfile
 
 CIRRUS_BUILD_ID = os.environ['CIRRUS_BUILD_ID']
-ARTIFACTS_URL = f"https://api.cirrus-ci.com/v1/artifact/build/{CIRRUS_BUILD_ID}/build/dist.zip"
+ARTIFACTS_URL = "https://api.cirrus-ci.com/v1/artifact/build/{}/build/dist.zip".format(CIRRUS_BUILD_ID)
 
 with urlopen(ARTIFACTS_URL) as resp:
     zipdata = resp.read()
