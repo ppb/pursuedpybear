@@ -65,8 +65,8 @@ macOS_task:
   install_script:
     # Per the pyenv homebrew recommendations.
     # https://github.com/pyenv/pyenv/wiki#suggested-build-environment
-    - sudo installer -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg -target /
-    - brew install openssl readline pyenv
+    - xcode-select --install
+    - brew install openssl readline sqlite3 xz zlib
     - pyenv install ${PYTHON}
     - pyenv global ${PYTHON}
     - pyenv rehash
