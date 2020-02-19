@@ -1,6 +1,6 @@
 [build-system]
 # Minimum requirements for the build system to execute.
-requires = ["setuptools", "wheel"]  # PEP 508 specifications.
+requires = ["setuptools>=30.3.0", "wheel", "setuptools_scm"]
 
 # Actually tell PEP517 tools to call setuptools
 build-backend = "setuptools.build_meta"
