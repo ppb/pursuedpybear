@@ -63,7 +63,7 @@ task:
         apt install -qq -y pkgconf libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libsdl1.2-dev libsmpeg-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev libfreetype6-dev gcc
       fi
     - pip install --upgrade-strategy eager -U -r requirements-tests.txt
-    - pip install dist/ppb-*.whl
+    - sh -c "pip install dist/ppb-*.whl"
 
   script:
     - command -v pypy3 >/dev/null && export PY=pypy3
@@ -92,7 +92,7 @@ macOS_task:
     - pyenv global ${PYTHON}
     - pyenv rehash
     - pip install --upgrade-strategy eager -U -r requirements-tests.txt
-    - pip install dist/ppb-*.whl
+    - sh -c "pip install dist/ppb-*.whl"
 
   script:
     - python3 --version
