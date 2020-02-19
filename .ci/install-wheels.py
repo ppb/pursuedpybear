@@ -15,6 +15,6 @@ with zipfile.ZipFile(io.BytesIO(zipdata)) as zf:
     zf.extractall()
 
 subprocess.run(
-    ['pip', 'install', *glob.glob('dist/*.whl')],
+    ['pip', 'install'] + glob.glob('dist/*.whl'),
     check=True
 )
