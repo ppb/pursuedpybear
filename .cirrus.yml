@@ -13,6 +13,8 @@ pep517_task:
 build_task:
   container:
     image: python:3
+  debug_script:
+    - git tag
   setup_script:
     - pip install bork
   script:
