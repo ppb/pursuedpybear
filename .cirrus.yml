@@ -130,7 +130,7 @@ task:
 
 
 upload_task:
-  # only_if: $CIRRUS_BRANCH == $CIRRUS_DEFAULT_BRANCH || $CIRRUS_RELEASE != ''
+  only_if: $CIRRUS_BRANCH == $CIRRUS_DEFAULT_BRANCH || $CIRRUS_RELEASE != ''
   depends_on:
     - build
     - docs

@@ -35,31 +35,31 @@ with tempfile.TemporaryDirectory() as td:
 
     twine upload --repository-url @(PYPI_TEST_REPO) --username __token__ --password $TWINE_TEST_TOKEN @(dists)
 
-    # print("")
+    print("")
 
-    # if 'CIRRUS_RELEASE' in ${...}:
-    #     print("Uploading to GitHub...")
-    #     for dist in dists:
-    #         print(f"\t{dist.name}...")
-    #         dest_url = f"https://uploads.github.com/repos/{$CIRRUS_REPO_FULL_NAME}/releases/{$CIRRUS_RELEASE}/assets?name={dist.name}"
-    #         with dist.open('rb') as fobj:
-    #             buff = fobj.read()
-    #             try:
-    #                 resp = urlopen(Request(
-    #                     url=dest_url,
-    #                     method='POST',
-    #                     data=buff,
-    #                     headers={
-    #                         "Authorization": f"token {$GITHUB_TOKEN}",
-    #                         "Content-Type": "application/octet-stream",
-    #                     },
-    #                 ))
-    #             except HTTPError as exc:
-    #                 print(exc.headers)
-    #                 print(exc.read())
-    #                 raise
+    if 'CIRRUS_RELEASE' in ${...}:
+        print("Uploading to GitHub...")
+        for dist in dists:
+            print(f"\t{dist.name}...")
+            dest_url = f"https://uploads.github.com/repos/{$CIRRUS_REPO_FULL_NAME}/releases/{$CIRRUS_RELEASE}/assets?name={dist.name}"
+            with dist.open('rb') as fobj:
+                buff = fobj.read()
+                try:
+                    resp = urlopen(Request(
+                        url=dest_url,
+                        method='POST',
+                        data=buff,
+                        headers={
+                            "Authorization": f"token {$GITHUB_TOKEN}",
+                            "Content-Type": "application/octet-stream",
+                        },
+                    ))
+                except HTTPError as exc:
+                    print(exc.headers)
+                    print(exc.read())
+                    raise
 
-    #     print("")
+        print("")
 
-    #     print("Uploading to PyPI...")
-    #     twine upload --username __token__ --password $TWINE_PROD_TOKEN @(dists)
+        print("Uploading to PyPI...")
+        twine upload --username __token__ --password $TWINE_PROD_TOKEN @(dists)
