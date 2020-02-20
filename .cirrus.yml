@@ -14,7 +14,7 @@ build_task:
   container:
     image: python:3
   debug_script:
-    - git tag
+    - git tag --list
   setup_script:
     - pip install bork
   script:
