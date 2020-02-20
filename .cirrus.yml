@@ -1,21 +1,7 @@
-docs_task:
-  skip: $CIRRUS_BRANCH =~ '.*\.tmp'
-  container:
-    image: python:3.7-slim
-
-  install_script:
-    - apt update || true ; apt install -qq -y make
-    - pip install --upgrade-strategy eager -U -r requirements-docs.txt
-    - pip install .
-
-  script:
-    - make -C docs/ linkcheck
-    - make -C docs/ html
-
 pep517_task:
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
   container:
-    image: python:3.7-slim
+    image: python:3.7
 
   install_script:
     - pip install --upgrade-strategy eager -U pep517
@@ -24,19 +10,52 @@ pep517_task:
     - python3 -m pep517.check .
 
 
+build_task:
+  container:
+    image: python:3
+  setup_script:
+    - git fetch --tags
+    - pip install bork
+  script:
+    - bork build
+  dist_artifacts:
+    path: "dist/**"
+
+
+docs_task:
+  skip: $CIRRUS_BRANCH =~ '.*\.tmp'
+  container:
+    image: python:3.7-slim
+
+  depends_on:
+    - build
+
+  install_script:
+    - apt update || true ; apt install -qq -y make
+    - pip install --upgrade-strategy eager -U -r requirements-docs.txt
+    - python .ci/install-wheels.py
+
+  script:
+    - make -C docs/ linkcheck
+    - make -C docs/ html
+
 task:
   name: "Linux $IMAGE"
+  alias: Tests
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
   allow_failures: $IMAGE =~ '.*-rc-.*'
   env:
     matrix:
       - IMAGE: python:3.6-slim
       - IMAGE: python:3.7-slim
-      # - IMAGE: python:3.8-rc-slim
+      # - IMAGE: python:3.8-slim
       - IMAGE: pypy:3.6-slim
 
   container:
     image: $IMAGE
+
+  depends_on:
+    - build
 
   install_script:
     - >-
@@ -45,7 +64,12 @@ task:
         apt install -qq -y pkgconf libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libsdl1.2-dev libsmpeg-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev libfreetype6-dev gcc
       fi
     - pip install --upgrade-strategy eager -U -r requirements-tests.txt
-    - pip install .
+    - >-
+      if command -v pypy3 >/dev/null; then
+        pypy3 .ci/install-wheels.py
+      else
+        python .ci/install-wheels.py
+      fi
 
   script:
     - command -v pypy3 >/dev/null && export PY=pypy3
@@ -54,6 +78,7 @@ task:
     - pytest
 
 macOS_task:
+  alias: Tests
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
   osx_instance:
     image: catalina-base
@@ -62,6 +87,8 @@ macOS_task:
     matrix:
       - PYTHON: 3.6.8
       - PYTHON: 3.7.2
+  depends_on:
+    - build
   install_script:
     # Per the pyenv homebrew recommendations.
     # https://github.com/pyenv/pyenv/wiki#suggested-build-environment
@@ -71,7 +98,7 @@ macOS_task:
     - pyenv global ${PYTHON}
     - pyenv rehash
     - pip install --upgrade-strategy eager -U -r requirements-tests.txt
-    - pip install .
+    - python .ci/install-wheels.py
 
   script:
     - python3 --version
@@ -80,6 +107,7 @@ macOS_task:
 
 task:
   name: "Windows $IMAGE"
+  alias: Tests
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
   allow_failures: $IMAGE =~ '.*-rc-.*'
   windows_container:
@@ -88,14 +116,37 @@ task:
 
   env:
     matrix:
-      - IMAGE: python:3.6-windowsservercore-1809
-      - IMAGE: python:3.7-windowsservercore-1809
+      - IMAGE: python:3.6-windowsservercore
+      - IMAGE: python:3.7-windowsservercore
 
   install_script:
     - C:\Python\python.exe -m pip install --upgrade-strategy eager -U -r requirements-tests.txt
-    - C:\Python\python.exe -m pip install .
+    - C:\Python\python.exe .ci/install-wheels.py
 
   script:
     - C:\Python\python.exe --version
     - C:\Python\python.exe -m pip list
     - C:\Python\python.exe -m pytest
+
+
+
+upload_task:
+  only_if: $CIRRUS_BRANCH == $CIRRUS_DEFAULT_BRANCH || $CIRRUS_RELEASE != ''
+  depends_on:
+    - build
+    - docs
+    - pep517
+    - Tests
+  env:
+    TWINE_TEST_TOKEN: "ENCRYPTED[4df6a9281bcbab67052d63d8ba4f5ee404d57fd95158e0e6e8693ac6b6ae0e2f2ec0ae8ac09a1fe9998b4675d6ccd7c2]"
+    TWINE_PROD_TOKEN: "ENCRYPTED[7ea667df4087e85f59575b59f07b2ef8da992831d45e0a0c60869aed64be252e4373b45b6a9f323a6a6365337bac0a7e]"
+    GITHUB_TOKEN: "ENCRYPTED[42fb2ca52f26c65b254620ce05eea27925844c034a0f73ca96f3fd4c80530a595e3c7dccda51df22b144a16673393704]"
+
+  container:
+    image: xonsh/xonsh:slim
+
+  install_script:
+    - pip install twine
+
+  script:
+    - xonsh .ci/upload.xsh

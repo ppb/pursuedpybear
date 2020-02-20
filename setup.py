@@ -15,6 +15,9 @@ def requirements(section=None):
 
 # See setup.cfg for the actual configuration.
 setup(
+    use_scm_version={
+        'local_scheme': 'dirty-tag',
+    },
     install_requires=requirements(),
     tests_require=requirements('tests'),
 )
