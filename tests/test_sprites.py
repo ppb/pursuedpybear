@@ -611,3 +611,20 @@ def test_rectangle_shape_mixin_center():
 
     assert test_sprite.center == test_sprite.position
     assert test_sprite.center == Vector(100, 100)
+
+
+def test_rectangle_shape_mixin_top_left():
+    class TestSprite(RectangleShapeMixin, BaseSprite):
+        pass
+
+    test_sprite = TestSprite()
+
+    assert test_sprite.width == 1
+    assert test_sprite.height == 1
+
+    assert test_sprite.top_left == Vector(-0.5, 0.5)
+
+    test_sprite.top_left = Vector(200, 200)
+
+    assert test_sprite.top_left == Vector(200, 200)
+    assert test_sprite.center == Vector(200.5, 199.5)
