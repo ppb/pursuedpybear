@@ -3,19 +3,19 @@ Principles and Values
 
 PursuedPyBear is a principles driven project. From its earliest days, it's been
 guided by a set of ideals that suggest the shape and form of any problem we
-encounter. From or primary focus on students and learners to our embracing
-change to both the code our principles.
+encounter. From our primary focus on students and learners to our embracing
+change of the code and our principles.
 
-We have identified four principles as the root of all of the others:
+We have identified four principles as the root of all the others:
 
 Students and Learners First
 -----------------------------------
 
 Our first commitment is to the new programmers and game makers who have made
 ``ppb`` their tool of choice. Whether introduced to them by a teacher or
-discovered on their own, we care about their experiences primarily. We don't
-forget educators, professional developers, or hobbyists while doing so. Our
-success is most easily measured by the diversity of our community, and that
+discovered on their own, we care about their experiences primarily. However, we
+won't forget educators, professional developers, or hobbyists while doing so.
+Our success is most easily measured by the diversity of our community, and that
 requires a focus on the early stages of use.
 
 Creativity without Limits
@@ -43,7 +43,7 @@ Embracing Radical Change
 Over time, the needs of ppb as a project and as a community have changed. It
 started as a solo project to encourage reuse of common patterns in one
 developer's workflows. It's now an education-focused community with a team of
-active developers and a couple of dozen contributors. As the needs shift, so too
+active developers and a couple dozen contributors. As the needs shift, so too
 do our principles and processes.
 
 By being willing to do hard work and experiment with improvements in code, we've
@@ -58,12 +58,12 @@ principles. Those principles were:
 * Fun
 
 You'll notice that some of them are still with us in this document. Others
-you'll find in the children documents of each of the ones explored here. Some
-are less principles and more design decisions.
+you'll find in the child documents of each of the ones explored here. Some are
+less principles and more design decisions.
 
 In general, we are always willing to field the idea of "maybe we should do it
 this way?" Those questions, even when the answer is no, keep us thinking about
-how things are and how the could be.
+how things are and how they could be.
 
 Ultimately, ``ppb`` is aspirational as a project, and our principles reflect
 that.
