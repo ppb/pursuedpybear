@@ -9,7 +9,7 @@ from sdl2 import (
     rw_from_object,  # https://pysdl2.readthedocs.io/en/latest/modules/sdl2.html#sdl2.sdl2.rw_from_object
     SDL_Window, SDL_Renderer,
     SDL_Rect,  # https://wiki.libsdl.org/SDL_Rect
-    SDL_INIT_VIDEO, SDL_WINDOW_ALLOW_HIGHDPI, SDL_BLENDMODE_BLEND,
+    SDL_INIT_VIDEO, SDL_WINDOW_ALLOW_HIGHDPI, SDL_BLENDMODE_BLEND, SDL_FLIP_NONE,
     SDL_CreateWindowAndRenderer,  # https://wiki.libsdl.org/SDL_CreateWindowAndRenderer
     SDL_DestroyRenderer,  # https://wiki.libsdl.org/SDL_DestroyRenderer
     SDL_DestroyWindow,  # https://wiki.libsdl.org/SDL_DestroyWindow
@@ -22,7 +22,6 @@ from sdl2 import (
     SDL_CreateTextureFromSurface,  # https://wiki.libsdl.org/SDL_CreateTextureFromSurface
     SDL_DestroyTexture,  # https://wiki.libsdl.org/SDL_DestroyTexture
     SDL_QueryTexture,  # https://wiki.libsdl.org/SDL_QueryTexture
-    SDL_RenderCopy,  # https://wiki.libsdl.org/SDL_RenderCopy
     SDL_RenderCopyEx,  # https://wiki.libsdl.org/SDL_RenderCopyEx
 )
 
@@ -128,8 +127,6 @@ class Renderer(SdlSubSystem):
         self.window = None
         self.window_title = window_title
         self.pixel_ratio = None
-        self.resized_images = {}
-        self.old_resized_images = {}
         self.render_clock = 0
         self.target_frame_rate = target_frame_rate
         self.target_count = 1 / self.target_frame_rate
@@ -176,18 +173,17 @@ class Renderer(SdlSubSystem):
 
         self.render_background(render_event.scene)
 
-        # self.old_resized_images = self.resized_images
-        # self.resized_images = {}
-
         for game_object in render_event.scene.sprite_layers():
             texture = self.prepare_resource(game_object)
             if texture is None:
                 continue
-            src_rect, dest_rect = self.compute_rectangles(texture.inner, game_object, camera)
+            src_rect, dest_rect, angle = self.compute_rectangles(
+                texture.inner, game_object, camera
+            )
             sdl_call(
-                # TODO: Switch to SDL_RenderCopy
-                SDL_RenderCopy, self.renderer, texture.inner,
+                SDL_RenderCopyEx, self.renderer, texture.inner,
                 ctypes.byref(src_rect), ctypes.byref(dest_rect),
+                angle, None, SDL_FLIP_NONE,
                 _check_error=lambda rv: rv < 0
             )
         sdl_call(SDL_RenderPresent, self.renderer)
@@ -199,29 +195,6 @@ class Renderer(SdlSubSystem):
             _check_error=lambda rv: rv < 0
         )
         sdl_call(SDL_RenderClear, self.renderer, _check_error=lambda rv: rv < 0)
-
-    def compute_rectangles(self, texture, game_object, camera):
-        flags = sdl2.stdinc.Uint32()
-        access = ctypes.c_int()
-        w = ctypes.c_int()
-        h = ctypes.c_int()
-        sdl_call(
-            SDL_QueryTexture, texture, ctypes.byref(flags), ctypes.byref(access),
-            ctypes.byref(w), ctypes.byref(h),
-            _check_error=lambda rv: rv < 0
-        )
-
-        src_rect = SDL_Rect(x=0, y=0, w=w, h=h)
-
-        center = camera.translate_to_viewport(game_object.position)
-        dest_rect = SDL_Rect(
-            x=int(center.x - w.value / 2),
-            y=int(center.y - h.value / 2),
-            w=w,
-            h=h,
-        )
-
-        return src_rect, dest_rect
 
     def prepare_resource(self, game_object):
         if game_object.size <= 0:
@@ -236,27 +209,31 @@ class Renderer(SdlSubSystem):
             _check_error=lambda rv: not rv
         ), SDL_DestroyTexture)
         return texture
-        resized_image = self.resize_image(source_image, game_object.size)
-        rotated_image = self.rotate_image(resized_image, game_object.rotation)
-        return rotated_image
 
-    def resize_image(self, image, game_unit_size):
-        key = (image, game_unit_size)
-        resized_image = self.old_resized_images.get(key)
-        if resized_image is None:
-            height = image.get_height()
-            width = image.get_width()
-            target_resolution = self.target_resolution(width,
-                                                       height,
-                                                       game_unit_size)
-            resized_image = pygame.transform.smoothscale(image,
-                                                         target_resolution)
-        self.resized_images[key] = resized_image
-        return resized_image
+    def compute_rectangles(self, texture, game_object, camera):
+        flags = sdl2.stdinc.Uint32()
+        access = ctypes.c_int()
+        img_w = ctypes.c_int()
+        img_h = ctypes.c_int()
+        sdl_call(
+            SDL_QueryTexture, texture, ctypes.byref(flags), ctypes.byref(access),
+            ctypes.byref(img_w), ctypes.byref(img_h),
+            _check_error=lambda rv: rv < 0
+        )
 
-    def rotate_image(self, image, rotation):
-        """Rotates image clockwise {rotation} degrees."""
-        return pygame.transform.rotate(image, rotation)
+        src_rect = SDL_Rect(x=0, y=0, w=img_w, h=img_h)
+
+        win_w, win_h = self.target_resolution(img_w.value, img_h.value, game_object.size)
+
+        center = camera.translate_to_viewport(game_object.position)
+        dest_rect = SDL_Rect(
+            x=int(center.x - win_w / 2),
+            y=int(center.y - win_h / 2),
+            w=win_w,
+            h=win_h,
+        )
+
+        return src_rect, dest_rect, ctypes.c_double(-game_object.rotation)
 
     def target_resolution(self, width, height, game_unit_size):
         values = [width, height]
