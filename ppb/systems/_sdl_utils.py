@@ -1,11 +1,19 @@
+import atexit
+
 from sdl2 import (
     SDL_GetError,   # https://wiki.libsdl.org/SDL_GetError
     SDL_ClearError,  # https://wiki.libsdl.org/SDL_ClearError
     SDL_InitSubSystem,  # https://wiki.libsdl.org/SDL_InitSubSystem
     SDL_QuitSubSystem,  # https://wiki.libsdl.org/SDL_QuitSubSystem
+    SDL_Quit,  # https://wiki.libsdl.org/SDL_Quit
 )
 
 from ppb.systemslib import System
+
+
+atexit.register(SDL_Quit)
+# The PPB model makes it hard to register this in connection with the actual
+# engine cleanup, so we'll do it on interpreter exit.
 
 
 class SdlError(Exception):
