@@ -1,13 +1,21 @@
+import ctypes
 import io
 import logging
 import random
 
-import pygame
+from sdl2 import (
+    SDL_INIT_VIDEO, SDL_Window, SDL_Renderer,
+    SDL_WINDOW_ALLOW_HIGHDPI,
+    SDL_CreateWindowAndRenderer,  # https://wiki.libsdl.org/SDL_CreateWindowAndRenderer
+    SDL_DestroyRenderer,  # https://wiki.libsdl.org/SDL_DestroyRenderer
+    SDL_DestroyWindow,  # https://wiki.libsdl.org/SDL_DestroyWindow
+    SDL_SetWindowTitle, # https://wiki.libsdl.org/SDL_SetWindowTitle
+)
 
 import ppb.assetlib as assets
 import ppb.events as events
 import ppb.flags as flags
-from ppb.systemslib import System
+from ppb.systems._sdl_utils import SdlSubSystem, sdl_call
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +41,8 @@ class Image(assets.Asset):
         return resource
 
 
-class Renderer(System):
+class Renderer(SdlSubSystem):
+    _sdl_subsystems = SDL_INIT_VIDEO
 
     def __init__(
         self,
@@ -53,12 +62,26 @@ class Renderer(System):
         self.target_count = 1 / self.target_frame_rate
 
     def __enter__(self):
-        pygame.init()
-        self.window = pygame.display.set_mode(self.resolution)
-        pygame.display.set_caption(self.window_title)
+        super().__enter__()
+        self.window = ctypes.POINTER(SDL_Window)()
+        self.renderer = ctypes.POINTER(SDL_Renderer)()
+        sdl_call(
+            SDL_CreateWindowAndRenderer,
+            self.resolution[0],  # Width
+            self.resolution[1],  # Height
+            SDL_WINDOW_ALLOW_HIGHDPI,  # Flags
+            # SDL_WINDOW_ALLOW_HIGHDPI - Allow the renderer to work in HiDPI natively
+            # SDL_WINDOW_OPENGL - Do we need this for accelerated 2D?
+            ctypes.byref(self.window),
+            ctypes.byref(self.renderer),
+            _check_error=lambda rv: rv < 0
+        )
+        sdl_call(SDL_SetWindowTitle, self.window, self.window_title.encode('utf-8'))
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        pygame.quit()
+    def __exit__(self, *exc):
+        sdl_call(SDL_DestroyRenderer, self.renderer)
+        sdl_call(SDL_DestroyWindow, self.window)
+        super().__exit__(*exc)
 
     def on_idle(self, idle_event: events.Idle, signal):
         self.render_clock += idle_event.time_delta
@@ -68,7 +91,13 @@ class Renderer(System):
             signal(events.Render())
             self.render_clock = 0
 
+    def pre_render_updates(self, scene):
+        camera = scene.main_camera
+        camera.viewport_width, camera.viewport_height = self.resolution
+        self.pixel_ratio = camera.pixel_ratio
+
     def on_render(self, render_event, signal):
+        return
         camera = render_event.scene.main_camera
         self.render_background(render_event.scene)
 
@@ -82,11 +111,6 @@ class Renderer(System):
             rectangle = self.prepare_rectangle(resource, game_object, camera)
             self.window.blit(resource, rectangle)
         pygame.display.update()
-
-    def pre_render_updates(self, scene):
-        camera = scene.main_camera
-        camera.viewport_width, camera.viewport_height = self.resolution
-        self.pixel_ratio = camera.pixel_ratio
 
     def render_background(self, scene):
         self.window.fill(scene.background_color)
