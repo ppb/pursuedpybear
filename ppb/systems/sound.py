@@ -110,6 +110,7 @@ class SoundController(SdlSubSystem):
         _call(Mix_AllocateChannels, value)
 
     def __enter__(self):
+        super().__enter__()
         _call(Mix_Init, MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG)
         _call(
             Mix_OpenAudio,
@@ -127,13 +128,14 @@ class SoundController(SdlSubSystem):
         self._finished_callback = channel_finished(self._on_channel_finished)
         _call(Mix_ChannelFinished, self._finished_callback)
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, *exc):
         # Unregister callback and release reference
         _call(Mix_ChannelFinished, _filler_channel_finished)
         self._finished_callback = None
         # Cleanup SDL_mixer
         _call(Mix_CloseAudio)
         _call(Mix_Quit)
+        super().__exit__(*exc)
 
     def on_play_sound(self, event, signal):
         sound = event.sound
