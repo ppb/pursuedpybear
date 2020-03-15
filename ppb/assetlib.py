@@ -47,6 +47,8 @@ class Asset(AbstractAsset):
 
     Meant to be subclassed, but in specific ways.
     """
+    _data = None
+
     def __new__(cls, name):
         clsname = f"{cls.__module__}:{cls.__qualname__}"
         try:
@@ -131,7 +133,6 @@ class Asset(AbstractAsset):
             raise self._raise_error
         else:
             return self._data
-
 
 
 def force_background_thread(func, *pargs, **kwargs):
