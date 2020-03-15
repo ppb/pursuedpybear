@@ -1,8 +1,55 @@
 Principles and Values
 =========================
 
-When ``ppb`` started it was given a set of principles that would guide it's
-first few years. Those principles are:
+PursuedPyBear is a principles driven project. From its earliest days, it's been
+guided by a set of ideals that suggest the shame and form of any problem we
+encounter. From or primary focus on students and learners to our embracing
+change to both the code our principles.
+
+We have identified four principles as the root of all of the others:
+
+Students and Learners First
+-----------------------------------
+
+Our first commitment is to the new programmers and game makers who have made
+``ppb`` their tool of choice. Whether introduced to them by a teacher or
+discovered on their own, we care about their experiences primarily. We don't
+forget educators, professional developers, or hobbyists while doing so. Our
+success is most easily measured by the diversity of our community, and that
+requires a focus on the early stages of use.
+
+Creativity without Limits
+----------------------------------
+
+The only limitation we accept is the limitations that come from the platform
+we've chosen: that being that the only limitation to what you can apply with
+``ppb`` is what the developer is capable of what Python is capable of.
+
+This is why we consider being a code first engine so critical to our design.
+It's one of many reasons we build with Python first.
+
+Fun
+-----------------
+
+We believe tools that are a joy to use are more likely to be picked up for the
+long term. Being fun means more than just joyful discovery. We care that
+complexity is neatly hidden until it's necessary to be addressed. We want to
+reduce "warts" in the API, increase overall discoverability, and allow you to
+work playfully.
+
+Embracing Radical Change
+--------------------------------
+
+Over time, the needs of ppb as a project and as a community have changed. It
+started as a solo project to encourage reduce of common patterns in one
+developers workflows. It's now an education focused community with a team of
+active developers and a couple of dozen contributors. As the needs shift, so too
+do our principles and processes.
+
+By being willing to do hard work and experiment with improvements in code, we've
+been able to build better software. ``ppb`` has seen three major architectures
+since it started. And this document replaces a previous version of our
+principles. Those principles were:
 
 * Education Friendly
 * Idiomatic Python
@@ -10,9 +57,16 @@ first few years. Those principles are:
 * Hardware Library Agnostic
 * Fun
 
-They've been great and we still stand by them, but the project has grown and so
-new values are needed. These will be loosely sorted into governance,  community
-values and technical values.
+You'll notice that some of them are still with us in this document. Others
+you'll find in the children documents of each of the ones explored here. Some
+are less principles and more design decisions.
+
+In general, we are always willing to field the idea of "maybe we should do it
+this way?" Those questions, even when the answer is no, keep us thinking about
+how things are and how the could be.
+
+Ultimately, ``ppb`` is aspirational as a project, and our principles reflect
+that.
 
 
 .. toctree::
