@@ -9,7 +9,10 @@ from sdl2 import (
     SDL_CreateWindowAndRenderer,  # https://wiki.libsdl.org/SDL_CreateWindowAndRenderer
     SDL_DestroyRenderer,  # https://wiki.libsdl.org/SDL_DestroyRenderer
     SDL_DestroyWindow,  # https://wiki.libsdl.org/SDL_DestroyWindow
-    SDL_SetWindowTitle, # https://wiki.libsdl.org/SDL_SetWindowTitle
+    SDL_SetWindowTitle,  # https://wiki.libsdl.org/SDL_SetWindowTitle
+    SDL_RenderPresent,  # https://wiki.libsdl.org/SDL_RenderPresent
+    SDL_RenderClear,  # https://wiki.libsdl.org/SDL_RenderClear
+    SDL_SetRenderDrawColor,  # https://wiki.libsdl.org/SDL_SetRenderDrawColor
 )
 
 import ppb.assetlib as assets
@@ -71,11 +74,11 @@ class Renderer(SdlSubSystem):
             self.resolution[1],  # Height
             SDL_WINDOW_ALLOW_HIGHDPI,  # Flags
             # SDL_WINDOW_ALLOW_HIGHDPI - Allow the renderer to work in HiDPI natively
-            # SDL_WINDOW_OPENGL - Do we need this for accelerated 2D?
             ctypes.byref(self.window),
             ctypes.byref(self.renderer),
             _check_error=lambda rv: rv < 0
         )
+        # NOTE: It looks like SDL_RENDERER_PRESENTVSYNC will cause SDL_RenderPresent() to block?
         sdl_call(SDL_SetWindowTitle, self.window, self.window_title.encode('utf-8'))
 
     def __exit__(self, *exc):
@@ -97,12 +100,12 @@ class Renderer(SdlSubSystem):
         self.pixel_ratio = camera.pixel_ratio
 
     def on_render(self, render_event, signal):
-        return
         camera = render_event.scene.main_camera
+
         self.render_background(render_event.scene)
 
-        self.old_resized_images = self.resized_images
-        self.resized_images = {}
+        # self.old_resized_images = self.resized_images
+        # self.resized_images = {}
 
         for game_object in render_event.scene.sprite_layers():
             resource = self.prepare_resource(game_object)
@@ -110,33 +113,35 @@ class Renderer(SdlSubSystem):
                 continue
             rectangle = self.prepare_rectangle(resource, game_object, camera)
             self.window.blit(resource, rectangle)
-        pygame.display.update()
+        sdl_call(SDL_RenderPresent, self.renderer)
 
     def render_background(self, scene):
-        self.window.fill(scene.background_color)
-
-    def prepare_resource(self, game_object):
-        image = game_object.__image__()
-        if image is flags.DoNotRender:
-            return None
-        if isinstance(image, str):
-            logger.warning(f"Using string resources is deprecated, use ppb.Image instead. Got {image!r}")
-            image = Image(image)
-
-        source_image = image.load()
-        if game_object.size <= 0:
-            return None
-        resized_image = self.resize_image(source_image, game_object.size)
-        rotated_image = self.rotate_image(resized_image, game_object.rotation)
-        return rotated_image
+        bg = scene.background_color
+        sdl_call(
+            SDL_SetRenderDrawColor, self.renderer, bg[0], bg[1], bg[2], 255,
+            _check_error=lambda rv: rv < 0
+        )
+        sdl_call(SDL_RenderClear, self.renderer, _check_error=lambda rv: rv < 0)
 
     def prepare_rectangle(self, resource, game_object, camera):
         rect = resource.get_rect()
         rect.center = camera.translate_to_viewport(game_object.position)
         return rect
 
+    def prepare_resource(self, game_object):
+        if game_object.size <= 0:
+            return None
+
+        image = game_object.__image__()
+        if image is flags.DoNotRender or image is None:
+            return None
+
+        source_image = image.load()
+        resized_image = self.resize_image(source_image, game_object.size)
+        rotated_image = self.rotate_image(resized_image, game_object.rotation)
+        return rotated_image
+
     def resize_image(self, image, game_unit_size):
-        # TODO: Pygame specific code To be abstracted somehow.
         key = (image, game_unit_size)
         resized_image = self.old_resized_images.get(key)
         if resized_image is None:
