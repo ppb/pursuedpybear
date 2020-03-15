@@ -101,6 +101,17 @@ class Asset(AbstractAsset):
         """
         return data
 
+    def free(self, object):
+        """
+        Called by __del__, if necessary. Meant to free the loaded data.
+        """
+
+    def __del__(self):
+        # This should only be called after the background threads and other
+        # processing has finished.
+        if self._data is not None:
+            self.free(self._data)
+
     def is_loaded(self):
         """
         Returns if the data has been loaded and parsed.
@@ -120,6 +131,7 @@ class Asset(AbstractAsset):
             raise self._raise_error
         else:
             return self._data
+
 
 
 def force_background_thread(func, *pargs, **kwargs):
