@@ -6,15 +6,17 @@ from sdl2 import (
 
 from sdl2.sdlmixer import (
     # Errors
-    Mix_GetError,
+    Mix_GetError, Mix_SetError,
     # Support library loading
     Mix_Init, Mix_Quit, MIX_INIT_FLAC, MIX_INIT_MOD, MIX_INIT_MP3, MIX_INIT_OGG,
     # Mixer init
     Mix_OpenAudio, Mix_CloseAudio,
     # Samples
-    Mix_LoadWAV_RW, Mix_FreeChunk,
+    Mix_LoadWAV_RW, Mix_FreeChunk, Mix_VolumeChunk,
     # Channels
     Mix_AllocateChannels, Mix_PlayChannel, Mix_ChannelFinished, channel_finished,
+    # Other
+    MIX_MAX_VOLUME,
 )
 
 from ppb.systemslib import System
@@ -39,6 +41,7 @@ def _call(func, *pargs, _check_error=None, **kwargs):
     If _check_error is not given, it is assumed that a non-empty error from
     Mix_GetError indicates error.
     """
+    Mix_SetError(b"")
     rv = func(*pargs, **kwargs)
     err = Mix_GetError()
     if (_check_error(rv) if _check_error else err):
@@ -66,7 +69,24 @@ class Sound(assetlib.Asset):
         # (This means that SoundController needs to keep a reference while playing.)
         if object:  # Check that the pointer isn't null
             _Mix_FreeChunk(object)  # Can't fail
-            object.contents = None
+            # object.contents = None
+            # Can't actually nullify the pointer. Good thing this is __del__.
+
+    @property
+    def volume(self):
+        """
+        The volume setting of this chunk, from 0.0 to 1.0
+        """
+        return _call(Mix_VolumeChunk, self.load(), -1) / MIX_MAX_VOLUME
+
+    @volume.setter
+    def volume(self, value):
+        _call(Mix_VolumeChunk, self.load(), value * MIX_MAX_VOLUME)
+
+
+@channel_finished
+def _filler_channel_finished(channel):
+    pass
 
 
 class SoundController(System):
@@ -89,20 +109,26 @@ class SoundController(System):
             # not sure how much difference it makes.
             _check_error=lambda rv: rv == -1
         )
+
+        _call(Mix_AllocateChannels, 16)  # TODO: Do something more interesting
+
         # Register callback, keeping reference for later cleanup
         self._finished_callback = channel_finished(self._on_channel_finished)
         _call(Mix_ChannelFinished, self._finished_callback)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         # Unregister callback and release reference
-        _call(Mix_ChannelFinished, None)
+        _call(Mix_ChannelFinished, _filler_channel_finished)
         self._finished_callback = None
         # Cleanup SDL_mixer
         _call(Mix_CloseAudio)
         _call(Mix_Quit)
 
     def on_play_sound(self, event, signal):
+        sound = event.sound
         chunk = event.sound.load()
+
+        # print(f"Playing {sound} at volume {sound.volume}")
 
         channel = _call(
             Mix_PlayChannel,
@@ -111,7 +137,7 @@ class SoundController(System):
             0,  # Do not repeat
             _check_error=lambda rv: rv == -1
         )
-        self.channels[channel] = event.sound  # Keep reference of playing asset
+        self.channels[channel] = sound  # Keep reference of playing asset
 
     def _on_channel_finished(self, channel_num):
         # "NEVER call SDL_Mixer functions, nor SDL_LockAudio, from a callback function."
