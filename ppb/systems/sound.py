@@ -5,15 +5,15 @@ from sdl2 import (
 )
 
 from sdl2.sdlmixer import (
-    # Errors
+    # Errors, https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_7.html#SEC7
     Mix_GetError, Mix_SetError,
-    # Support library loading
+    # Support library loading https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_7.html#SEC7
     Mix_Init, Mix_Quit, MIX_INIT_FLAC, MIX_INIT_MOD, MIX_INIT_MP3, MIX_INIT_OGG,
-    # Mixer init
+    # Mixer init https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_7.html#SEC7
     Mix_OpenAudio, Mix_CloseAudio,
-    # Samples
+    # Samples https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_16.html#SEC16
     Mix_LoadWAV_RW, Mix_FreeChunk, Mix_VolumeChunk,
-    # Channels
+    # Channels https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_25.html#SEC25
     Mix_AllocateChannels, Mix_PlayChannel, Mix_ChannelFinished, channel_finished,
     # Other
     MIX_MAX_VOLUME,
