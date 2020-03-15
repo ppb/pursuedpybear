@@ -4,6 +4,7 @@ import logging
 import random
 
 import sdl2
+import sdl2.ext
 
 from sdl2 import (
     rw_from_object,  # https://pysdl2.readthedocs.io/en/latest/modules/sdl2.html#sdl2.sdl2.rw_from_object
@@ -23,6 +24,7 @@ from sdl2 import (
     SDL_DestroyTexture,  # https://wiki.libsdl.org/SDL_DestroyTexture
     SDL_QueryTexture,  # https://wiki.libsdl.org/SDL_QueryTexture
     SDL_RenderCopyEx,  # https://wiki.libsdl.org/SDL_RenderCopyEx
+    SDL_CreateRGBSurface,  # https://wiki.libsdl.org/SDL_CreateRGBSurface
 )
 
 from sdl2.sdlimage import (
@@ -66,10 +68,10 @@ def img_call(func, *pargs, _check_error=None, **kwargs):
         return rv
 
 
-# TODO: Move Image out of the renderer so sprites can type hint
-#  appropriately.
+# TODO: Move Image out of the renderer so sprites can type hint appropriately.
 class Image(assets.Asset):
     # Wraps POINTER(SDL_Surface)
+
     def background_parse(self, data):
         file = rw_from_object(io.BytesIO(data))
         # ^^^^ is a pure-python emulation, does not need cleanup.
@@ -86,15 +88,20 @@ class Image(assets.Asset):
         return surface
 
     def file_missing(self):
-        resource = pygame.Surface((70, 70))
-        # this algorithm can't produce black, so this is a safe colorkey.
-        resource.set_colorkey((0, 0, 0))
-        random.seed(str(self.name))
-        r = random.randint(65, 255)
-        g = random.randint(65, 255)
-        b = random.randint(65, 255)
-        resource.fill((r, g, b))
-        return resource
+        width = height = 70  # Pixels, arbitrary
+        surface = sdl_call(
+            SDL_CreateRGBSurface, 0, width, height, 32, 0, 0, 0, 0,
+            _check_error=lambda rv: not rv
+        )
+
+        rand = random.Random(str(self.name))
+        r = rand.randint(65, 255)
+        g = rand.randint(65, 255)
+        b = rand.randint(65, 255)
+        color = sdl2.ext.Color(r, g, b)
+
+        sdl2.ext.fill(surface.contents, color)
+        return surface
 
     def free(self, object, _SDL_FreeSurface=SDL_FreeSurface):
         # ^^^ is a way to keep required functions during interpreter cleanup
