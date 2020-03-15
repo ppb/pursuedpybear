@@ -1,5 +1,7 @@
 """
 Tests the sound system without initializating anything else.
+
+NOTE: Does not open a window.
 """
 import ppb
 
@@ -7,7 +9,7 @@ import ppb
 class Scene(ppb.BaseScene):
     sound = ppb.Sound("laser1.ogg")
     running = 0
-    lifespan = 5
+    lifespan = 2
 
     def on_scene_started(self, event, signal):
         print("Scene start")

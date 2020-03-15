@@ -94,7 +94,20 @@ class SoundController(System):
 
     def __init__(self, **kw):
         super().__init__(**kw)
-        self.channels = {}  # Track sound assets so they don't get freed early
+        self._currently_playing = {}  # Track sound assets so they don't get freed early
+
+    @property
+    def allocated_channels(self):
+        """
+        The number of channels currently allocated by SDL_mixer.
+
+        Seems to default to 8.
+        """
+        return _call(Mix_AllocateChannels, -1)
+
+    @allocated_channels.setter
+    def allocated_channels(self, value):
+        _call(Mix_AllocateChannels, value)
 
     def __enter__(self):
         _call(Mix_Init, MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG)
@@ -109,8 +122,6 @@ class SoundController(System):
             # not sure how much difference it makes.
             _check_error=lambda rv: rv == -1
         )
-
-        _call(Mix_AllocateChannels, 16)  # TODO: Do something more interesting
 
         # Register callback, keeping reference for later cleanup
         self._finished_callback = channel_finished(self._on_channel_finished)
@@ -135,8 +146,8 @@ class SoundController(System):
             0,  # Do not repeat
             _check_error=lambda rv: rv == -1
         )
-        self.channels[channel] = sound  # Keep reference of playing asset
+        self._currently_playing[channel] = sound  # Keep reference of playing asset
 
     def _on_channel_finished(self, channel_num):
         # "NEVER call SDL_Mixer functions, nor SDL_LockAudio, from a callback function."
-        self.channels[channel_num] = None  # Release the asset that was playing
+        self._currently_playing[channel_num] = None  # Release the asset that was playing
