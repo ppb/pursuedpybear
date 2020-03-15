@@ -19,13 +19,13 @@ from sdl2.sdlmixer import (
     MIX_MAX_VOLUME,
 )
 
-from ppb.systemslib import System
 from ppb import assetlib
+from ppb.systems._sdl_utils import SdlError, SdlSubSystem
 
 __all__ = ('SoundController', 'Sound', 'SdlMixerError')
 
 
-class SdlMixerError(Exception):
+class SdlMixerError(SdlError):
     """
     SDL_mixer raised an error
     """
@@ -89,7 +89,7 @@ def _filler_channel_finished(channel):
     pass
 
 
-class SoundController(System):
+class SoundController(SdlSubSystem):
     _finished_callback = None
 
     def __init__(self, **kw):
