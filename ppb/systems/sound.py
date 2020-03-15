@@ -128,8 +128,6 @@ class SoundController(System):
         sound = event.sound
         chunk = event.sound.load()
 
-        # print(f"Playing {sound} at volume {sound.volume}")
-
         channel = _call(
             Mix_PlayChannel,
             -1,  # Auto-pick channel
