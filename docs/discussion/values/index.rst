@@ -2,7 +2,7 @@ Principles and Values
 =========================
 
 PursuedPyBear is a principles driven project. From its earliest days, it's been
-guided by a set of ideals that suggest the shame and form of any problem we
+guided by a set of ideals that suggest the shape and form of any problem we
 encounter. From or primary focus on students and learners to our embracing
 change to both the code our principles.
 
@@ -41,8 +41,8 @@ Embracing Radical Change
 --------------------------------
 
 Over time, the needs of ppb as a project and as a community have changed. It
-started as a solo project to encourage reduce of common patterns in one
-developers workflows. It's now an education focused community with a team of
+started as a solo project to encourage reuse of common patterns in one
+developer's workflows. It's now an education-focused community with a team of
 active developers and a couple of dozen contributors. As the needs shift, so too
 do our principles and processes.
 
