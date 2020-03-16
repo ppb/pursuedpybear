@@ -88,8 +88,9 @@ macOS_task:
   env:
     PATH: ${HOME}/.pyenv/shims:${PATH}
     matrix:
-      - PYTHON: 3.6.8
-      - PYTHON: 3.7.2
+      - PYTHON: 3.6.10
+      - PYTHON: 3.7.7
+      - PYTHON: 3.8.2
   depends_on:
     - build
   install_script:
@@ -121,6 +122,7 @@ task:
     matrix:
       - IMAGE: python:3.6-windowsservercore
       - IMAGE: python:3.7-windowsservercore
+      - IMAGE: python:3.8-windowsservercore
 
   install_script:
     - C:\Python\python.exe -m pip install --upgrade-strategy eager -U -r requirements-tests.txt
