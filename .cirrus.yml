@@ -88,8 +88,10 @@ macOS_task:
   env:
     PATH: ${HOME}/.pyenv/shims:${PATH}
     matrix:
-      - PYTHON: 3.6.10
-      - PYTHON: 3.7.7
+      # Get the current version of pyenv from https://formulae.brew.sh/formula/pyenv
+      # Look that up on https://github.com/pyenv/pyenv/tree/master/plugins/python-build/share/python-build
+      - PYTHON: 3.6.9
+      - PYTHON: 3.7.5
       - PYTHON: 3.8.2
   depends_on:
     - build
