@@ -2,7 +2,7 @@
 Tests rotation vs Vector angles
 
 The center sprite should always face the orbiting sprite, and they should be
-moving clockwise.
+moving counter-clockwise.
 """
 import ppb
 

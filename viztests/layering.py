@@ -1,7 +1,7 @@
 """
 Visual test of the layering system.
 
-The green circle mover should render above the purple up arrows and below
+The grey circle mover should render above the purple up arrows and below
 the yellow down arrows.
 """
 from itertools import cycle
