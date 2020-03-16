@@ -217,12 +217,16 @@ class EventPoller(SdlSubSystem):
 
     def key_pressed(self, event, scene):
         key = event.key
+        if key.repeat:
+            return
         if key.keysym.sym in self.key_map:
             return events.KeyPressed(key=self.key_map[key.keysym.sym],
                                      mods=self.build_mods(key.keysym.mod))
 
     def key_released(self, event, scene):
         key = event.key
+        if key.repeat:
+            return
         if key.keysym.sym in self.key_map:
             return events.KeyReleased(key=self.key_map[key.keysym.sym],
                                       mods=self.build_mods(key.keysym.mod))
