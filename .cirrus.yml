@@ -92,7 +92,7 @@ macOS_task:
       # Look that up on https://github.com/pyenv/pyenv/tree/master/plugins/python-build/share/python-build
       - PYTHON: 3.6.9
       - PYTHON: 3.7.5
-      - PYTHON: 3.8.2
+      - PYTHON: 3.8.1
   depends_on:
     - build
   install_script:
