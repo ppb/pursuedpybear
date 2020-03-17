@@ -26,7 +26,7 @@ class EventPoller(SdlSubSystem):
     """
     An event poller that converts Pygame events into PPB events.
     """
-    _subsystems = SDL_INIT_EVENTS
+    _sdl_subsystems = SDL_INIT_EVENTS
 
     event_map = {
         SDL_QUIT: "quit",
