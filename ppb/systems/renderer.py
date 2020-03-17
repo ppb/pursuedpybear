@@ -10,7 +10,7 @@ from sdl2 import (
     rw_from_object,  # https://pysdl2.readthedocs.io/en/latest/modules/sdl2.html#sdl2.sdl2.rw_from_object
     SDL_Window, SDL_Renderer,
     SDL_Rect,  # https://wiki.libsdl.org/SDL_Rect
-    SDL_INIT_VIDEO, SDL_WINDOW_ALLOW_HIGHDPI, SDL_BLENDMODE_BLEND, SDL_FLIP_NONE,
+    SDL_INIT_VIDEO, SDL_BLENDMODE_BLEND, SDL_FLIP_NONE,
     SDL_CreateWindowAndRenderer,  # https://wiki.libsdl.org/SDL_CreateWindowAndRenderer
     SDL_DestroyRenderer,  # https://wiki.libsdl.org/SDL_DestroyRenderer
     SDL_DestroyWindow,  # https://wiki.libsdl.org/SDL_DestroyWindow
@@ -147,7 +147,7 @@ class Renderer(SdlSubSystem):
             SDL_CreateWindowAndRenderer,
             self.resolution[0],  # Width
             self.resolution[1],  # Height
-            SDL_WINDOW_ALLOW_HIGHDPI,  # Flags
+            0,  # Flags
             # SDL_WINDOW_ALLOW_HIGHDPI - Allow the renderer to work in HiDPI natively
             ctypes.byref(self.window),
             ctypes.byref(self.renderer),
