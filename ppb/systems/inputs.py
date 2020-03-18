@@ -158,7 +158,9 @@ class EventPoller(SdlSubSystem):
 
     def on_idle(self, idle: events.Idle, signal):
         event = SDL_Event()
-        while sdl_call(SDL_PollEvent, ctypes.byref(event)):
+        # Don't use sdl_call because no documented error return.
+        # Also, inner functions do set the error flag, causing problems.
+        while SDL_PollEvent(ctypes.byref(event)):
             methname = self.event_map.get(event.type)
             if methname is not None:  # Is there a handler for this pygame event?
                 ppbevent = getattr(self, methname)(event, idle.scene)
