@@ -47,6 +47,8 @@ class Asset(AbstractAsset):
 
     Meant to be subclassed, but in specific ways.
     """
+    _data = None
+
     def __new__(cls, name):
         clsname = f"{cls.__module__}:{cls.__qualname__}"
         try:
@@ -100,6 +102,17 @@ class Asset(AbstractAsset):
         Called in the background thread.
         """
         return data
+
+    def free(self, object):
+        """
+        Called by __del__, if necessary. Meant to free the loaded data.
+        """
+
+    def __del__(self):
+        # This should only be called after the background threads and other
+        # processing has finished.
+        if self._data is not None:
+            self.free(self._data)
 
     def is_loaded(self):
         """
