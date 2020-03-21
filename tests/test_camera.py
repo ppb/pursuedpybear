@@ -131,9 +131,9 @@ def test_transfromation_roundtrip(vp_width, vp_height, pixel_ratio, cam_pos, poi
     vp_width=st.integers(min_value=1),
     vp_height=st.integers(min_value=1),
     pixel_ratio=st.floats(min_value=1, max_value=1e5, allow_nan=False, allow_infinity=False),
-    cam_pos=vectors(),
-    point=vectors(),
-    delta=vectors(),
+    cam_pos=vectors(1e5),
+    point=vectors(1e5),
+    delta=vectors(1e5),
 )
 def test_transfromation_movement(
     vp_width, vp_height, pixel_ratio, cam_pos, point, delta,
