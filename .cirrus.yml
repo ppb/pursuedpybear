@@ -1,3 +1,6 @@
+# !!NOTE!!
+# If any of the image names or python versions change, update bors.toml
+
 pep517_task:
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
   container:
@@ -88,8 +91,10 @@ macOS_task:
   env:
     PATH: ${HOME}/.pyenv/shims:${PATH}
     matrix:
+      # To update:
       # Get the current version of pyenv from https://formulae.brew.sh/formula/pyenv
       # Look that up on https://github.com/pyenv/pyenv/tree/master/plugins/python-build/share/python-build
+      # Also update bors.toml
       - PYTHON: 3.6.9
       - PYTHON: 3.7.5
       - PYTHON: 3.8.1
