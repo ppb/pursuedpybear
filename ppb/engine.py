@@ -1,8 +1,8 @@
+import time
 from collections import defaultdict
 from collections import deque
 from contextlib import ExitStack
 from itertools import chain
-import time
 from typing import Any
 from typing import Callable
 from typing import DefaultDict
@@ -11,19 +11,33 @@ from typing import Type
 from typing import Union
 
 from ppb import events
-from ppb.eventlib import EventMixin
+from ppb.assetlib import AssetLoadingSystem
+from ppb.errors import BadEventHandlerException
 from ppb.systems import EventPoller
 from ppb.systems import Renderer
-from ppb.systems import Updater
 from ppb.systems import SoundController
-from ppb.assetlib import AssetLoadingSystem
+from ppb.systems import Updater
 from ppb.utils import LoggingMixin
-
+from ppb.utils import camel_to_snake
 
 _ellipsis = type(...)
 
+_cached_handler_names = {}
 
-class GameEngine(EventMixin, LoggingMixin):
+
+def _get_handler_name(txt):
+    result = _cached_handler_names.get(txt)
+    if result is None:
+        result = "on_" + camel_to_snake(txt)
+        _cached_handler_names[txt] = result
+    return result
+
+
+for x in events.__all__:
+    _get_handler_name(x)
+
+
+class GameEngine(LoggingMixin):
 
     def __init__(self, first_scene: Type, *,
                  basic_systems=(Renderer, Updater, EventPoller, SoundController, AssetLoadingSystem),
@@ -127,17 +141,26 @@ class GameEngine(EventMixin, LoggingMixin):
         scene = self.current_scene
         event.scene = scene
         extensions = chain(self.event_extensions[type(event)], self.event_extensions[...])
+
+        # Hydrating extensions.
         for callback in extensions:
             callback(event)
-        self.__event__(event, self.signal)
-        for system in self.systems:
-            system.__event__(event, self.signal)
-        # Required for if we publish with no current scene.
-        # Should only happen when the last scene stops via event.
-        if scene is not None:
-            scene.__event__(event, self.signal)
-            for game_object in scene:
-                game_object.__event__(event, self.signal)
+
+        event_handler_name = _get_handler_name(type(event).__name__)
+        for obj in self.walk():
+            method = getattr(obj, event_handler_name, None)
+            if callable(method):
+                try:
+                    method(event, self.signal)
+                except TypeError as ex:
+                    from inspect import signature
+                    sig = signature(method)
+                    try:
+                        sig.bind(event, self.signal)
+                    except TypeError:
+                        raise BadEventHandlerException(obj, event_handler_name, event) from ex
+                    else:
+                        raise
 
     def on_start_scene(self, event: events.StartScene, signal: Callable[[Any], None]):
         """
@@ -212,3 +235,10 @@ class GameEngine(EventMixin, LoggingMixin):
         the wrong scene.
         """
         self.events = deque()
+
+    def walk(self):
+        yield self
+        yield from self.systems
+        yield self.current_scene
+        if self.current_scene is not None:
+            yield from self.current_scene
