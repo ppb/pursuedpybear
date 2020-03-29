@@ -1,9 +1,10 @@
 import logging
-import sys
-import numbers
 import math
+import numbers
+import re
+import sys
 
-__all__ = 'LoggingMixin', 'FauxFloat',
+__all__ = 'LoggingMixin', 'FauxFloat', 'camel_to_snake'
 
 
 # Dictionary mapping file names -> module names
@@ -20,6 +21,15 @@ def _build_index():
         for mod in sys.modules.values()
         if hasattr(mod, '__file__') and hasattr(mod, '__name__')
     }
+
+
+_boundaries_finder = re.compile('(.)([A-Z][a-z]+)')
+_boundaries_finder_2 = re.compile('([a-z0-9])([A-Z])')
+
+
+def camel_to_snake(txt):
+    s1 = _boundaries_finder.sub(r'\1_\2', txt)
+    return _boundaries_finder_2.sub(r'\1_\2', s1).lower()
 
 
 def _get_module(file_name):

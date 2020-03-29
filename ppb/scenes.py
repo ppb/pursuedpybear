@@ -9,7 +9,6 @@ from typing import Sequence
 from typing import Type
 
 from ppb.camera import Camera
-from ppb.eventlib import EventMixin
 
 
 class GameObjectCollection(Collection):
@@ -96,7 +95,7 @@ class GameObjectCollection(Collection):
             s.discard(game_object)
 
 
-class BaseScene(EventMixin):
+class BaseScene:
     # Background color, in RGB, each channel is 0-255
     background_color: Sequence[int] = (0, 0, 100)
     container_class: Type = GameObjectCollection

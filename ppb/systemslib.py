@@ -1,7 +1,4 @@
-from ppb import eventlib
-
-
-class System(eventlib.EventMixin):
+class System:
 
     def __init__(self, **_):
         pass
