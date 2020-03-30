@@ -41,7 +41,6 @@ class BaseSprite:
 
     The things that define a BaseSprite:
 
-    * The __event__ protocol (see ppb.eventlib.EventMixin)
     * A position vector
     * A layer
 
