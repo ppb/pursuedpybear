@@ -55,6 +55,7 @@ with tempfile.TemporaryDirectory() as td:
                         },
                     ))
                 except HTTPError as exc:
+                    print(f"Error {exc.code} ({exc.reason}) from {dest_url}")
                     print(exc.headers)
                     print(exc.read())
                     raise
