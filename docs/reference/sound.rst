@@ -10,16 +10,16 @@ Sound effects can be triggered by sending an event:
         signal(PlaySound(sound=ppb.Sound('toot.ogg')))
 
 The following sound formats are supported:
-* Wave
-* AIFF
-* VOC
-* MOD
-* MIDI
-* OGG (with both Vorbis and Opus)
-* MP3
-* FLAC
 
-Additionally, MIDI _may_ be supported.
+* `OGG <https://en.wikipedia.org/wiki/Ogg>`_ (with both `Vorbis <https://en.wikipedia.org/wiki/Vorbis>`_ and `Opus <https://en.wikipedia.org/wiki/Opus_(audio_format)>`_)
+* `FLAC <https://en.wikipedia.org/wiki/FLAC>`_
+* `MP3 <https://en.wikipedia.org/wiki/MP3>`_
+* `WAV <https://en.wikipedia.org/wiki/WAV>`_
+* `AIFF <https://en.wikipedia.org/wiki/Audio_Interchange_File_Format>`_
+* `MOD <https://en.wikipedia.org/wiki/MOD_(file_format)>`_
+* VOC
+
+Additionally, MIDI *may* be supported.
 
 .. note::
     As is usual with assets, you should instantiate your :py:class:`ppb.Sound`
