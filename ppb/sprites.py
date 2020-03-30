@@ -44,8 +44,8 @@ class BaseSprite:
     * A position vector
     * A layer
 
-    BaseSprite provides an __init__ method that sets attributes based on kwargs
-    to make rapid prototyping easier.
+    BaseSprite provides an :py:meth:`__init__()` method that sets attributes
+    based on kwargs to make rapid prototyping easier.
     """
     #: (:py:class:`ppb.Vector`): Location of the sprite
     position: Vector = Vector(0, 0)
