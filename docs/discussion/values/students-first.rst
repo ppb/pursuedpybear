@@ -46,4 +46,6 @@ learning something new should only add to that knowledge, not require
 reassessment.
 
 We also try to reduce the number of times a user is forced to ask "why is it
-like this and not like that?"
+like this and not like that?" Things that are like messages should use the event
+queue. State should be contained by objects at the right level of abstraction.
+Things should fit the model.

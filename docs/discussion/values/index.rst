@@ -37,7 +37,7 @@ complexity is neatly hidden until it's necessary to be addressed. We want to
 reduce "warts" in the API, increase overall discoverability, and allow you to
 work playfully.
 
-Embracing Radical Change
+Radical Acceptance
 --------------------------------
 
 Over time, the needs of ppb as a project and as a community have changed. It
@@ -73,5 +73,7 @@ that.
    :maxdepth: 2
    :caption: Our Values
 
+   students-first
+   creativity-without-limits
    community-values
    technical-values
