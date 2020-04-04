@@ -38,6 +38,7 @@ import ppb.assetlib as assets
 import ppb.events as events
 import ppb.flags as flags
 from ppb.systems._sdl_utils import SdlSubSystem, sdl_call, SdlError
+from ppb.systems._utils import ObjectSideData
 
 logger = logging.getLogger(__name__)
 
@@ -138,6 +139,8 @@ class Renderer(SdlSubSystem):
         self.target_frame_rate = target_frame_rate
         self.target_count = 1 / self.target_frame_rate
 
+        self._texture_cache = ObjectSideData()
+
     def __enter__(self):
         super().__enter__()
         img_call(IMG_Init, IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF)
@@ -211,11 +214,16 @@ class Renderer(SdlSubSystem):
         if image is flags.DoNotRender or image is None:
             return None
 
-        texture = SmartPointer(sdl_call(
-            SDL_CreateTextureFromSurface, self.renderer, image.load(),
-            _check_error=lambda rv: not rv
-        ), SDL_DestroyTexture)
-        return texture
+        surface = image.load()
+        try:
+            return self._texture_cache[surface]
+        except KeyError:
+            texture = SmartPointer(sdl_call(
+                SDL_CreateTextureFromSurface, self.renderer, surface,
+                _check_error=lambda rv: not rv
+            ), SDL_DestroyTexture)
+            self._texture_cache[surface] = texture
+            return texture
 
     def compute_rectangles(self, texture, game_object, camera):
         flags = sdl2.stdinc.Uint32()
