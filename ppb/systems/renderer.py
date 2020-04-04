@@ -2,7 +2,7 @@ import ctypes
 import io
 import logging
 import random
-from time import time
+from time import monotonic
 
 import sdl2
 import sdl2.ext
@@ -136,10 +136,9 @@ class Renderer(SdlSubSystem):
         self.window = None
         self.window_title = window_title
         self.pixel_ratio = None
-        self.render_clock = time()
         self.target_frame_rate = target_frame_rate
         self.target_frame_length = 1 / self.target_frame_rate
-        self.target_clock = self.render_clock + self.target_frame_length
+        self.target_clock = monotonic() + self.target_frame_length
 
         self._texture_cache = ObjectSideData()
 
@@ -168,12 +167,12 @@ class Renderer(SdlSubSystem):
         super().__exit__(*exc)
 
     def on_idle(self, idle_event: events.Idle, signal):
-        self.render_clock = time()
-        if self.render_clock >= self.target_clock:
+        t = monotonic()
+        if t >= self.target_clock:
             self.pre_render_updates(idle_event.scene)
             signal(events.PreRender())
             signal(events.Render())
-            self.target_clock = self.render_clock + self.target_frame_length
+            self.target_clock = t + self.target_frame_length
 
     def pre_render_updates(self, scene):
         camera = scene.main_camera
