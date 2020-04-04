@@ -2,6 +2,7 @@ import ctypes
 import io
 import logging
 import random
+from time import monotonic
 
 import sdl2
 import sdl2.ext
@@ -38,6 +39,7 @@ import ppb.assetlib as assets
 import ppb.events as events
 import ppb.flags as flags
 from ppb.systems._sdl_utils import SdlSubSystem, sdl_call, SdlError
+from ppb.systems._utils import ObjectSideData
 
 logger = logging.getLogger(__name__)
 
@@ -134,9 +136,11 @@ class Renderer(SdlSubSystem):
         self.window = None
         self.window_title = window_title
         self.pixel_ratio = None
-        self.render_clock = 0
         self.target_frame_rate = target_frame_rate
-        self.target_count = 1 / self.target_frame_rate
+        self.target_frame_length = 1 / self.target_frame_rate
+        self.target_clock = monotonic() + self.target_frame_length
+
+        self._texture_cache = ObjectSideData()
 
     def __enter__(self):
         super().__enter__()
@@ -163,12 +167,12 @@ class Renderer(SdlSubSystem):
         super().__exit__(*exc)
 
     def on_idle(self, idle_event: events.Idle, signal):
-        self.render_clock += idle_event.time_delta
-        if self.render_clock > self.target_count:
+        t = monotonic()
+        if t >= self.target_clock:
             self.pre_render_updates(idle_event.scene)
             signal(events.PreRender())
             signal(events.Render())
-            self.render_clock = 0
+            self.target_clock = t + self.target_frame_length
 
     def pre_render_updates(self, scene):
         camera = scene.main_camera
@@ -211,11 +215,16 @@ class Renderer(SdlSubSystem):
         if image is flags.DoNotRender or image is None:
             return None
 
-        texture = SmartPointer(sdl_call(
-            SDL_CreateTextureFromSurface, self.renderer, image.load(),
-            _check_error=lambda rv: not rv
-        ), SDL_DestroyTexture)
-        return texture
+        surface = image.load()
+        try:
+            return self._texture_cache[surface]
+        except KeyError:
+            texture = SmartPointer(sdl_call(
+                SDL_CreateTextureFromSurface, self.renderer, surface,
+                _check_error=lambda rv: not rv
+            ), SDL_DestroyTexture)
+            self._texture_cache[surface] = texture
+            return texture
 
     def compute_rectangles(self, texture, game_object, camera):
         flags = sdl2.stdinc.Uint32()
