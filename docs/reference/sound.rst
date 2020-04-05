@@ -32,4 +32,4 @@ Reference
 
 .. autoclass:: ppb.Sound
    
-   The asset to use for sounds. WAV and Ogg/Vorbis are supported.
+   The asset to use for sounds. A variety of file formats are supported.
