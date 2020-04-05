@@ -184,11 +184,13 @@ class AssetLoadingSystem(System):
     def _hint(self, filename, callback=None):
         self._began += 1
         try:
+            # If we're already loading this data, reuse that loader
             fut = self._queue[filename]
         except KeyError:
+            # Nothing is currently loading this data, make a fresh job
             fut = self._queue[filename] = self._executor.submit(self._load, filename)
         if callback is not None:
-            # There are circumstances where Future will call us syncronously
+            # There are circumstances where Future will call back syncronously.
             # In which case, redirect to a fresh background thread.
             fut.add_done_callback(partial(force_background_thread, callback))
 
