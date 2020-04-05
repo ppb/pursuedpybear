@@ -75,8 +75,9 @@ useful.
     Loads an image file and parses it into a form usable by the renderer.
 
 .. autoclass:: ppb.Sound
+    :noindex:
 
-    Loads and decodes an image file. Wave and Ogg Vorbis are supported.
+    Loads and decodes an image file. A variety of formats are supported.
 
 
 
