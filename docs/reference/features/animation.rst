@@ -1,5 +1,6 @@
 Animation
 =========
+.. py:module:: ppb.features.animation
 
 This is a simple animation tool, allowing individual frame files to be composed
 into a sprite animation, like so:
