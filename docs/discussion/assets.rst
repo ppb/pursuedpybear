@@ -55,7 +55,7 @@ Then, you make an :py:class:`Asset` subclass. There's a few methods of note for 
 
 * :py:meth:`Asset.background_parse()`: Do the actual parsing. Accepts the bytes loaded from the file, and returns the data object that the asset is wrapping.
 * :py:meth:`Asset.file_missing()`: If defined, this will be called if the file is not found, and is expected to return a synthesized stand-in object. If not defined, :py:meth:`Asset.load()` will raise an error.
-* :py:meth:`Asset.free()`: Handles cleanup in the case where resources need to be explicitly cleaned. Note that because this is called in the context of :py:meth:`__del__()`, care must be taken around refering to globals or other modules.
+* :py:meth:`Asset.free()`: Handles cleanup in the case where resources need to be explicitly cleaned. Note that because this is called in the context of :py:meth:`__del__() <object.__del__>`, care must be taken around refering to globals or other modules.
 
 At the point of use, all you need to do is call :py:meth:`Asset.load()` and you will get the object created by the asset. This will block if the background processing is incomplete.
 
