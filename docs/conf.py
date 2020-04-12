@@ -190,4 +190,4 @@ todo_include_todos = True
 
 
 # -- autodoc configuration
-autodoc_mock_imports = ['pySDL']
+autodoc_mock_imports = ['sdl2']
