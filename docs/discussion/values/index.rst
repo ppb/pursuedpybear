@@ -75,5 +75,5 @@ that.
 
    students-first
    creativity-without-limits
-   community-values
-   technical-values
+   fun
+   radical-acceptance
