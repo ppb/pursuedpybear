@@ -29,8 +29,9 @@ Inclusion
 
 PursuedPyBear started as the solo project of a trans woman with a non-standard
 education background. As it's grown, we have sought out and encouraged
-contributors from diverse backgrounds. We have a code of conduct that covers all
-participation in the project.
+contributors from diverse backgrounds. We have a
+`code of conduct <https://ppb.dev/coc.html>`_ that covers all participation in
+the project.
 
 We like being a diverse project, and we will protect the environment that let's
 it be that way.
