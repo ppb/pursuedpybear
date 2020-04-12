@@ -15,7 +15,6 @@ import ppb_vector
 from ppb_vector import Vector
 
 import ppb
-from ppb.eventlib import EventMixin
 from ppb.utils import FauxFloat
 
 __all__ = (
@@ -35,7 +34,7 @@ error_message = "'{klass}' object does not have attribute '{attribute}'"
 side_attribute_error_message = error_message.format
 
 
-class BaseSprite(EventMixin):
+class BaseSprite:
     """
     The base Sprite class. All sprites should inherit from this (directly or
     indirectly).

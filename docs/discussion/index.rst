@@ -7,5 +7,7 @@ advanced users.
 
 .. toctree::
    :maxdepth: 2
+   :caption: Contents:
 
    values/index
+   assets

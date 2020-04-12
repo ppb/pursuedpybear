@@ -47,6 +47,8 @@ class Asset(AbstractAsset):
 
     Meant to be subclassed, but in specific ways.
     """
+    _data = None
+
     def __new__(cls, name):
         clsname = f"{cls.__module__}:{cls.__qualname__}"
         try:
@@ -100,6 +102,17 @@ class Asset(AbstractAsset):
         Called in the background thread.
         """
         return data
+
+    def free(self, object):
+        """
+        Called by __del__, if necessary. Meant to free the loaded data.
+        """
+
+    def __del__(self):
+        # This should only be called after the background threads and other
+        # processing has finished.
+        if self._data is not None:
+            self.free(self._data)
 
     def is_loaded(self):
         """
@@ -171,11 +184,13 @@ class AssetLoadingSystem(System):
     def _hint(self, filename, callback=None):
         self._began += 1
         try:
+            # If we're already loading this data, reuse that loader
             fut = self._queue[filename]
         except KeyError:
+            # Nothing is currently loading this data, make a fresh job
             fut = self._queue[filename] = self._executor.submit(self._load, filename)
         if callback is not None:
-            # There are circumstances where Future will call us syncronously
+            # There are circumstances where Future will call back syncronously.
             # In which case, redirect to a fresh background thread.
             fut.add_done_callback(partial(force_background_thread, callback))
 

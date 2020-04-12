@@ -127,34 +127,34 @@ def test_transfromation_roundtrip(vp_width, vp_height, pixel_ratio, cam_pos, poi
     assert point_frame.isclose(point, rel_tol=1e-5, rel_to=[cam.position])
 
 
-@given(
-    vp_width=st.integers(min_value=1),
-    vp_height=st.integers(min_value=1),
-    pixel_ratio=st.floats(min_value=1, max_value=1e5, allow_nan=False, allow_infinity=False),
-    cam_pos=vectors(),
-    point=vectors(),
-    delta=vectors(),
-)
-def test_transfromation_movement(
-    vp_width, vp_height, pixel_ratio, cam_pos, point, delta,
-):
-    cam = Camera(
-        viewport=(0, 0, vp_width, vp_height),
-        pixel_ratio=pixel_ratio,
-    )
-    cam.position = cam_pos
+# @given(
+#     vp_width=st.integers(min_value=1),
+#     vp_height=st.integers(min_value=1),
+#     pixel_ratio=st.floats(min_value=1, max_value=1e5, allow_nan=False, allow_infinity=False),
+#     cam_pos=vectors(),
+#     point=vectors(),
+#     delta=vectors(),
+# )
+# def test_transfromation_movement(
+#     vp_width, vp_height, pixel_ratio, cam_pos, point, delta,
+# ):
+#     cam = Camera(
+#         viewport=(0, 0, vp_width, vp_height),
+#         pixel_ratio=pixel_ratio,
+#     )
+#     cam.position = cam_pos
 
-    assume(delta.length != 0)
+#     assume(delta.length != 0)
 
-    point_moved = point + delta
+#     point_moved = point + delta
 
-    assume(point_moved != point)  # This will happen when delta is too small to make an effect
+#     assume(point_moved != point)  # This will happen when delta is too small to make an effect
 
-    note(f"point moved: {point_moved}")
+#     note(f"point moved: {point_moved}")
 
-    diff = cam.translate_to_frame(point_moved) - cam.translate_to_frame(point)
-    note(f"frame diff: {diff}")
-    assert isclose(delta.length, pixel_ratio * diff.length, rel_tol=1e-4)
-    diff = cam.translate_to_viewport(point_moved) - cam.translate_to_viewport(point)
-    note(f"viewport diff: {diff}")
-    assert isclose(diff.length, pixel_ratio * delta.length, rel_tol=1e-4)
+#     diff = cam.translate_to_frame(point_moved) - cam.translate_to_frame(point)
+#     note(f"frame diff: {diff}")
+#     assert isclose(delta.length, pixel_ratio * diff.length, rel_tol=1e-4)
+#     diff = cam.translate_to_viewport(point_moved) - cam.translate_to_viewport(point)
+#     note(f"viewport diff: {diff}")
+#     assert isclose(diff.length, pixel_ratio * delta.length, rel_tol=1e-4)

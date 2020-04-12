@@ -1,4 +1,6 @@
-pygame<2
+PySDL2
+pysdl2-dll; sys.platform == 'win32'
+pysdl2-dll; sys.platform == 'darwin'
 ppb-vector ~= 1.0
 dataclasses; python_version < "3.7"
 importlib_resources; python_version < "3.7"

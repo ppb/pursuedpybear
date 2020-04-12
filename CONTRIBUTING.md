@@ -115,7 +115,7 @@ available to be added to. Our test suite could use some love. In the
 end you contribute to `ppb` by being part of its community.
 
 [auto]: https://automatetheboringstuff.com "Automate the Boring Stuff"
-[coc]: https://github.com/pathunstrom/pursuedpybear/blob/master/CodeofConduct.md "Code of Conduct"
+[coc]: https://github.com/ppb/.github/blob/master/CODE_OF_CONDUCT.md "Code of Conduct"
 [contributors]: https://github.com/ppb/pursuedpybear/blob/master/CONTRIBUTORS.md "Contributors"
 [covenant]: http://contributor-covenant.org/ "Contributor's Covenant"
 [discuss]: https://github.com/ppb/pursuedpybear/issues?q=is%3Aissue+is%3Aopen+label%3Adiscussion "PPB Discussions"
@@ -126,5 +126,5 @@ end you contribute to `ppb` by being part of its community.
 [issues]: https://github.com/ppb/pursuedpybear/issues "PPB Issues"
 [new contributor]: https://github.com/ppb/pursuedpybear/labels/new%20contributor "Issues labeld New Contributor"
 [projects]: https://github.com/orgs/ppb/projects "PPB Projects"
-[readme]: https://github.com/pathunstrom/pursuedpybear/blob/master/README.md "PPB README"
+[readme]: https://github.com/ppb/pursuedpybear/blob/master/README.md "PPB README"
 [tutorial]: https://github.com/ppb/tutorials "PPB Tutorials"

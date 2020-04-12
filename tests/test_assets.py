@@ -1,3 +1,5 @@
+import gc
+
 import pytest
 
 from ppb import GameEngine, BaseScene
@@ -122,3 +124,30 @@ def test_instance_condense():
     assert a1 is a2
     assert a1 is not a3
     assert a1 is not s1
+
+
+def test_free(clean_assets):
+    free_called = False
+
+    class Const(Asset):
+        def background_parse(self, data):
+            return "yoink"
+
+        def free(self, obj):
+            nonlocal free_called
+            free_called = True
+
+    a = Const('ppb/utils.py')
+    engine = GameEngine(
+        AssetTestScene, basic_systems=[AssetLoadingSystem, Failer],
+        fail=lambda e: False, message=None, run_time=1,
+    )
+    with engine:
+        engine.start()
+
+        assert a.load() == "yoink"
+        # At this poiint, background processing should have finished
+
+    del engine, a  # Clean up everything that might be holding a reference.
+    gc.collect()
+    assert free_called
