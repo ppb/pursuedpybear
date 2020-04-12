@@ -42,7 +42,7 @@ Subclassing
 file-based assets. These make the consolidation, background-loading, and other
 aspects of :py:class:`Asset` possible.
 
-You should really only implement two methods:
+You should really only implement three methods:
 
 * :py:meth:`background_parse()`: This is called with the loaded data and returns
   an object constructed from that data. This is called from a background thread
@@ -58,6 +58,10 @@ You should really only implement two methods:
 
   For example, :py:class:`ppb.Image` uses this to produce the default square.
 
+* :py:meth:`free()`: This is to clean up any resources that would not normally
+  be cleaned up by Python's garbage collector. If you are integrating external
+  libraries, you may need this.
+
 
 Concrete Assets
 ---------------
@@ -71,8 +75,9 @@ useful.
     Loads an image file and parses it into a form usable by the renderer.
 
 .. autoclass:: ppb.Sound
+    :noindex:
 
-    Loads and decodes an image file. Wave and Ogg Vorbis are supported.
+    Loads and decodes an image file. A variety of formats are supported.
 
 
 

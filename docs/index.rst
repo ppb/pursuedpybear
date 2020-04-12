@@ -49,11 +49,10 @@ ppb runs on the latest Python.
 Object Oriented and Event Driven
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-``ppb`` games are built out of instances of objects that inherit from
-``EventMixin``. Each object only has enough information to respond to
-the event provided, which always includes the current ``BaseScene``.
-Because ``ppb`` doesn’t have a master list of events, you can provide
-new ones simply to add more granular control over your game.
+``ppb`` games are built out of instances of objects. Each object only has
+enough information to respond to the event provided, which always includes the
+current ``BaseScene``. Because ``ppb`` doesn’t have a master list of events,
+you can provide new ones simply to add more granular control over your game.
 
 Hardware Library Agnostic
 ~~~~~~~~~~~~~~~~~~~~~~~~~

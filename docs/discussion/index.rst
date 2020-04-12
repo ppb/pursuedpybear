@@ -6,7 +6,8 @@ Discussion is a place to talk about the history and why of specific parts of
 advanced users.
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Contents:
 
+   values/index
    assets

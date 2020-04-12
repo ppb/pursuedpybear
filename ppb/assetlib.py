@@ -105,7 +105,9 @@ class Asset(AbstractAsset):
 
     def free(self, object):
         """
-        Called by __del__, if necessary. Meant to free the loaded data.
+        Called by :py:meth:`__del__()` if the data was loaded.
+
+        Meant to free any resources held outside of Python.
         """
 
     def __del__(self):
