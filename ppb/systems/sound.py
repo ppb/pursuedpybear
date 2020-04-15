@@ -150,10 +150,11 @@ class SoundController(SdlSubSystem):
                 0,  # Do not repeat
                 _check_error=lambda rv: rv == -1
             )
-            self._currently_playing[channel] = sound  # Keep reference of playing asset
         except SdlMixerError as e:
             if not str(e).endswith("No free channels available"):
                 raise
+        else:
+            self._currently_playing[channel] = sound  # Keep reference of playing asset
 
     def _on_channel_finished(self, channel_num):
         # "NEVER call SDL_Mixer functions, nor SDL_LockAudio, from a callback function."
