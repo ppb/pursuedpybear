@@ -336,10 +336,10 @@ class GameEngine(LoggingMixin):
         """
         Walk the object tree.
 
-        Publication order: The :class:`GameEngine`, the :class:`GameEngine`
-        :class:`~ppb.systemslib.System` list, the current :class:`~ppb.BaseScene`,
-        then finally the :class:`~ppb.Sprite` objects in the
-        :class:`~ppb.BaseScene`.
+        Publication order: The :class:`GameEngine`, the
+        :class:`~ppb.systemslib.System` list, the current
+        :class:`~ppb.BaseScene`, then finally the :class:`~ppb.Sprite` objects
+        in the current scene.
         """
         yield self
         yield from self.systems
