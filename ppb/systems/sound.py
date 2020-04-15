@@ -21,6 +21,7 @@ from sdl2.sdlmixer import (
 
 from ppb import assetlib
 from ppb.systems._sdl_utils import SdlError, SdlSubSystem
+from ppb.utils import LoggingMixin
 
 __all__ = ('SoundController', 'Sound', 'SdlMixerError')
 
@@ -89,7 +90,7 @@ def _filler_channel_finished(channel):
     pass
 
 
-class SoundController(SdlSubSystem):
+class SoundController(SdlSubSystem, LoggingMixin):
     _finished_callback = None
 
     def __init__(self, **kw):
@@ -153,6 +154,7 @@ class SoundController(SdlSubSystem):
         except SdlMixerError as e:
             if not str(e).endswith("No free channels available"):
                 raise
+            self.logger.warn("Attempted to play sound, but there were no available channels.")
         else:
             self._currently_playing[channel] = sound  # Keep reference of playing asset
 
