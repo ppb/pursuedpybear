@@ -39,7 +39,7 @@ for x in events.__all__:
 
 class GameEngine(LoggingMixin):
     """
-    The core component of ppb.
+    The core component of :mod:`ppb`.
 
     To use the engine directly, treat it as a context manager: ::
 
@@ -50,12 +50,12 @@ class GameEngine(LoggingMixin):
                  basic_systems=(Renderer, Updater, EventPoller, SoundController, AssetLoadingSystem),
                  systems=(), scene_kwargs=None, **kwargs):
         """
-        :param first_scene: A :class:`ppb.BaseScene` type.
+        :param first_scene: A :class:`~ppb.BaseScene` type.
         :type first_scene: Type
-        :param basic_systems: Systems that are considered the "default". Includes:
-           :class:`ppb.systems.Renderer`, :class:`ppb.systems.Updater`,
-           :class:`ppb.systems.EventPoller`, :class:`SoundController`,
-           :class:`AssetLoadingSystem`.
+        :param basic_systems: :class:systemslib.Systems that are considered
+           the "default". Includes: :class:`~systems.Renderer`,
+           :class:`~systems.Updater`, :class:`~systems.EventPoller`,
+           :class:`~systems.SoundController`, :class:`~systems.AssetLoadingSystem`.
         :type basic_systems: Iterable[systemslib.System]
         :param systems: Additional user defined systems.
         :type systems: Iterable[systemslib.System]
@@ -126,8 +126,8 @@ class GameEngine(LoggingMixin):
         """
         Begin the main loop.
 
-        If you have not entered the ``GameEngine``, run will enter it for
-        you before starting.
+        If you have not entered the :class:`GameEngine`, this function will
+        enter it for you before starting.
 
         Example: ::
 
@@ -147,7 +147,7 @@ class GameEngine(LoggingMixin):
 
         Called by :meth:`GameEngine.run` before :meth:`GameEngine.main_loop`.
 
-        You shouldn't call this yourself unless you're embedding ``ppb`` in
+        You shouldn't call this yourself unless you're embedding :mod:`ppb` in
         another event loop.
         """
         self.running = True
@@ -159,8 +159,8 @@ class GameEngine(LoggingMixin):
         """
         Loop forever.
 
-        If you're embedding ppb in an external event loop you should not use
-        this method. Call :meth:`GameEngine.loop_once` instead.
+        If you're embedding :mod:`ppb` in an external event loop you should not
+        use this method. Call :meth:`GameEngine.loop_once` instead.
         """
         while self.running:
             time.sleep(0)
@@ -170,7 +170,8 @@ class GameEngine(LoggingMixin):
         """
         Iterate once.
 
-        If you're embedding ppb in an external event loop call once per loop.
+        If you're embedding :mod:`ppb` in an external event loop call once per
+        loop.
         """
         if not self.entered:
             raise ValueError("Cannot run before things have started",
@@ -187,9 +188,9 @@ class GameEngine(LoggingMixin):
 
         :param next_scene: A dictionary with the keys:
 
-           * "scene_class": A :class:`ppb.BaseScene` type.
-           * "args": A ``list`` of positional arguments.
-           * "kwargs": A ``dict`` of keyword arguments.
+           * "scene_class": A :class:`~ppb.BaseScene` type.
+           * "args": A :class:`list` of positional arguments.
+           * "kwargs": A :class:`dict` of keyword arguments.
         """
         scene = next_scene["scene_class"]
         if scene is None:
@@ -204,9 +205,9 @@ class GameEngine(LoggingMixin):
 
         Thread-safe.
 
-        You will rarely call signal directly from a GameEngine instance. The
-        current GameEngine instance will pass it's signal method as part of
-        publishing an event.
+        You will rarely call this directly from a :class:`GameEngine` instance.
+        The current :class:`GameEngine` instance will pass it's signal method
+        as part of publishing an event.
         """
         self.events.append(event)
 
@@ -244,7 +245,7 @@ class GameEngine(LoggingMixin):
         Start a new scene. The current scene pauses.
 
         Do not call this method directly. It is called by the GameEngine when a
-        :class:`events.StartScene` event is fired.
+        :class:`~events.StartScene` event is fired.
         """
         self._pause_scene()
         self._start_scene(event.new_scene, event.kwargs)
@@ -254,7 +255,7 @@ class GameEngine(LoggingMixin):
         Stop a running scene. If there's a scene on the stack, it resumes.
 
         Do not call this method directly. It is called by the GameEngine when a
-        :class:`events.StopScene` event is fired.
+        :class:`~events.StopScene` event is fired.
         """
         self._stop_scene()
         if self.current_scene is not None:
@@ -267,7 +268,7 @@ class GameEngine(LoggingMixin):
         Replace the running scene with a new one.
 
         Do not call this method directly. It is called by the GameEngine when a
-        :class:`events.ReplaceScene` event is fired.
+        :class:`~events.ReplaceScene` event is fired.
         """
         self._stop_scene()
         self._start_scene(event.new_scene, event.kwargs)
@@ -277,7 +278,7 @@ class GameEngine(LoggingMixin):
         Shut down the event loop.
 
         Do not call this method directly. It is called by the GameEngine when a
-        :class:`events.Quit` event is fired.
+        :class:`~events.Quit` event is fired.
         """
         self.running = False
 
@@ -335,8 +336,10 @@ class GameEngine(LoggingMixin):
         """
         Walk the object tree.
 
-        Publication order: The GameEngine, the GameEngine Systems, the current
-        Scene, then finally the Sprites in the Scene.
+        Publication order: The :class:`GameEngine`, the :class:`GameEngine`
+        :class:`~ppb.systemslib.System` list, the current :class:`~ppb.BaseScene`,
+        then finally the :class:`~ppb.Sprite` objects in the
+        :class:`~ppb.BaseScene`.
         """
         yield self
         yield from self.systems
