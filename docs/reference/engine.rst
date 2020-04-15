@@ -4,7 +4,7 @@
 GameEngine
 ================
 
-The ``GameEngine`` is the literal beating heart of ppb: It's the publisher for
+The :py:class:`GameEngine` is the literal beating heart of ppb: It's the publisher for
 the event and messaging system, is the source of the ``Idle`` event, and is the
 root container of the object tree.
 
