@@ -123,6 +123,7 @@ class SoundController(SdlSubSystem):
             # not sure how much difference it makes.
             _check_error=lambda rv: rv == -1
         )
+        self.allocated_channels = 16
 
         # Register callback, keeping reference for later cleanup
         self._finished_callback = channel_finished(self._on_channel_finished)
@@ -141,14 +142,18 @@ class SoundController(SdlSubSystem):
         sound = event.sound
         chunk = event.sound.load()
 
-        channel = _call(
-            Mix_PlayChannel,
-            -1,  # Auto-pick channel
-            chunk,
-            0,  # Do not repeat
-            _check_error=lambda rv: rv == -1
-        )
-        self._currently_playing[channel] = sound  # Keep reference of playing asset
+        try:
+            channel = _call(
+                Mix_PlayChannel,
+                -1,  # Auto-pick channel
+                chunk,
+                0,  # Do not repeat
+                _check_error=lambda rv: rv == -1
+            )
+            self._currently_playing[channel] = sound  # Keep reference of playing asset
+        except SdlMixerError as e:
+            if not str(e).endswith("No free channels available"):
+                raise
 
     def _on_channel_finished(self, channel_num):
         # "NEVER call SDL_Mixer functions, nor SDL_LockAudio, from a callback function."
