@@ -38,10 +38,35 @@ for x in events.__all__:
 
 
 class GameEngine(LoggingMixin):
+    """
+    The core component of ppb.
 
+    To use the engine directly, treat it as a context manager: ::
+
+       with GameEngine(BaseScene, **kwargs) as ge:
+           ge.run()
+    """
     def __init__(self, first_scene: Type, *,
                  basic_systems=(Renderer, Updater, EventPoller, SoundController, AssetLoadingSystem),
                  systems=(), scene_kwargs=None, **kwargs):
+        """
+        :param first_scene: A :class:`ppb.BaseScene` type.
+        :type first_scene: Type
+        :param basic_systems: Systems that are considered the "default". Includes:
+           :class:`ppb.systems.Renderer`, :class:`ppb.systems.Updater`,
+           :class:`ppb.systems.EventPoller`, :class:`SoundController`,
+           :class:`AssetLoadingSystem`.
+        :type basic_systems: Iterable[systemslib.System]
+        :param systems: Additional user defined systems.
+        :type systems: Iterable[systemslib.System]
+        :param scene_kwargs: Keyword arguments passed along to the first scene.
+        :type scene_kwargs: Dict[str, Any]
+        :param kwargs: Additional keyword arguments. Passed to the systems.
+
+        .. warning::
+           Passing in your own ``basic_systems`` can have unintended
+           consequences. Consider passing via systems parameter instead.
+        """
 
         super(GameEngine, self).__init__()
 
