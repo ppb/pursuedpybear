@@ -17,4 +17,5 @@ decisions are made, see the discussion section.
    sprites
    engine
    sound
+   flags
    features/index
