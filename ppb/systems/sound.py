@@ -21,6 +21,7 @@ from sdl2.sdlmixer import (
 
 from ppb import assetlib
 from ppb.systems._sdl_utils import SdlError, SdlSubSystem
+from ppb.utils import LoggingMixin
 
 __all__ = ('SoundController', 'Sound', 'SdlMixerError')
 
@@ -89,7 +90,7 @@ def _filler_channel_finished(channel):
     pass
 
 
-class SoundController(SdlSubSystem):
+class SoundController(SdlSubSystem, LoggingMixin):
     _finished_callback = None
 
     def __init__(self, **kw):
@@ -123,6 +124,7 @@ class SoundController(SdlSubSystem):
             # not sure how much difference it makes.
             _check_error=lambda rv: rv == -1
         )
+        self.allocated_channels = 16
 
         # Register callback, keeping reference for later cleanup
         self._finished_callback = channel_finished(self._on_channel_finished)
@@ -141,14 +143,20 @@ class SoundController(SdlSubSystem):
         sound = event.sound
         chunk = event.sound.load()
 
-        channel = _call(
-            Mix_PlayChannel,
-            -1,  # Auto-pick channel
-            chunk,
-            0,  # Do not repeat
-            _check_error=lambda rv: rv == -1
-        )
-        self._currently_playing[channel] = sound  # Keep reference of playing asset
+        try:
+            channel = _call(
+                Mix_PlayChannel,
+                -1,  # Auto-pick channel
+                chunk,
+                0,  # Do not repeat
+                _check_error=lambda rv: rv == -1
+            )
+        except SdlMixerError as e:
+            if not str(e).endswith("No free channels available"):
+                raise
+            self.logger.warn("Attempted to play sound, but there were no available channels.")
+        else:
+            self._currently_playing[channel] = sound  # Keep reference of playing asset
 
     def _on_channel_finished(self, channel_num):
         # "NEVER call SDL_Mixer functions, nor SDL_LockAudio, from a callback function."
