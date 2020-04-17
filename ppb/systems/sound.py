@@ -81,7 +81,7 @@ class Sound(assetlib.Asset):
 
     @volume.setter
     def volume(self, value):
-        _call(Mix_VolumeChunk, self.load(), value * MIX_MAX_VOLUME)
+        _call(Mix_VolumeChunk, self.load(), int(value * MIX_MAX_VOLUME))
 
 
 @channel_finished
