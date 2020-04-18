@@ -95,60 +95,33 @@ class DelayedThreadExecutor(concurrent.futures.ThreadPoolExecutor):
 _executor = DelayedThreadExecutor()
 
 
-class MockFuture:
+class MockFuture(concurrent.futures.Future):
     """
     Acts as a Future's understudy until the real future is availalble.
     """
-    def __init__(self):
-        self._cancelled = False
-        self._callbacks = []
-        self._real_future = None
-        self._have_future = threading.Event()
-
-    def cancel(self):
-        self._cancelled = True
-        return True
-
-    def cancelled(self):
-        return self._cancelled
-
-    def running(self):
-        return False
-
-    def done(self):
-        return self._cancelled
-
-    def result(self, timeout=None):
-        # Note that timeout will probably get stretched
-        self._have_future.wait(timeout)
-        return self._real_future.result(timeout)
-
-    def exception(self, timeout=None):
-        # Note that timeout will probably get stretched
-        self._have_future.wait(timeout)
-        return self._real_future.exception(timeout)
-
-    def add_done_callback(self, fn):
-        self._callbacks.append(fn)
-
     def handoff(self, fut):
         """
         Gives our state to the real future
         """
-        if self._real_future is not None:
-            raise RuntimeError("MockFuture cannot hand off more than once")
+        with self._condition:
+            # Add the callbacks
+            callbacks, self._done_callbacks = self._done_callbacks, []
+            for fn in callbacks:
+                fut.add_done_callback(fn)
 
-        self._real_future = fut
+            # Apply cancellation
+            if self.cancelled():
+                fut.cancel()
+            else:
+                fut.add_done_callback(self._pass_on_result)
 
-        # Add the callbacks
-        for fn in self._callbacks:
-            fut.add_done_callback(fn)
-
-        # Apply cancellation
-        if self._cancelled:
-            fut.cancel()
-
-        self._have_future.set()
+    def _pass_on_result(self, fut):
+        try:
+            result = fut.result()
+        except BaseException as exc:
+            self.set_exception(exc)
+        else:
+            self.set_result(result)
 
 
 class AbstractAsset(abc.ABC):
