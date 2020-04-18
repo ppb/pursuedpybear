@@ -4,7 +4,6 @@ The asset loading system.
 import abc
 import collections
 import concurrent.futures
-from functools import partial
 import logging
 import queue
 import sys
