@@ -116,7 +116,7 @@ class AbstractAsset(abc.ABC):
         return True
 
 
-class BackgroundAsset(AbstractAsset):
+class BackgroundMixin:
     """
     Asset that does stuff in the background.
     """
@@ -155,10 +155,28 @@ class BackgroundAsset(AbstractAsset):
         return self._future.result(timeout)
 
 
+class FreeingMixin:
+    """
+    Asset that supports freeing
+    """
+    def free(self, object):
+        """
+        Called by :py:meth:`__del__()` if the data was loaded.
+
+        Meant to free any resources held outside of Python.
+        """
+
+    def __del__(self):
+        # This should only be called after the background threads and other
+        # processing has finished.
+        if self.is_loaded():
+            self.free(self.load())
+
+
 _asset_cache = weakref.WeakValueDictionary()
 
 
-class Asset(BackgroundAsset):
+class Asset(BackgroundMixin, FreeingMixin, AbstractAsset):
     """
     A resource to be loaded from the filesystem and used.
 
@@ -204,19 +222,6 @@ class Asset(BackgroundAsset):
         Called in the background thread.
         """
         return data
-
-    def free(self, object):
-        """
-        Called by :py:meth:`__del__()` if the data was loaded.
-
-        Meant to free any resources held outside of Python.
-        """
-
-    def __del__(self):
-        # This should only be called after the background threads and other
-        # processing has finished.
-        if self.is_loaded():
-            self.free(self.load())
 
 
 def force_background_thread(func, *pargs, **kwargs):
