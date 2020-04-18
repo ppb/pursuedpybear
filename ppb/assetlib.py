@@ -95,6 +95,62 @@ class DelayedThreadExecutor(concurrent.futures.ThreadPoolExecutor):
 _executor = DelayedThreadExecutor()
 
 
+class MockFuture:
+    """
+    Acts as a Future's understudy until the real future is availalble.
+    """
+    def __init__(self):
+        self._cancelled = False
+        self._callbacks = []
+        self._real_future = None
+        self._have_future = threading.Event()
+
+    def cancel(self):
+        self._cancelled = True
+        return True
+
+    def cancelled(self):
+        return self._cancelled
+
+    def running(self):
+        return False
+
+    def done(self):
+        return self._cancelled
+
+    def result(self, timeout=None):
+        # Note that timeout will probably get stretched
+        self._have_future.wait(timeout)
+        return self._real_future.result(timeout)
+
+    def exception(self, timeout=None):
+        # Note that timeout will probably get stretched
+        self._have_future.wait(timeout)
+        return self._real_future.exception(timeout)
+
+    def add_done_callback(self, fn):
+        self._callbacks.append(fn)
+
+    def handoff(self, fut):
+        """
+        Gives our state to the real future
+        """
+        if self._real_future is not None:
+            raise RuntimeError("MockFuture cannot hand off more than once")
+
+        self._real_future = fut
+
+        # Add the callbacks
+        for fn in self._callbacks:
+            fut.add_done_callback(fn)
+
+        # Apply cancellation
+        if self._cancelled:
+            fut.cancel()
+
+        self._have_future.set()
+
+
 class AbstractAsset(abc.ABC):
     """
     The asset interface.
