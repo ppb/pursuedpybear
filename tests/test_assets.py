@@ -10,13 +10,24 @@ from ppb.assetlib import DelayedThreadExecutor, Asset, AssetLoadingSystem
 from ppb.testutils import Failer
 
 
+@pytest.fixture
+def clean_assets():
+    """
+    Cleans out the global state of the asset system, so that we start fresh every
+    test.
+    """
+    # Note that while AssetLoadingSystem cleans stuff up when it exits, this
+    # makes sure that the tests start fresh.
+    ppb.assetlib._executor = DelayedThreadExecutor()
+
+
 class AssetTestScene(BaseScene):
     def on_asset_loaded(self, event, signal):
         self.ale = event
         signal(ppb.events.Quit())
 
 
-def test_executor():
+def test_executor(clean_assets):
     # Can't easily test the cancellation, since jobs in progress can't be cancelled.
     def work():
         return "spam"
@@ -35,7 +46,7 @@ def test_executor():
     assert pool._shutdown
 
 
-def test_loading():
+def test_loading(clean_assets):
     a = Asset('ppb/engine.py')
     engine = GameEngine(
         AssetTestScene, basic_systems=[AssetLoadingSystem, Failer],
@@ -63,7 +74,7 @@ def test_loading():
 #         assert a.load()
 
 
-def test_missing_package():
+def test_missing_package(clean_assets):
     a = Asset('does/not/exist')
     engine = GameEngine(
         AssetTestScene, basic_systems=[AssetLoadingSystem, Failer],
@@ -76,7 +87,7 @@ def test_missing_package():
             assert a.load()
 
 
-def test_missing_resource():
+def test_missing_resource(clean_assets):
     a = Asset('ppb/dont.touch.this')
     engine = GameEngine(
         AssetTestScene, basic_systems=[AssetLoadingSystem, Failer],
@@ -89,7 +100,7 @@ def test_missing_resource():
             assert a.load()
 
 
-def test_parsing():
+def test_parsing(clean_assets):
     class Const(Asset):
         def background_parse(self, data):
             return "nah"
@@ -105,7 +116,7 @@ def test_parsing():
         assert a.load() == "nah"
 
 
-def test_missing_parse():
+def test_missing_parse(clean_assets):
     class Const(Asset):
         def file_missing(self):
             return "igotu"
@@ -121,7 +132,7 @@ def test_missing_parse():
         assert a.load() == "igotu"
 
 
-def test_instance_condense():
+def test_instance_condense(clean_assets):
     class SubAsset(Asset):
         pass
 
@@ -137,7 +148,7 @@ def test_instance_condense():
     assert a1 is not s1
 
 
-def test_free():
+def test_free(clean_assets):
     free_called = False
 
     class Const(Asset):
