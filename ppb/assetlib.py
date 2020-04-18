@@ -104,7 +104,7 @@ class AbstractAsset(abc.ABC):
     real/file assets.
     """
     @abc.abstractmethod
-    def load(self):
+    def load(self, timeout: float = None):
         """
         Get the data of this asset, in the appropriate form.
         """
