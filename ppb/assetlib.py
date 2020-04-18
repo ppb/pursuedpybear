@@ -18,6 +18,27 @@ __all__ = 'AbstractAsset', 'Asset', 'AssetLoadingSystem',
 logger = logging.getLogger(__name__)
 
 
+class DelayedThreadExecutor(concurrent.futures.ThreadPoolExecutor):
+    """
+    Same as ThreadPoolExecutor, but doesn't start immediately.
+
+    On exit, cancels all futures
+    """
+    # Note that this reaches through all kinds of internals, but they're pretty stable
+    def __init__(self, *p, **kw):
+        super().__init__(*p, **kw)
+        self._actual_max_workers = self._max_workers
+        self._max_workers = 0
+
+    def __enter__(self):
+        self._max_workers = self._actual_max_workers
+        self._adjust_thread_count()
+        return self
+
+    def __exit__(self, *exc):
+        self.shutdown(cancel_futures=True, wait=False)
+
+
 class AbstractAsset(abc.ABC):
     """
     The asset interface.
