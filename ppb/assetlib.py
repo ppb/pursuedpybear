@@ -6,6 +6,7 @@ import collections
 import concurrent.futures
 from functools import partial
 import logging
+import queue
 import sys
 import threading
 import weakref
@@ -23,13 +24,23 @@ class DelayedThreadExecutor(concurrent.futures.ThreadPoolExecutor):
     """
     Same as ThreadPoolExecutor, but doesn't start immediately.
 
-    On exit, cancels all futures
+    Context manager. On exit, cancels all futures.
+
+    Also does stuff with events.
     """
     # Note that this reaches through all kinds of internals, but they're pretty stable
+    _started = 0
+    _finished = 0
+
     def __init__(self, *p, **kw):
         super().__init__(*p, **kw)
         self._actual_max_workers = self._max_workers
         self._max_workers = 0
+
+        if hasattr(queue, 'SimpleQueue'):  # 3.7
+            self._event_queue = queue.SimpleQueue()
+        else:
+            self._event_queue = queue.Queue()
 
     def __enter__(self):
         self._max_workers = self._actual_max_workers
@@ -51,6 +62,35 @@ class DelayedThreadExecutor(concurrent.futures.ThreadPoolExecutor):
                     work_item.future.cancel()
 
             self.shutdown(wait=False)
+
+    def submit(self, fn, *args, _asset=None, **kwargs):
+        if _asset is not None:
+            self._started += 1
+
+        fut = super().submit(fn, *args, **kwargs)
+
+        if _asset is not None:
+            fut.__asset = weakref.ref(_asset)
+            fut.add_done_callback(self._finish)
+
+        return fut
+
+    def _finish(self, fut):
+        asset = fut.__asset()
+        if asset is not None:
+            self._finished += 1
+            self._event_queue.put(events.AssetLoaded(
+                asset=asset,
+                total_loaded=self._finished,
+                total_queued=self._started - self._finished,
+            ))
+
+    def queued_events(self):
+        while True:
+            try:
+                yield self._event_queue.get_nowait()
+            except queue.Empty:
+                break
 
 
 _executor = DelayedThreadExecutor()
@@ -114,14 +154,10 @@ class Asset(AbstractAsset):
                 if hasattr(self, 'file_missing'):
                     logger.warning("File not found: %r", self.name)
                     self._data = self.file_missing()
-                    if _finished is not None:
-                        _finished(self)
                 else:
                     raise
             else:
                 self._data = self.background_parse(raw)
-                if _finished is not None:
-                    _finished(self)
         except Exception as exc:
             import traceback
             traceback.print_exc()
@@ -166,8 +202,9 @@ class Asset(AbstractAsset):
 
         Will block until the data is loaded.
         """
-        if _hint is _default_hint:
-            logger.warning(f"Waited on {self!r} before the engine began")
+        # FIXME
+        # if _hint is _default_hint:
+        #     logger.warning(f"Waited on {self!r} before the engine began")
         self._finished.wait(timeout)
         if hasattr(self, '_raise_error'):
             raise self._raise_error
@@ -194,77 +231,34 @@ class AssetLoadingSystem(System):
     def __init__(self, *, engine, **_):
         super().__init__(**_)
         self.engine = engine
-        self._queue = weakref.WeakValueDictionary()  # maps names to futures
-        self._began = 0
-        self._ended = 0
 
         self._event_queue = collections.deque()
 
     def __enter__(self):
+        global _executor
         _executor.__enter__()
-        # 1. Register ourselves as the hint provider
-        global _hint, _finished, _backlog
-        assert _hint is _default_hint
-        _hint = self._hint
-        _finished = self._finished
-
-        # 2. Grab-n-clear the backlog (atomically?)
-        queue, _backlog = _backlog, []
-
-        # 3. Process the backlog
-        for filename, callback in queue:
-            self._hint(filename, callback)
 
     def __exit__(self, *exc):
-        global _executor
+        global _executor, _asset_cache
         # Clean everything out
         _executor.__exit__(*exc)
-        _executor = DelayedThreadExecutor()
         _asset_cache.clear()
-
-        # Reset the hint provider
-        global _hint, _finished
-        _hint = _default_hint
-        _finished = None
-
-    def _hint(self, filename, callback=None):
-        self._began += 1
-        try:
-            # If we're already loading this data, reuse that loader
-            fut = self._queue[filename]
-        except KeyError:
-            # Nothing is currently loading this data, make a fresh job
-            fut = self._queue[filename] = _executor.submit(self._load, filename)
-        if callback is not None:
-            # There are circumstances where Future will call back syncronously.
-            # In which case, redirect to a fresh background thread.
-            fut.add_done_callback(partial(force_background_thread, callback))
-
-    @staticmethod
-    def _load(filename):
-        with vfs.open(filename) as file:
-            return file.read()
-
-    def _finished(self, asset):
-        self._ended += 1
-        self._event_queue.append(asset)
+        _executor = DelayedThreadExecutor()
 
     def on_idle(self, event, signal):
-        while self._event_queue:
-            asset = self._event_queue.popleft()
-            signal(events.AssetLoaded(
-                asset=asset,
-                total_loaded=self._ended,
-                total_queued=self._began - self._ended,
-            ))
+        for event in _executor.queued_events():
+            signal(event)
 
 
-_backlog = []
+def _load(filename):
+    with vfs.open(filename) as file:
+        return file.read()
 
 
-def _default_hint(filename, callback=None):
-    _backlog.append((filename, callback))
-
-
-_hint = _default_hint
-_finished = None
+def _hint(filename, callback=None):
+    # Nothing is currently loading this data, make a fresh job
+    fut = _executor.submit(_load, filename)
+    if callback is not None:
+        # There are circumstances where Future will call back syncronously.
+        # In which case, redirect to a fresh background thread.
+        fut.add_done_callback(partial(force_background_thread, callback))

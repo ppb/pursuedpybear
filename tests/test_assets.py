@@ -10,15 +10,6 @@ from ppb.assetlib import DelayedThreadExecutor, Asset, AssetLoadingSystem
 from ppb.testutils import Failer
 
 
-@pytest.fixture
-def clean_assets():
-    """
-    Cleans out the global state of the asset system, so that we start fresh every
-    test.
-    """
-    ppb.assetlib._backlog = []
-
-
 class AssetTestScene(BaseScene):
     def on_asset_loaded(self, event, signal):
         self.ale = event
@@ -44,7 +35,7 @@ def test_executor():
     assert pool._shutdown
 
 
-def test_loading(clean_assets):
+def test_loading():
     a = Asset('ppb/engine.py')
     engine = GameEngine(
         AssetTestScene, basic_systems=[AssetLoadingSystem, Failer],
@@ -72,7 +63,7 @@ def test_loading(clean_assets):
 #         assert a.load()
 
 
-def test_missing_package(clean_assets):
+def test_missing_package():
     a = Asset('does/not/exist')
     engine = GameEngine(
         AssetTestScene, basic_systems=[AssetLoadingSystem, Failer],
@@ -85,7 +76,7 @@ def test_missing_package(clean_assets):
             assert a.load()
 
 
-def test_missing_resource(clean_assets):
+def test_missing_resource():
     a = Asset('ppb/dont.touch.this')
     engine = GameEngine(
         AssetTestScene, basic_systems=[AssetLoadingSystem, Failer],
@@ -98,7 +89,7 @@ def test_missing_resource(clean_assets):
             assert a.load()
 
 
-def test_parsing(clean_assets):
+def test_parsing():
     class Const(Asset):
         def background_parse(self, data):
             return "nah"
@@ -114,7 +105,7 @@ def test_parsing(clean_assets):
         assert a.load() == "nah"
 
 
-def test_missing_parse(clean_assets):
+def test_missing_parse():
     class Const(Asset):
         def file_missing(self):
             return "igotu"
