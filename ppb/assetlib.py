@@ -53,6 +53,9 @@ class DelayedThreadExecutor(concurrent.futures.ThreadPoolExecutor):
             self.shutdown(wait=False)
 
 
+_executor = DelayedThreadExecutor()
+
+
 class AbstractAsset(abc.ABC):
     """
     The asset interface.
@@ -191,7 +194,6 @@ class AssetLoadingSystem(System):
     def __init__(self, *, engine, **_):
         super().__init__(**_)
         self.engine = engine
-        self._executor = concurrent.futures.ThreadPoolExecutor()
         self._queue = weakref.WeakValueDictionary()  # maps names to futures
         self._began = 0
         self._ended = 0
@@ -199,6 +201,7 @@ class AssetLoadingSystem(System):
         self._event_queue = collections.deque()
 
     def __enter__(self):
+        _executor.__enter__()
         # 1. Register ourselves as the hint provider
         global _hint, _finished, _backlog
         assert _hint is _default_hint
@@ -212,7 +215,13 @@ class AssetLoadingSystem(System):
         for filename, callback in queue:
             self._hint(filename, callback)
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, *exc):
+        global _executor
+        # Clean everything out
+        _executor.__exit__(*exc)
+        _executor = DelayedThreadExecutor()
+        _asset_cache.clear()
+
         # Reset the hint provider
         global _hint, _finished
         _hint = _default_hint
@@ -225,7 +234,7 @@ class AssetLoadingSystem(System):
             fut = self._queue[filename]
         except KeyError:
             # Nothing is currently loading this data, make a fresh job
-            fut = self._queue[filename] = self._executor.submit(self._load, filename)
+            fut = self._queue[filename] = _executor.submit(self._load, filename)
         if callback is not None:
             # There are circumstances where Future will call back syncronously.
             # In which case, redirect to a fresh background thread.
