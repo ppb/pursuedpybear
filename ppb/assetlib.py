@@ -6,6 +6,7 @@ import collections
 import concurrent.futures
 from functools import partial
 import logging
+import sys
 import threading
 import weakref
 
@@ -36,7 +37,20 @@ class DelayedThreadExecutor(concurrent.futures.ThreadPoolExecutor):
         return self
 
     def __exit__(self, *exc):
-        self.shutdown(cancel_futures=True, wait=False)
+        if sys.version_info >= (3, 9):
+            self.shutdown(wait=False, cancel_futures=True)
+        else:
+            import queue
+            # Backport of 3.9 future cancelling code
+            while True:
+                try:
+                    work_item = self._work_queue.get_nowait()
+                except queue.Empty:
+                    break
+                if work_item is not None:
+                    work_item.future.cancel()
+
+            self.shutdown(wait=False)
 
 
 class AbstractAsset(abc.ABC):

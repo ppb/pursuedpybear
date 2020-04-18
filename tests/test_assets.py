@@ -1,11 +1,12 @@
 import gc
+import time
 
 import pytest
 
 from ppb import GameEngine, BaseScene
 import ppb.events
 import ppb.assetlib
-from ppb.assetlib import Asset, AssetLoadingSystem
+from ppb.assetlib import DelayedThreadExecutor, Asset, AssetLoadingSystem
 from ppb.testutils import Failer
 
 
@@ -22,6 +23,25 @@ class AssetTestScene(BaseScene):
     def on_asset_loaded(self, event, signal):
         self.ale = event
         signal(ppb.events.Quit())
+
+
+def test_executor():
+    # Can't easily test the cancellation, since jobs in progress can't be cancelled.
+    def work():
+        return "spam"
+
+    pool = DelayedThreadExecutor()
+    assert not pool._threads
+
+    fut = pool.submit(work)
+    time.sleep(0.01)  # Let any hypothetical threads do work
+    assert not pool._threads
+    assert not (fut.done() or fut.running())
+
+    with pool:
+        assert fut.result() == "spam"
+
+    assert pool._shutdown
 
 
 def test_loading(clean_assets):
