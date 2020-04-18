@@ -148,8 +148,6 @@ class BackgroundMixin:
     """
     Asset that does stuff in the background.
     """
-    _fut = None
-
     def _start(self):
         """
         Queue the background stuff to run.
@@ -181,6 +179,41 @@ class BackgroundMixin:
         # if _hint is _default_hint:
         #     logger.warning(f"Waited on {self!r} before the engine began")
         return self._future.result(timeout)
+
+    def add_callback(self, func, *pargs, **kwargs):
+        """
+        Add a function to be called when this asset has loaded.
+        """
+        self._future.add_done_callback(
+            lambda _: _executor.submit(func, self, *pargs, **kwargs)
+        )
+
+
+class ChainingMixin(BackgroundMixin):
+    """
+    Asset that does stuff in the background, after other assets have loaded.
+    """
+    def _start(self, *assets):
+        """
+        Queue the background stuff to run.
+
+        Call at the end of __init__().
+        """
+        self._future = MockFuture()
+
+        for asset in assets:
+            if hasattr(asset, 'add_callback'):
+                asset.add_callback(self._check_completed, assets)
+
+        self._check_completed(None, assets)
+
+    def _check_completed(self, _, assets):
+        if all(a.is_loaded() for a in assets):
+            # Ok, everything we've ween waiting on is done, start the task and
+            # do the future handoff
+            mock, self._future = \
+                self._future, _executor.submit(self._background, _asset=self)
+            mock.handoff(self._future)
 
 
 class FreeingMixin:
