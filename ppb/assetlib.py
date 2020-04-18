@@ -116,17 +116,54 @@ class AbstractAsset(abc.ABC):
         return True
 
 
+class BackgroundAsset(AbstractAsset):
+    """
+    Asset that does stuff in the background.
+    """
+    _fut = None
+
+    def _start(self):
+        """
+        Queue the background stuff to run.
+
+        Call at the end of __init__().
+        """
+        self._future = _executor.submit(self._background, _asset=self)
+
+    def _background(self):
+        """
+        The background processing.
+
+        Override me.
+        """
+
+    def is_loaded(self):
+        """
+        Returns if the data has been loaded and parsed.
+        """
+        return self._future.done()
+
+    def load(self, timeout: float = None):
+        """
+        Gets the parsed data.
+
+        Will block until the data is loaded.
+        """
+        # FIXME
+        # if _hint is _default_hint:
+        #     logger.warning(f"Waited on {self!r} before the engine began")
+        return self._future.result(timeout)
+
+
 _asset_cache = weakref.WeakValueDictionary()
 
 
-class Asset(AbstractAsset):
+class Asset(BackgroundAsset):
     """
     A resource to be loaded from the filesystem and used.
 
     Meant to be subclassed, but in specific ways.
     """
-    _data = None
-
     def __new__(cls, name):
         clsname = f"{cls.__module__}:{cls.__qualname__}"
         try:
@@ -138,34 +175,25 @@ class Asset(AbstractAsset):
 
     def __init__(self, name):
         self.name = str(name)
-        self._finished = threading.Event()
-        _hint(self.name, self._finished_background)
+        self._start()
 
     def __repr__(self):
         return f"<{type(self).__name__} name={self.name!r}{' loaded' if self.is_loaded() else ''}>"
 
-    def _finished_background(self, fut):
-        # Internal
+    def _background(self):
         # Called in background thread
         try:
-            try:
-                raw = fut.result()
-            except FileNotFoundError:
-                if hasattr(self, 'file_missing'):
-                    logger.warning("File not found: %r", self.name)
-                    self._data = self.file_missing()
-                else:
-                    raise
+            file = vfs.open(self.name)
+        except FileNotFoundError:
+            if hasattr(self, 'file_missing'):
+                logger.warning("File not found: %r", self.name)
+                return self.file_missing()
             else:
-                self._data = self.background_parse(raw)
-        except Exception as exc:
-            import traceback
-            traceback.print_exc()
-            # Save unhandled exceptions to be raised in the main thread
-            self._raise_error = exc
-        finally:
-            # This always needs to happen so the main thread isn't just blocked
-            self._finished.set()
+                raise
+        else:
+            with file:
+                raw = file.read()
+            return self.background_parse(raw)
 
     def background_parse(self, data: bytes):
         """
@@ -187,29 +215,8 @@ class Asset(AbstractAsset):
     def __del__(self):
         # This should only be called after the background threads and other
         # processing has finished.
-        if self._data is not None:
-            self.free(self._data)
-
-    def is_loaded(self):
-        """
-        Returns if the data has been loaded and parsed.
-        """
-        return self._finished.is_set()
-
-    def load(self, timeout: float = None):
-        """
-        Gets the parsed data.
-
-        Will block until the data is loaded.
-        """
-        # FIXME
-        # if _hint is _default_hint:
-        #     logger.warning(f"Waited on {self!r} before the engine began")
-        self._finished.wait(timeout)
-        if hasattr(self, '_raise_error'):
-            raise self._raise_error
-        else:
-            return self._data
+        if self.is_loaded():
+            self.free(self.load())
 
 
 def force_background_thread(func, *pargs, **kwargs):
@@ -248,17 +255,3 @@ class AssetLoadingSystem(System):
     def on_idle(self, event, signal):
         for event in _executor.queued_events():
             signal(event)
-
-
-def _load(filename):
-    with vfs.open(filename) as file:
-        return file.read()
-
-
-def _hint(filename, callback=None):
-    # Nothing is currently loading this data, make a fresh job
-    fut = _executor.submit(_load, filename)
-    if callback is not None:
-        # There are circumstances where Future will call back syncronously.
-        # In which case, redirect to a fresh background thread.
-        fut.add_done_callback(partial(force_background_thread, callback))

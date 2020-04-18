@@ -137,7 +137,7 @@ def test_instance_condense():
     assert a1 is not s1
 
 
-def test_free(clean_assets):
+def test_free():
     free_called = False
 
     class Const(Asset):
