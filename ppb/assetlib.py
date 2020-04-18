@@ -241,6 +241,12 @@ def force_background_thread(func, *pargs, **kwargs):
 
 
 class AssetLoadingSystem(System):
+    """
+    Connects the asset system to PPB, managing lifecycles and such.
+
+    To minimize the chance of a race condition around initialization, place at
+    the end of the list of systems.
+    """
     def __init__(self, *, engine, **_):
         super().__init__(**_)
         self.engine = engine
