@@ -5,11 +5,8 @@ The grey circle mover should render above the purple up arrows and below
 the yellow down arrows.
 """
 from itertools import cycle
-import sys
 
 import ppb
-
-print(sys.path)
 
 
 class Mover(ppb.BaseSprite):
