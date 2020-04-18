@@ -62,6 +62,9 @@ class DelayedThreadExecutor(concurrent.futures.ThreadPoolExecutor):
 
             self.shutdown(wait=False)
 
+    def running(self):
+        return (self._max_workers > 0) and (not self._shutdown)
+
     def submit(self, fn, *args, _asset=None, **kwargs):
         if _asset is not None:
             self._started += 1
@@ -148,9 +151,8 @@ class BackgroundMixin:
 
         Will block until the data is loaded.
         """
-        # FIXME
-        # if _hint is _default_hint:
-        #     logger.warning(f"Waited on {self!r} before the engine began")
+        if not _executor.running():
+            logger.warning(f"Waited on {self!r} before the engine began")
         return self._future.result(timeout)
 
 
