@@ -25,7 +25,7 @@ def test_layering_attribute():
 
     scene = LayeredScene()
     for lower_sprite, higher_sprite in zip(scene.sprite_layers(), islice(scene.sprite_layers(), 1, None)):
-        if isinstance(lower_sprite, camera.Camera) or isinstance(higher_sprite, camera.Camera):
+        if isinstance(lower_sprite, camera.OldCamera) or isinstance(higher_sprite, camera.OldCamera):
             continue
         assert lower_sprite.layer < higher_sprite.layer
 
@@ -40,11 +40,11 @@ def test_change_layer():
     for sprite in ones:
         scene.add(sprite)
 
-    assert next(filter(lambda s: not isinstance(s, camera.Camera), scene.sprite_layers())) is test_sprite
+    assert next(filter(lambda s: not isinstance(s, camera.OldCamera), scene.sprite_layers())) is test_sprite
 
     test_sprite.layer = 2
 
-    assert list(filter(lambda s: not isinstance(s, camera.Camera), scene.sprite_layers()))[-1] is test_sprite
+    assert list(filter(lambda s: not isinstance(s, camera.OldCamera), scene.sprite_layers()))[-1] is test_sprite
 
 
 def test_layering_without_layer_attribute():
@@ -56,4 +56,4 @@ def test_layering_without_layer_attribute():
     for x in range(1, 6):
         scene.add(LayeredSprite(x))
 
-    assert next(filter(lambda s: not isinstance(s, camera.Camera), scene.sprite_layers())) is test_sprite
+    assert next(filter(lambda s: not isinstance(s, camera.OldCamera), scene.sprite_layers())) is test_sprite

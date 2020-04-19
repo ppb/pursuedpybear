@@ -8,7 +8,7 @@ from typing import Iterator
 from typing import Sequence
 from typing import Type
 
-from ppb.camera import Camera
+from ppb.camera import OldCamera
 
 
 class GameObjectCollection(Collection):
@@ -108,7 +108,7 @@ class BaseScene:
             setattr(self, k, v)
 
         self.game_objects = self.container_class()
-        self.main_camera = Camera(pixel_ratio=pixel_ratio)
+        self.main_camera = OldCamera(pixel_ratio=pixel_ratio)
 
         if set_up is not None:
             set_up(self)
@@ -128,11 +128,11 @@ class BaseScene:
         return self.game_objects.tags
 
     @property
-    def main_camera(self) -> Camera:
+    def main_camera(self) -> OldCamera:
         return next(self.game_objects.get(tag="main_camera"))
 
     @main_camera.setter
-    def main_camera(self, value: Camera):
+    def main_camera(self, value: OldCamera):
         for camera in self.game_objects.get(tag="main_camera"):
             self.game_objects.remove(camera)
         self.game_objects.add(value, tags=["main_camera"])

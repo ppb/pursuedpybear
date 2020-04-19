@@ -6,7 +6,44 @@ from ppb.sprites import Sprite
 from ppb.flags import DoNotRender
 
 
-class Camera(Sprite):
+class Camera:
+    """
+    A simple Camera.
+
+    Intentionally tightly coupled to the renderer to allow information flow
+    back and forth.
+
+    There is a one-to-one relationship between cameras and scenes.
+    """
+    image = DoNotRender  # Temporary until resolved with #395
+    position = Vector(0, 0)
+
+    def __init__(self, renderer, target_game_unit_width, viewport_dimensions):
+        """
+        You shouldn't instantiate your own camera in general. If you want to
+        override the Camera, see :class:`~ppb.systems.renderer`.
+
+        :param renderer: The renderer associated with the camera.
+        :type renderer: ~ppb.systems.renderer.Renderer
+        :param target_game_unit_width: The number of game units wide you
+           would like to display. The actual width may be less than this
+           depending on the ratio to the viewport (as it can only be as wide
+           as there are pixels.)
+        :type target_game_unit_width: Real
+        :param viewport_dimensions: The pixel dimensions of the rendered
+           viewport in (width, height) form.
+        :type viewport_dimensions: Tuple[int, int]
+        """
+        self.renderer = renderer
+        self.target_game_unit_width = target_game_unit_width
+        self.viewport_dimensions = viewport_dimensions
+        width, height = viewport_dimensions
+        self._pixel_ratio = int(width / target_game_unit_width)
+        self._width = width / self._pixel_ratio
+        self._height = height / self._pixel_ratio
+
+
+class OldCamera(Sprite):
 
     image = DoNotRender
 
