@@ -6,7 +6,10 @@ import pytest
 from ppb import GameEngine, BaseScene
 import ppb.events
 import ppb.assetlib
-from ppb.assetlib import DelayedThreadExecutor, Asset, AssetLoadingSystem
+from ppb.assetlib import (
+    DelayedThreadExecutor, Asset, AssetLoadingSystem, BackgroundMixin,
+    ChainingMixin, AbstractAsset,
+)
 from ppb.testutils import Failer
 
 
@@ -173,3 +176,36 @@ def test_free(clean_assets):
     del engine, a  # Clean up everything that might be holding a reference.
     gc.collect()
     assert free_called
+
+
+def test_chained(clean_assets):
+    class Const(BackgroundMixin, AbstractAsset):
+        def __init__(self, value):
+            self.value = value
+            self._start()
+
+        def _background(self):
+            return self.value
+
+    class Concat(ChainingMixin, AbstractAsset):
+        def __init__(self, delimiter, *values):
+            self.delimiter = delimiter
+            self.values = values
+            self._start(*values)
+
+        def _background(self):
+            return self.delimiter.join(a.load() for a in self.values)
+
+    a = Concat(
+        ' ',
+        Const("spam"), Const("eggs"), Const("foo"), Const("bar"),
+    )
+    engine = GameEngine(
+        AssetTestScene, basic_systems=[AssetLoadingSystem, Failer],
+        fail=lambda e: False, message=None, run_time=1,
+    )
+    with engine:
+        engine.start()
+
+        assert a.load() == "spam eggs foo bar"
+        # At this poiint, background processing should have finished
