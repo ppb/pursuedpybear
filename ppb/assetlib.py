@@ -14,7 +14,11 @@ import ppb.vfs as vfs
 import ppb.events as events
 from ppb.systemslib import System
 
-__all__ = 'AbstractAsset', 'Asset', 'AssetLoadingSystem',
+__all__ = (
+    'AssetLoadingSystem',
+    'AbstractAsset', 'BackgroundMixin', 'ChainingMixin', 'FreeingMixin',
+    'Asset',
+)
 
 logger = logging.getLogger(__name__)
 
