@@ -1,5 +1,7 @@
 from typing import Sequence
+from typing import Tuple
 from numbers import Number
+from numbers import Real
 
 from ppb_vector import Vector
 from ppb.sprites import Sprite
@@ -18,7 +20,8 @@ class Camera:
     image = DoNotRender  # Temporary until resolved with #395
     position = Vector(0, 0)
 
-    def __init__(self, renderer, target_game_unit_width, viewport_dimensions):
+    def __init__(self, renderer, target_game_unit_width: Real,
+                 viewport_dimensions: Tuple[int, int]):
         """
         You shouldn't instantiate your own camera in general. If you want to
         override the Camera, see :class:`~ppb.systems.renderer`.
@@ -37,10 +40,61 @@ class Camera:
         self.renderer = renderer
         self.target_game_unit_width = target_game_unit_width
         self.viewport_dimensions = viewport_dimensions
-        width, height = viewport_dimensions
-        self._pixel_ratio = int(width / target_game_unit_width)
-        self._width = width / self._pixel_ratio
-        self._height = height / self._pixel_ratio
+        self._pixel_ratio = None
+        self._width = None
+        self._height = None
+        self._set_dimensions(target_width=target_game_unit_width)
+
+    @property
+    def width(self) -> Real:
+        """
+        The game unit width of the viewport.
+
+        When you set the width, the height will change as well.
+        """
+        return self._width
+
+    @width.setter
+    def width(self, target_width):
+        self._set_dimensions(target_width=target_width)
+
+    @property
+    def height(self) -> Real:
+        """
+        The game unit height of the viewport
+
+        When you set the height, the width will change as well.
+        """
+        return self._height
+
+    @height.setter
+    def height(self, target_height):
+        """
+        Set the height of the camera.
+
+        :param target_height: The number of game units we prefer to display. It
+           is possible to have a slightly different number depending on the
+           ratio between game units and pixels in the display.
+        :type target_height: Real
+        """
+        self._set_dimensions(target_height=target_height)
+
+    def _set_dimensions(self, target_width=None, target_height=None):
+        # Set new pixel ratio
+        viewport_width, viewport_height = self.viewport_dimensions
+        if target_width is not None and target_height is not None:
+            raise ValueError("Can only set one dimension at a time.")
+        elif target_width is not None:
+            game_unit_target = target_width
+            pixel_value = viewport_width
+        elif target_height is not None:
+            game_unit_target = target_height
+            pixel_value = viewport_height
+        else:
+            raise ValueError("Must set target_width or target_height")
+        self._pixel_ratio = pixel_value / game_unit_target
+        self._width = viewport_width / self._pixel_ratio
+        self._height = viewport_height / self._pixel_ratio
 
 
 class OldCamera(Sprite):
