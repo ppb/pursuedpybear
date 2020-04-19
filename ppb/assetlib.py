@@ -289,21 +289,6 @@ class Asset(BackgroundMixin, FreeingMixin, AbstractAsset):
         return data
 
 
-def force_background_thread(func, *pargs, **kwargs):
-    """
-    Calls the given function from not the main thread.
-
-    If already not the main thread, calls it syncronously.
-
-    If this is the main thread, creates a new thread to call it.
-    """
-    if threading.current_thread() is threading.main_thread():
-        t = threading.Thread(target=func, args=pargs, kwargs=kwargs, daemon=True)
-        t.start()
-    else:
-        func(*pargs, **kwargs)
-
-
 class AssetLoadingSystem(System):
     def __init__(self, *, engine, **_):
         super().__init__(**_)
