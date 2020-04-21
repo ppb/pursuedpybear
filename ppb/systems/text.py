@@ -34,22 +34,23 @@ class Font(ChainingMixin, FreeingMixin, AbstractAsset):
         # We do it this way so that the raw data can be cached between multiple
         # invocations, even though we have to reparse it every time.
         self._data = Asset(name)
-        self._size = size
-        self._index = index
+        self.size = size
+        self.index = index
 
         self._start(self._data)
 
     def _background(self):
-        file = rw_from_object(io.BytesIO(self._data.load()))
-        # ^^^^ is a pure-python emulation, does not need cleanup.
-        if self._index is None:
+        self._file = rw_from_object(io.BytesIO(self._data.load()))
+        # We have to keep the file around because freetype doesn't load
+        # everything at once, resulting in segfaults.
+        if self.index is None:
             return ttf_call(
-                TTF_OpenFontRW, file, False, self._size,
+                TTF_OpenFontRW, self._file, False, self.size,
                 _check_error=lambda rv: not rv
             )
         else:
             return ttf_call(
-                TTF_OpenFontIndexRW, file, False, self._size, self._index,
+                TTF_OpenFontIndexRW, self._file, False, self.size, self.index,
                 _check_error=lambda rv: not rv
             )
 
@@ -58,7 +59,11 @@ class Font(ChainingMixin, FreeingMixin, AbstractAsset):
         _TTF_CloseFont(data)  # Can't fail
 
     def __repr__(self):
-        return f"<{type(self).__name__} name={self._data.name!r} size={self._size!r}{' loaded' if self.is_loaded() else ''}>"
+        return f"<{type(self).__name__} name={self.name!r} size={self._size!r}{' loaded' if self.is_loaded() else ''}>"
+
+    @property
+    def name(self):
+        return self._data.name
 
     def resize(self, size):
         """
@@ -92,7 +97,7 @@ class Text(ChainingMixin, FreeingMixin, AbstractAsset):
 
     def _background(self):
         return ttf_call(
-            TTF_RenderUTF8_Blended, self.font.load(), b"hi",
+            TTF_RenderUTF8_Blended, self.font.load(), self.txt.encode('utf-8'),
             SDL_Color(*self.color),
             _check_error=lambda rv: not rv
         )
