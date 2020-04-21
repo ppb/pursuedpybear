@@ -91,7 +91,7 @@ def exists(filepath):
         dirpath = _main_path()
         return (dirpath / filename).is_file()
     else:
-        return impres.is_resource(modulename, filepath)
+        return impres.is_resource(modulename, filename)
 
 
 def iterdir(modulepath):

@@ -208,4 +208,31 @@ def test_chained(clean_assets):
         engine.start()
 
         assert a.load() == "spam eggs foo bar"
-        # At this poiint, background processing should have finished
+
+
+def test_chained_big(clean_assets):
+    class Concat(ChainingMixin, AbstractAsset):
+        def __init__(self, delimiter, *values):
+            self.delimiter = delimiter
+            self.values = values
+            self._start(*values)
+
+        def _background(self):
+            return self.delimiter.join(a.load() for a in self.values)
+
+    a = Concat(
+        b'\n',
+        *(
+            Asset(f"ppb/{fname}")
+            for fname in ppb.vfs.iterdir('ppb')
+            if ppb.vfs.exists(f"ppb/{fname}")
+        )
+    )
+    engine = GameEngine(
+        AssetTestScene, basic_systems=[AssetLoadingSystem, Failer],
+        fail=lambda e: False, message=None, run_time=1,
+    )
+    with engine:
+        engine.start()
+
+        assert a.load(timeout=5)
