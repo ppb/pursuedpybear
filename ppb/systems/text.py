@@ -1,4 +1,5 @@
 import io
+import threading
 
 from sdl2 import rw_from_object
 
@@ -8,6 +9,7 @@ from sdl2 import (
 )
 
 from sdl2.sdlttf import (
+    TTF_Init, TTF_Quit,  # https://www.libsdl.org/projects/SDL_ttf/docs/SDL_ttf_6.html#SEC6
     TTF_OpenFontRW,  # https://www.libsdl.org/projects/SDL_ttf/docs/SDL_ttf_15.html
     TTF_OpenFontIndexRW,  # https://www.libsdl.org/projects/SDL_ttf/docs/SDL_ttf_17.html
     TTF_CloseFont,  # https://www.libsdl.org/projects/SDL_ttf/docs/SDL_ttf_18.html
@@ -19,6 +21,15 @@ from sdl2.sdlttf import (
 
 from ppb.assetlib import Asset, ChainingMixin, AbstractAsset, FreeingMixin
 from ppb.systems._sdl_utils import ttf_call
+
+# From https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html:
+# [Since 2.5.6] In multi-threaded applications it is easiest to use one
+# FT_Library object per thread. In case this is too cumbersome, a single
+# FT_Library object across threads is possible also, as long as a mutex lock is
+# used around FT_New_Face and FT_Done_Face.
+#
+# I assume this translates to TTF_OpenFont* and TTF_CloseFont
+_freetype_lock = threading.RLock()
 
 
 class Font(ChainingMixin, FreeingMixin, AbstractAsset):
@@ -43,20 +54,27 @@ class Font(ChainingMixin, FreeingMixin, AbstractAsset):
         self._file = rw_from_object(io.BytesIO(self._data.load()))
         # We have to keep the file around because freetype doesn't load
         # everything at once, resulting in segfaults.
-        if self.index is None:
-            return ttf_call(
-                TTF_OpenFontRW, self._file, False, self.size,
-                _check_error=lambda rv: not rv
-            )
-        else:
-            return ttf_call(
-                TTF_OpenFontIndexRW, self._file, False, self.size, self.index,
-                _check_error=lambda rv: not rv
-            )
+        with _freetype_lock:
+            # Doing this so that we "refcount" the FT_Library internal to SDL_ttf
+            # (TTF_CloseFont is often called after system cleanup)
+            ttf_call(TTF_Init, _check_error=lambda rv: rv == -1)
+            if self.index is None:
+                return ttf_call(
+                    TTF_OpenFontRW, self._file, False, self.size,
+                    _check_error=lambda rv: not rv
+                )
+            else:
+                return ttf_call(
+                    TTF_OpenFontIndexRW, self._file, False, self.size, self.index,
+                    _check_error=lambda rv: not rv
+                )
 
-    def free(self, data, _TTF_CloseFont=TTF_CloseFont):
+    def free(self, data, _TTF_CloseFont=TTF_CloseFont, _lock=_freetype_lock,
+             _TTF_Quit=TTF_Quit):
         # ^^^ is a way to keep required functions during interpreter cleanup
-        _TTF_CloseFont(data)  # Can't fail
+        with _lock:
+            _TTF_CloseFont(data)  # Can't fail
+            _TTF_Quit()
 
     def __repr__(self):
         return f"<{type(self).__name__} name={self.name!r} size={self._size!r}{' loaded' if self.is_loaded() else ''}>"
