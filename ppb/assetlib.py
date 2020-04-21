@@ -246,7 +246,12 @@ class FreeingMixin:
         # This should only be called after the background threads and other
         # processing has finished.
         if self.is_loaded():
-            self.free(self.load())
+            try:
+                data = self.load()
+            except BaseException:
+                pass
+            else:
+                self.free(data)
 
 
 _asset_cache = weakref.WeakValueDictionary()
