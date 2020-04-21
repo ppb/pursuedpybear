@@ -75,7 +75,7 @@ task:
       fi
     - >-
       apt-get update || true;
-      apt-get install -qq -y libsdl2-2.0-0 libsdl2-mixer-2.0-0 libsdl2-image-2.0-0 libsdl2-gfx-1.0-0
+      apt-get install -qq -y libsdl2-2.0-0 libsdl2-mixer-2.0-0 libsdl2-image-2.0-0 libsdl2-gfx-1.0-0 libsdl2-ttf-2.0-0
 
   script:
     - command -v pypy3 >/dev/null && export PY=pypy3
