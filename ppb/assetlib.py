@@ -82,14 +82,14 @@ class DelayedThreadExecutor(concurrent.futures.ThreadPoolExecutor):
         mock = MockFuture()
 
         def waiter():
-            concurrent.futures.wait(futures, return_when=concurrent.futures.FIRST_EXCEPTION)
-            for f in futures:
-                if f.done():
-                    exc = f.exception()
-                    if exc is not None:
-                        mock.set_exception(exc)
-                        break
+            done, not_done = concurrent.futures.wait(futures, return_when=concurrent.futures.FIRST_EXCEPTION)
+            for f in done:
+                exc = f.exception()
+                if exc is not None:
+                    mock.set_exception(exc)
+                    break
             else:
+                assert not not_done
                 newfut = self.submit(callback, *pargs, **kwargs)
                 mock.handoff(newfut)
 
