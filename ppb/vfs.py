@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 def _main_path():
     main = sys.modules['__main__']
-    mainpath = getattr(main, '__file__')
+    mainpath = getattr(main, '__file__', None)
     if mainpath:
         mainpath = Path(mainpath)
         return mainpath.absolute().parent
