@@ -34,10 +34,15 @@ from sdl2.sdlimage import (
     IMG_INIT_JPG, IMG_INIT_PNG, IMG_INIT_TIF,
 )
 
+from sdl2.sdlttf import (
+    TTF_Init, TTF_Quit,  # https://www.libsdl.org/projects/SDL_ttf/docs/SDL_ttf_6.html#SEC6
+)
+
+
 import ppb.assetlib as assets
 import ppb.events as events
 import ppb.flags as flags
-from ppb.systems._sdl_utils import SdlSubSystem, sdl_call, img_call
+from ppb.systems._sdl_utils import SdlSubSystem, sdl_call, img_call, ttf_call
 from ppb.systems._utils import ObjectSideData
 
 logger = logging.getLogger(__name__)
@@ -121,6 +126,7 @@ class Renderer(SdlSubSystem):
     def __enter__(self):
         super().__enter__()
         img_call(IMG_Init, IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF)
+        ttf_call(TTF_Init, _check_error=lambda rv: rv == -1)
         self.window = ctypes.POINTER(SDL_Window)()
         self.renderer = ctypes.POINTER(SDL_Renderer)()
         sdl_call(
@@ -139,6 +145,7 @@ class Renderer(SdlSubSystem):
     def __exit__(self, *exc):
         sdl_call(SDL_DestroyRenderer, self.renderer)
         sdl_call(SDL_DestroyWindow, self.window)
+        ttf_call(TTF_Quit)
         img_call(IMG_Quit)
         super().__exit__(*exc)
 
