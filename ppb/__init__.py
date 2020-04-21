@@ -12,11 +12,12 @@ from ppb.scenes import BaseScene
 from ppb.sprites import Sprite
 from ppb.systems import Image
 from ppb.systems import Sound
+from ppb.systems import Font
 
 __all__ = (
     # Shortcuts
     'Vector', 'BaseScene', 'BaseSprite', 'Circle', 'Image', 'Sprite',
-    'Square', 'Sound', 'Triangle', 'events',
+    'Square', 'Sound', 'Triangle', 'events', 'Font',
     # Local stuff
     'run', 'make_engine',
 )
