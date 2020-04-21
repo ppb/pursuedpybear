@@ -29,7 +29,6 @@ from sdl2 import (
 )
 
 from sdl2.sdlimage import (
-    IMG_GetError, IMG_SetError,  # https://www.libsdl.org/projects/SDL_image/docs/SDL_image_43.html#SEC43
     IMG_Load_RW,  # https://www.libsdl.org/projects/SDL_image/docs/SDL_image_12.html#SEC12
     IMG_Init, IMG_Quit,  # https://www.libsdl.org/projects/SDL_image/docs/SDL_image_6.html#SEC6
     IMG_INIT_JPG, IMG_INIT_PNG, IMG_INIT_TIF,
@@ -38,36 +37,13 @@ from sdl2.sdlimage import (
 import ppb.assetlib as assets
 import ppb.events as events
 import ppb.flags as flags
-from ppb.systems._sdl_utils import SdlSubSystem, sdl_call, SdlError
+from ppb.systems._sdl_utils import SdlSubSystem, sdl_call, img_call
 from ppb.systems._utils import ObjectSideData
 
 logger = logging.getLogger(__name__)
 
 
 DEFAULT_RESOLUTION = 800, 600
-
-
-class ImgError(SdlError):
-    pass
-
-
-def img_call(func, *pargs, _check_error=None, **kwargs):
-    """
-    Wrapper for calling SDL functions for handling errors.
-
-    If _check_error is given, called with the return value to check for errors.
-    If _check_error returns truthy, an error occurred.
-
-    If _check_error is not given, it is assumed that a non-empty error from
-    Mix_GetError indicates error.
-    """
-    IMG_SetError(b"")
-    rv = func(*pargs, **kwargs)
-    err = IMG_GetError()
-    if (_check_error(rv) if _check_error else err):
-        raise SdlError(f"Error calling {func.__name__}: {err.decode('utf-8')}")
-    else:
-        return rv
 
 
 # TODO: Move Image out of the renderer so sprites can type hint appropriately.

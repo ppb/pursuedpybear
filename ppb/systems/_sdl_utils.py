@@ -8,6 +8,15 @@ from sdl2 import (
     SDL_Quit,  # https://wiki.libsdl.org/SDL_Quit
 )
 
+from sdl2.sdlmixer import (
+    # Errors, https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_7.html#SEC7
+    Mix_GetError, Mix_SetError,
+)
+
+from sdl2.sdlimage import (
+    IMG_GetError, IMG_SetError,  # https://www.libsdl.org/projects/SDL_image/docs/SDL_image_43.html#SEC43
+)
+
 from ppb.systemslib import System
 
 
@@ -54,3 +63,53 @@ class SdlSubSystem(System):
     def __exit__(self, exc_type, exc_val, exc_tb):
         sdl_call(SDL_QuitSubSystem, self._sdl_subsystems)
         super().__exit__(exc_type, exc_val, exc_tb)
+
+
+class SdlMixerError(SdlError):
+    """
+    SDL_mixer raised an error
+    """
+
+
+def mix_call(func, *pargs, _check_error=None, **kwargs):
+    """
+    Wrapper for calling SDL_mixer functions for handling errors.
+
+    If _check_error is given, called with the return value to check for errors.
+    If _check_error returns truthy, an error occurred.
+
+    If _check_error is not given, it is assumed that a non-empty error from
+    Mix_GetError indicates error.
+    """
+    Mix_SetError(b"")
+    rv = func(*pargs, **kwargs)
+    err = Mix_GetError()
+    if (_check_error(rv) if _check_error else err):
+        raise SdlMixerError(f"Error calling {func.__name__}: {err.decode('utf-8')}")
+    else:
+        return rv
+
+
+class ImgError(SdlError):
+    pass
+
+
+def img_call(func, *pargs, _check_error=None, **kwargs):
+    """
+    Wrapper for calling SDL functions for handling errors.
+
+    If _check_error is given, called with the return value to check for errors.
+    If _check_error returns truthy, an error occurred.
+
+    If _check_error is not given, it is assumed that a non-empty error from
+    Mix_GetError indicates error.
+    """
+    IMG_SetError(b"")
+    rv = func(*pargs, **kwargs)
+    err = IMG_GetError()
+    if (_check_error(rv) if _check_error else err):
+        raise SdlError(f"Error calling {func.__name__}: {err.decode('utf-8')}")
+    else:
+        return rv
+
+

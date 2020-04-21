@@ -5,8 +5,6 @@ from sdl2 import (
 )
 
 from sdl2.sdlmixer import (
-    # Errors, https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_7.html#SEC7
-    Mix_GetError, Mix_SetError,
     # Support library loading https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_7.html#SEC7
     Mix_Init, Mix_Quit, MIX_INIT_FLAC, MIX_INIT_MOD, MIX_INIT_MP3, MIX_INIT_OGG,
     # Mixer init https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_7.html#SEC7
@@ -20,35 +18,10 @@ from sdl2.sdlmixer import (
 )
 
 from ppb import assetlib
-from ppb.systems._sdl_utils import SdlError, SdlSubSystem
+from ppb.systems._sdl_utils import SdlSubSystem, mix_call, SdlMixerError
 from ppb.utils import LoggingMixin
 
-__all__ = ('SoundController', 'Sound', 'SdlMixerError')
-
-
-class SdlMixerError(SdlError):
-    """
-    SDL_mixer raised an error
-    """
-
-
-def _call(func, *pargs, _check_error=None, **kwargs):
-    """
-    Wrapper for calling SDL_mixer functions for handling errors.
-
-    If _check_error is given, called with the return value to check for errors.
-    If _check_error returns truthy, an error occurred.
-
-    If _check_error is not given, it is assumed that a non-empty error from
-    Mix_GetError indicates error.
-    """
-    Mix_SetError(b"")
-    rv = func(*pargs, **kwargs)
-    err = Mix_GetError()
-    if (_check_error(rv) if _check_error else err):
-        raise SdlMixerError(f"Error calling {func.__name__}: {err.decode('utf-8')}")
-    else:
-        return rv
+__all__ = ('SoundController', 'Sound')
 
 
 class Sound(assetlib.Asset):
@@ -57,7 +30,7 @@ class Sound(assetlib.Asset):
     def background_parse(self, data):
         file = rw_from_object(io.BytesIO(data))
         # ^^^^ is a pure-python emulation, does not need cleanup.
-        return _call(
+        return mix_call(
             Mix_LoadWAV_RW, file, False,
             _check_error=lambda rv: not rv
         )
@@ -78,11 +51,11 @@ class Sound(assetlib.Asset):
         """
         The volume setting of this chunk, from 0.0 to 1.0
         """
-        return _call(Mix_VolumeChunk, self.load(), -1) / MIX_MAX_VOLUME
+        return mix_call(Mix_VolumeChunk, self.load(), -1) / MIX_MAX_VOLUME
 
     @volume.setter
     def volume(self, value):
-        _call(Mix_VolumeChunk, self.load(), int(value * MIX_MAX_VOLUME))
+        mix_call(Mix_VolumeChunk, self.load(), int(value * MIX_MAX_VOLUME))
 
 
 @channel_finished
@@ -104,16 +77,16 @@ class SoundController(SdlSubSystem, LoggingMixin):
 
         Seems to default to 8.
         """
-        return _call(Mix_AllocateChannels, -1)
+        return mix_call(Mix_AllocateChannels, -1)
 
     @allocated_channels.setter
     def allocated_channels(self, value):
-        _call(Mix_AllocateChannels, value)
+        mix_call(Mix_AllocateChannels, value)
 
     def __enter__(self):
         super().__enter__()
-        _call(Mix_Init, MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG)
-        _call(
+        mix_call(Mix_Init, MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG)
+        mix_call(
             Mix_OpenAudio,
             44100,  # Sample frequency, 44.1 kHz is CD quality
             AUDIO_S16SYS,  # Audio, 16-bit, system byte order. IDK is signed makes a difference
@@ -128,15 +101,15 @@ class SoundController(SdlSubSystem, LoggingMixin):
 
         # Register callback, keeping reference for later cleanup
         self._finished_callback = channel_finished(self._on_channel_finished)
-        _call(Mix_ChannelFinished, self._finished_callback)
+        mix_call(Mix_ChannelFinished, self._finished_callback)
 
     def __exit__(self, *exc):
         # Unregister callback and release reference
-        _call(Mix_ChannelFinished, _filler_channel_finished)
+        mix_call(Mix_ChannelFinished, _filler_channel_finished)
         self._finished_callback = None
         # Cleanup SDL_mixer
-        _call(Mix_CloseAudio)
-        _call(Mix_Quit)
+        mix_call(Mix_CloseAudio)
+        mix_call(Mix_Quit)
         super().__exit__(*exc)
 
     def on_play_sound(self, event, signal):
@@ -144,7 +117,7 @@ class SoundController(SdlSubSystem, LoggingMixin):
         chunk = event.sound.load()
 
         try:
-            channel = _call(
+            channel = mix_call(
                 Mix_PlayChannel,
                 -1,  # Auto-pick channel
                 chunk,
