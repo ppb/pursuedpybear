@@ -77,7 +77,7 @@ class Font(ChainingMixin, FreeingMixin, AbstractAsset):
             _TTF_Quit()
 
     def __repr__(self):
-        return f"<{type(self).__name__} name={self.name!r} size={self._size!r}{' loaded' if self.is_loaded() else ''}>"
+        return f"<{type(self).__name__} name={self.name!r} size={self.size!r}{' loaded' if self.is_loaded() else ''} at {id(self):x}>"
 
     @property
     def name(self):
@@ -112,6 +112,9 @@ class Text(ChainingMixin, FreeingMixin, AbstractAsset):
         self.color = color
 
         self._start(self.font)
+
+    def __repr__(self):
+        return f"<{type(self).__name__} txt={self.txt!r} font={self.font!r} color={self.color!r}{' loaded' if self.is_loaded() else ''} at 0x{id(self):x}>"
 
     def _background(self):
         return ttf_call(
