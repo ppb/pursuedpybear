@@ -13,11 +13,12 @@ from ppb.sprites import Sprite
 from ppb.systems import Image
 from ppb.systems import Sound
 from ppb.systems import Font
+from ppb.systems import Text
 
 __all__ = (
     # Shortcuts
     'Vector', 'BaseScene', 'BaseSprite', 'Circle', 'Image', 'Sprite',
-    'Square', 'Sound', 'Triangle', 'events', 'Font',
+    'Square', 'Sound', 'Triangle', 'events', 'Font', 'Text',
     # Local stuff
     'run', 'make_engine',
 )
