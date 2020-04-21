@@ -78,6 +78,25 @@ class DelayedThreadExecutor(concurrent.futures.ThreadPoolExecutor):
 
         return fut
 
+    def gather(self, futures, callback, *pargs, **kwargs):
+        mock = MockFuture()
+
+        def waiter():
+            concurrent.futures.wait(futures, return_when=concurrent.futures.FIRST_EXCEPTION)
+            for f in futures:
+                if f.done():
+                    exc = f.exception()
+                    if exc is not None:
+                        mock.set_exception(exc)
+                        break
+            else:
+                newfut = self.submit(callback, *pargs, **kwargs)
+                mock.handoff(newfut)
+
+        threading.Thread(target=waiter).start()
+
+        return mock
+
     def _finish(self, fut):
         asset = fut.__asset()
         if asset is not None:
@@ -103,21 +122,29 @@ class MockFuture(concurrent.futures.Future):
     """
     Acts as a Future's understudy until the real future is availalble.
     """
+    _handed_off = False
+
     def handoff(self, fut):
         """
         Gives our state to the real future
         """
         with self._condition:
-            # Add the callbacks
-            callbacks, self._done_callbacks = self._done_callbacks, []
-            for fn in callbacks:
-                fut.add_done_callback(fn)
+            if self._handed_off:
+                raise concurrent.futures.InvalidStateError(f"{self!r} already handed off")
+            self._handed_off = True
 
-            # Apply cancellation
-            if self.cancelled():
-                fut.cancel()
-            else:
-                fut.add_done_callback(self._pass_on_result)
+            # Add the callbacks
+        with self._condition:
+            callbacks, self._done_callbacks = self._done_callbacks, []
+
+        for fn in callbacks:
+            fut.add_done_callback(fn)
+
+        # Apply cancellation
+        if self.cancelled():
+            fut.cancel()
+        else:
+            fut.add_done_callback(self._pass_on_result)
 
     def _pass_on_result(self, fut):
         try:
@@ -152,6 +179,8 @@ class BackgroundMixin:
     """
     Asset that does stuff in the background.
     """
+    _future = None
+
     def _start(self):
         """
         Queue the background stuff to run.
@@ -171,7 +200,7 @@ class BackgroundMixin:
         """
         Returns if the data has been loaded and parsed.
         """
-        return self._future.done()
+        return self._future is not None and self._future.done()
 
     def load(self, timeout: float = None):
         """
@@ -184,14 +213,6 @@ class BackgroundMixin:
         #     logger.warning(f"Waited on {self!r} before the engine began")
         return self._future.result(timeout)
 
-    def add_callback(self, func, *pargs, **kwargs):
-        """
-        Add a function to be called when this asset has loaded.
-        """
-        self._future.add_done_callback(
-            lambda _: _executor.submit(func, self, *pargs, **kwargs)
-        )
-
 
 class ChainingMixin(BackgroundMixin):
     """
@@ -203,21 +224,11 @@ class ChainingMixin(BackgroundMixin):
 
         Call at the end of __init__().
         """
-        self._future = MockFuture()
-
-        for asset in assets:
-            if hasattr(asset, 'add_callback'):
-                asset.add_callback(self._check_completed, assets)
-
-        self._check_completed(None, assets)
-
-    def _check_completed(self, _, assets):
-        if all(a.is_loaded() for a in assets):
-            # Ok, everything we've ween waiting on is done, start the task and
-            # do the future handoff
-            mock, self._future = \
-                self._future, _executor.submit(self._background, _asset=self)
-            mock.handoff(self._future)
+        self._future = _executor.gather([
+            asset._future
+            for asset in assets
+            if hasattr(asset, '_future')
+        ], self._background, _asset=self)
 
 
 class FreeingMixin:
@@ -261,7 +272,7 @@ class Asset(BackgroundMixin, FreeingMixin, AbstractAsset):
         self._start()
 
     def __repr__(self):
-        return f"<{type(self).__name__} name={self.name!r}{' loaded' if self.is_loaded() else ''}>"
+        return f"<{type(self).__name__} name={self.name!r}{' loaded' if self.is_loaded() else ''} at 0x{id(self):x}>"
 
     def _background(self):
         # Called in background thread
