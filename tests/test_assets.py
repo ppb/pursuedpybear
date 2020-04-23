@@ -1,3 +1,4 @@
+import concurrent.futures
 import gc
 import time
 
@@ -173,3 +174,10 @@ def test_free(clean_assets):
     del engine, a  # Clean up everything that might be holding a reference.
     gc.collect()
     assert free_called
+
+
+def test_timeout(clean_assets):
+    a = Asset('ppb/utils.py')
+
+    with pytest.raises(concurrent.futures.TimeoutError):
+        a.load(timeout=0.1)
