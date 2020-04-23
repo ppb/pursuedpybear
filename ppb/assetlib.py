@@ -66,6 +66,9 @@ class DelayedThreadExecutor(concurrent.futures.ThreadPoolExecutor):
 
             self.shutdown(wait=False)
 
+    def running(self):
+        return (self._max_workers > 0) and (not self._shutdown)
+
     def submit(self, fn, *args, _asset=None, **kwargs):
         if _asset is not None:
             self._started += 1
@@ -208,9 +211,9 @@ class BackgroundMixin:
 
         Will block until the data is loaded.
         """
-        # FIXME
-        # if _hint is _default_hint:
-        #     logger.warning(f"Waited on {self!r} before the engine began")
+        # NOTE: This is called by FreeingMixin.__del__()
+        if not self.is_loaded() and not _executor.running():
+            logger.warning(f"Waited on {self!r} outside of the engine")
         return self._future.result(timeout)
 
 
@@ -245,6 +248,8 @@ class FreeingMixin:
     def __del__(self):
         # This should only be called after the background threads and other
         # processing has finished.
+        # NOTE: This isn't super great, but there isn't a better way without
+        # knowing what we've been mixed with.
         if self.is_loaded():
             try:
                 data = self.load()
@@ -306,6 +311,12 @@ class Asset(BackgroundMixin, FreeingMixin, AbstractAsset):
 
 
 class AssetLoadingSystem(System):
+    """
+    Connects the asset system to PPB, managing lifecycles and such.
+
+    To minimize the chance of a race condition around initialization, place at
+    the end of the list of systems.
+    """
     def __init__(self, *, engine, **_):
         super().__init__(**_)
         self.engine = engine
