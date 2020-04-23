@@ -15,7 +15,7 @@ from sdl2.sdlgfx import (
     filledCircleRGBA,  # https://www.ferzkopp.net/Software/SDL2_gfx/Docs/html/_s_d_l2__gfx_primitives_8h.html#a666bd764e2fe962656e5829d0aad5ba6
 )
 
-from ppb.assetlib import AbstractAsset
+from ppb.assetlib import BackgroundMixin, FreeingMixin, AbstractAsset
 from ppb.systems._sdl_utils import sdl_call
 
 __all__ = (
@@ -47,29 +47,28 @@ def _create_surface(color):
     return surface
 
 
-class Shape(AbstractAsset):
+class Shape(BackgroundMixin, FreeingMixin, AbstractAsset):
     """Shapes are drawing primitives that are good for rapid prototyping."""
-    _surface = None
     def __init__(self, red: int, green: int, blue: int):
-        color = red, green, blue
-        self._surface = _create_surface(color)
+        self.color = red, green, blue
+        self._start()
+
+    def _background(self):
+        surface = _create_surface(self.color)
 
         renderer = sdl_call(
-            SDL_CreateSoftwareRenderer, self._surface,
+            SDL_CreateSoftwareRenderer, surface,
             _check_error=lambda rv: not rv
         )
         try:
-            self._draw_shape(renderer, rgb=color)
+            self._draw_shape(renderer, rgb=self.color)
         finally:
             sdl_call(SDL_DestroyRenderer, renderer)
 
-    def load(self):
-        """Return the underlying asset."""
-        return self._surface
+        return surface
 
-    def __del__(self, _SDL_FreeSurface=SDL_FreeSurface):
-        if self._surface:
-            SDL_FreeSurface(self._surface)
+    def free(self, surface, _SDL_FreeSurface=SDL_FreeSurface):
+        SDL_FreeSurface(surface)
 
     def _draw_shape(self, renderer, **_) -> None:
         """
