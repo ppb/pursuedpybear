@@ -154,8 +154,6 @@ class BackgroundMixin:
         # NOTE: This is called by FreeingMixin.__del__()
         if not self.is_loaded() and not _executor.running():
             logger.warning(f"Waited on {self!r} outside of the engine")
-            import traceback
-            traceback.print_tb()
         return self._future.result(timeout)
 
 
