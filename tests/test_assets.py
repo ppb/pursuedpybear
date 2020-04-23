@@ -1,11 +1,13 @@
+import concurrent.futures
 import gc
+import time
 
 import pytest
 
 from ppb import GameEngine, BaseScene
 import ppb.events
 import ppb.assetlib
-from ppb.assetlib import Asset, AssetLoadingSystem
+from ppb.assetlib import DelayedThreadExecutor, Asset, AssetLoadingSystem
 from ppb.testutils import Failer
 
 
@@ -15,13 +17,34 @@ def clean_assets():
     Cleans out the global state of the asset system, so that we start fresh every
     test.
     """
-    ppb.assetlib._backlog = []
+    # Note that while AssetLoadingSystem cleans stuff up when it exits, this
+    # makes sure that the tests start fresh.
+    ppb.assetlib._executor = DelayedThreadExecutor()
 
 
 class AssetTestScene(BaseScene):
     def on_asset_loaded(self, event, signal):
         self.ale = event
         signal(ppb.events.Quit())
+
+
+def test_executor(clean_assets):
+    # Can't easily test the cancellation, since jobs in progress can't be cancelled.
+    def work():
+        return "spam"
+
+    pool = DelayedThreadExecutor()
+    assert not pool._threads
+
+    fut = pool.submit(work)
+    time.sleep(0.01)  # Let any hypothetical threads do work
+    assert not pool._threads
+    assert not (fut.done() or fut.running())
+
+    with pool:
+        assert fut.result() == "spam"
+
+    assert pool._shutdown
 
 
 def test_loading(clean_assets):
@@ -110,7 +133,7 @@ def test_missing_parse(clean_assets):
         assert a.load() == "igotu"
 
 
-def test_instance_condense():
+def test_instance_condense(clean_assets):
     class SubAsset(Asset):
         pass
 
@@ -151,3 +174,10 @@ def test_free(clean_assets):
     del engine, a  # Clean up everything that might be holding a reference.
     gc.collect()
     assert free_called
+
+
+def test_timeout(clean_assets):
+    a = Asset('ppb/utils.py')
+
+    with pytest.raises(concurrent.futures.TimeoutError):
+        a.load(timeout=0.1)
