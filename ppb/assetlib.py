@@ -151,8 +151,11 @@ class BackgroundMixin:
 
         Will block until the data is loaded.
         """
-        if not _executor.running():
-            logger.warning(f"Waited on {self!r} before the engine began")
+        # NOTE: This is called by FreeingMixin.__del__()
+        if not self.is_loaded() and not _executor.running():
+            logger.warning(f"Waited on {self!r} outside of the engine")
+            import traceback
+            traceback.print_tb()
         return self._future.result(timeout)
 
 
@@ -170,6 +173,8 @@ class FreeingMixin:
     def __del__(self):
         # This should only be called after the background threads and other
         # processing has finished.
+        # NOTE: This isn't super great, but there isn't a better way without
+        # knowing what we've been mixed with.
         if self.is_loaded():
             self.free(self.load())
 
