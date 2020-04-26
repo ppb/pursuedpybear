@@ -90,6 +90,16 @@ def test_camera_point_is_visible(camera, position, point, expect):
     assert camera.point_is_visible(point) == expect
 
 
+@pytest.mark.parametrize("position, point, expected", [
+    [Vector(0, 0), Vector(-1, -1), Vector(320, 380)],
+    [Vector(0, 0), Vector(4, -3), Vector(720, 540)],
+    [Vector(0, 0), Vector(-6, 4), Vector(-80, -20)]
+])
+def test_camera_translate_point_to_screen(camera, position, point, expected):
+    camera.position = position
+    assert camera.translate_point_to_screen(point) == expected
+
+
 def test_camera_viewport():
     cam = OldCamera(viewport=(0, 0, 800, 600))
     assert cam.point_in_viewport(Vector(400, 400))
@@ -119,7 +129,7 @@ def test_camera_translate_to_frame():
     assert cam.translate_to_frame(Vector(560, 220)) == Vector(7, 6)
 
 
-def test_camera_translate_to_viewport():
+def test_old_camera_translate_to_viewport():
     cam = OldCamera(viewport=(0, 0, 800, 600), pixel_ratio=80)
     assert cam.position == Vector(0, 0)
     assert cam.translate_to_viewport(Vector(0, 0)) == Vector(400, 300)

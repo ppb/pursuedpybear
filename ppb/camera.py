@@ -17,8 +17,8 @@ class Camera:
 
     There is a one-to-one relationship between cameras and scenes.
     """
-    image = DoNotRender  # Temporary until resolved with #395
     position = Vector(0, 0)
+    size = 0  # Cameras never render, so their logical game unit size is 0
 
     def __init__(self, renderer, target_game_unit_width: Real,
                  viewport_dimensions: Tuple[int, int]):
@@ -40,7 +40,7 @@ class Camera:
         self.renderer = renderer
         self.target_game_unit_width = target_game_unit_width
         self.viewport_dimensions = viewport_dimensions
-        self._pixel_ratio = None
+        self.pixel_ratio = None
         self._width = None
         self._height = None
         self._set_dimensions(target_width=target_game_unit_width)
@@ -99,6 +99,17 @@ class Camera:
             and self.bottom <= point.y <= self.top
         )
 
+    def translate_point_to_screen(self, point: Vector) -> Vector:
+        """
+        Convert a vector from game position to screen position.
+
+        :param point: A vector in game units
+        :type point: Vector
+        :return: A vector in pixels.
+        :rtype: Vector
+        """
+        return Vector(point.x - self.left, self.top - point.y) * self.pixel_ratio
+
     @property
     def bottom(self):
         return self.position.y - (self.height / 2)
@@ -144,9 +155,9 @@ class Camera:
             pixel_value = viewport_height
         else:
             raise ValueError("Must set target_width or target_height")
-        self._pixel_ratio = int(pixel_value / game_unit_target)
-        self._width = viewport_width / self._pixel_ratio
-        self._height = viewport_height / self._pixel_ratio
+        self.pixel_ratio = int(pixel_value / game_unit_target)
+        self._width = viewport_width / self.pixel_ratio
+        self._height = viewport_height / self.pixel_ratio
 
 
 class OldCamera(Sprite):

@@ -8,7 +8,7 @@ from typing import Iterator
 from typing import Sequence
 from typing import Type
 
-from ppb.camera import OldCamera
+from ppb.camera import Camera
 
 
 class GameObjectCollection(Collection):
@@ -99,6 +99,7 @@ class BaseScene:
     # Background color, in RGB, each channel is 0-255
     background_color: Sequence[int] = (0, 0, 100)
     container_class: Type = GameObjectCollection
+    camera_class = Camera
 
     def __init__(self, *,
                  set_up: Callable = None, pixel_ratio: Number = 64,
@@ -108,7 +109,6 @@ class BaseScene:
             setattr(self, k, v)
 
         self.game_objects = self.container_class()
-        self.main_camera = OldCamera(pixel_ratio=pixel_ratio)
 
         if set_up is not None:
             set_up(self)
@@ -128,11 +128,11 @@ class BaseScene:
         return self.game_objects.tags
 
     @property
-    def main_camera(self) -> OldCamera:
+    def main_camera(self) -> Camera:
         return next(self.game_objects.get(tag="main_camera"))
 
     @main_camera.setter
-    def main_camera(self, value: OldCamera):
+    def main_camera(self, value: Camera):
         for camera in self.game_objects.get(tag="main_camera"):
             self.game_objects.remove(camera)
         self.game_objects.add(value, tags=["main_camera"])
