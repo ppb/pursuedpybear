@@ -29,12 +29,11 @@ def test_camera_move(cam):
     assert cam.position == Vector(600, 600)
 
 
-def test_setting_in_game_dimensions():
+def test_setting_in_game_dimensions(camera):
     """
     Proves setting the width and height affect each other and matches
     the calculated ratio to the viewport.
     """
-    camera = Camera(None, 10, (800, 600))
     assert camera.width == 10
     assert camera.height == 7.5
 
@@ -49,6 +48,19 @@ def test_setting_in_game_dimensions():
     camera.height = 100
     assert isclose(camera.width, 133.33333, rel_tol=0.01)
     assert camera.height == 100
+
+
+@pytest.mark.parametrize("position, expected", [
+    [Vector(0, 0), {"right": 5, "left": -5, "top": 3.75, "bottom": -3.75}],
+    [Vector(0, 1), {"right": 5, "left": -5, "top": 4.75, "bottom": -2.75}],
+    [Vector(15, -33), {"right": 20, "left": 10, "top": -29.25, "bottom": -36.75}]
+])
+def test_camera_sides(camera, position, expected):
+    camera.position = position
+    assert camera.left == expected["left"]
+    assert camera.right == expected["right"]
+    assert camera.top == expected["top"]
+    assert camera.bottom == expected["bottom"]
 
 
 def test_camera_viewport():

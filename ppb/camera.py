@@ -87,19 +87,19 @@ class Camera:
 
     @property
     def bottom(self):
-        return 1
+        return self.position.y - (self.height / 2)
 
     @property
     def left(self):
-        return 1
+        return self.position.x - (self.width / 2)
 
     @property
     def right(self):
-        return 1
+        return self.position.x + (self.width / 2)
 
     @property
     def top(self):
-        return 1
+        return self.position.y + (self.height / 2)
 
     def _set_dimensions(self, target_width=None, target_height=None):
         # Set new pixel ratio
