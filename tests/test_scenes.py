@@ -5,7 +5,7 @@ from pytest import mark
 from pytest import raises
 
 from ppb.scenes import BaseScene
-from ppb.camera import OldCamera
+from ppb.camera import Camera
 from ppb.scenes import GameObjectCollection
 
 
@@ -130,15 +130,13 @@ def test_collection_methods(player, enemies):
 
 
 def test_main_camera(scene):
+    assert scene.main_camera is None
 
-    assert isinstance(scene.main_camera, OldCamera)
-    old_cam = scene.main_camera
-    new_cam = OldCamera()
+    new_cam = Camera(None, 25, (800, 600))
 
     scene.main_camera = new_cam
 
     assert scene.main_camera == new_cam
-    assert old_cam not in scene
     assert new_cam in scene
 
 

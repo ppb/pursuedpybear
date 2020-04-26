@@ -129,7 +129,11 @@ class BaseScene:
 
     @property
     def main_camera(self) -> Camera:
-        return next(self.game_objects.get(tag="main_camera"))
+        try:
+            camera = next(self.game_objects.get(tag="main_camera"))
+        except StopIteration:
+            camera = None
+        return camera
 
     @main_camera.setter
     def main_camera(self, value: Camera):

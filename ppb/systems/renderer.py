@@ -250,11 +250,7 @@ class Renderer(SdlSubSystem):
 
         src_rect = SDL_Rect(x=0, y=0, w=img_w, h=img_h)
 
-        values = [img_w.value, img_h.value]
-        short_side_index = img_w.value > img_h.value
-        target = camera.pixel_ratio * game_object.size
-        ratio = values[short_side_index] / target
-        win_w, win_h = tuple(round(value / ratio) for value in values)
+        win_w, win_h = self.target_resolution(img_w.value, img_h.value, game_object.size, camera.pixel_ratio)
 
         center = camera.translate_point_to_screen(game_object.position)
         dest_rect = SDL_Rect(
@@ -265,3 +261,11 @@ class Renderer(SdlSubSystem):
         )
 
         return src_rect, dest_rect, ctypes.c_double(-game_object.rotation)
+
+    @staticmethod
+    def target_resolution(width, height, game_object_size, pixel_ratio):
+        values = [width, height]
+        short_side_index = width > height
+        target = pixel_ratio * game_object_size
+        ratio = values[short_side_index] / target
+        return tuple(round(value / ratio) for value in values)
