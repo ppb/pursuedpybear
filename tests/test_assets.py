@@ -7,7 +7,10 @@ import pytest
 from ppb import GameEngine, BaseScene
 import ppb.events
 import ppb.assetlib
-from ppb.assetlib import DelayedThreadExecutor, Asset, AssetLoadingSystem
+from ppb.assetlib import (
+    DelayedThreadExecutor, Asset, AssetLoadingSystem, BackgroundMixin,
+    ChainingMixin, AbstractAsset,
+)
 from ppb.testutils import Failer
 
 
@@ -181,3 +184,63 @@ def test_timeout(clean_assets):
 
     with pytest.raises(concurrent.futures.TimeoutError):
         a.load(timeout=0.1)
+
+
+def test_chained(clean_assets):
+    class Const(BackgroundMixin, AbstractAsset):
+        def __init__(self, value):
+            self.value = value
+            self._start()
+
+        def _background(self):
+            return self.value
+
+    class Concat(ChainingMixin, AbstractAsset):
+        def __init__(self, delimiter, *values):
+            self.delimiter = delimiter
+            self.values = values
+            self._start(*values)
+
+        def _background(self):
+            return self.delimiter.join(a.load() for a in self.values)
+
+    a = Concat(
+        ' ',
+        Const("spam"), Const("eggs"), Const("foo"), Const("bar"),
+    )
+    engine = GameEngine(
+        AssetTestScene, basic_systems=[AssetLoadingSystem, Failer],
+        fail=lambda e: False, message=None, run_time=1,
+    )
+    with engine:
+        engine.start()
+
+        assert a.load() == "spam eggs foo bar"
+
+
+def test_chained_big(clean_assets):
+    class Concat(ChainingMixin, AbstractAsset):
+        def __init__(self, delimiter, *values):
+            self.delimiter = delimiter
+            self.values = values
+            self._start(*values)
+
+        def _background(self):
+            return self.delimiter.join(a.load() for a in self.values)
+
+    a = Concat(
+        b'\n',
+        *(
+            Asset(f"ppb/{fname}")
+            for fname in ppb.vfs.iterdir('ppb')
+            if ppb.vfs.exists(f"ppb/{fname}")
+        )
+    )
+    engine = GameEngine(
+        AssetTestScene, basic_systems=[AssetLoadingSystem, Failer],
+        fail=lambda e: False, message=None, run_time=1,
+    )
+    with engine:
+        engine.start()
+
+        assert a.load(timeout=5)

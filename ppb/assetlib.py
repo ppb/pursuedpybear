@@ -14,7 +14,11 @@ import ppb.vfs as vfs
 import ppb.events as events
 from ppb.systemslib import System
 
-__all__ = 'AbstractAsset', 'Asset', 'AssetLoadingSystem',
+__all__ = (
+    'AssetLoadingSystem',
+    'AbstractAsset', 'BackgroundMixin', 'ChainingMixin', 'FreeingMixin',
+    'Asset',
+)
 
 logger = logging.getLogger(__name__)
 
@@ -77,6 +81,25 @@ class DelayedThreadExecutor(concurrent.futures.ThreadPoolExecutor):
 
         return fut
 
+    def gather(self, futures, callback, *pargs, **kwargs):
+        mock = MockFuture()
+
+        def waiter():
+            done, not_done = concurrent.futures.wait(futures, return_when=concurrent.futures.FIRST_EXCEPTION)
+            for f in done:
+                exc = f.exception()
+                if exc is not None:
+                    mock.set_exception(exc)
+                    break
+            else:
+                assert not not_done
+                newfut = self.submit(callback, *pargs, **kwargs)
+                mock.handoff(newfut)
+
+        threading.Thread(target=waiter).start()
+
+        return mock
+
     def _finish(self, fut):
         asset = fut.__asset()
         if asset is not None:
@@ -96,6 +119,43 @@ class DelayedThreadExecutor(concurrent.futures.ThreadPoolExecutor):
 
 
 _executor = DelayedThreadExecutor()
+
+
+class MockFuture(concurrent.futures.Future):
+    """
+    Acts as a Future's understudy until the real future is availalble.
+    """
+    _handed_off = False
+
+    def handoff(self, fut):
+        """
+        Gives our state to the real future
+        """
+        with self._condition:
+            if self._handed_off:
+                raise concurrent.futures.InvalidStateError(f"{self!r} already handed off")
+            self._handed_off = True
+
+            # Add the callbacks
+        with self._condition:
+            callbacks, self._done_callbacks = self._done_callbacks, []
+
+        for fn in callbacks:
+            fut.add_done_callback(fn)
+
+        # Apply cancellation
+        if self.cancelled():
+            fut.cancel()
+        else:
+            fut.add_done_callback(self._pass_on_result)
+
+    def _pass_on_result(self, fut):
+        try:
+            result = fut.result()
+        except BaseException as exc:
+            self.set_exception(exc)
+        else:
+            self.set_result(result)
 
 
 class AbstractAsset(abc.ABC):
@@ -122,7 +182,7 @@ class BackgroundMixin:
     """
     Asset that does stuff in the background.
     """
-    _fut = None
+    _future = None
 
     def _start(self):
         """
@@ -143,7 +203,7 @@ class BackgroundMixin:
         """
         Returns if the data has been loaded and parsed.
         """
-        return self._future.done()
+        return self._future is not None and self._future.done()
 
     def load(self, timeout: float = None):
         """
@@ -155,6 +215,23 @@ class BackgroundMixin:
         if not self.is_loaded() and not _executor.running():
             logger.warning(f"Waited on {self!r} outside of the engine")
         return self._future.result(timeout)
+
+
+class ChainingMixin(BackgroundMixin):
+    """
+    Asset that does stuff in the background, after other assets have loaded.
+    """
+    def _start(self, *assets):
+        """
+        Queue the background stuff to run.
+
+        Call at the end of __init__().
+        """
+        self._future = _executor.gather([
+            asset._future
+            for asset in assets
+            if hasattr(asset, '_future')
+        ], self._background, _asset=self)
 
 
 class FreeingMixin:
@@ -174,7 +251,12 @@ class FreeingMixin:
         # NOTE: This isn't super great, but there isn't a better way without
         # knowing what we've been mixed with.
         if self.is_loaded():
-            self.free(self.load())
+            try:
+                data = self.load()
+            except BaseException:
+                pass
+            else:
+                self.free(data)
 
 
 _asset_cache = weakref.WeakValueDictionary()
@@ -200,7 +282,7 @@ class Asset(BackgroundMixin, FreeingMixin, AbstractAsset):
         self._start()
 
     def __repr__(self):
-        return f"<{type(self).__name__} name={self.name!r}{' loaded' if self.is_loaded() else ''}>"
+        return f"<{type(self).__name__} name={self.name!r}{' loaded' if self.is_loaded() else ''} at 0x{id(self):x}>"
 
     def _background(self):
         # Called in background thread
@@ -226,21 +308,6 @@ class Asset(BackgroundMixin, FreeingMixin, AbstractAsset):
         Called in the background thread.
         """
         return data
-
-
-def force_background_thread(func, *pargs, **kwargs):
-    """
-    Calls the given function from not the main thread.
-
-    If already not the main thread, calls it syncronously.
-
-    If this is the main thread, creates a new thread to call it.
-    """
-    if threading.current_thread() is threading.main_thread():
-        t = threading.Thread(target=func, args=pargs, kwargs=kwargs, daemon=True)
-        t.start()
-    else:
-        func(*pargs, **kwargs)
 
 
 class AssetLoadingSystem(System):
