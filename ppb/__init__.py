@@ -1,3 +1,19 @@
+"""
+A python game framework.
+
+PursuedPyBear is object oriented and event driven. Practically, this means that
+most of your code will be organized into classes. Game objects in
+:mod:`ppb` are :class:`Sprite` instances, which get contained in
+:class:`BaseScenes <BaseScene>`. In turn, the :class:`GameEngine`
+contains the scenes and :class:`Systems <System>`.
+:mod:`Events <events>` are defined as simple classes and event handlers
+are based on their names.
+
+The classes, modules, and methods exported directly are the most used parts of
+the library and intended to be used by users at all levels (barring
+make_engine). Advanced features tend to be in their own modules and subpackages.
+"""
+
 import logging
 import warnings
 from typing import Callable
@@ -54,16 +70,47 @@ def _make_kwargs(setup, title, engine_opts):
 def run(setup: Callable[[BaseScene], None] = None, *, log_level=logging.WARNING,
         starting_scene=BaseScene, title="PursuedPyBear", **engine_opts):
     """
-    Run a small game.
+    Run a game.
 
-    The resolution will 800 pixels wide by 600 pixels tall.
+    This is the default entry point for ppb games.
 
-    setup is a callable that accepts a scene and returns None.
+    Sample usage:
+    ::
+       import ppb
 
-    log_level let's you set the expected log level. Consider logging.DEBUG if
-    something is behaving oddly.
+       def setup(scene):
+           scene.add(ppb.Sprite())
 
-    starting_scene let's you change the scene used by the engine.
+       ppb.run(setup)
+
+    Alternatively:
+    ::
+       import ppb
+
+       class Game(ppb.BaseScene):
+           def __init__(self, **kwargs):
+               super().__init__(**kwargs)
+               self.add(ppb.Sprite())
+
+       ppb.run(starting_scene=Game)
+
+    See the :doc:`../getting-started` guide for a more complete guide to
+    building games.
+
+    All parameters are optional.
+
+    :param setup: Called with the first scene to allow initialization of
+       your game.
+    :type setup: Callable[[BaseScene], None]
+    :param log_level: The logging level from :func:`logging` to send to the
+       console.
+    :param starting_scene: A scene class to use. Defaults to
+       :class:`~ppb.scenes.BaseScene`
+    :type starting_scene: type
+    :param title: The title of the rendered window.
+    :type title: str
+    :param engine_opts: Additional keyword arguments passed to the
+       :class:`~ppb.engine.GameEngine`.
     """
     logging.basicConfig(level=log_level)
 
@@ -74,4 +121,24 @@ def run(setup: Callable[[BaseScene], None] = None, *, log_level=logging.WARNING,
 def make_engine(setup: Callable[[BaseScene], None] = None, *,
                 starting_scene=BaseScene, title="PursedPyBear",
                 **engine_opts):
+    """
+    Setup a :class:`GameEngine`.
+
+    This function exists for third party modules to use the same code paths
+    as :func:`run` for setting up their engine. If you want to instantiate
+    your own engine, you can do so directly using the
+    :class:`constructor <GameEngine>`.
+
+    :param setup: Called with the first scene to allow initialization of
+       your game.
+    :type setup: Callable[[BaseScene], None]
+    :param starting_scene: A scene class to use. Defaults to
+       :class:`~ppb.scenes.BaseScene`
+    :type starting_scene: type
+    :param title: The title of the rendered window.
+    :type title: str
+    :param engine_opts: Additional keyword arguments passed to the
+       :class:`~ppb.engine.GameEngine`
+    :return: A GameEngine instance.
+    """
     return GameEngine(starting_scene, **_make_kwargs(setup, title, engine_opts))
