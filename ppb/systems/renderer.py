@@ -113,7 +113,7 @@ class Renderer(SdlSubSystem):
         resolution=DEFAULT_RESOLUTION,
         window_title: str = "PursuedPyBear",
         target_frame_rate: int = 30,
-        target_camera_width=10,
+        target_camera_width=25,
         **kwargs
     ):
         self.resolution = resolution
