@@ -102,8 +102,7 @@ class BaseScene:
     camera_class = Camera
 
     def __init__(self, *,
-                 set_up: Callable = None, pixel_ratio: Number = 64,
-                 **kwargs):
+                 set_up: Callable = None, **kwargs):
         super().__init__()
         for k, v in kwargs.items():
             setattr(self, k, v)
