@@ -66,7 +66,7 @@ Additionally, on Linux only you must install the SDL library:
 
 Debian, Ubuntu::
 
-   sudo apt install libsdl2-2.0-0 libsdl2-mixer-2.0-0 libsdl2-image-2.0-0 libsdl2-gfx-1.0-0
+   sudo apt install libsdl2-2.0-0 libsdl2-mixer-2.0-0 libsdl2-image-2.0-0 libsdl2-gfx-1.0-0 libsdl2-ttf-2.0-0
 
 You should see a few libraries get put together in your terminal, and when
 you have a prompt again, we're ready to go!
