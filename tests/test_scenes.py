@@ -130,15 +130,13 @@ def test_collection_methods(player, enemies):
 
 
 def test_main_camera(scene):
+    assert scene.main_camera is None
 
-    assert isinstance(scene.main_camera, Camera)
-    old_cam = scene.main_camera
-    new_cam = Camera()
+    new_cam = Camera(None, 25, (800, 600))
 
     scene.main_camera = new_cam
 
     assert scene.main_camera == new_cam
-    assert old_cam not in scene
     assert new_cam in scene
 
 

@@ -24,4 +24,5 @@ decisions are made, see the :doc:`/discussion/index` section.
    sprites
    engine
    sound
+   camera
    features/index

@@ -42,6 +42,8 @@ from sdl2.sdlttf import (
 import ppb.assetlib as assets
 import ppb.events as events
 import ppb.flags as flags
+
+from ppb.camera import Camera
 from ppb.systems._sdl_utils import SdlSubSystem, sdl_call, img_call, ttf_call
 from ppb.systems._utils import ObjectSideData
 
@@ -111,12 +113,14 @@ class Renderer(SdlSubSystem):
         resolution=DEFAULT_RESOLUTION,
         window_title: str = "PursuedPyBear",
         target_frame_rate: int = 30,
+        target_camera_width=25,
         **kwargs
     ):
         self.resolution = resolution
         self.window = None
         self.window_title = window_title
-        self.pixel_ratio = None
+        self.scene_cameras = {}
+        self.target_camera_width = target_camera_width
         self.target_frame_rate = target_frame_rate
         self.target_frame_length = 1 / self.target_frame_rate
         self.target_clock = monotonic() + self.target_frame_length
@@ -152,15 +156,23 @@ class Renderer(SdlSubSystem):
     def on_idle(self, idle_event: events.Idle, signal):
         t = monotonic()
         if t >= self.target_clock:
-            self.pre_render_updates(idle_event.scene)
             signal(events.PreRender())
             signal(events.Render())
             self.target_clock = t + self.target_frame_length
 
-    def pre_render_updates(self, scene):
-        camera = scene.main_camera
-        camera.viewport_width, camera.viewport_height = self.resolution
-        self.pixel_ratio = camera.pixel_ratio
+    def on_scene_started(self, scene_started, signal):
+        scene = scene_started.scene
+        camera_class = getattr(scene_started.scene, "camera_class", Camera)
+        # For future: This is basically the pattern we'd use to define
+        # multiple cameras. We'd just need to have the scene tell us the
+        # regions they should render to.
+        camera = camera_class(self, self.target_camera_width, self.resolution)
+        scene.main_camera = camera
+        self.scene_cameras[scene] = [camera]
+
+    def on_scene_stopped(self, scene_stopped, signal):
+        """We don't need to hold onto references for scenes that stopped."""
+        del self.scene_cameras[scene_stopped.scene]
 
     def on_render(self, render_event, signal):
         camera = render_event.scene.main_camera
@@ -222,9 +234,9 @@ class Renderer(SdlSubSystem):
 
         src_rect = SDL_Rect(x=0, y=0, w=img_w, h=img_h)
 
-        win_w, win_h = self.target_resolution(img_w.value, img_h.value, game_object.size)
+        win_w, win_h = self.target_resolution(img_w.value, img_h.value, game_object.size, camera.pixel_ratio)
 
-        center = camera.translate_to_viewport(game_object.position)
+        center = camera.translate_point_to_screen(game_object.position)
         dest_rect = SDL_Rect(
             x=int(center.x - win_w / 2),
             y=int(center.y - win_h / 2),
@@ -234,9 +246,10 @@ class Renderer(SdlSubSystem):
 
         return src_rect, dest_rect, ctypes.c_double(-game_object.rotation)
 
-    def target_resolution(self, width, height, game_unit_size):
+    @staticmethod
+    def target_resolution(width, height, game_object_size, pixel_ratio):
         values = [width, height]
         short_side_index = width > height
-        target = self.pixel_ratio * game_unit_size
+        target = pixel_ratio * game_object_size
         ratio = values[short_side_index] / target
         return tuple(round(value / ratio) for value in values)

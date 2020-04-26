@@ -176,7 +176,7 @@ class EventPoller(SdlSubSystem):
         motion = event.motion
         screen_position = Vector(motion.x, motion.y)
         camera = scene.main_camera
-        scene_position = camera.translate_to_frame(screen_position)
+        scene_position = camera.translate_point_to_game_space(screen_position)
         delta = Vector(motion.xrel, motion.yrel) * (1/camera.pixel_ratio)
         buttons = {
             value
@@ -195,7 +195,7 @@ class EventPoller(SdlSubSystem):
         button = event.button
         screen_position = Vector(button.x, button.y)
         camera = scene.main_camera
-        scene_position = camera.translate_to_frame(screen_position)
+        scene_position = camera.translate_point_to_game_space(screen_position)
         btn = self.button_map.get(button.button)
         if btn is not None:
             return events.ButtonPressed(
@@ -208,7 +208,7 @@ class EventPoller(SdlSubSystem):
         button = event.button
         screen_position = Vector(button.x, button.y)
         camera = scene.main_camera
-        scene_position = camera.translate_to_frame(screen_position)
+        scene_position = camera.translate_point_to_game_space(screen_position)
         btn = self.button_map.get(button.button)
         if btn is not None:
             return events.ButtonReleased(
