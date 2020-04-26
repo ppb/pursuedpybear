@@ -101,6 +101,22 @@ class Camera:
     def top(self):
         return self.position.y + (self.height / 2)
 
+    @property
+    def top_left(self):
+        return Vector(self.left, self.top)
+
+    @property
+    def top_right(self):
+        return Vector(self.right, self.top)
+
+    @property
+    def bottom_left(self):
+        return Vector(self.left, self.bottom)
+
+    @property
+    def bottom_right(self):
+        return Vector(self.right, self.bottom)
+
     def _set_dimensions(self, target_width=None, target_height=None):
         # Set new pixel ratio
         viewport_width, viewport_height = self.viewport_dimensions

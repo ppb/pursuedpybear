@@ -63,6 +63,19 @@ def test_camera_sides(camera, position, expected):
     assert camera.bottom == expected["bottom"]
 
 
+@pytest.mark.parametrize("position, expected", [
+    [Vector(0, 0), {"tl": Vector(-5, 3.75), "tr": Vector(5, 3.75), "bl": Vector(-5, -3.75), "br": Vector(5, -3.75)}],
+    [Vector(3, 6), {"tl": Vector(-2, 9.75), "tr": Vector(8, 9.75), "bl": Vector(-2, 2.25), "br": Vector(8, 2.25)}],
+    [Vector(85, -2), {"tl": Vector(80, 1.75), "tr": Vector(90, 1.75), "bl": Vector(80, -5.75), "br": Vector(90, -5.75)}]
+])
+def test_camera_corners(camera, position, expected):
+    camera.position = position
+    assert camera.top_left == expected["tl"]
+    assert camera.top_right == expected["tr"]
+    assert camera.bottom_left == expected["bl"]
+    assert camera.bottom_right == expected["br"]
+
+
 def test_camera_viewport():
     cam = OldCamera(viewport=(0, 0, 800, 600))
     assert cam.point_in_viewport(Vector(400, 400))
