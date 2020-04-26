@@ -3,7 +3,7 @@
 Camera
 =============
 
-Stuff
+.. automodule:: ppb.camera
 
 
 .. autoclass:: Camera

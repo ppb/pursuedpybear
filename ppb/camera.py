@@ -1,3 +1,12 @@
+"""
+:class:`Cameras <Camera>` are objects that straddle the line between game space
+and screen space. The renderer uses the position of the camera to translate
+:class:`Sprite's <ppb.Sprite>` positions to the screen in order to make them
+visible.
+
+The :class:`~ppb.systems.Renderer` inserts a :class:`Camera` into the current
+scene in response to the :class:`~ppb.events.SceneStarted`.
+"""
 from typing import Tuple
 from numbers import Real
 
@@ -12,6 +21,10 @@ class Camera:
     back and forth.
 
     There is a one-to-one relationship between cameras and scenes.
+
+    You can subclass Camera to add event handlers. If you do so, set the
+    camera_class class attribute of your scene to your subclass. The renderer
+    will instantiate the correct type.
     """
     position = Vector(0, 0)
     size = 0  # Cameras never render, so their logical game unit size is 0
@@ -20,7 +33,7 @@ class Camera:
                  viewport_dimensions: Tuple[int, int]):
         """
         You shouldn't instantiate your own camera in general. If you want to
-        override the Camera, see :class:`~ppb.systems.renderer`.
+        override the Camera, see above.
 
         :param renderer: The renderer associated with the camera.
         :type renderer: ~ppb.systems.renderer.Renderer
