@@ -110,6 +110,18 @@ class Camera:
         """
         return Vector(point.x - self.left, self.top - point.y) * self.pixel_ratio
 
+    def translate_point_to_game_space(self, point: Vector) -> Vector:
+        """
+        Convert a vector from screen position to game position.
+
+        :param point: A vector in pixels
+        :type point: Vector
+        :return: A vector in game units.
+        :rtype: Vector
+        """
+        scaled = point / self.pixel_ratio
+        return Vector(self.left + scaled.x, self.top - scaled.y)
+
     @property
     def bottom(self):
         return self.position.y - (self.height / 2)

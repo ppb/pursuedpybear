@@ -100,6 +100,16 @@ def test_camera_translate_point_to_screen(camera, position, point, expected):
     assert camera.translate_point_to_screen(point) == expected
 
 
+@pytest.mark.parametrize("position, point, expected", [
+    [Vector(0, 0), Vector(320, 380), Vector(-1, -1)],
+    [Vector(0, 0), Vector(720, 540), Vector(4, -3)],
+    [Vector(0, 0), Vector(-80, -20), Vector(-6, 4)]
+])
+def test_camera_translate_point_to_game_space(camera, position, point, expected):
+    camera.position = position
+    assert camera.translate_point_to_game_space(point) == expected
+
+
 def test_camera_viewport():
     cam = OldCamera(viewport=(0, 0, 800, 600))
     assert cam.point_in_viewport(Vector(400, 400))
