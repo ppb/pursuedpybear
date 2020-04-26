@@ -85,6 +85,20 @@ class Camera:
     def height(self, target_height):
         self._set_dimensions(target_height=target_height)
 
+    def point_is_visible(self, point: Vector) -> bool:
+        """
+        Determine if a given point is in view of the camera.
+
+        :param point: A vector representation of a point in game units.
+        :type point: Vector
+        :return: Whether the point is in view or not.
+        :rtype: bool
+        """
+        return (
+            self.left <= point.x <= self.right
+            and self.bottom <= point.y <= self.top
+        )
+
     @property
     def bottom(self):
         return self.position.y - (self.height / 2)

@@ -76,6 +76,20 @@ def test_camera_corners(camera, position, expected):
     assert camera.bottom_right == expected["br"]
 
 
+@pytest.mark.parametrize("position, point, expect", [
+    [Vector(0, 0), Vector(-4, 3), True],
+    [Vector(0, 0), Vector(-7, 1), False],
+    [Vector(50, 24), Vector(46, 26), True],
+    [Vector(50, 24), Vector(0, 0), False],
+    [Vector(0, 0), Vector(5, 3.75), True],  # Points on the edge are visible.
+    [Vector(0, 0), Vector(5, 4), False],
+    [Vector(0, 0), Vector(0, 3.75), True],
+])
+def test_camera_point_is_visible(camera, position, point, expect):
+    camera.position = position
+    assert camera.point_is_visible(point) == expect
+
+
 def test_camera_viewport():
     cam = OldCamera(viewport=(0, 0, 800, 600))
     assert cam.point_in_viewport(Vector(400, 400))
