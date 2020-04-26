@@ -1,20 +1,54 @@
 from math import isclose
 
+import hypothesis.strategies as st
+from hypothesis import given, assume, note, example
+import pytest
+
 from ppb import Sprite
 from ppb import Vector
 from ppb.camera import OldCamera
-
-from hypothesis import given, assume, note, example
-import hypothesis.strategies as st
+from ppb.camera import Camera
 from .utils import vectors
 
 
-def test_camera_move():
-    cam = OldCamera()
+@pytest.fixture
+def old_camera():
+    return OldCamera()
+
+
+@pytest.fixture
+def camera():
+    return Camera(None, 10, (800, 600))
+
+
+@pytest.mark.parametrize("cam", [camera, old_camera])
+def test_camera_move(cam):
     cam.position = Vector(500, 500)
     assert cam.position == Vector(500, 500)
     cam.position += Vector(100, 100)
     assert cam.position == Vector(600, 600)
+
+
+def test_setting_in_game_dimensions():
+    """
+    Proves setting the width and height affect each other and matches
+    the calculated ratio to the viewport.
+    """
+    camera = Camera(None, 10, (800, 600))
+    assert camera.width == 10
+    assert camera.height == 7.5
+
+    camera.width = 25
+    assert camera.width == 25
+    assert camera.height == 18.75
+
+    camera.width = 34
+    assert isclose(camera.width, 34.7826, rel_tol=0.01)
+    assert isclose(camera.height, 26.08695, rel_tol=0.01)
+
+    camera.height = 100
+    assert isclose(camera.width, 133.33333, rel_tol=0.01)
+    assert camera.height == 100
 
 
 def test_camera_viewport():

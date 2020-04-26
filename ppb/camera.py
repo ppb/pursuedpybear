@@ -50,6 +50,13 @@ class Camera:
         """
         The game unit width of the viewport.
 
+        See :mod:`ppb.sprites` for details about game units.
+
+        When setting this property, the resulting width may be slightly
+        different from the value provided based on the ratio between the width
+        of the window in screen pixels and desired number of game units to
+        represent.
+
         When you set the width, the height will change as well.
         """
         return self._width
@@ -61,7 +68,14 @@ class Camera:
     @property
     def height(self) -> Real:
         """
-        The game unit height of the viewport
+        The game unit height of the viewport.
+
+        See :mod:`ppb.sprites` for details about game units.
+
+        When setting this property, the resulting height may be slightly
+        different from the value provided based on the ratio between the height
+        of the window in screen pixels and desired number of game units to
+        represent.
 
         When you set the height, the width will change as well.
         """
@@ -69,15 +83,23 @@ class Camera:
 
     @height.setter
     def height(self, target_height):
-        """
-        Set the height of the camera.
-
-        :param target_height: The number of game units we prefer to display. It
-           is possible to have a slightly different number depending on the
-           ratio between game units and pixels in the display.
-        :type target_height: Real
-        """
         self._set_dimensions(target_height=target_height)
+
+    @property
+    def bottom(self):
+        return 1
+
+    @property
+    def left(self):
+        return 1
+
+    @property
+    def right(self):
+        return 1
+
+    @property
+    def top(self):
+        return 1
 
     def _set_dimensions(self, target_width=None, target_height=None):
         # Set new pixel ratio
@@ -92,7 +114,7 @@ class Camera:
             pixel_value = viewport_height
         else:
             raise ValueError("Must set target_width or target_height")
-        self._pixel_ratio = pixel_value / game_unit_target
+        self._pixel_ratio = int(pixel_value / game_unit_target)
         self._width = viewport_width / self._pixel_ratio
         self._height = viewport_height / self._pixel_ratio
 
