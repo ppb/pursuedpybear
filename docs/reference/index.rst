@@ -22,6 +22,7 @@ decisions are made, see the :doc:`/discussion/index` section.
    assets
    scenes
    sprites
+   text
    engine
    sound
    camera
