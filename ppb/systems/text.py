@@ -34,13 +34,13 @@ _freetype_lock = threading.RLock()
 
 class Font(ChainingMixin, FreeingMixin, AbstractAsset):
     """
-    A True-Type/OpenType Font
+    A TrueType/OpenType Font
     """
     def __init__(self, name, *, size, index=None):
         """
-        * name: the filename to load
-        * size: the size in points
-        * index: the index of the font in a multi-font file (rare)
+        :param name: the filename to load
+        :param size: the size in points
+        :param index: the index of the font in a multi-font file (rare)
         """
         # We do it this way so that the raw data can be cached between multiple
         # invocations, even though we have to reparse it every time.
@@ -104,9 +104,14 @@ class Font(ChainingMixin, FreeingMixin, AbstractAsset):
 
 class Text(ChainingMixin, FreeingMixin, AbstractAsset):
     """
-    A bit of rendered text
+    A bit of rendered text.
     """
     def __init__(self, txt, *, font, color=(0, 0, 0)):
+        """
+        :param txt: The text to display.
+        :param font: The font to use (a :py:class:`ppb.Font`)
+        :param color: The color to use.
+        """
         self.txt = txt
         self.font = font
         self.color = color
