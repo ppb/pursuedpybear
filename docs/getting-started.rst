@@ -68,6 +68,10 @@ Debian, Ubuntu::
 
    sudo apt install libsdl2-2.0-0 libsdl2-mixer-2.0-0 libsdl2-image-2.0-0 libsdl2-gfx-1.0-0 libsdl2-ttf-2.0-0
 
+Fedora, CentOS, RHEL ::
+
+    sudo dnf install SDL2 SDL2_ttf SDL2_image SDL2_gfx SDL2_mixer
+
 You should see a few libraries get put together in your terminal, and when
 you have a prompt again, we're ready to go!
 
