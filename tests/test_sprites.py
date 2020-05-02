@@ -611,6 +611,14 @@ class SidesResults(NamedTuple):
     right: Union[float, int]
 
 
+class CornerResults(NamedTuple):
+    """A container for results while testing sprites."""
+    top_left: Vector
+    top_right: Vector
+    bottom_left: Vector
+    bottom_right: Vector
+
+
 class SpriteParams(NamedTuple):
     position: Vector
     width: Union[float, int]
@@ -645,6 +653,66 @@ def test_rectangle_shape_mixin_sides_access(sprite_class, params: SpriteParams, 
     assert sprite.bottom == results.bottom
     assert sprite.left == results.left
     assert sprite.right == results.right
+
+
+@pytest.mark.parametrize("sprite_class", [RectangleSprite])
+@pytest.mark.parametrize("params, results", [
+    [
+        SpriteParams(Vector(0, 0), 1, 1),
+        CornerResults(
+            Vector(-0.5, 0.5),
+            Vector(0.5, 0.5),
+            Vector(-0.5, -0.5),
+            Vector(0.5, -0.5)
+        )
+    ],
+    [
+        SpriteParams(Vector(0, 0), 2, 1),
+        CornerResults(
+            Vector(-1, 0.5),
+            Vector(1, 0.5),
+            Vector(-1, -0.5),
+            Vector(1, -0.5)
+        )
+    ],
+    [
+        SpriteParams(Vector(0, 0), 1, 2),
+        CornerResults(
+            Vector(-0.5, 1),
+            Vector(0.5, 1),
+            Vector(-0.5, -1),
+            Vector(0.5, -1)
+        )
+    ],
+    [
+        SpriteParams(Vector(-54.8, 76.64), 1.06, 2.74),
+        CornerResults(
+            Vector(-55.33, 78.01),
+            Vector(-54.269999999999996, 78.01),
+            Vector(-55.33, 75.27),
+            Vector(-54.269999999999996, 75.27)
+        )
+    ],
+    [
+        SpriteParams(Vector(-58.05, 96.62), 0.36, 2.02),
+        CornerResults(
+            Vector(-58.23, 97.63000000000001),
+            Vector(-57.87, 97.63000000000001),
+            Vector(-58.23, 95.61),
+            Vector(-57.87, 95.61),
+        )
+    ]
+])
+def test_rectangle_shape_mixin_corners_access(sprite_class, params: SpriteParams, results: CornerResults):
+    sprite = sprite_class(
+        position=params.position,
+        width=params.width,
+        height=params.height,
+    )
+    assert sprite.top_left == results.top_left
+    assert sprite.top_right == results.top_right
+    assert sprite.bottom_left == results.bottom_left
+    assert sprite.bottom_right == results.bottom_right
 
 
 def test_rectangle_shape_mixin_center():
