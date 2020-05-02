@@ -9,7 +9,6 @@ from typing import Sequence
 from typing import Type
 
 from ppb.camera import Camera
-from ppb.eventlib import EventMixin
 
 
 class GameObjectCollection(Collection):
@@ -96,20 +95,19 @@ class GameObjectCollection(Collection):
             s.discard(game_object)
 
 
-class BaseScene(EventMixin):
+class BaseScene:
     # Background color, in RGB, each channel is 0-255
     background_color: Sequence[int] = (0, 0, 100)
     container_class: Type = GameObjectCollection
+    camera_class = Camera
 
     def __init__(self, *,
-                 set_up: Callable = None, pixel_ratio: Number = 64,
-                 **kwargs):
+                 set_up: Callable = None, **kwargs):
         super().__init__()
         for k, v in kwargs.items():
             setattr(self, k, v)
 
         self.game_objects = self.container_class()
-        self.main_camera = Camera(pixel_ratio=pixel_ratio)
 
         if set_up is not None:
             set_up(self)
@@ -130,7 +128,11 @@ class BaseScene(EventMixin):
 
     @property
     def main_camera(self) -> Camera:
-        return next(self.game_objects.get(tag="main_camera"))
+        try:
+            camera = next(self.game_objects.get(tag="main_camera"))
+        except StopIteration:
+            camera = None
+        return camera
 
     @main_camera.setter
     def main_camera(self, value: Camera):

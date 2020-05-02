@@ -9,12 +9,12 @@ from ppb.events import Idle
 from ppb.events import Quit
 
 
-@mark.parametrize("loop_count", range(1, 6))
+@mark.parametrize("loop_count", list(range(1, 6)))
 def test_quitter(loop_count):
     quitter = testutil.Quitter(loop_count=loop_count)
     signal_mock = Mock()
     for i in range(loop_count):
-        quitter.__event__(Idle(.01), signal_mock)
+        quitter.on_idle(Idle(.01), signal_mock)
     signal_mock.assert_called_once()
     assert len(signal_mock.call_args[0]) == 1
     assert len(signal_mock.call_args[1]) == 0
@@ -25,7 +25,7 @@ def test_failer_immediate():
     failer = testutil.Failer(fail=lambda e: True, message="Expected failure.", engine=None)
 
     with raises(AssertionError):
-        failer.__event__(Idle(0.0), lambda x: None)
+        failer.on_idle(Idle(0.0), lambda x: None)
 
 
 def test_failer_timed():
@@ -35,7 +35,7 @@ def test_failer_timed():
 
     while True:
         try:
-            failer.__event__(Idle(0.0), lambda x: None)
+            failer.on_idle(Idle(0.0), lambda x: None)
         except AssertionError as e:
             if e.args[0] == "Test ran too long.":
                 end_time = monotonic()

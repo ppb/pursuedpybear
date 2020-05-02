@@ -15,7 +15,6 @@ import ppb_vector
 from ppb_vector import Vector
 
 import ppb
-from ppb.eventlib import EventMixin
 from ppb.utils import FauxFloat
 
 __all__ = (
@@ -36,19 +35,18 @@ error_message = "'{klass}' object does not have attribute '{attribute}'"
 side_attribute_error_message = error_message.format
 
 
-class BaseSprite(EventMixin):
+class BaseSprite:
     """
     The base Sprite class. All sprites should inherit from this (directly or
     indirectly).
 
     The things that define a BaseSprite:
 
-    * The __event__ protocol (see ppb.eventlib.EventMixin)
     * A position vector
     * A layer
 
-    BaseSprite provides an __init__ method that sets attributes based on kwargs
-    to make rapid prototyping easier.
+    BaseSprite provides an :py:meth:`__init__()` method that sets attributes
+    based on kwargs to make rapid prototyping easier.
     """
     #: (:py:class:`ppb.Vector`): Location of the sprite
     position: Vector = Vector(0, 0)

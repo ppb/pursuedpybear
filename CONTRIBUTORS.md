@@ -29,3 +29,5 @@ Halle Jones|HJones@aliacy.com||
 [Pamela McA'Nulty](https://github.com/PamelaM) | | [pmcanulty01](https://twitter.com/pmcanulty01)
 [Trenton Mason](https://github.com/BubbsTheSupreme) | <trenton.mason14@outlook.com> | [BubbsTheSupreme](https://twitter.com/BubbsTheSupreme)
 [Arul Prabakaran](https://github.com/arulprabakaran) | [arul.prabakaran@gmail.com](arul.prabakaran@gmail.com) | [arulpraba](https://twitter.com/arulpraba)
+[Calvin Spealman](https://github.com/ironfroggy) | [ironfroggy@gmail.com](ironfroggy@gmail.com) | [@ironfroggy](https://twitter.com/ironfroggy)
+[Sanket Dasgupta](https://github.com/SanketDG) | [sanketdasgupta@gmail.com](sanketdasgupta@gmail.com) | [@SanketDG](https://twitter.com/SanketDG)

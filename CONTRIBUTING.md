@@ -110,21 +110,21 @@ file][tutorial] for more details.
 ## Can I Contribute Without Code?
 
 There's so much else that needs to be done besides fixing `ppb`'s code.
-We need documentation. Docstrings or [the docs project][docs] are
+We need documentation. Docstrings or [the docs folder][docs] are
 available to be added to. Our test suite could use some love. In the
 end you contribute to `ppb` by being part of its community.
 
 [auto]: https://automatetheboringstuff.com "Automate the Boring Stuff"
-[coc]: https://github.com/pathunstrom/pursuedpybear/blob/master/CodeofConduct.md "Code of Conduct"
+[coc]: https://github.com/ppb/.github/blob/master/CODE_OF_CONDUCT.md "Code of Conduct"
 [contributors]: https://github.com/ppb/pursuedpybear/blob/master/CONTRIBUTORS.md "Contributors"
 [covenant]: http://contributor-covenant.org/ "Contributor's Covenant"
 [discuss]: https://github.com/ppb/pursuedpybear/issues?q=is%3Aissue+is%3Aopen+label%3Adiscussion "PPB Discussions"
-[docs]: https://github.com/ppb/docs "PPB Docs"
+[docs]: https://github.com/ppb/pursuedpybear/tree/master/docs "PPB Docs"
 [draftpr]: https://github.blog/2019-02-14-introducing-draft-pull-requests/ "Introducing draft pull requests"
 [fork]: https://help.github.com/articles/fork-a-repo/ "Fork a repo"
-[goals]: https://github.com/ppb/pursuedpybear#guiding-principles "PPB Goals"
+[goals]: https://ppb.dev/#guiding-principles "PPB Goals"
 [issues]: https://github.com/ppb/pursuedpybear/issues "PPB Issues"
 [new contributor]: https://github.com/ppb/pursuedpybear/labels/new%20contributor "Issues labeld New Contributor"
 [projects]: https://github.com/orgs/ppb/projects "PPB Projects"
-[readme]: https://github.com/pathunstrom/pursuedpybear/blob/master/README.md "PPB README"
+[readme]: https://github.com/ppb/pursuedpybear/blob/master/README.md "PPB README"
 [tutorial]: https://github.com/ppb/tutorials "PPB Tutorials"

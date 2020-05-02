@@ -213,7 +213,7 @@ def test_flush_events():
 
     assert len(ge.events) == 2
 
-    ge.flush_events()
+    ge._flush_events()
 
     assert len(ge.events) == 0
 

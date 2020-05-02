@@ -3,7 +3,6 @@ A system for two phase updates: Update, and Commit.
 """
 from dataclasses import dataclass
 from ppb.systemslib import System
-from ppb.eventlib import EventMixin
 
 __all__ = 'Commit',
 
@@ -24,7 +23,7 @@ class TwoPhaseSystem(System):
         signal(Commit())
 
 
-class TwoPhaseMixin(EventMixin):
+class TwoPhaseMixin:
     """
     Mixin to apply to objects to handle two phase updates.
     """
