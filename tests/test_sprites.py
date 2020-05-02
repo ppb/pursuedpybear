@@ -716,10 +716,10 @@ def test_sprite_corners_access(sprite_class, params: SpriteParams, results: Corn
 
 
 class SetterResults(NamedTuple):
-    top_left: CornerResults
-    top_right: CornerResults
-    bottom_left: CornerResults
-    bottom_right: CornerResults
+    top_left: Union[CornerResults, SidesResults]
+    top_right: Union[CornerResults, SidesResults]
+    bottom_left: Union[CornerResults, SidesResults]
+    bottom_right: Union[CornerResults, SidesResults]
 
 
 @pytest.mark.parametrize("sprite_class", [RectangleSprite])
