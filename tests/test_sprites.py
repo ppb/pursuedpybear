@@ -1,4 +1,6 @@
 from math import isclose
+from typing import NamedTuple
+from typing import Union
 from unittest.mock import patch
 import warnings
 
@@ -597,6 +599,52 @@ def test_deprecated_base_sprite_warns():
         assert len(w) == 1
         assert issubclass(w[-1].category, DeprecationWarning)
         assert "deprecated" in str(w[-1].message)
+
+# Below are tests for the new RectangleShapeMixin and the default Sprite that uses it.
+
+
+class SidesResults(NamedTuple):
+    """A container for results while testing sprites."""
+    top: Union[float, int]
+    bottom: Union[float, int]
+    left: Union[float, int]
+    right: Union[float, int]
+
+
+class SpriteParams(NamedTuple):
+    position: Vector
+    width: Union[float, int]
+    height: Union[float, int]
+
+
+class RectangleSprite(RectangleShapeMixin, BaseSprite):
+    pass
+
+
+@pytest.mark.parametrize("sprite_class", [RectangleSprite])
+@pytest.mark.parametrize("params, results", [
+    [SpriteParams(Vector(0, 0), 1, 1), SidesResults(0.5, -0.5, -0.5, 0.5)],
+    [SpriteParams(Vector(0, 0), 2, 1), SidesResults(0.5, -0.5, -1, 1)],
+    [SpriteParams(Vector(0, 0), 1, 2), SidesResults(1, -1, -0.5, 0.5)],
+    [
+        SpriteParams(Vector(-62.03, 16.29), 4.87, 0.53),
+        SidesResults(16.555, 16.025, -64.465, -59.595)
+    ],
+    [
+        SpriteParams(Vector(32.88, 55.3), 7.47, 0.99),
+        SidesResults(55.794999999999995, 54.805, 29.145000000000003, 36.615)
+    ],
+])
+def test_rectangle_shape_mixin_sides_access(sprite_class, params: SpriteParams, results: SidesResults):
+    sprite = sprite_class(
+        position=params.position,
+        width=params.width,
+        height=params.height,
+    )
+    assert sprite.top == results.top
+    assert sprite.bottom == results.bottom
+    assert sprite.left == results.left
+    assert sprite.right == results.right
 
 
 def test_rectangle_shape_mixin_center():

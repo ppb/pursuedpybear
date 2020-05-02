@@ -394,11 +394,11 @@ class RectangleShapeMixin:
 
     @property
     def top(self) -> float:
-        return self.position.y + self.width / 2
+        return self.position.y + self.height / 2
 
     @property
     def bottom(self) -> float:
-        return self.position.y - self.width / 2
+        return self.position.y - self.height / 2
 
     @property
     def top_left(self) -> Vector:
