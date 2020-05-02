@@ -407,20 +407,38 @@ class RectangleShapeMixin:
     @top_left.setter
     def top_left(self, vector: Vector):
         x = vector.x + (self.width / 2)
-        y = vector.y - (self.width / 2)
+        y = vector.y - (self.height / 2)
         self.position = Vector(x, y)
 
     @property
     def top_right(self) -> Vector:
         return Vector(self.right, self.top)
 
+    @top_right.setter
+    def top_right(self, vector: Vector):
+        x = vector.x - (self.width / 2)
+        y = vector.y - (self.height / 2)
+        self.position = Vector(x, y)
+
     @property
     def bottom_left(self) -> Vector:
         return Vector(self.left, self.bottom)
 
+    @bottom_left.setter
+    def bottom_left(self, vector: Vector):
+        x = vector.x + (self.width / 2)
+        y = vector.y + (self.height / 2)
+        self.position = Vector(x, y)
+
     @property
     def bottom_right(self) -> Vector:
         return Vector(self.right, self.bottom)
+
+    @bottom_right.setter
+    def bottom_right(self, vector: Vector):
+        x = vector.x - (self.width / 2)
+        y = vector.y + (self.height / 2)
+        self.position = Vector(x, y)
 
     @property
     def center(self) -> Vector:

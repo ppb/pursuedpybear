@@ -643,7 +643,7 @@ class RectangleSprite(RectangleShapeMixin, BaseSprite):
         SidesResults(55.794999999999995, 54.805, 29.145000000000003, 36.615)
     ],
 ])
-def test_rectangle_shape_mixin_sides_access(sprite_class, params: SpriteParams, results: SidesResults):
+def test_sprite_sides_access(sprite_class, params: SpriteParams, results: SidesResults):
     sprite = sprite_class(
         position=params.position,
         width=params.width,
@@ -703,12 +703,81 @@ def test_rectangle_shape_mixin_sides_access(sprite_class, params: SpriteParams, 
         )
     ]
 ])
-def test_rectangle_shape_mixin_corners_access(sprite_class, params: SpriteParams, results: CornerResults):
+def test_sprite_corners_access(sprite_class, params: SpriteParams, results: CornerResults):
     sprite = sprite_class(
         position=params.position,
         width=params.width,
         height=params.height,
     )
+    assert sprite.top_left == results.top_left
+    assert sprite.top_right == results.top_right
+    assert sprite.bottom_left == results.bottom_left
+    assert sprite.bottom_right == results.bottom_right
+
+
+class SetterResults(NamedTuple):
+    top_left: CornerResults
+    top_right: CornerResults
+    bottom_left: CornerResults
+    bottom_right: CornerResults
+
+
+@pytest.mark.parametrize("sprite_class", [RectangleSprite])
+@pytest.mark.parametrize("params, setter_results", [
+    [
+        SpriteParams(Vector(0, 0), 1, 1),
+        SetterResults(
+            CornerResults(Vector(0, 0), Vector(1, 0), Vector(0, -1), Vector(1, -1)),
+            CornerResults(Vector(-1, 0), Vector(0, 0), Vector(-1, -1), Vector(0, -1)),
+            CornerResults(Vector(0, 1), Vector(1, 1), Vector(0, 0), Vector(1, 0)),
+            CornerResults(Vector(-1, 1), Vector(0, 1), Vector(-1, 0), Vector(0, 0)),
+        )
+    ],
+    [
+        SpriteParams(Vector(0, 0), 2, 1),
+        SetterResults(
+            CornerResults(Vector(0, 0), Vector(2, 0), Vector(0, -1), Vector(2, -1)),
+            CornerResults(Vector(-2, 0), Vector(0, 0), Vector(-2, -1), Vector(0, -1)),
+            CornerResults(Vector(0, 1), Vector(2, 1), Vector(0, 0), Vector(2, 0)),
+            CornerResults(Vector(-2, 1), Vector(0, 1), Vector(-2, 0), Vector(0, 0))
+        )
+    ],
+    [
+        SpriteParams(Vector(200, 200), 1, 1),
+        SetterResults(
+            CornerResults(Vector(200, 200), Vector(201, 200), Vector(200, 199), Vector(201, 199)),
+            CornerResults(Vector(199, 200), Vector(200, 200), Vector(199, 199), Vector(200, 199)),
+            CornerResults(Vector(200, 201), Vector(201, 201), Vector(200, 200), Vector(201, 200)),
+            CornerResults(Vector(199, 201), Vector(200, 201), Vector(199, 200), Vector(200, 200))
+        )
+    ]
+])
+def test_sprite_corners_set(sprite_class, params: SpriteParams, setter_results: SetterResults):
+    sprite = sprite_class(width=params.width, heigh=params.height)
+
+    sprite.top_left = params.position
+    results = setter_results.top_left
+    assert sprite.top_left == results.top_left
+    assert sprite.top_right == results.top_right
+    assert sprite.bottom_left == results.bottom_left
+    assert sprite.bottom_right == results.bottom_right
+
+    sprite.top_right = params.position
+    results = setter_results.top_right
+    assert sprite.top_left == results.top_left
+    assert sprite.top_right == results.top_right
+    assert sprite.bottom_left == results.bottom_left
+    assert sprite.bottom_right == results.bottom_right
+
+    sprite.bottom_left = params.position
+    results = setter_results.bottom_left
+    assert sprite.top_left == results.top_left
+    assert sprite.top_right == results.top_right
+    assert sprite.bottom_left == results.bottom_left
+    assert sprite.bottom_right == results.bottom_right
+
+    sprite.bottom_right = params.position
+    results = setter_results.bottom_right
     assert sprite.top_left == results.top_left
     assert sprite.top_right == results.top_right
     assert sprite.bottom_left == results.bottom_left
@@ -727,20 +796,3 @@ def test_rectangle_shape_mixin_center():
 
     assert test_sprite.center == test_sprite.position
     assert test_sprite.center == Vector(100, 100)
-
-
-def test_rectangle_shape_mixin_top_left():
-    class TestSprite(RectangleShapeMixin, BaseSprite):
-        pass
-
-    test_sprite = TestSprite()
-
-    assert test_sprite.width == 1
-    assert test_sprite.height == 1
-
-    assert test_sprite.top_left == Vector(-0.5, 0.5)
-
-    test_sprite.top_left = Vector(200, 200)
-
-    assert test_sprite.top_left == Vector(200, 200)
-    assert test_sprite.center == Vector(200.5, 199.5)
