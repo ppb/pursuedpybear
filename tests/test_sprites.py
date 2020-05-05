@@ -788,7 +788,7 @@ def test_sprite_corners_access(sprite_class, params: SpriteParams, results: Corn
     assert sprite.bottom_right == results.bottom_right
 
 
-@pytest.mark.parametrize("sprite_class", [RectangleTestSprite])
+@pytest.mark.parametrize("sprite_class", [RectangleTestSprite, RectangleSprite])
 @pytest.mark.parametrize("params, setter_results", [
     [
         SpriteParams(Vector(0, 0), 1, 1),

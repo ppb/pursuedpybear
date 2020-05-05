@@ -23,6 +23,7 @@ __all__ = (
     "RotatableMixin",
     "SquareShapeMixin",
     "RectangleShapeMixin",
+    "RectangleSprite",
     "RenderableMixin",
 )
 
@@ -477,4 +478,17 @@ class Sprite(SquareShapeMixin, RenderableMixin, RotatableMixin, BaseSprite):
     * RotatableMixin
 
     New in 0.7.0: Use this in place of BaseSprite in your games.
+    """
+
+
+class RectangleSprite(RectangleShapeMixin, RenderableMixin, RotatableMixin, BaseSprite):
+    """
+    A rectangle sprite.
+
+    Sprite includes:
+
+    * BaseSprite
+    * RectangleShapeMixin
+    * RenderableMixin
+    *RotatableMixin
     """
