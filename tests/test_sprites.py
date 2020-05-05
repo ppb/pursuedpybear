@@ -18,7 +18,13 @@ class RectangleTestSprite(RectangleShapeMixin, BaseSprite):
     pass
 
 
-SPRITE_CLASSES = [RectangleTestSprite, RectangleSprite]
+class SquareTestSprite(SquareShapeMixin, BaseSprite):
+    pass
+
+
+RECTANGLE_SPRITE_CLASSES = [RectangleTestSprite, RectangleSprite]
+SQUARE_SPRITE_CLASSES = [SquareTestSprite, Sprite]
+SPRITE_CLASSES = [*RECTANGLE_SPRITE_CLASSES, *SQUARE_SPRITE_CLASSES]
 
 
 def test_class_attrs():
@@ -81,39 +87,34 @@ def test_rotatable_base_sprite():
     assert test_sprite.rotation == 1
 
 
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @given(y=floats(allow_nan=False, allow_infinity=False))
-def test_sides_bottom(y):
-    sprite = Sprite(position=(0, y))
+def test_sides_bottom(y, sprite_class):
+    sprite = sprite_class(position=(0, y))
     assert isclose(sprite.bottom, y - 0.5)
-
-
-def test_sides_bottom_invalid_access():
-    sprite = Sprite()
-    with pytest.raises(AttributeError):
-        unknown = sprite.bottom.bottom
-
-    with pytest.raises(AttributeError):
-        unknown = sprite.bottom.top
 
 
 # ints because the kinds of floats hypothesis generates aren't realistic
 # to our use case.
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @given(y=integers(max_value=10_000_000, min_value=-10_000_000))
-def test_sides_bottom_set(y):
-    sprite = Sprite()
+def test_sides_bottom_set(y, sprite_class):
+    sprite = sprite_class()
     sprite.bottom = y
     assert sprite.bottom == y
     assert sprite.position.y == y + 0.5
 
 
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @given(y=integers(max_value=10_000_000, min_value=-10_000_000))
-def test_sides_bottom_plus_equals(y):
-    sprite = Sprite()
+def test_sides_bottom_plus_equals(y, sprite_class):
+    sprite = sprite_class()
     sprite.bottom += y
     assert sprite.bottom == y - 0.5
     assert sprite.position.y == sprite.bottom + 0.5
 
 
+@pytest.mark.skip
 @given(x=floats(allow_nan=False, allow_infinity=False), y=floats(allow_nan=False, allow_infinity=False))
 def test_sides_bottom_center(x, y):
     sprite = Sprite(position=(x, y))
@@ -124,6 +125,7 @@ def test_sides_bottom_center(x, y):
 
 # ints because the kinds of floats hypothesis generates aren't realistic
 # to our use case.
+@pytest.mark.skip
 @pytest.mark.parametrize("vector_type", [tuple, Vector])
 @given(x=integers(max_value=10_000_000, min_value=-10_000_000), y=integers(max_value=10_000_000, min_value=-10_000_000))
 def test_sides_bottom_center_set(x, y, vector_type):
@@ -134,147 +136,110 @@ def test_sides_bottom_center_set(x, y, vector_type):
     assert sprite.position == bottom_center + Vector(0, 0.5)
 
 
+@pytest.mark.skip
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @pytest.mark.parametrize("vector_type", [tuple, Vector])
 @given(x=integers(max_value=10_000_000, min_value=-10_000_000), y=integers(max_value=10_000_000, min_value=-10_000_000))
-def test_sides_bottom_center_plus_equals(x, y, vector_type):
-    sprite = Sprite()
-    sprite.bottom.center += vector_type((x, y))
-    bottom_center = sprite.bottom.center
+def test_sides_bottom_center_plus_equals(x, y, vector_type, sprite_class):
+    sprite = sprite_class()
+    sprite.bottom_center += vector_type((x, y))
+    bottom_center = sprite.bottom_center
     assert bottom_center == Vector(x, y - 0.5)
     assert sprite.position == bottom_center + Vector(0, 0.5)
 
 
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @given(x=floats(allow_nan=False, allow_infinity=False), y=floats(allow_nan=False, allow_infinity=False))
-def test_sides_bottom_left(x, y):
-    sprite = Sprite(position=(x, y))
-    bottom_left = sprite.bottom.left
-    left_bottom = sprite.left.bottom
-    assert bottom_left == left_bottom
+def test_sides_bottom_left(x, y, sprite_class):
+    sprite = sprite_class(position=(x, y))
+    bottom_left = sprite.bottom_left
     assert isclose(bottom_left.y, y - 0.5)
     assert isclose(bottom_left.x, x - 0.5)
 
 
 # ints because the kinds of floats hypothesis generates aren't realistic
 # to our use case.
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @pytest.mark.parametrize("vector_type", [tuple, Vector])
 @given(x=integers(max_value=10_000_000, min_value=-10_000_000), y=integers(max_value=10_000_000, min_value=-10_000_000))
-def test_sides_bottom_left_set(x, y, vector_type):
-    sprite = Sprite()
-    sprite.bottom.left = vector_type((x, y))
-    bottom_left = sprite.bottom.left
-    left_bottom = sprite.left.bottom
-    assert bottom_left == left_bottom
+def test_sides_bottom_left_set(x, y, vector_type, sprite_class):
+    sprite = sprite_class()
+    sprite.bottom_left = vector_type((x, y))
+    bottom_left = sprite.bottom_left
     assert bottom_left == Vector(x, y)
     assert sprite.position == bottom_left + Vector(0.5, 0.5)
 
-    # duplicating to prove top.left and left.top are the same.
-    sprite = Sprite()
-    sprite.left.bottom = vector_type((x, y))
-    bottom_left = sprite.bottom.left
-    left_bottom = sprite.left.bottom
-    assert left_bottom == bottom_left
-    assert left_bottom == Vector(x, y)
-    assert sprite.position == left_bottom + Vector(0.5, 0.5)
 
-
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @pytest.mark.parametrize("vector_type", [tuple, Vector])
 @given(x=integers(max_value=10_000_000, min_value=-10_000_000), y=integers(max_value=10_000_000, min_value=-10_000_000))
-def test_sides_bottom_left_plus_equals(x, y, vector_type):
-    sprite = Sprite()
-    sprite.bottom.left += vector_type((x, y))
-    bottom_left = sprite.bottom.left
-    left_bottom = sprite.left.bottom
-    assert bottom_left == left_bottom
+def test_sides_bottom_left_plus_equals(x, y, vector_type, sprite_class):
+    sprite = sprite_class()
+    sprite.bottom_left += vector_type((x, y))
+    bottom_left = sprite.bottom_left
     assert bottom_left == Vector(x - 0.5, y - 0.5)
     assert sprite.position == bottom_left + Vector(0.5, 0.5)
 
-    # duplicating to prove bottom.left and left.bottom are the same.
-    sprite = Sprite()
-    sprite.bottom.left += vector_type((x, y))
-    bottom_left = sprite.bottom.left
-    left_bottom = sprite.left.bottom
-    assert left_bottom == bottom_left
-    assert left_bottom == Vector(x +- 0.5, y - 0.5)
-    assert sprite.position == left_bottom + Vector(0.5, 0.5)
 
-
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @given(x=floats(allow_nan=False, allow_infinity=False), y=floats(allow_nan=False, allow_infinity=False))
-def test_sides_bottom_right(x, y):
-    sprite = Sprite(position=(x, y))
-    bottom_right = sprite.bottom.right
-    right_bottom = sprite.right.bottom
-    assert bottom_right == right_bottom
+def test_sides_bottom_right(x, y, sprite_class):
+    sprite = sprite_class(position=(x, y))
+    bottom_right = sprite.bottom_right
     assert isclose(bottom_right.y, y - 0.5)
     assert isclose(bottom_right.x, x + 0.5)
 
 
 # ints because the kinds of floats hypothesis generates aren't realistic
 # to our use case.
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @pytest.mark.parametrize("vector_type", [tuple, Vector])
 @given(x=integers(max_value=10_000_000, min_value=-10_000_000), y=integers(max_value=10_000_000, min_value=-10_000_000))
-def test_sides_bottom_right_set(x, y, vector_type):
-    sprite = Sprite()
-    sprite.bottom.right = vector_type((x, y))
-    bottom_right = sprite.bottom.right
-    right_bottom = sprite.right.bottom
-    assert bottom_right == right_bottom
+def test_sides_bottom_right_set(x, y, vector_type, sprite_class):
+    sprite = sprite_class()
+    sprite.bottom_right = vector_type((x, y))
+    bottom_right = sprite.bottom_right
     assert bottom_right == Vector(x, y)
     assert sprite.position == bottom_right + Vector(-0.5, 0.5)
 
-    # duplicating to prove top.left and left.top are the same.
-    sprite = Sprite()
-    sprite.right.bottom = vector_type((x, y))
-    bottom_right = sprite.bottom.right
-    right_bottom = sprite.right.bottom
-    assert right_bottom == bottom_right
-    assert right_bottom == Vector(x, y)
-    assert sprite.position == right_bottom + Vector(-0.5, 0.5)
 
-
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @pytest.mark.parametrize("vector_type", [tuple, Vector])
 @given(x=integers(max_value=10_000_000, min_value=-10_000_000), y=integers(max_value=10_000_000, min_value=-10_000_000))
-def test_sides_bottom_right_plus_equals(x, y, vector_type):
-    sprite = Sprite()
-    sprite.bottom.right += vector_type((x, y))
-    bottom_right = sprite.bottom.right
-    right_bottom = sprite.right.bottom
-    assert bottom_right == right_bottom
+def test_sides_bottom_right_plus_equals(x, y, vector_type, sprite_class):
+    sprite = sprite_class()
+    sprite.bottom_right += vector_type((x, y))
+    bottom_right = sprite.bottom_right
     assert bottom_right == Vector(x + 0.5, y - 0.5)
     assert sprite.position == bottom_right + Vector(-0.5, 0.5)
 
-    # duplicating to prove bottom.left and left.bottom are the same.
-    sprite = Sprite()
-    sprite.bottom.left += vector_type((x, y))
-    bottom_right = sprite.bottom.right
-    right_bottom = sprite.right.bottom
-    assert right_bottom == bottom_right
-    assert right_bottom == Vector(x + 0.5, y - 0.5)
-    assert sprite.position == right_bottom + Vector(-0.5, 0.5)
 
-
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @given(x=floats(allow_nan=False, allow_infinity=False), y=floats(allow_nan=False, allow_infinity=False))
-def test_sides_center_equals_position(x, y):
-    sprite = Sprite(position=(x, y))
+def test_sides_center_equals_position(x, y, sprite_class):
+    sprite = sprite_class(position=(x, y))
     assert sprite.center == sprite.position
 
 
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @pytest.mark.parametrize("vector_type", [tuple, Vector])
 @given(x=floats(allow_nan=False, allow_infinity=False), y=floats(allow_nan=False, allow_infinity=False))
-def test_sides_center_setting(x, y, vector_type):
-    sprite = Sprite()
+def test_sides_center_setting(x, y, vector_type, sprite_class):
+    sprite = sprite_class()
     sprite.center = vector_type((x, y))
     assert sprite.center.x == x
     assert sprite.center.y == y
     assert sprite.position == sprite.center
 
 
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @pytest.mark.parametrize("vector_type", [tuple, Vector])
 @given(x=floats(allow_nan=False, allow_infinity=False),
        y=floats(allow_nan=False, allow_infinity=False),
        delta_x=floats(allow_nan=False, allow_infinity=False),
        delta_y=floats(allow_nan=False, allow_infinity=False))
-def test_sides_center_plus_equals(x, y, delta_x, delta_y, vector_type):
-    sprite = Sprite(position=(x, y))
+def test_sides_center_plus_equals(x, y, delta_x, delta_y, vector_type, sprite_class):
+    sprite = sprite_class(position=(x, y))
     sprite.center += vector_type((delta_x, delta_y))
     assert sprite.position.x == x + delta_x
     assert sprite.position.y == y + delta_y
@@ -287,35 +252,28 @@ def test_sides_left(x):
     assert isclose(sprite.left, x - 0.5)
 
 
-
-def test_sides_left_invalid_access():
-    sprite = Sprite()
-    with pytest.raises(AttributeError):
-        unknown = sprite.left.right
-
-    with pytest.raises(AttributeError):
-        unknown = sprite.left.left
-
-
 # ints because the kinds of floats hypothesis generates aren't realistic
 # to our use case.
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @given(x=integers(max_value=10_000_000, min_value=-10_000_000))
-def test_sides_left_set(x):
-    sprite = Sprite()
+def test_sides_left_set(x, sprite_class):
+    sprite = sprite_class()
     sprite.left = x
     print(float(sprite.left))
     assert sprite.left == x
     assert sprite.position.x == x + 0.5
 
 
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @given(x=integers(max_value=10_000_000, min_value=-10_000_000))
-def test_sides_left_plus_equals(x):
-    sprite = Sprite()
+def test_sides_left_plus_equals(x, sprite_class):
+    sprite = sprite_class()
     sprite.left += x
     assert sprite.left == x - 0.5
     assert sprite.position.x == sprite.left + 0.5
 
 
+@pytest.mark.skip
 @given(x=floats(allow_nan=False, allow_infinity=False), y=floats(allow_nan=False, allow_infinity=False))
 def test_sides_left_center(x, y):
     sprite = Sprite(position=(x, y))
@@ -326,6 +284,7 @@ def test_sides_left_center(x, y):
 
 # ints because the kinds of floats hypothesis generates aren't realistic
 # to our use case.
+@pytest.mark.skip
 @pytest.mark.parametrize("vector_type", [tuple, Vector])
 @given(x=integers(max_value=10_000_000, min_value=-10_000_000), y=integers(max_value=10_000_000, min_value=-10_000_000))
 def test_sides_left_center_set(x, y, vector_type):
@@ -336,50 +295,46 @@ def test_sides_left_center_set(x, y, vector_type):
     assert sprite.position == left_center + Vector(0.5, 0)
 
 
+@pytest.mark.skip
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @pytest.mark.parametrize("vector_type", [tuple, Vector])
 @given(x=integers(max_value=10_000_000, min_value=-10_000_000), y=integers(max_value=10_000_000, min_value=-10_000_000))
-def test_sides_left_center_plus_equals(x, y, vector_type):
-    sprite = Sprite()
+def test_sides_left_center_plus_equals(x, y, vector_type, sprite_class):
+    sprite = sprite_class()
     sprite.left.center += vector_type((x, y))
     left_center = sprite.left.center
     assert left_center == Vector(x - 0.5, y)
     assert sprite.position == left_center + Vector(0.5, 0)
 
 
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @given(x=floats(allow_nan=False, allow_infinity=False))
-def test_sides_right(x):
-    sprite = Sprite(position=(x, 0))
+def test_sides_right(x, sprite_class):
+    sprite = sprite_class(position=(x, 0))
     assert isclose(sprite.right, x + 0.5)
-
-
-def test_sides_right_invalid_access():
-    sprite = Sprite()
-    with pytest.raises(AttributeError):
-        unknown = sprite.right.right
-
-    with pytest.raises(AttributeError):
-        unknown = sprite.right.left
 
 
 # ints because the kinds of floats hypothesis generates aren't realistic
 # to our use case.
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @given(x=integers(max_value=10_000_000, min_value=-10_000_000))
-def test_sides_right_set(x):
-    sprite = Sprite()
+def test_sides_right_set(x, sprite_class):
+    sprite = sprite_class()
     sprite.right = x
-    print(float(sprite.left))
     assert sprite.right == x
     assert sprite.position.x == x - 0.5
 
 
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @given(x=integers(max_value=10_000_000, min_value=-10_000_000))
-def test_sides_right_plus_equals(x):
-    sprite = Sprite()
+def test_sides_right_plus_equals(x, sprite_class):
+    sprite = sprite_class()
     sprite.right += x
     assert sprite.right == x + 0.5
     assert sprite.position.x == sprite.right - 0.5
 
 
+@pytest.mark.skip
 @given(x=floats(allow_nan=False, allow_infinity=False), y=floats(allow_nan=False, allow_infinity=False))
 def test_sides_right_center(x, y):
     sprite = Sprite(position=(x, y))
@@ -390,6 +345,7 @@ def test_sides_right_center(x, y):
 
 # ints because the kinds of floats hypothesis generates aren't realistic
 # to our use case.
+@pytest.mark.skip
 @pytest.mark.parametrize("vector_type", [tuple, Vector])
 @given(x=integers(max_value=10_000_000, min_value=-10_000_000), y=integers(max_value=10_000_000, min_value=-10_000_000))
 def test_sides_right_center_set(x, y, vector_type):
@@ -400,49 +356,46 @@ def test_sides_right_center_set(x, y, vector_type):
     assert sprite.position == right_center + Vector(-0.5, 0)
 
 
+@pytest.mark.skip
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @pytest.mark.parametrize("vector_type", [tuple, Vector])
 @given(x=integers(max_value=10_000_000, min_value=-10_000_000), y=integers(max_value=10_000_000, min_value=-10_000_000))
-def test_sides_right_center_plus_equals(x, y, vector_type):
-    sprite = Sprite()
+def test_sides_right_center_plus_equals(x, y, vector_type, sprite_class):
+    sprite = sprite_class()
     sprite.right.center += vector_type((x, y))
     right_center = sprite.right.center
     assert right_center == Vector(x + 0.5, y)
     assert sprite.position == right_center + Vector(-0.5, 0)
 
 
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @given(y=floats(allow_nan=False, allow_infinity=False))
-def test_sides_top(y):
-    sprite = Sprite(position=(0, y))
+def test_sides_top(y, sprite_class):
+    sprite = sprite_class(position=(0, y))
     assert isclose(sprite.top, y + 0.5)
-
-
-def test_sides_top_invalid_access():
-    sprite = Sprite()
-    with pytest.raises(AttributeError):
-        unknown = sprite.top.bottom
-
-    with pytest.raises(AttributeError):
-        unknown = sprite.top.top
 
 
 # ints because the kinds of floats hypothesis generates aren't realistic
 # to our use case.
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @given(y=integers(max_value=10_000_000, min_value=-10_000_000))
-def test_sides_top_set(y):
-    sprite = Sprite()
+def test_sides_top_set(y, sprite_class):
+    sprite = sprite_class()
     sprite.top = y
     assert sprite.top == y
     assert sprite.position.y == y - 0.5
 
 
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @given(y=integers(max_value=10_000_000, min_value=-10_000_000))
-def test_sides_top_plus_equals(y):
-    sprite = Sprite()
+def test_sides_top_plus_equals(y, sprite_class):
+    sprite = sprite_class()
     sprite.top += y
     assert sprite.top == y + 0.5
     assert sprite.position.y == sprite.top - 0.5
 
 
+@pytest.mark.skip
 @given(x=floats(allow_nan=False, allow_infinity=False), y=floats(allow_nan=False, allow_infinity=False))
 def test_sides_top_center(x, y):
     sprite = Sprite(position=(x, y))
@@ -453,6 +406,7 @@ def test_sides_top_center(x, y):
 
 # ints because the kinds of floats hypothesis generates aren't realistic
 # to our use case.
+@pytest.mark.skip
 @pytest.mark.parametrize("vector_type", [tuple, Vector])
 @given(x=integers(max_value=10_000_000, min_value=-10_000_000), y=integers(max_value=10_000_000, min_value=-10_000_000))
 def test_sides_top_center_set(x, y, vector_type):
@@ -463,6 +417,7 @@ def test_sides_top_center_set(x, y, vector_type):
     assert sprite.position == top_center + Vector(0, -0.5)
 
 
+@pytest.mark.skip  # Have discussion about centers.
 @pytest.mark.parametrize("vector_type", [tuple, Vector])
 @given(x=integers(max_value=10_000_000, min_value=-10_000_000), y=integers(max_value=10_000_000, min_value=-10_000_000))
 def test_sides_top_center_plus_equals(x, y, vector_type):
@@ -473,112 +428,70 @@ def test_sides_top_center_plus_equals(x, y, vector_type):
     assert sprite.position == top_center + Vector(0, -0.5)
 
 
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @given(x=floats(allow_nan=False, allow_infinity=False), y=floats(allow_nan=False, allow_infinity=False))
-def test_sides_top_left(x, y):
+def test_sides_top_left(x, y, sprite_class):
     sprite = Sprite(position=(x, y))
-    top_left = sprite.top.left
-    left_top = sprite.left.top
-    assert top_left == left_top
+    top_left = sprite.top_left
     assert isclose(top_left.y, y + 0.5)
     assert isclose(top_left.x, x - 0.5)
 
 
 # ints because the kinds of floats hypothesis generates aren't realistic
 # to our use case.
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @pytest.mark.parametrize("vector_type", [tuple, Vector])
 @given(x=integers(max_value=10_000_000, min_value=-10_000_000), y=integers(max_value=10_000_000, min_value=-10_000_000))
-def test_sides_top_left_set(x, y, vector_type):
-    sprite = Sprite()
-    sprite.top.left = vector_type((x, y))
-    top_left = sprite.top.left
-    left_top = sprite.left.top
-    assert top_left == left_top
+def test_sides_top_left_set(x, y, vector_type, sprite_class):
+    sprite = sprite_class()
+    sprite.top_left = vector_type((x, y))
+    top_left = sprite.top_left
     assert top_left == Vector(x, y)
     assert sprite.position == top_left + Vector(0.5, -0.5)
 
-    # duplicating to prove top.left and left.top are the same.
-    sprite = Sprite()
-    sprite.left.top = vector_type((x, y))
-    top_left = sprite.top.left
-    left_top = sprite.left.top
-    assert left_top == top_left
-    assert left_top == Vector(x, y)
-    assert sprite.position == left_top + Vector(0.5, -0.5)
 
-
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @pytest.mark.parametrize("vector_type", [tuple, Vector])
 @given(x=integers(max_value=10_000_000, min_value=-10_000_000), y=integers(max_value=10_000_000, min_value=-10_000_000))
-def test_sides_top_left_plus_equals(x, y, vector_type):
-    sprite = Sprite()
-    sprite.top.left += vector_type((x, y))
-    top_left = sprite.top.left
-    left_top = sprite.left.top
-    assert top_left == left_top
+def test_sides_top_left_plus_equals(x, y, vector_type, sprite_class):
+    sprite = sprite_class()
+    sprite.top_left += vector_type((x, y))
+    top_left = sprite.top_left
     assert top_left == Vector(x - 0.5, y + 0.5)
     assert sprite.position == top_left + Vector(0.5, -0.5)
 
-    # duplicating to prove top.left and left.top are the same.
-    sprite = Sprite()
-    sprite.top.left += vector_type((x, y))
-    top_left = sprite.top.left
-    left_top = sprite.left.top
-    assert left_top == top_left
-    assert left_top == Vector(x - 0.5, y + 0.5)
-    assert sprite.position == left_top + Vector(0.5, -0.5)
 
-
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @given(x=floats(allow_nan=False, allow_infinity=False), y=floats(allow_nan=False, allow_infinity=False))
-def test_sides_top_right(x, y):
-    sprite = Sprite(position=(x, y))
-    top_right = sprite.top.right
-    right_top = sprite.right.top
-    assert top_right == right_top
+def test_sides_top_right(x, y, sprite_class):
+    sprite = sprite_class(position=(x, y))
+    top_right = sprite.top_right
     assert isclose(top_right.y, y + 0.5)
     assert isclose(top_right.x, x + 0.5)
 
 
 # ints because the kinds of floats hypothesis generates aren't realistic
 # to our use case.
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @pytest.mark.parametrize("vector_type", [tuple, Vector])
 @given(x=integers(max_value=10_000_000, min_value=-10_000_000), y=integers(max_value=10_000_000, min_value=-10_000_000))
-def test_sides_top_right_set(x, y, vector_type):
-    sprite = Sprite()
-    sprite.top.right = vector_type((x, y))
-    top_right = sprite.top.right
-    right_top = sprite.right.top
-    assert top_right == right_top
+def test_sides_top_right_set(x, y, vector_type, sprite_class):
+    sprite = sprite_class()
+    sprite.top_right = vector_type((x, y))
+    top_right = sprite.top_right
     assert top_right == Vector(x, y)
     assert sprite.position == top_right + Vector(-0.5, -0.5)
 
-    # duplicating to prove top.left and left.top are the same.
-    sprite = Sprite()
-    sprite.right.top = vector_type((x, y))
-    top_right = sprite.top.right
-    right_top = sprite.right.top
-    assert right_top == top_right
-    assert right_top == Vector(x, y)
-    assert sprite.position == right_top + Vector(-0.5, -0.5)
 
-
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @pytest.mark.parametrize("vector_type", [tuple, Vector])
 @given(x=integers(max_value=10_000_000, min_value=-10_000_000), y=integers(max_value=10_000_000, min_value=-10_000_000))
-def test_sides_top_right_plus_equals(x, y, vector_type):
-    sprite = Sprite()
-    sprite.top.right += vector_type((x, y))
-    top_right = sprite.top.right
-    right_top = sprite.right.top
-    assert top_right == right_top
+def test_sides_top_right_plus_equals(x, y, vector_type, sprite_class):
+    sprite = sprite_class()
+    sprite.top_right += vector_type((x, y))
+    top_right = sprite.top_right
     assert top_right == Vector(x + 0.5, y + 0.5)
     assert sprite.position == top_right + Vector(-0.5, -0.5)
-
-    # duplicating to prove top.left and left.top are the same.
-    sprite = Sprite()
-    sprite.top.left += vector_type((x, y))
-    top_right = sprite.top.right
-    right_top = sprite.right.top
-    assert right_top == top_right
-    assert right_top == Vector(x + 0.5, y + 0.5)
-    assert sprite.position == right_top + Vector(-0.5, -0.5)
 
 
 def test_sprite_in_main():
@@ -646,7 +559,7 @@ class SideSetterResults(NamedTuple):
     right: SidesResults
 
 
-@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
+@pytest.mark.parametrize("sprite_class", RECTANGLE_SPRITE_CLASSES)
 @pytest.mark.parametrize("params, results", [
     [SpriteParams(Vector(0, 0), 1, 1), SidesResults(0.5, -0.5, -0.5, 0.5)],
     [SpriteParams(Vector(0, 0), 2, 1), SidesResults(0.5, -0.5, -1, 1)],
@@ -672,7 +585,7 @@ def test_sprite_sides_access(sprite_class, params: SpriteParams, results: SidesR
     assert sprite.right == results.right
 
 
-@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
+@pytest.mark.parametrize("sprite_class", RECTANGLE_SPRITE_CLASSES)
 @pytest.mark.parametrize("params, results", [
     [
         SpriteParams(Vector(0, 0), 1, 1),
@@ -731,7 +644,7 @@ def test_sprite_sides_set(sprite_class, params: SpriteParams, results: SideSette
     assert sprite.bottom == expected.bottom
 
 
-@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
+@pytest.mark.parametrize("sprite_class", RECTANGLE_SPRITE_CLASSES)
 @pytest.mark.parametrize("params, results", [
     [
         SpriteParams(Vector(0, 0), 1, 1),
@@ -791,7 +704,7 @@ def test_sprite_corners_access(sprite_class, params: SpriteParams, results: Corn
     assert sprite.bottom_right == results.bottom_right
 
 
-@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
+@pytest.mark.parametrize("sprite_class", RECTANGLE_SPRITE_CLASSES)
 @pytest.mark.parametrize("params, setter_results", [
     [
         SpriteParams(Vector(0, 0), 1, 1),
