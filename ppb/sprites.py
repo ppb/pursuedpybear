@@ -388,17 +388,33 @@ class RectangleShapeMixin:
     def left(self) -> float:
         return self.position.x - self.width / 2
 
+    @left.setter
+    def left(self, value: Union[float, int]):
+        self.position = Vector(value + (self.width * 0.5), self.position.y)
+
     @property
     def right(self) -> float:
         return self.position.x + self.width / 2
+
+    @right.setter
+    def right(self, value: Union[float, int]):
+        self.position = Vector(value - (self.width * 0.5), self.position.y)
 
     @property
     def top(self) -> float:
         return self.position.y + self.height / 2
 
+    @top.setter
+    def top(self, value: Union[int, float]):
+        self.position = Vector(self.position.x, value - (self.height * 0.5))
+
     @property
     def bottom(self) -> float:
         return self.position.y - self.height / 2
+
+    @bottom.setter
+    def bottom(self, value: Union[float, int]):
+        self.position = Vector(self.position.x, value + (self.height * 0.5))
 
     @property
     def top_left(self) -> Vector:

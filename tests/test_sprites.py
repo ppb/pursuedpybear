@@ -625,11 +625,25 @@ class SpriteParams(NamedTuple):
     height: Union[float, int]
 
 
-class RectangleSprite(RectangleShapeMixin, BaseSprite):
+class CornerSetterResults(NamedTuple):
+    top_left: CornerResults
+    top_right: CornerResults
+    bottom_left: CornerResults
+    bottom_right: CornerResults
+
+
+class SideSetterResults(NamedTuple):
+    top: SidesResults
+    bottom: SidesResults
+    left: SidesResults
+    right: SidesResults
+
+
+class RectangleTestSprite(RectangleShapeMixin, BaseSprite):
     pass
 
 
-@pytest.mark.parametrize("sprite_class", [RectangleSprite])
+@pytest.mark.parametrize("sprite_class", [RectangleTestSprite])
 @pytest.mark.parametrize("params, results", [
     [SpriteParams(Vector(0, 0), 1, 1), SidesResults(0.5, -0.5, -0.5, 0.5)],
     [SpriteParams(Vector(0, 0), 2, 1), SidesResults(0.5, -0.5, -1, 1)],
@@ -655,7 +669,66 @@ def test_sprite_sides_access(sprite_class, params: SpriteParams, results: SidesR
     assert sprite.right == results.right
 
 
-@pytest.mark.parametrize("sprite_class", [RectangleSprite])
+@pytest.mark.parametrize("sprite_class", [RectangleTestSprite])
+@pytest.mark.parametrize("params, results", [
+    [
+        SpriteParams(Vector(0, 0), 1, 1),
+        SideSetterResults(
+            SidesResults(0, -1, -0.5, 0.5),
+            SidesResults(1, 0, -0.5, 0.5),
+            SidesResults(0.5, -0.5, 0, 1),
+            SidesResults(0.5, -0.5, -1, 0)
+        )
+    ],
+    [
+        SpriteParams(Vector(0, 0), 2, 1),
+        SideSetterResults(
+            SidesResults(0, -1, -1, 1),
+            SidesResults(1, 0, -1, 1),
+            SidesResults(0.5, -0.5, 0, 2),
+            SidesResults(0.5, -0.5, -2, 0)
+        )
+    ]
+])
+def test_sprite_sides_set(sprite_class, params: SpriteParams, results: SideSetterResults):
+    sprite = sprite_class(
+        width=params.width,
+        height=params.height
+    )
+
+    sprite.left = params.position.x
+    expected = results.left
+    assert sprite.left == expected.left
+    assert sprite.right == expected.right
+    assert sprite.top == expected.top
+    assert sprite.bottom == expected.bottom
+
+    sprite.position = Vector(0, 0)
+    sprite.right = params.position.x
+    expected = results.right
+    assert sprite.left == expected.left
+    assert sprite.right == expected.right
+    assert sprite.top == expected.top
+    assert sprite.bottom == expected.bottom
+
+    sprite.position = Vector(0, 0)
+    sprite.top = params.position.y
+    expected = results.top
+    assert sprite.left == expected.left
+    assert sprite.right == expected.right
+    assert sprite.top == expected.top
+    assert sprite.bottom == expected.bottom
+
+    sprite.position = Vector(0, 0)
+    sprite.bottom = params.position.y
+    expected = results.bottom
+    assert sprite.left == expected.left
+    assert sprite.right == expected.right
+    assert sprite.top == expected.top
+    assert sprite.bottom == expected.bottom
+
+
+@pytest.mark.parametrize("sprite_class", [RectangleTestSprite])
 @pytest.mark.parametrize("params, results", [
     [
         SpriteParams(Vector(0, 0), 1, 1),
@@ -715,18 +788,11 @@ def test_sprite_corners_access(sprite_class, params: SpriteParams, results: Corn
     assert sprite.bottom_right == results.bottom_right
 
 
-class SetterResults(NamedTuple):
-    top_left: Union[CornerResults, SidesResults]
-    top_right: Union[CornerResults, SidesResults]
-    bottom_left: Union[CornerResults, SidesResults]
-    bottom_right: Union[CornerResults, SidesResults]
-
-
-@pytest.mark.parametrize("sprite_class", [RectangleSprite])
+@pytest.mark.parametrize("sprite_class", [RectangleTestSprite])
 @pytest.mark.parametrize("params, setter_results", [
     [
         SpriteParams(Vector(0, 0), 1, 1),
-        SetterResults(
+        CornerSetterResults(
             CornerResults(Vector(0, 0), Vector(1, 0), Vector(0, -1), Vector(1, -1)),
             CornerResults(Vector(-1, 0), Vector(0, 0), Vector(-1, -1), Vector(0, -1)),
             CornerResults(Vector(0, 1), Vector(1, 1), Vector(0, 0), Vector(1, 0)),
@@ -735,7 +801,7 @@ class SetterResults(NamedTuple):
     ],
     [
         SpriteParams(Vector(0, 0), 2, 1),
-        SetterResults(
+        CornerSetterResults(
             CornerResults(Vector(0, 0), Vector(2, 0), Vector(0, -1), Vector(2, -1)),
             CornerResults(Vector(-2, 0), Vector(0, 0), Vector(-2, -1), Vector(0, -1)),
             CornerResults(Vector(0, 1), Vector(2, 1), Vector(0, 0), Vector(2, 0)),
@@ -744,7 +810,7 @@ class SetterResults(NamedTuple):
     ],
     [
         SpriteParams(Vector(200, 200), 1, 1),
-        SetterResults(
+        CornerSetterResults(
             CornerResults(Vector(200, 200), Vector(201, 200), Vector(200, 199), Vector(201, 199)),
             CornerResults(Vector(199, 200), Vector(200, 200), Vector(199, 199), Vector(200, 199)),
             CornerResults(Vector(200, 201), Vector(201, 201), Vector(200, 200), Vector(201, 200)),
@@ -752,7 +818,7 @@ class SetterResults(NamedTuple):
         )
     ]
 ])
-def test_sprite_corners_set(sprite_class, params: SpriteParams, setter_results: SetterResults):
+def test_sprite_corners_set(sprite_class, params: SpriteParams, setter_results: CornerSetterResults):
     sprite = sprite_class(width=params.width, heigh=params.height)
 
     sprite.top_left = params.position
