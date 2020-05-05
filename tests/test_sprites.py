@@ -14,6 +14,13 @@ from ppb.sprites import *
 from ppb_vector import Vector
 
 
+class RectangleTestSprite(RectangleShapeMixin, BaseSprite):
+    pass
+
+
+SPRITE_CLASSES = [RectangleTestSprite, RectangleSprite]
+
+
 def test_class_attrs():
     class TestSprite(BaseSprite):
         position = Vector(4, 2)
@@ -639,11 +646,7 @@ class SideSetterResults(NamedTuple):
     right: SidesResults
 
 
-class RectangleTestSprite(RectangleShapeMixin, BaseSprite):
-    pass
-
-
-@pytest.mark.parametrize("sprite_class", [RectangleTestSprite])
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @pytest.mark.parametrize("params, results", [
     [SpriteParams(Vector(0, 0), 1, 1), SidesResults(0.5, -0.5, -0.5, 0.5)],
     [SpriteParams(Vector(0, 0), 2, 1), SidesResults(0.5, -0.5, -1, 1)],
@@ -669,7 +672,7 @@ def test_sprite_sides_access(sprite_class, params: SpriteParams, results: SidesR
     assert sprite.right == results.right
 
 
-@pytest.mark.parametrize("sprite_class", [RectangleTestSprite])
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @pytest.mark.parametrize("params, results", [
     [
         SpriteParams(Vector(0, 0), 1, 1),
@@ -728,7 +731,7 @@ def test_sprite_sides_set(sprite_class, params: SpriteParams, results: SideSette
     assert sprite.bottom == expected.bottom
 
 
-@pytest.mark.parametrize("sprite_class", [RectangleTestSprite])
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @pytest.mark.parametrize("params, results", [
     [
         SpriteParams(Vector(0, 0), 1, 1),
@@ -788,7 +791,7 @@ def test_sprite_corners_access(sprite_class, params: SpriteParams, results: Corn
     assert sprite.bottom_right == results.bottom_right
 
 
-@pytest.mark.parametrize("sprite_class", [RectangleTestSprite, RectangleSprite])
+@pytest.mark.parametrize("sprite_class", SPRITE_CLASSES)
 @pytest.mark.parametrize("params, setter_results", [
     [
         SpriteParams(Vector(0, 0), 1, 1),
