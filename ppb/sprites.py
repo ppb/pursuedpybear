@@ -11,7 +11,7 @@ from inspect import getfile
 from pathlib import Path
 from typing import Union
 
-from ppb_vector import Vector
+from ppb_vector import Vector, VectorLike
 
 import ppb
 
@@ -173,7 +173,7 @@ class RectangleShapeMixin:
 
     @top.setter
     def top(self, value: Union[int, float]):
-        self.position = Vector(self.position.x, value - (self.height * 0.5))
+        self.position = Vector(self.position.x, value - (self.height / 2))
 
     @property
     def bottom(self) -> float:
@@ -181,7 +181,7 @@ class RectangleShapeMixin:
 
     @bottom.setter
     def bottom(self, value: Union[float, int]):
-        self.position = Vector(self.position.x, value + (self.height * 0.5))
+        self.position = Vector(self.position.x, value + (self.height / 2))
 
     @property
     def top_left(self) -> Vector:
@@ -226,6 +226,42 @@ class RectangleShapeMixin:
         x = vector.x - (self.width / 2)
         y = vector.y + (self.height / 2)
         self.position = Vector(x, y)
+
+    @property
+    def bottom_middle(self) -> Vector:
+        return Vector(self.position.x, self.bottom)
+
+    @bottom_middle.setter
+    def bottom_middle(self, value: VectorLike):
+        value = Vector(value)
+        self.position = Vector(value.x, value.y + self.height / 2)
+
+    @property
+    def left_middle(self) -> Vector:
+        return Vector(self.left, self.position.y)
+
+    @left_middle.setter
+    def left_middle(self, value: VectorLike):
+        value = Vector(value)
+        self.position = Vector(value.x + self.width / 2, value.y)
+
+    @property
+    def right_middle(self) -> Vector:
+        return Vector(self.right, self.position.y)
+
+    @right_middle.setter
+    def right_middle(self, value: VectorLike):
+        value = Vector(value)
+        self.position = Vector(value.x - self.width / 2, value.y)
+
+    @property
+    def top_middle(self) -> Vector:
+        return Vector(self.position.x, self.top)
+
+    @top_middle.setter
+    def top_middle(self, value: VectorLike):
+        value = Vector(value)
+        self.position = Vector(value.x, value.y - self.height / 2)
 
     @property
     def center(self) -> Vector:
