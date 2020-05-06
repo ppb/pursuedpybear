@@ -31,3 +31,4 @@ Halle Jones|HJones@aliacy.com||
 [Arul Prabakaran](https://github.com/arulprabakaran) | [arul.prabakaran@gmail.com](arul.prabakaran@gmail.com) | [arulpraba](https://twitter.com/arulpraba)
 [Calvin Spealman](https://github.com/ironfroggy) | [ironfroggy@gmail.com](ironfroggy@gmail.com) | [@ironfroggy](https://twitter.com/ironfroggy)
 [Sanket Dasgupta](https://github.com/SanketDG) | [sanketdasgupta@gmail.com](sanketdasgupta@gmail.com) | [@SanketDG](https://twitter.com/SanketDG)
+[Serin Delaunay](https://github.com/serin-delaunay) | | [SerinDelaunay](https://twitter.com/SerinDelaunay)
