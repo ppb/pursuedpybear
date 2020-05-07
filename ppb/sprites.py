@@ -316,5 +316,5 @@ class RectangleSprite(RectangleShapeMixin, RenderableMixin, RotatableMixin, Base
     * BaseSprite
     * RectangleShapeMixin
     * RenderableMixin
-    *RotatableMixin
+    * RotatableMixin
     """
