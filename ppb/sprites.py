@@ -137,9 +137,6 @@ class RectangleShapeMixin:
     """
     A Mixin that provides a rectangular area to sprites.
 
-    You should include RectangleShapeMixin before your BaseSprite in your
-    parent classes.
-
     Classes derived from RectangleShapeMixin default to the same size and
     shape as all ppb Sprites: A 1 game unit by 1 game unit square. Just set
     the width and height in your constructor (Or as class attributes) to
