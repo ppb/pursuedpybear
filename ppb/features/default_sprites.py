@@ -26,7 +26,7 @@ class TargetSprite(ppb.Sprite):
         if self.max_speed < self.min_speed:
             raise ValueError("TargetSprite maximum speed cannot be less than minimum speed.")
         if self.exponential_speed > 1.0:
-            raise ValueError("TargetSprite exponential speed cannot be greater than 1.")
+            raise ValueError(f"{type(self).__name__} exponential speed cannot be greater than 1.")
         offset = self.target - self.position
         distance_to_target = offset.length
         if distance_to_target < 0.0001:
