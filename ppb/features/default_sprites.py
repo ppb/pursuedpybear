@@ -2,7 +2,7 @@ import ppb
 import math
 
 
-class TargetSprite(ppb.sprites.BaseSprite):
+class TargetSprite(ppb.Sprite):
     """Sprite that moves to a given target.
 
     :param target: Vector that the sprite moves towards.
