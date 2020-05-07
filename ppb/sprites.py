@@ -273,6 +273,15 @@ class RectangleShapeMixin:
 
 
 class SquareShapeMixin(RectangleShapeMixin):
+    """
+    A Mixin that provides a square area to sprites.
+
+    Extends the interface of :class:`RectangleShapeMixin` by using the ``size``
+    attribute to determine width and height. Setting either ``width`` or
+    ``height`` sets the ``size`` and maintains the square shape at the new size.
+
+    The default size of :class:`SquareShapeMixin` is 1 game unit.
+    """
     size = 1
 
     @property
