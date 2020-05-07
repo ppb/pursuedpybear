@@ -3,7 +3,15 @@ import math
 
 
 class TargetSprite(ppb.sprites.BaseSprite):
-    """Sprite that moves to a given target."""
+    """Sprite that moves to a given target.
+
+    :param target: Vector that the sprite moves towards.
+    :param speed: Distance per second that the sprite travels with linear motion.
+    :param exponential_speed: Fraction of the distance to the target that the sprite travels
+    per second with exponential motion. Should normally be in the range [0.0, 1.0].
+    :param max_speed: Maximum distance per second that the sprite can travel.
+    :param min_speed: Minimum distance per second that the sprite travels when not in range of the target.
+    """
     target = ppb.Vector(0, 0)
     speed = 1.0
     exponential_speed = 0.0
