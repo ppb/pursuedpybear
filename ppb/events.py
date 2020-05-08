@@ -206,7 +206,7 @@ class ReplaceScene:
     An object requested a
     Fired to replace the current scene with a new one.
 
-    new_scene can be an instance or a class. If a class, must include kwargs.
+    ``new_scene`` can be an instance or a class. If a class, must include kwargs.
     If new_scene is an instance kwargs should be empty or None.
 
     Before the previous scene stops, a SceneStopped event will be fired.
