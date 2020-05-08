@@ -220,7 +220,7 @@ class ReplaceScene:
         * `signal(new_scene=ReplaceScene, kwargs={"player": player}`
 
     .. warning::
-       In general, you should not respond to ReplaceScene, if you want to
+       In general, you should not respond to :class:`ReplaceScene`, if you want to
        respond to a new scene, see :class:`SceneStarted`.
     """
     new_scene: Union[BaseScene, Type[BaseScene]]  #: A :class:`~ppb.scenes.BaseScene` class or instance
@@ -294,7 +294,7 @@ class StopScene:
     will be fired after the responses to the :class:`SceneStopped` event.
 
     .. warning::
-       In general, you should not respond to StopScene, if you want to respond
+       In general, you should not respond to :class:`StopScene`, if you want to respond
        to a scene ending, see :class:`SceneStopped`.
     """
     scene: BaseScene = None  #: The currently running scene.
@@ -317,7 +317,7 @@ class Update:
     """
     A simulation tick.
 
-    Respond via on_update to advance the simulation of your game objects.
+    Respond via ``on_update`` to advance the simulation of your game objects.
     """
     time_delta: float  #: Seconds since last Update
     scene: BaseScene = None  #: The currently running scene.
