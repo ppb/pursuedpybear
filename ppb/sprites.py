@@ -11,27 +11,19 @@ from inspect import getfile
 from pathlib import Path
 from typing import Union
 
-import ppb_vector
-from ppb_vector import Vector
+from ppb_vector import Vector, VectorLike
 
 import ppb
-from ppb.utils import FauxFloat
 
 __all__ = (
     "BaseSprite",
     "Sprite",
     "RotatableMixin",
     "SquareShapeMixin",
+    "RectangleShapeMixin",
+    "RectangleSprite",
     "RenderableMixin",
 )
-
-TOP = "top"
-BOTTOM = "bottom"
-LEFT = "left"
-RIGHT = "right"
-
-error_message = "'{klass}' object does not have attribute '{attribute}'"
-side_attribute_error_message = error_message.format
 
 
 class BaseSprite:
@@ -141,228 +133,169 @@ class RotatableMixin:
         self.rotation += degrees
 
 
-class Side(FauxFloat):
+class RectangleShapeMixin:
     """
-    Acts like a float, but also has a variety of accessors.
+    A Mixin that provides a rectangular area to sprites.
+
+    Classes derived from RectangleShapeMixin default to the same size and
+    shape as all ppb Sprites: A 1 game unit by 1 game unit square. Just set
+    the width and height in your constructor (Or as class attributes) to
+    change this default.
     """
-    sides = {
-        LEFT: ('x', -1),
-        RIGHT: ('x', 1),
-        TOP: ('y', 1),
-        BOTTOM: ('y', -1)
-    }
-
-    def __init__(self, parent: 'SquareShapeMixin', side: str):
-        self.side = side
-        self.parent = parent
-
-    def __repr__(self):
-        return f"Side({self.parent!r}, {self.side!r})"
-
-    def __str__(self):
-        return str(float(self))
-
-    def _lookup_side(self, side):
-        dimension, sign = self.sides[side]
-        return dimension, sign * self.parent._offset_value
-
-    def __float__(self):
-        dimension, offset = self._lookup_side(self.side)
-        return self.parent.position[dimension] + offset
+    width: int = 1
+    height: int = 1
+    # Following class properties for type hinting only. Your concrete sprite
+    # should already have one.
+    position: Vector
 
     @property
-    def top(self) -> Vector:
-        """
-        Get the corner vector
-        """
-        self._attribute_gate(TOP, [TOP, BOTTOM])
-        return Vector(float(self), float(self.parent.top))
-
-    @top.setter
-    def top(self, value):
-        self._attribute_gate(TOP, [TOP, BOTTOM])
-        self.parent.position = self._mk_update_vector_side(TOP, value)
-
-    @property
-    def bottom(self) -> Vector:
-        """
-        Get the corner vector
-        """
-        self._attribute_gate(BOTTOM, [TOP, BOTTOM])
-        return Vector(float(self), float(self.parent.bottom))
-
-    @bottom.setter
-    def bottom(self, value):
-        self._attribute_gate(BOTTOM, [TOP, BOTTOM])
-        self.parent.position = self._mk_update_vector_side(BOTTOM, value)
-
-    @property
-    def left(self) -> Vector:
-        """
-        Get the corner vector
-        """
-        self._attribute_gate(LEFT, [LEFT, RIGHT])
-        return Vector(float(self.parent.left), float(self))
+    def left(self) -> float:
+        return self.position.x - self.width / 2
 
     @left.setter
-    def left(self, value):
-        self._attribute_gate(LEFT, [LEFT, RIGHT])
-        self.parent.position = self._mk_update_vector_side(LEFT, value)
+    def left(self, value: Union[float, int]):
+        self.position = Vector(value + (self.width / 2), self.position.y)
 
     @property
-    def right(self) -> Vector:
-        """
-        Get the corner vector
-        """
-        self._attribute_gate(RIGHT, [LEFT, RIGHT])
-        return Vector(float(self.parent.right), float(self))
+    def right(self) -> float:
+        return self.position.x + self.width / 2
 
     @right.setter
-    def right(self, value):
-        self._attribute_gate(RIGHT, [LEFT, RIGHT])
-        self.parent.position = self._mk_update_vector_side(RIGHT, value)
+    def right(self, value: Union[float, int]):
+        self.position = Vector(value - (self.width / 2), self.position.y)
+
+    @property
+    def top(self) -> float:
+        return self.position.y + self.height / 2
+
+    @top.setter
+    def top(self, value: Union[int, float]):
+        self.position = Vector(self.position.x, value - (self.height / 2))
+
+    @property
+    def bottom(self) -> float:
+        return self.position.y - self.height / 2
+
+    @bottom.setter
+    def bottom(self, value: Union[float, int]):
+        self.position = Vector(self.position.x, value + (self.height / 2))
+
+    @property
+    def top_left(self) -> Vector:
+        return Vector(self.left, self.top)
+
+    @top_left.setter
+    def top_left(self, vector: Vector):
+        vector = Vector(vector)
+        x = vector.x + (self.width / 2)
+        y = vector.y - (self.height / 2)
+        self.position = Vector(x, y)
+
+    @property
+    def top_right(self) -> Vector:
+        return Vector(self.right, self.top)
+
+    @top_right.setter
+    def top_right(self, vector: Vector):
+        vector = Vector(vector)
+        x = vector.x - (self.width / 2)
+        y = vector.y - (self.height / 2)
+        self.position = Vector(x, y)
+
+    @property
+    def bottom_left(self) -> Vector:
+        return Vector(self.left, self.bottom)
+
+    @bottom_left.setter
+    def bottom_left(self, vector: Vector):
+        vector = Vector(vector)
+        x = vector.x + (self.width / 2)
+        y = vector.y + (self.height / 2)
+        self.position = Vector(x, y)
+
+    @property
+    def bottom_right(self) -> Vector:
+        return Vector(self.right, self.bottom)
+
+    @bottom_right.setter
+    def bottom_right(self, vector: Vector):
+        vector = Vector(vector)
+        x = vector.x - (self.width / 2)
+        y = vector.y + (self.height / 2)
+        self.position = Vector(x, y)
+
+    @property
+    def bottom_middle(self) -> Vector:
+        return Vector(self.position.x, self.bottom)
+
+    @bottom_middle.setter
+    def bottom_middle(self, value: VectorLike):
+        value = Vector(value)
+        self.position = Vector(value.x, value.y + self.height / 2)
+
+    @property
+    def left_middle(self) -> Vector:
+        return Vector(self.left, self.position.y)
+
+    @left_middle.setter
+    def left_middle(self, value: VectorLike):
+        value = Vector(value)
+        self.position = Vector(value.x + self.width / 2, value.y)
+
+    @property
+    def right_middle(self) -> Vector:
+        return Vector(self.right, self.position.y)
+
+    @right_middle.setter
+    def right_middle(self, value: VectorLike):
+        value = Vector(value)
+        self.position = Vector(value.x - self.width / 2, value.y)
+
+    @property
+    def top_middle(self) -> Vector:
+        return Vector(self.position.x, self.top)
+
+    @top_middle.setter
+    def top_middle(self, value: VectorLike):
+        value = Vector(value)
+        self.position = Vector(value.x, value.y - self.height / 2)
 
     @property
     def center(self) -> Vector:
-        """
-        Get the midpoint vector
-        """
-        if self.side in (TOP, BOTTOM):
-            return Vector(self.parent.center.x, float(self))
-        else:
-            return Vector(float(self), self.parent.center.y)
-
-    @center.setter
-    def center(self, value):
-        self.parent.position = self._mk_update_vector_center(value)
-
-    def _mk_update_vector_side(self, attribute, value: Vector):
-        """
-        Calculate the updated vector, based on the given corner.
-
-        That is, handles the calculation for forms like sprite.top.left = vector
-        """
-        value = Vector(value)
-        assert attribute != 'center'
-        # Does a bunch of dynamc resolution:
-        # Sprite.top.left
-        #        ^   ^ attribute
-        #        self.side
-        self_dimension, self_offset = self._lookup_side(self.side)
-
-        attr_dimension, attr_offset = self._lookup_side(attribute)
-
-        assert self_dimension != attr_dimension
-
-        fields = {
-            self_dimension: value[self_dimension] - self_offset,
-            attr_dimension: value[attr_dimension] - attr_offset,
-        }
-        return Vector(fields)
-
-    def _mk_update_vector_center(self, value):
-        """
-        Calculate the update vector, based on the given side.
-
-        That is, handles the calculation for forms like sprite.right = number
-        """
-        value = Vector(value)
-        # Pretty similar to ._mk_update_vector_side()
-        self_dimension, self_offset = self._lookup_side(self.side)
-
-        attr_dimension = 'y' if self_dimension == 'x' else 'x'
-
-        fields = {
-            self_dimension: value[self_dimension] - self_offset,
-            attr_dimension: value[attr_dimension]
-        }
-
-        return Vector(fields)
-
-    def _attribute_gate(self, attribute, bad_sides):
-        if self.side in bad_sides:
-            name = type(self).__name__
-            message = side_attribute_error_message(klass=name,
-                                                   attribute=attribute)
-            raise AttributeError(message)
-
-
-class SquareShapeMixin:
-    """
-    A mixin that applies square shapes to sprites.
-
-    You should include SquareShapeMixin before ppb.sprites.BaseSprite in
-    your parent classes.
-    """
-    #: The width/height of the sprite (sprites are square)
-    size: Union[int, float] = 1
-    #: Just here for typing and linting purposes. Your sprite should already have a position.
-    position: ppb_vector.Vector
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-        # Trigger some calculations
-        self.size = self.size
-
-    @property
-    def center(self) -> Vector:
-        """
-        The position of the center of the sprite
-        """
         return self.position
 
     @center.setter
-    def center(self, value: ppb_vector.VectorLike):
-        self.position = Vector(value)
+    def center(self, vector: Vector):
+        self.position = Vector(vector)
+
+
+class SquareShapeMixin(RectangleShapeMixin):
+    """
+    A Mixin that provides a square area to sprites.
+
+    Extends the interface of :class:`RectangleShapeMixin` by using the ``size``
+    attribute to determine width and height. Setting either ``width`` or
+    ``height`` sets the ``size`` and maintains the square shape at the new size.
+
+    The default size of :class:`SquareShapeMixin` is 1 game unit.
+    """
+    size = 1
 
     @property
-    def left(self) -> Side:
-        """
-        The left side
-        """
-        return Side(self, LEFT)
+    def width(self):
+        return self.size
 
-    @left.setter
-    def left(self, value: float):
-        self.position = Vector(value + self._offset_value, self.position.y)
+    @width.setter
+    def width(self, value: Union[float, int]):
+        self.size = value
 
     @property
-    def right(self) -> Side:
-        """
-        The right side
-        """
-        return Side(self, RIGHT)
+    def height(self):
+        return self.size
 
-    @right.setter
-    def right(self, value):
-        self.position = Vector(value - self._offset_value, self.position.y)
-
-    @property
-    def top(self) -> Side:
-        """
-        The top side
-        """
-        return Side(self, TOP)
-
-    @top.setter
-    def top(self, value):
-        self.position = Vector(self.position.x, value - self._offset_value)
-
-    @property
-    def bottom(self) -> Side:
-        """
-        The bottom side
-        """
-        return Side(self, BOTTOM)
-
-    @bottom.setter
-    def bottom(self, value):
-        self.position = Vector(self.position.x, value + self._offset_value)
-
-    @property
-    def _offset_value(self):
-        return self.size / 2
+    @height.setter
+    def height(self, value: Union[float, int]):
+        self.size = value
 
 
 class Sprite(SquareShapeMixin, RenderableMixin, RotatableMixin, BaseSprite):
@@ -377,4 +310,21 @@ class Sprite(SquareShapeMixin, RenderableMixin, RotatableMixin, BaseSprite):
     * RotatableMixin
 
     New in 0.7.0: Use this in place of BaseSprite in your games.
+    """
+
+
+class RectangleSprite(RectangleShapeMixin, RenderableMixin, RotatableMixin, BaseSprite):
+    """
+    A rectangle sprite.
+
+    Sprite includes:
+
+    * BaseSprite
+    * RectangleShapeMixin
+    * RenderableMixin
+    * RotatableMixin
+
+    .. warning::
+       The rotation and facing attributes of RectangleSprite do not change its
+       bounding box, only the presentation of the image applied to it.
     """
