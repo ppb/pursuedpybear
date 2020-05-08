@@ -29,6 +29,7 @@ Reference
 ---------
 .. autoclass:: ppb.events.PlaySound
    :members:
+   :noindex:
 
 .. autoclass:: ppb.Sound
    
