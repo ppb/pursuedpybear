@@ -103,7 +103,7 @@ class StartScene:
         * `signal(new_scene=StartScene, kwargs={"player": player}`
 
     .. warning::
-       In general, you should not respond to StartScene, if you want to respond to
+       In general, you should not respond to :class:`StartScene`, if you want to respond to
        a new scene, see :class:`SceneStarted`.
     """
     new_scene: Union[BaseScene, Type[BaseScene]]  #: A :class:`~ppb.scenes.BaseScene` class or instance
