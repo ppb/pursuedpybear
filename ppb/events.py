@@ -259,8 +259,8 @@ class SceneStopped:
     """
     A scene is being stopped and will no longer be available.
 
-    This is delivered to a scene and it's objects when a StopScene or
-    ReplaceScene event is sent to the engine.
+    This is delivered to a scene and it's objects when a :class:`StopScene` or
+    :class:`ReplaceScene` event is sent to the engine.
 
     The end of the scene lifetime, started with :class:`SceneStarted`.
     """
