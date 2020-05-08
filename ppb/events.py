@@ -193,7 +193,7 @@ class Render:
     The :class:`~ppb.systems.renderer.Renderer` is rendering.
 
     .. warning::
-       In general, responses to Render will not be reflected until the next
+       In general, responses to :class:`Render` will not be reflected until the next
        render pass. If you want changes to effect this frame, see
        :class:`PreRender`
     """
