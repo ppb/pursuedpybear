@@ -14,7 +14,7 @@ The :meth:`~ppb.GameEngine.signal` function accepts one parameter: an
 instance of an event class. You are not limited to predefined event types, but
 can provide arbitrary instances.
 
-Events as defined here are :func:`dataclasses.dataclass` but :mod:`ppb` does
+Events as defined here are :func:`dataclasses.dataclass`, but ppb does
 not expect dataclasses, they are just a simple way to quickly define new events.
 The name of the handler will always be based on the name of the class, with the
 TitleCase name of the class converted to on_event_name function. The instance
