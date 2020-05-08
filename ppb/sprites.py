@@ -323,4 +323,8 @@ class RectangleSprite(RectangleShapeMixin, RenderableMixin, RotatableMixin, Base
     * RectangleShapeMixin
     * RenderableMixin
     * RotatableMixin
+
+    .. warning::
+       The rotation and facing attributes of RectangleSprite do not change its
+       bounding box, only the presentation of the image applied to it.
     """
