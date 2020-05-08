@@ -89,7 +89,7 @@ class StartScene:
     """
     An object requested a new scene to be started.
 
-    new_scene can be an instance or a class. If a class, must include kwargs.
+    ``new_scene`` can be an instance or a class. If a class, must include kwargs.
     If new_scene is an instance kwargs should be empty or None.
 
     Before the previous scene pauses, a ScenePaused event will be fired.
