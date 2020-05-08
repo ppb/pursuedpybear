@@ -234,7 +234,7 @@ class SceneContinued:
     A scene that had been paused has continued.
 
     This is delivered to a scene as it resumes operation after being paused via
-    a ScenePaused event.
+    a :class:`ScenePaused` event.
 
     From the middle of the event lifetime that begins with
     :class:`SceneStarted`.
