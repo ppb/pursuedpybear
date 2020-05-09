@@ -26,4 +26,5 @@ decisions are made, see the :doc:`/discussion/index` section.
    engine
    sound
    camera
+   directions
    features/index
