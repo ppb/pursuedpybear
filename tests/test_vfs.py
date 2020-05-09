@@ -24,10 +24,9 @@ def cwd_file():
     # delete the temp file manually.
 
     with tempfile.NamedTemporaryFile(dir=os.getcwd(), delete=False) as ntf:
-        name = os.path.basename(ntf.name)
         ntf.close()
-        yield name
-        os.remove(name)
+        yield os.path.basename(ntf.name)
+        os.remove(ntf.name)
 
 
 def test_main_normal(cwd_file):
