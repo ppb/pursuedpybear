@@ -238,7 +238,7 @@ class SceneContinued:
     From the middle of the event lifetime that begins with
     :class:`SceneStarted`.
     """
-    scene: BaseScene = None  #: The scene that is resuming operation.
+    scene: BaseScene = None  #: The scene that is resuming.
 
 
 @dataclass
@@ -270,7 +270,7 @@ class SceneStopped:
     This is delivered to a scene and it's objects when a :class:`StopScene` or
     :class:`ReplaceScene` event is sent to the engine.
 
-    Is technically an optional scene, as not all scenes in the stack will
+    This is technically an optional event, as not all scenes in the stack will
     receive a :class:`SceneStopped` event if a :class:`Quit` event was sent.
 
     This is the end of the scene lifetime, see :class:`SceneStarted`.
