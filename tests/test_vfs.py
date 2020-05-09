@@ -20,8 +20,14 @@ def save_main_file():
 
 @pytest.fixture
 def cwd_file():
-    with tempfile.NamedTemporaryFile(dir=os.getcwd()) as ntf:
-        yield os.path.basename(ntf.name)
+    # Windows doesn't like multiple open handles, so we need to close and
+    # delete the temp file manually.
+
+    with tempfile.NamedTemporaryFile(dir=os.getcwd(), delete=False) as ntf:
+        name = os.path.basename(ntf.name)
+        ntf.close()
+        yield name
+        os.remove(name)
 
 
 def test_main_normal(cwd_file):
