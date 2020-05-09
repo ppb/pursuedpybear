@@ -158,7 +158,7 @@ class MouseMotion:
 @dataclass
 class PreRender:
     """
-    The :class:`~ppb.Renderer` is preparing to render.
+    The :class:`~ppb.systems.Renderer` is preparing to render.
 
     :class:`PreRender` is called before every frame is rendered. Things that are
     strictly for display purposes (like the text of a score board or the
@@ -203,8 +203,7 @@ class Render:
 @dataclass
 class ReplaceScene:
     """
-    An object requested a
-    Fired to replace the current scene with a new one.
+    An object requested a new scene to replace it.
 
     ``new_scene`` can be an instance or a class. If a class, must include kwargs.
     If new_scene is an instance kwargs should be empty or None.
@@ -216,8 +215,8 @@ class ReplaceScene:
     a SceneStarted event will be sent.
 
     Examples:
-        * `signal(new_scene=ReplaceScene(MyScene(player=player))`
-        * `signal(new_scene=ReplaceScene, kwargs={"player": player}`
+        * `signal(ReplaceScene(MyScene(player=player))`
+        * `signal(ReplaceScene(new_scene=ReplacementScene, kwargs={"player": player}))`
 
     .. warning::
        In general, you should not respond to :class:`ReplaceScene`, if you want to
@@ -239,7 +238,7 @@ class SceneContinued:
     From the middle of the event lifetime that begins with
     :class:`SceneStarted`.
     """
-    scene: BaseScene = None  #: The currently running scene.
+    scene: BaseScene = None  #: The scene that is resuming operation.
 
 
 @dataclass
@@ -247,11 +246,20 @@ class SceneStarted:
     """
     A new scene has started running.
 
-    This is delivered to a Scene shortly after it starts. The beginning of the
-    scene lifetime, ended with :class:`SceneStopped`, paused with
-    :class:`ScenePaused`, and resumed from a pause with :class:`SceneContinued`.
+    This is delivered to a Scene shortly after it starts.
+
+    Responding to SceneStarted is a good choice for :mod:`ppb.systems` that
+    change behavior based on the running scene, or if you have start up work
+    that requires the initial state to be set before it happens.
+
+    The scene lifetime events happen in the following order:
+
+    1. Always: :class:`SceneStarted`
+    2. Optionally, Repeatable: :class:`ScenePaused`
+    3. Optionally, Repeatable: :class:`SceneContinued`
+    4. Optionally: :class:`SceneStopped`
     """
-    scene: BaseScene = None  #: The currently running scene.
+    scene: BaseScene = None  #: The scene that is starting.
 
 
 @dataclass
@@ -262,9 +270,12 @@ class SceneStopped:
     This is delivered to a scene and it's objects when a :class:`StopScene` or
     :class:`ReplaceScene` event is sent to the engine.
 
-    The end of the scene lifetime, started with :class:`SceneStarted`.
+    Is technically an optional scene, as not all scenes in the stack will
+    receive a :class:`SceneStopped` event if a :class:`Quit` event was sent.
+
+    This is the end of the scene lifetime, see :class:`SceneStarted`.
     """
-    scene: BaseScene = None  #: The currently running scene.
+    scene: BaseScene = None  #: The scene that is stopping.
 
 
 @dataclass
@@ -278,7 +289,7 @@ class ScenePaused:
 
     A middle event in the scene lifetime, started with :class:`SceneStarted`.
     """
-    scene: BaseScene = None  #: The currently running scene.
+    scene: BaseScene = None  #: The scene that has paused.
 
 
 @dataclass
@@ -297,7 +308,7 @@ class StopScene:
        In general, you should not respond to :class:`StopScene`, if you want to respond
        to a scene ending, see :class:`SceneStopped`.
     """
-    scene: BaseScene = None  #: The currently running scene.
+    scene: BaseScene = None  #: The scene that is stopping.
 
 
 @dataclass
@@ -318,6 +329,8 @@ class Update:
     A simulation tick.
 
     Respond via ``on_update`` to advance the simulation of your game objects.
+    Movement and other things that happen "over time" are best implemented in
+    your on_update methods.
     """
     time_delta: float  #: Seconds since last Update
     scene: BaseScene = None  #: The currently running scene.
@@ -331,6 +344,7 @@ class PlaySound:
     Signal in an event handler to have a sound played.
 
     Example: ::
+
        signal(PlaySound(my_sound))
     """
     sound: 'ppb.assets.Asset'  #: A :class:`~ppb.systems.sound.Sound` asset.
@@ -343,4 +357,4 @@ class AssetLoaded:
     """
     asset: 'ppb.assets.Asset'  #: A :class:`~ppb.assetlib.Asset`
     total_loaded: int  #: The total count of loaded assets.
-    total_queued: int  # The total number of requested assets.
+    total_queued: int  #: The number of requested assets still waiting.

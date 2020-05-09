@@ -60,7 +60,7 @@ These are events triggered during the lifetime of a scene: it starting, stopping
 etc.
 
 The ``scene`` property on these events always refers to the scene these are
-about--``ScenePaused.scene`` is the scene that is being paused.
+about---``ScenePaused.scene`` is the scene that is being paused.
 
 .. autoclass:: ppb.events.SceneStarted
    :members:
