@@ -190,7 +190,7 @@ class Quit:
 @dataclass
 class Render:
     """
-    The :class:`~ppb.systems.renderer.Renderer` is rendering.
+    The :class:`~ppb.systems.Renderer` is rendering.
 
     .. warning::
        In general, responses to :class:`Render` will not be reflected until the next
