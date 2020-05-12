@@ -202,7 +202,10 @@ class Renderer(SdlSubSystem):
         )
         sdl_call(SDL_RenderClear, self.renderer, _check_error=lambda rv: rv < 0)
 
-    def is_visible(self, game_object):
+    def _object_has_dimension(self, game_object):
+        """
+        Tests that an object has dimensionality and they're >0.
+        """
         if hasattr(game_object, 'width') and game_object.width <= 0:
             return False
         elif hasattr(game_object, 'height') and game_object.height <= 0:
@@ -215,8 +218,14 @@ class Renderer(SdlSubSystem):
             return True
 
     def prepare_resource(self, game_object):
-        if not self.is_visible(game_object):
+        """
+        Get the SDL Texture for an object.
+        """
+        if not self._object_has_dimension(game_object):
             return None
+
+        if not hasattr(game_object, '__image__'):
+            return
 
         image = game_object.__image__()
         if image is flags.DoNotRender or image is None:
