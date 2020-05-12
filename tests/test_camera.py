@@ -7,6 +7,7 @@ import pytest
 from ppb import Sprite
 from ppb import Vector
 from ppb.camera import Camera
+from ppb.sprites import BaseSprite
 from .utils import vectors
 
 
@@ -118,8 +119,18 @@ def test_sprite_in_view(camera, input_position, expected):
         position = input_position
 
     test_sprite = Thing()
-    print(f"Sprite: {test_sprite.position}, {test_sprite.width}, {test_sprite.height}")
-    print(f"Camera: {camera.position}, {camera.width}, {camera.height}")
+    assert camera.sprite_in_view(test_sprite) == expected
+
+
+@pytest.mark.parametrize("input_position, expected", [
+    [Vector(0, 0), True],
+    [Vector(5, 0), True],
+    [Vector(0, 3.75), True],
+    [Vector(10, 10), False]
+])
+def test_sprite_in_view_no_dimensions(camera, input_position, expected):
+    test_sprite = BaseSprite(position=input_position)
+
     assert camera.sprite_in_view(test_sprite) == expected
 
 
