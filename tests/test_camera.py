@@ -7,6 +7,7 @@ import pytest
 from ppb import Sprite
 from ppb import Vector
 from ppb.camera import Camera
+from ppb.sprites import BaseSprite
 from .utils import vectors
 
 
@@ -104,27 +105,35 @@ def test_camera_translate_point_to_game_space(camera, position, point, expected)
     assert camera.translate_point_to_game_space(point) == expected
 
 
-# @pytest.mark.skip(reason="Test for old camera. Will want to restore this functionality in new camera.")
-# def test_sprite_in_viewport():
-#     # Added the expected pixel ratio due to change in default breaking this test.
-#     # 80 is the legacy value.
-#     cam = OldCamera(viewport=(0, 0, 800, 600), pixel_ratio=80)
-#
-#     class Thing(Sprite):
-#         def __init__(self, position=Vector(2, 2)):
-#             super().__init__()
-#             self.size = 2
-#             self.position = position
-#
-#     sprite_in = Thing(Vector(-3, -1))
-#     sprite_half_in = Thing(Vector(5, -2))
-#     sprite_out = Thing(Vector(2, 5))
-#
-#     assert not cam.in_frame(sprite_out)
-#     assert cam.in_frame(sprite_in)
-#     assert cam.in_frame(sprite_half_in)
-#
-#
+@pytest.mark.parametrize("input_position, expected", [
+    [Vector(-3, 1), True],  # Fully inside the camera's view
+    [Vector(5, -2), True],  # partially inside the camera's view
+    [Vector(2, 6), False],  # well outside the Camera's view.
+    [Vector(6, 0), False],  # Outside with edges touching (horizontal)
+    [Vector(0, 4.75), False],  # Outside with edges touching (vertical)
+])
+def test_sprite_in_view(camera, input_position, expected):
+
+    class Thing(Sprite):
+        size = 2
+        position = input_position
+
+    test_sprite = Thing()
+    assert camera.sprite_in_view(test_sprite) == expected
+
+
+@pytest.mark.parametrize("input_position, expected", [
+    [Vector(0, 0), True],
+    [Vector(5, 0), True],
+    [Vector(0, 3.75), True],
+    [Vector(10, 10), False]
+])
+def test_sprite_in_view_no_dimensions(camera, input_position, expected):
+    test_sprite = BaseSprite(position=input_position)
+
+    assert camera.sprite_in_view(test_sprite) == expected
+
+
 # @pytest.mark.skip("Old camera test. Will probably want to rewrite this in the future to support new camera.")
 # @given(
 #     vp_width=st.integers(min_value=1),
