@@ -186,6 +186,6 @@ class Camera(RectangleShapeMixin):
             pixel_value = viewport_height
         else:
             raise ValueError("Must set target_width or target_height")
-        self.pixel_ratio = int(pixel_value / game_unit_target)
+        self.pixel_ratio = pixel_value / game_unit_target
         self._width = viewport_width / self.pixel_ratio
         self._height = viewport_height / self.pixel_ratio
