@@ -145,41 +145,38 @@ def test_sprite_in_view_no_dimensions(camera, input_position, expected):
     assert camera.sprite_in_view(test_sprite) == expected
 
 
-# @pytest.mark.skip("Old camera test. Will probably want to rewrite this in the future to support new camera.")
-# @given(
-#     vp_width=st.integers(min_value=1),
-#     vp_height=st.integers(min_value=1),
-#     pixel_ratio=st.floats(min_value=1, max_value=1e5, allow_nan=False, allow_infinity=False),
-#     cam_pos=vectors(1e15),  # Set low to prevent loss-of-precision problems about frame size
-#     point=vectors(),
-# )
-# @example(vp_width=2, vp_height=2, pixel_ratio=1.0, cam_pos=Vector(0.0, 0.0), point=Vector(0.0, 0.0))
-# def test_transfromation_roundtrip(vp_width, vp_height, pixel_ratio, cam_pos, point):
-#     cam = OldCamera(
-#         viewport=(0, 0, vp_width, vp_height),
-#         pixel_ratio=pixel_ratio,
-#     )
-#     cam.position = cam_pos
-#
-#     note(f"frame: ({cam.frame_left}, {cam.frame_bottom}) -> ({cam.frame_right}, {cam.frame_top})")
-#
-#     # Some underflow/loss of precision problems
-#     assume(cam.frame_left != cam.frame_right)
-#     assume(cam.frame_top != cam.frame_bottom)
-#
-#     note(f"point: {point}")
-#
-#     point_frame = cam.translate_to_frame(point)
-#     note(f"point->frame: {point_frame}")
-#     point_viewport = cam.translate_to_viewport(point_frame)
-#     note(f"point->frame->viewport: {point_viewport}")
-#     assert point_viewport.isclose(point, rel_tol=1e-5, rel_to=[cam.position])
-#
-#     point_viewport = cam.translate_to_viewport(point)
-#     note(f"point->viewport: {point_viewport}")
-#     point_frame = cam.translate_to_frame(point_viewport)
-#     note(f"point->viewport->frame: {point_frame}")
-#     assert point_frame.isclose(point, rel_tol=1e-5, rel_to=[cam.position])
+@given(
+    vp_width=st.integers(min_value=1),
+    vp_height=st.integers(min_value=1),
+    target_width=st.floats(min_value=1, max_value=1e5, allow_nan=False, allow_infinity=False),
+    cam_pos=vectors(1e15),  # Set low to prevent loss-of-precision problems about frame size
+    point=vectors(),
+)
+@example(vp_width=2, vp_height=2, target_width=1.0, cam_pos=Vector(0.0, 0.0), point=Vector(0.0, 0.0))
+@example(vp_width=1, vp_height=1, target_width=1.0000000000222042, cam_pos=Vector(0.0, 0.0), point=Vector(0.0, 0.0))
+def test_transformation_roundtrip(vp_width, vp_height, target_width, cam_pos, point):
+    cam = Camera(None, target_width, (vp_width, vp_height))
+    cam.position = cam_pos
+
+    note(f"frame: ({cam.left}, {cam.bottom}) -> ({cam.right}, {cam.top})")
+
+    # Some underflow/loss of precision problems
+    assume(cam.left != cam.right)
+    assume(cam.top != cam.bottom)
+
+    note(f"point: {point}")
+
+    point_frame = cam.translate_point_to_screen(point)
+    note(f"point->frame: {point_frame}")
+    point_viewport = cam.translate_point_to_game_space(point_frame)
+    note(f"point->frame->viewport: {point_viewport}")
+    assert point_viewport.isclose(point, rel_tol=1e-5, rel_to=[cam.position])
+
+    point_viewport = cam.translate_point_to_game_space(point)
+    note(f"point->viewport: {point_viewport}")
+    point_frame = cam.translate_point_to_screen(point_viewport)
+    note(f"point->viewport->frame: {point_frame}")
+    assert point_frame.isclose(point, rel_tol=1e-5, rel_to=[cam.position])
 
 
 # @given(
