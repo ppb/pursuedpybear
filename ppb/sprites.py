@@ -133,7 +133,10 @@ class RenderableMixin:
 
 class RotatableMixin:
     """
-    A simple rotation mixin. Can be included with sprites.
+    A rotation mixin. Can be included with sprites.
+
+    .. warning:: rotation does not affect underlying position, it only rotates
+       the sprites image and provides a facing.
     """
     _rotation = 0
     # This is necessary to make facing do the thing while also being adjustable.
@@ -145,7 +148,9 @@ class RotatableMixin:
     @property
     def facing(self):
         """
-        The direction the "front" is facing
+        The direction the "front" is facing.
+
+        Can be set to an arbitrary facing by providing a facing vector.
         """
         return Vector(*self.basis).rotate(self.rotation).normalize()
 
