@@ -202,9 +202,30 @@ class Renderer(SdlSubSystem):
         )
         sdl_call(SDL_RenderClear, self.renderer, _check_error=lambda rv: rv < 0)
 
+    def _object_has_dimension(self, game_object):
+        """
+        Tests that an object has dimensionality and they're >0.
+        """
+        if hasattr(game_object, 'width') and game_object.width <= 0:
+            return False
+        elif hasattr(game_object, 'height') and game_object.height <= 0:
+            return False
+        elif hasattr(game_object, 'size') and game_object.size <= 0:
+            return False
+        elif not (hasattr(game_object, 'width') or hasattr(game_object, 'height') or hasattr(game_object, 'size')):
+            return False
+        else:
+            return True
+
     def prepare_resource(self, game_object):
-        if game_object.size <= 0:
+        """
+        Get the SDL Texture for an object.
+        """
+        if not self._object_has_dimension(game_object):
             return None
+
+        if not hasattr(game_object, '__image__'):
+            return
 
         image = game_object.__image__()
         if image is flags.DoNotRender or image is None:
@@ -234,7 +255,13 @@ class Renderer(SdlSubSystem):
 
         src_rect = SDL_Rect(x=0, y=0, w=img_w, h=img_h)
 
-        win_w, win_h = self.target_resolution(img_w.value, img_h.value, game_object.size, camera.pixel_ratio)
+        if hasattr(game_object, 'width'):
+            obj_w = game_object.width
+            obj_h = game_object.height
+        else:
+            obj_w, obj_h = game_object.size
+
+        win_w, win_h = self.target_resolution(img_w.value, img_h.value, obj_w, obj_h, camera.pixel_ratio)
 
         center = camera.translate_point_to_screen(game_object.position)
         dest_rect = SDL_Rect(
@@ -247,9 +274,15 @@ class Renderer(SdlSubSystem):
         return src_rect, dest_rect, ctypes.c_double(-game_object.rotation)
 
     @staticmethod
-    def target_resolution(width, height, game_object_size, pixel_ratio):
-        values = [width, height]
-        short_side_index = width > height
-        target = pixel_ratio * game_object_size
-        ratio = values[short_side_index] / target
-        return tuple(round(value / ratio) for value in values)
+    def target_resolution(img_width, img_height, obj_width, obj_height, pixel_ratio):
+        if not obj_width:
+            print("no width")
+            ratio = img_height / (pixel_ratio * obj_height)
+        elif not obj_height:
+            print("no height")
+            ratio = img_width / (pixel_ratio * obj_width)
+        else:
+            ratio_w = img_width / (pixel_ratio * obj_width)
+            ratio_h = img_height / (pixel_ratio * obj_height)
+            ratio = min(ratio_w, ratio_h)  # smaller value -> less reduction
+        return round(img_width / ratio), round(img_height / ratio)
