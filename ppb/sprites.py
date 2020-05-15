@@ -435,12 +435,16 @@ class Sprite(SquareShapeMixin, RenderableMixin, RotatableMixin, BaseSprite):
     """
     The default Sprite class.
 
-    Sprite includes:
+    Sprite defines no additional methods or attributes, but is made up of
+    :class:`BaseSprite` with the mixins :class:`~ppb.sprites.RotatableMixin`,
+    :class:`~ppb.sprites.RenderableMixin`, and
+    :class:`~ppb.sprites.SquareShapeMixin`.
 
-    * BaseSprite
-    * SquareShapeMixin
-    * RenderableMixin
-    * RotatableMixin
+    For most use cases, this is probably the class you want to subclass to make
+    your game objects.
+
+    If you need rectangular sprites instead of squares, see
+    :class:`RectangleSprite`.
 
     New in 0.7.0: Use this in place of BaseSprite in your games.
     """
@@ -450,14 +454,8 @@ class RectangleSprite(RectangleShapeMixin, RenderableMixin, RotatableMixin, Base
     """
     A rectangle sprite.
 
-    Sprite includes:
-
-    * BaseSprite
-    * RectangleShapeMixin
-    * RenderableMixin
-    * RotatableMixin
-
-    .. warning::
-       The rotation and facing attributes of RectangleSprite do not change its
-       bounding box, only the presentation of the image applied to it.
+    Similarly to :class:`~ppb.Sprite`, :class:`RectangleSprite` does not
+    introduce any new methods or attributes. It's made up of :class:`BaseSprite`
+    with the mixins: :class:`RotatableMixin`, :class:`RenderableMixin`, and
+    :class:`RectangleShapeMixin`.
     """

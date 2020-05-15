@@ -8,18 +8,20 @@ Sprites
    :noindex:
 
 ------------------
-Default Sprite
+Concrete Sprites
 ------------------
 
-This is the class you should instantiate or subclass for your games unless
-you are changing the defaults.
+Concrete sprites are a combination of :class:`BaseSprite` and various mixins.
+They implement a number of useful features for game development and should be
+the primary classes you subclass when building game objects.
 
 .. autoclass:: ppb.Sprite
    :members:
    :inherited-members:
 
-Note that ``ppb.BaseSprite`` is deprecated in favor of ppb.Sprite. Scheduled
-for removal in ppb v0.8.0.
+.. autoclass:: ppb.sprites.RectangleSprite
+   :members:
+   :inherited-members:
 
 -------------------
 Feature Mixins
