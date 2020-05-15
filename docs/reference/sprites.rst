@@ -46,13 +46,3 @@ expectations.
 .. autoclass:: ppb.sprites.BaseSprite
    :members:
    :inherited-members:
-
-
--------------------
-Internals
--------------------
-
-These classes are internals for various APIs included with mixins.
-
-.. autoclass:: ppb.sprites.Side
-   :members:
