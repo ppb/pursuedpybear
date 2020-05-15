@@ -1,4 +1,4 @@
-.. py:currentmodule:: ppb.sprites
+.. py:module:: ppb.sprites
 
 =================
 Sprites

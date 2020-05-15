@@ -97,8 +97,13 @@ class RenderableMixin:
     """
     A class implementing the API expected by ppb.systems.renderer.Renderer.
 
-    You should include RenderableMixin before BaseSprite in your parent
-    class definitions.
+    The render expects a width and height (see :class:`RectangleMixin`) and will
+    skip rendering if a sprite has no shape. You can use
+    :class:`RectangleMixin`, :class:`SquareMixin`, or set the values yourself.
+
+    Additionally, if :attr:`~RenderableMixin.image` is None, the sprite will not
+    be rendered. If you just want a basic shape to be rendered, see
+    :mod:`ppb.assets`.
     """
     #: (:py:class:`ppb.Image`): The image asset
     image = None  # TODO: Type hint appropriately
