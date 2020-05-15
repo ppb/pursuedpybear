@@ -182,8 +182,8 @@ class RectangleShapeMixin:
 
     Classes derived from RectangleShapeMixin default to the same size and
     shape as all ppb Sprites: A 1 game unit by 1 game unit square. Just set
-    the width and height in your constructor (Or as class attributes) to
-    change this default.
+    the width and height in your constructor (Or as
+    :class:`class attributes <BaseSprite>`) to change this default.
     """
     width: int = 1
     height: int = 1
@@ -193,6 +193,11 @@ class RectangleShapeMixin:
 
     @property
     def left(self) -> float:
+        """
+        The left side side of the object.
+
+        Can be set to a number.
+        """
         return self.position.x - self.width / 2
 
     @left.setter
@@ -201,6 +206,11 @@ class RectangleShapeMixin:
 
     @property
     def right(self) -> float:
+        """
+        The right side of the object.
+
+        Can be set to a number.
+        """
         return self.position.x + self.width / 2
 
     @right.setter
@@ -209,6 +219,11 @@ class RectangleShapeMixin:
 
     @property
     def top(self) -> float:
+        """
+        The top of the object.
+
+        Can be set to a number.
+        """
         return self.position.y + self.height / 2
 
     @top.setter
@@ -217,6 +232,11 @@ class RectangleShapeMixin:
 
     @property
     def bottom(self) -> float:
+        """
+        The bottom of the object.
+
+        Can be set to a number.
+        """
         return self.position.y - self.height / 2
 
     @bottom.setter
@@ -225,6 +245,11 @@ class RectangleShapeMixin:
 
     @property
     def top_left(self) -> Vector:
+        """
+        The top left corner of the object.
+
+        Can be set to a :class:`ppb_vector.Vector`.
+        """
         return Vector(self.left, self.top)
 
     @top_left.setter
@@ -236,6 +261,11 @@ class RectangleShapeMixin:
 
     @property
     def top_right(self) -> Vector:
+        """
+        The top right corner of the object.
+
+        Can be set to a :class:`ppb_vector.Vector`.
+        """
         return Vector(self.right, self.top)
 
     @top_right.setter
@@ -247,6 +277,11 @@ class RectangleShapeMixin:
 
     @property
     def bottom_left(self) -> Vector:
+        """
+        The bottom left corner of the object.
+
+        Can be set to a :class:`ppb_vector.Vector`.
+        """
         return Vector(self.left, self.bottom)
 
     @bottom_left.setter
@@ -262,6 +297,11 @@ class RectangleShapeMixin:
 
     @bottom_right.setter
     def bottom_right(self, vector: Vector):
+        """
+        The bottom right corner of the object.
+
+        Can be set to a :class:`ppb_vector.Vector`.
+        """
         vector = Vector(vector)
         x = vector.x - (self.width / 2)
         y = vector.y + (self.height / 2)
@@ -269,6 +309,11 @@ class RectangleShapeMixin:
 
     @property
     def bottom_middle(self) -> Vector:
+        """
+        The midpoint of the bottom of the object.
+
+        Can be set to a :class:`ppb_vector.Vector`.
+        """
         return Vector(self.position.x, self.bottom)
 
     @bottom_middle.setter
@@ -278,6 +323,11 @@ class RectangleShapeMixin:
 
     @property
     def left_middle(self) -> Vector:
+        """
+        The midpoint of the left side of the object.
+
+        Can be set to a :class:`ppb_vector.Vector`.
+        """
         return Vector(self.left, self.position.y)
 
     @left_middle.setter
@@ -287,6 +337,11 @@ class RectangleShapeMixin:
 
     @property
     def right_middle(self) -> Vector:
+        """
+        The midpoint of the right side of the object.
+
+        Can be set to a :class:`ppb_vector.Vector`.
+        """
         return Vector(self.right, self.position.y)
 
     @right_middle.setter
@@ -296,6 +351,11 @@ class RectangleShapeMixin:
 
     @property
     def top_middle(self) -> Vector:
+        """
+        The midpoint of the top of the object.
+
+        Can be set to a :class:`ppb_vector.Vector`.
+        """
         return Vector(self.position.x, self.top)
 
     @top_middle.setter
@@ -305,6 +365,12 @@ class RectangleShapeMixin:
 
     @property
     def center(self) -> Vector:
+        """
+        The center point of the object. Equivalent to the
+        :attr:`~BaseSprite.position`.
+
+        Can be set to a :class:`ppb_vector.Vector`.
+        """
         return self.position
 
     @center.setter

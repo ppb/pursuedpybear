@@ -5,6 +5,7 @@ Sprites
 =================
 
 .. automodule:: ppb.sprites
+   :noindex:
 
 ------------------
 Default Sprite
@@ -31,6 +32,9 @@ complete documentation.
    :members:
 
 .. autoclass:: ppb.sprites.RotatableMixin
+   :members:
+
+.. autoclass:: ppb.sprites.RectangleShapeMixin
    :members:
 
 .. autoclass:: ppb.sprites.SquareShapeMixin
