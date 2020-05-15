@@ -1,11 +1,20 @@
 """
 Sprites are game objects.
 
-In ppb all sprites are built from composition via mixins or subclassing via
-traditional Python inheritance. Sprite is provided as a default expectation
-used in ppb.
+To use a sprite you use :meth:`BaseScene.add <ppb.BaseScene.add>` to add it
+to a scene. When contained in an active scene, the engine will call the various
+:mod:`event <ppb.events>` handlers on the sprite.
 
-If you intend to build your own set of expectation, see BaseSprite.
+When defining your own custom sprites, we suggest you start with
+:class:`~ppb.Sprite`. By subclassing :class:`~ppb.Sprite`, you get a number of
+features automatically. You then define your event handlers as methods on your
+new class to produce behaviors.
+
+All sprites in ppb are built from composition via mixins or subclassing via
+traditional Python inheritance.
+
+If you don't need the built in features of :class:`~ppb.Sprite` see
+:class:`BaseSprite`.
 """
 from inspect import getfile
 from pathlib import Path
@@ -45,6 +54,30 @@ class BaseSprite:
     layer: int = 0
 
     def __init__(self, **kwargs):
+        """
+        :class:`BaseSprite` does not accept any positional arguments, and uses
+        kwargs to set arbitrary state to the :class:`BaseSprite` instance. This
+        allows rapid prototyping.
+
+        Example: ::
+
+           sprite = BaseSprite(speed=6)
+           print(sprite.speed)
+
+        This sample will print the numeral 6.
+
+        You may add any arbitrary data values in this fashion. Alternatively,
+        it is considered best practice to subclass :class:`BaseSprite` and set
+        the default values of any required attributes as class attributes.
+
+        Example: ::
+
+           class Rocket(ppb.sprites.BaseSprite):
+              velocity = Vector(0, 1)
+
+              def on_update(self, update_event, signal):
+                  self.position += self.velocity * update_event.time_delta
+        """
         super().__init__()
 
         self.position = Vector(self.position)
