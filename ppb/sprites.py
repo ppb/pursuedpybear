@@ -184,8 +184,13 @@ class RectangleShapeMixin:
     shape as all ppb Sprites: A 1 game unit by 1 game unit square. Just set
     the width and height in your constructor (Or as
     :class:`class attributes <BaseSprite>`) to change this default.
+
+    .. warning:: The concrete class using RectangleShapeMixin must have a
+       position.
     """
+    #: The width of the sprite.
     width: int = 1
+    #: The height of the sprite.
     height: int = 1
     # Following class properties for type hinting only. Your concrete sprite
     # should already have one.
@@ -382,16 +387,29 @@ class SquareShapeMixin(RectangleShapeMixin):
     """
     A Mixin that provides a square area to sprites.
 
-    Extends the interface of :class:`RectangleShapeMixin` by using the ``size``
-    attribute to determine width and height. Setting either ``width`` or
-    ``height`` sets the ``size`` and maintains the square shape at the new size.
+    Extends the interface of :class:`RectangleShapeMixin` by using the
+    :attr:`~SquareShapeMixin.size` attribute to determine
+    :meth:`~SquareShapeMixin.width` and :meth:`~SquareShapeMixin.height`.
+    Setting either :meth:`~SquareShapeMixin.width` or
+    :meth:`~SquareShapeMixin.height` sets the
+    :attr:`~SquareShapeMixin.size` and maintains the square shape at the new
+    size.
 
     The default size of :class:`SquareShapeMixin` is 1 game unit.
+
+    Please see :class:`RectangleShapeMixin` for additional details.
     """
+    #: The width and height of the object. Setting size changes the
+    #: :meth:`height` and :meth:`width` of the sprite.
     size = 1
 
     @property
     def width(self):
+        """
+        The width of the sprite.
+
+        Setting the width of the sprite changes :attr:`size` and :meth:`height`.
+        """
         return self.size
 
     @width.setter
@@ -400,6 +418,12 @@ class SquareShapeMixin(RectangleShapeMixin):
 
     @property
     def height(self):
+        """
+        The height of the sprite.
+
+        Setting the height of the sprite changes the :attr:`size` and
+        :meth:`width`.
+        """
         return self.size
 
     @height.setter
