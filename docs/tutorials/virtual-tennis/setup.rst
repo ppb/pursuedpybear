@@ -40,7 +40,9 @@ like.
    one at a time and hit the enter or return key and wait until they stop
    putting new text on the screen before the next command.
 
-On all systems: ::
+On all systems:
+
+.. code-block::
 
    cd /path/to/src/
    mkdir virtual-tennis
@@ -62,7 +64,7 @@ change based on its name.
 
    .. group-tab:: Windows
 
-      ::
+      .. code-block::
 
          py -3.8 -m venv .venv
          .venv\Scripts\activate
@@ -70,7 +72,7 @@ change based on its name.
 
    .. group-tab:: MacOS
 
-      ::
+      .. code-block::
 
          python3.8 -m venv .venv
          source .venv/bin/activate
