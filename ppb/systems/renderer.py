@@ -2,6 +2,7 @@ import ctypes
 import io
 import logging
 import random
+from typing import Tuple
 
 import sdl2
 import sdl2.ext
@@ -25,6 +26,11 @@ from sdl2 import (
     SDL_QueryTexture,  # https://wiki.libsdl.org/SDL_QueryTexture
     SDL_RenderCopyEx,  # https://wiki.libsdl.org/SDL_RenderCopyEx
     SDL_CreateRGBSurface,  # https://wiki.libsdl.org/SDL_CreateRGBSurface
+    SDL_BLENDMODE_ADD,
+    SDL_BLENDMODE_BLEND,
+    SDL_SetTextureAlphaMod,
+    SDL_SetTextureBlendMode,
+    SDL_SetTextureColorMod,
 )
 
 from sdl2.sdlimage import (
@@ -107,6 +113,9 @@ class SmartPointer:
 
 class Renderer(SdlSubSystem):
     _sdl_subsystems = SDL_INIT_VIDEO
+    last_opacity: int = 255
+    last_opacity_mode: str = 'blend'
+    last_color: Tuple[int, int, int] = (255, 255, 255)
 
     def __init__(
         self,
@@ -233,14 +242,41 @@ class Renderer(SdlSubSystem):
 
         surface = image.load()
         try:
-            return self._texture_cache[surface]
+            texture = self._texture_cache[surface]
         except KeyError:
             texture = SmartPointer(sdl_call(
                 SDL_CreateTextureFromSurface, self.renderer, surface,
                 _check_error=lambda rv: not rv
             ), SDL_DestroyTexture)
             self._texture_cache[surface] = texture
-            return texture
+
+        opacity = getattr(game_object, 'opacity', 255)
+        opacity_mode = getattr(game_object, 'opacity_mode', 'blend')
+        tint = getattr(game_object, 'tint', (255, 255, 255))
+
+        sdl_call(
+            SDL_SetTextureAlphaMod, texture.inner, opacity,
+            _check_error=lambda rv: rv < 0
+        )
+        if opacity_mode == 'add':
+            sdl_call(
+                SDL_SetTextureBlendMode, texture.inner, SDL_BLENDMODE_ADD,
+                _check_error=lambda rv: rv < 0
+            )
+        elif opacity_mode == 'blend':
+            sdl_call(
+                SDL_SetTextureBlendMode, texture.inner, SDL_BLENDMODE_BLEND,
+                _check_error=lambda rv: rv < 0
+            )
+        else:
+            raise ValueError(f"Support modes for translucent sprites are 'add' or 'blend', not '{opacity_mode}'.")
+
+        sdl_call(
+            SDL_SetTextureColorMod, texture.inner, tint[0], tint[1], tint[2],
+            _check_error=lambda rv: rv < 0
+        )
+
+        return texture
 
     def compute_rectangles(self, texture, game_object, camera):
         flags = sdl2.stdinc.Uint32()
