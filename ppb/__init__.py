@@ -46,6 +46,7 @@ from ppb.systems import Image
 from ppb.systems import Sound
 from ppb.systems import Font
 from ppb.systems import Text
+from ppb.utils import get_time
 
 __all__ = (
     # Shortcuts

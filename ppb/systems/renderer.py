@@ -2,7 +2,6 @@ import ctypes
 import io
 import logging
 import random
-from time import monotonic
 
 import sdl2
 import sdl2.ext
@@ -46,6 +45,7 @@ import ppb.flags as flags
 from ppb.camera import Camera
 from ppb.systems._sdl_utils import SdlSubSystem, sdl_call, img_call, ttf_call
 from ppb.systems._utils import ObjectSideData
+from ppb.utils import get_time
 
 logger = logging.getLogger(__name__)
 
@@ -123,7 +123,7 @@ class Renderer(SdlSubSystem):
         self.target_camera_width = target_camera_width
         self.target_frame_rate = target_frame_rate
         self.target_frame_length = 1 / self.target_frame_rate
-        self.target_clock = monotonic() + self.target_frame_length
+        self.target_clock = get_time() + self.target_frame_length
 
         self._texture_cache = ObjectSideData()
 
@@ -154,7 +154,7 @@ class Renderer(SdlSubSystem):
         super().__exit__(*exc)
 
     def on_idle(self, idle_event: events.Idle, signal):
-        t = monotonic()
+        t = get_time()
         if t >= self.target_clock:
             signal(events.PreRender())
             signal(events.Render())

@@ -1,8 +1,9 @@
 import logging
 import re
 import sys
+from time import perf_counter
 
-__all__ = 'LoggingMixin', 'camel_to_snake'
+__all__ = 'LoggingMixin', 'camel_to_snake', 'get_time'
 
 
 # Dictionary mapping file names -> module names
@@ -28,6 +29,10 @@ _boundaries_finder_2 = re.compile('([a-z0-9])([A-Z])')
 def camel_to_snake(txt):
     s1 = _boundaries_finder.sub(r'\1_\2', txt)
     return _boundaries_finder_2.sub(r'\1_\2', s1).lower()
+
+
+def get_time():
+    return perf_counter()
 
 
 def _get_module(file_name):

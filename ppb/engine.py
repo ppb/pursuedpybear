@@ -19,6 +19,7 @@ from ppb.systems import SoundController
 from ppb.systems import Updater
 from ppb.utils import LoggingMixin
 from ppb.utils import camel_to_snake
+from ppb.utils import get_time
 
 _ellipsis = type(...)
 
@@ -151,7 +152,7 @@ class GameEngine(LoggingMixin):
         another event loop.
         """
         self.running = True
-        self._last_idle_time = time.monotonic()
+        self._last_idle_time = get_time()
         self.activate({"scene_class": self.first_scene,
                        "kwargs": self.scene_kwargs})
 
@@ -176,7 +177,7 @@ class GameEngine(LoggingMixin):
         if not self.entered:
             raise ValueError("Cannot run before things have started",
                              self.entered)
-        now = time.monotonic()
+        now = get_time()
         self.signal(events.Idle(now - self._last_idle_time))
         self._last_idle_time = now
         while self.events:
