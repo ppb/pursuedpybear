@@ -32,4 +32,4 @@ Halle Jones|HJones@aliacy.com||
 [Calvin Spealman](https://github.com/ironfroggy) | [ironfroggy@gmail.com](ironfroggy@gmail.com) | [@ironfroggy](https://twitter.com/ironfroggy)
 [Sanket Dasgupta](https://github.com/SanketDG) | [sanketdasgupta@gmail.com](sanketdasgupta@gmail.com) | [@SanketDG](https://twitter.com/SanketDG)
 [Serin Delaunay](https://github.com/serin-delaunay) | | [SerinDelaunay](https://twitter.com/SerinDelaunay)
-[Nils Müller](https://github.com/shimst3r) | [shimst3r@gmail.com](mailto:shimst3r@gmail.com) || [@shimst3r](https://twitter.com/shimst3r)
+[Nils Müller](https://github.com/shimst3r) | [shimst3r@gmail.com](mailto:shimst3r@gmail.com) | [@shimst3r](https://twitter.com/shimst3r)
