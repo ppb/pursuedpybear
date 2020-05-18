@@ -32,6 +32,14 @@ def camel_to_snake(txt):
 
 
 def get_time():
+    """
+    Returns the time via the default timer.
+    
+    Currently uses :func:`time.perf_counter` as the default timer.
+    
+    .. warning:: This is not a globally synchronized timer, it's just simply a system time. It is intended
+       to make sure all timers in ppb code use the same function.
+    """
     return perf_counter()
 
 
