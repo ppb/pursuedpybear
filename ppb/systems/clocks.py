@@ -1,5 +1,6 @@
 import time
 
+import ppb
 import ppb.events as events
 from ppb.systemslib import System
 
@@ -13,12 +14,12 @@ class Updater(System):
         self.time_step = time_step
 
     def __enter__(self):
-        self.start_time = time.monotonic()
+        self.start_time = ppb.get_time()
 
     def on_idle(self, idle_event: events.Idle, signal):
         if self.last_tick is None:
-            self.last_tick = time.monotonic()
-        this_tick = time.monotonic()
+            self.last_tick = ppb.get_time()
+        this_tick = ppb.get_time()
         self.accumulated_time += this_tick - self.last_tick
         self.last_tick = this_tick
         while self.accumulated_time >= self.time_step:
