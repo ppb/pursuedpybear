@@ -40,7 +40,7 @@ docs_task:
 
   script:
     - make -C docs/ linkcheck
-    - make -C docs/ html
+    - make -C docs/ "SPHINXOPTS=-W -n" html
 
 task:
   name: "Linux $IMAGE"
