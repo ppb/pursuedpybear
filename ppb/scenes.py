@@ -32,11 +32,12 @@ class GameObjectCollection(Collection):
         """
         Add a game_object to the container.
 
-        game_object: Any Hashable object. The item to be added.
-        tags: An iterable of Hashable objects. Values that can be used to
+        :param game_object: Any Hashable object. The item to be added.
+        :param tags: An iterable of Hashable objects. Values that can be used to
               retrieve a group containing the game_object.
 
-        Examples:
+        Examples: ::
+
             container.add(MyObject())
 
             container.add(MyObject(), tags=("red", "blue")
@@ -54,15 +55,16 @@ class GameObjectCollection(Collection):
         """
         Get an iterator of objects by kind or tag.
 
-        kind: Any type. Pass to get a subset of contained items with the given
+        :param kind: Any type. Pass to get a subset of contained items with the given
               type.
-        tag: Any Hashable object. Pass to get a subset of contained items with
+        :param tag: Any Hashable object. Pass to get a subset of contained items with
              the given tag.
 
         Pass both kind and tag to get objects that are both that type and that
         tag.
 
-        Examples:
+        Examples: ::
+
             container.get(type=MyObject)
 
             container.get(tag="red")
@@ -83,9 +85,10 @@ class GameObjectCollection(Collection):
         """
         Remove the given object from the container.
 
-        game_object: A hashable contained by container.
+        :param game_object: A hashable contained by container.
 
-        Example:
+        Example: ::
+
             container.remove(myObject)
         """
         self.all.remove(game_object)
@@ -144,11 +147,12 @@ class BaseScene:
         """
         Add a game_object to the scene.
 
-        game_object: Any GameObject object. The item to be added.
-        tags: An iterable of Hashable objects. Values that can be used to
+        :param game_object: Any GameObject object. The item to be added.
+        :param tags: An iterable of Hashable objects. Values that can be used to
               retrieve a group containing the game_object.
 
-        Examples:
+        Examples: ::
+
             scene.add(MyGameObject())
 
             scene.add(MyGameObject(), tags=("red", "blue")
@@ -159,15 +163,16 @@ class BaseScene:
         """
         Get an iterator of GameObjects by kind or tag.
 
-        kind: Any type. Pass to get a subset of contained GameObjects with the
+        :param kind: Any type. Pass to get a subset of contained GameObjects with the
               given type.
-        tag: Any Hashable object. Pass to get a subset of contained GameObjects
+        :param tag: Any Hashable object. Pass to get a subset of contained GameObjects
              with the given tag.
 
         Pass both kind and tag to get objects that are both that type and that
         tag.
 
-        Examples:
+        Examples: ::
+
             scene.get(type=MyGameObject)
 
             scene.get(tag="red")
@@ -180,9 +185,10 @@ class BaseScene:
         """
         Remove the given object from the scene.
 
-        game_object: A game object.
+        :param game_object: A game object.
 
-        Example:
+        Example: ::
+
             scene.remove(my_game_object)
         """
         self.game_objects.remove(game_object)
