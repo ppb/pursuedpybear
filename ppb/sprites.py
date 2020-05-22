@@ -445,8 +445,6 @@ class Sprite(SquareShapeMixin, RenderableMixin, RotatableMixin, BaseSprite):
 
     If you need rectangular sprites instead of squares, see
     :class:`RectangleSprite`.
-
-    New in 0.7.0: Use this in place of BaseSprite in your games.
     """
 
 
