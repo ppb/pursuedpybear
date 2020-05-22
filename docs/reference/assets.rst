@@ -1,4 +1,4 @@
-.. py:currentmodule:: ppb.assets
+.. py:module:: ppb.assets
 
 Assets
 ======
