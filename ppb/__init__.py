@@ -50,28 +50,11 @@ from ppb.utils import get_time
 
 __all__ = (
     # Shortcuts
-    'Vector', 'BaseScene', 'BaseSprite', 'Circle', 'Image', 'Sprite',
+    'Vector', 'BaseScene', 'Circle', 'Image', 'Sprite',
     'Square', 'Sound', 'Triangle', 'events', 'Font', 'Text', 'directions',
     # Local stuff
     'run', 'make_engine',
 )
-
-
-class BaseSprite(Sprite):
-    """
-    A stub that raises a deprecation warning when a user uses
-    ``ppb.BaseSprite.``
-    """
-    __warning = """Using ppb.BaseSprite is deprecated.
-
-    You probably want ppb.Sprite. If you're wanting to use BaseSprite and
-    mixins to change what features your sprites have, import
-    ppb.sprites.BaseSprite.
-    """
-
-    def __init__(self, **kwargs):
-        warnings.warn(self.__warning, DeprecationWarning)
-        super().__init__(**kwargs)
 
 
 def _make_kwargs(setup, title, engine_opts):
