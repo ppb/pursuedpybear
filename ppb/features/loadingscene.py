@@ -72,7 +72,7 @@ class ProgressBarLoadingScene(BaseLoadingScene):
     #: Image to use for sprites in the "loaded" state (left side)
     loaded_image: "ppb.Image"
     #: Image to use for sprites in the "unloaded" state (right side)
-    unloaded_image: "ppb.Image" = ppb.flags.DoNotRender
+    unloaded_image: "ppb.Image" = None
 
     def update_progress(self, progress):
         """

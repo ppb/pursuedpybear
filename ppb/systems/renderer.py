@@ -228,7 +228,7 @@ class Renderer(SdlSubSystem):
             return
 
         image = game_object.__image__()
-        if image is flags.DoNotRender or image is None:
+        if image is None:
             return None
 
         surface = image.load()

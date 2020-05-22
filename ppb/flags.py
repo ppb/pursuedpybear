@@ -20,7 +20,7 @@ New classes of flags (eg mouse buttons) can be defined as:
         "This is a flag to indicate a thing."
 """
 
-__all__ = 'Flag', 'DoNotRender'
+__all__ = 'Flag',
 
 
 class FlagMeta(type):
@@ -49,10 +49,4 @@ class Flag(metaclass=FlagMeta, abstract=True):
     Inherit from Flag to make a simple flag.
 
     Add abstract=True in the class line to make a flag type.
-    """
-
-
-class DoNotRender(Flag):
-    """
-    Inform the renderer to ignore this object.
     """
