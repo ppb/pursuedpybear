@@ -56,8 +56,8 @@ class BaseSprite:
     def __init__(self, **kwargs):
         """
         :class:`BaseSprite` does not accept any positional arguments, and uses
-        kwargs to set arbitrary state to the :class:`BaseSprite` instance. This
-        allows rapid prototyping.
+        keyword arguments to set arbitrary state to the :class:`BaseSprite`
+        instance. This allows rapid prototyping.
 
         Example: ::
 
