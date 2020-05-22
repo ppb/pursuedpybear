@@ -135,7 +135,7 @@ class RotatableMixin:
     """
     A rotation mixin. Can be included with sprites.
 
-    .. warning:: rotation does not affect underlying position, it only rotates
+    .. warning:: rotation does not affect underlying shape (the corners are still in the same place), it only rotates
        the sprites image and provides a facing.
     """
     _rotation = 0
