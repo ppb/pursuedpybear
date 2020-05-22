@@ -17,8 +17,6 @@ you are changing the defaults.
    :members:
    :inherited-members:
 
-Note that ``ppb.BaseSprite`` is deprecated in favor of ppb.Sprite. Scheduled
-for removal in ppb v0.8.0.
 
 -------------------
 Feature Mixins

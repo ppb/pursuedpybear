@@ -5,7 +5,7 @@ from ppb.features.animation import Animation
 import ppb.events as events
 
 
-class Blob(ppb.BaseSprite):
+class Blob(ppb.Sprite):
     image = Animation("resources/blob_{0..6}.png", 10)
     target = ppb.Vector(0, 0)
     speed = 1

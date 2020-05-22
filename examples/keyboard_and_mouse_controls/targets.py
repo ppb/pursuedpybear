@@ -6,14 +6,14 @@ from ppb import Sound
 from ppb.events import PlaySound
 
 
-class MoverMixin(ppb.BaseSprite):
+class MoverMixin(ppb.Sprite):
     velocity = Vector(0, 0)
 
     def on_update(self, update, signal):
         self.position += self.velocity * update.time_delta
 
 
-class Player(MoverMixin, ppb.BaseSprite):
+class Player(MoverMixin, ppb.Sprite):
     # We handle movement by mapping each key to a velocity vector
     # and adding it on press and subtracting it on release.
     left_vector = Vector(-1, 0)
@@ -48,7 +48,7 @@ class Player(MoverMixin, ppb.BaseSprite):
         )
 
 
-class Bullet(MoverMixin, ppb.BaseSprite):
+class Bullet(MoverMixin, ppb.Sprite):
     velocity = Vector(0, 2)
     _rotation = 180
 
@@ -68,7 +68,7 @@ class Bullet(MoverMixin, ppb.BaseSprite):
                     break
 
 
-class Target(ppb.BaseSprite):
+class Target(ppb.Sprite):
     radius = 0.5
 
 
