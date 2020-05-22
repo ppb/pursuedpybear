@@ -83,6 +83,12 @@ Start working, try to solve the problem. If you get stuck, ask
 questions in your open PR. The maintainers and active contributors are
 here to help.
 
+Make sure the PPB tests pass by installing the test dependencies and
+running the full test suite.
+
+    pip install -r requirements-tests.txt
+    pytest
+
 Once you think it's ready, time to remove "WIP" from the title or hit
 the "Ready for review" button. Now someone senior in the project will
 review. They'll either ask for changes or approve your PR. If you need

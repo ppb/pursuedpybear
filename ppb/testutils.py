@@ -1,6 +1,7 @@
 import time
 from typing import Callable
 
+import ppb
 from ppb.engine import GameEngine
 from ppb.events import Idle
 from ppb.events import Quit
@@ -14,12 +15,12 @@ class Failer(System):
         super().__init__(**kwargs)
         self.fail = fail
         self.message = message
-        self.start = time.monotonic()
+        self.start = ppb.get_time()
         self.run_time = run_time
         self.engine = engine
 
     def on_idle(self, idle_event: Idle, signal):
-        if time.monotonic() - self.start > self.run_time:
+        if ppb.get_time() - self.start > self.run_time:
             raise AssertionError("Test ran too long.")
         if self.fail(self.engine):
             raise AssertionError(self.message)
