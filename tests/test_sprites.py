@@ -9,7 +9,6 @@ from hypothesis.strategies import floats
 from hypothesis.strategies import integers
 import pytest
 
-from ppb import BaseSprite as DeprecatedBaseSprite
 from ppb.sprites import *
 from ppb_vector import Vector
 
@@ -505,17 +504,6 @@ def test_sprite_in_main():
         # This patch simulates what happens when TestSprite was defined in the REPL
         assert s.__image__()  # We don't care what it is, as long as it's something
 
-
-def test_deprecated_base_sprite_warns():
-    with warnings.catch_warnings(record=True) as w:
-        # Cause all warnings to always be triggered.
-        warnings.simplefilter("always")
-        # Trigger a warning.
-        sprite = DeprecatedBaseSprite()
-        # Verify some things
-        assert len(w) == 1
-        assert issubclass(w[-1].category, DeprecationWarning)
-        assert "deprecated" in str(w[-1].message)
 
 # Below are tests for the new RectangleShapeMixin and the default Sprite that uses it.
 
