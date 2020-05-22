@@ -101,7 +101,7 @@ class RenderableMixin:
     skip rendering if a sprite has no shape. You can use
     :class:`RectangleMixin`, :class:`SquareMixin`, or set the values yourself.
 
-    Additionally, if :attr:`~RenderableMixin.image` is None, the sprite will not
+    Additionally, if :attr:`~RenderableMixin.image` is ``None``, the sprite will not
     be rendered. If you just want a basic shape to be rendered, see
     :mod:`ppb.assets`.
     """
@@ -185,8 +185,8 @@ class RectangleShapeMixin:
     the width and height in your constructor (Or as
     :class:`class attributes <BaseSprite>`) to change this default.
 
-    .. warning:: The concrete class using RectangleShapeMixin must have a
-       position.
+    .. note:: The concrete class using :class:`RectangleShapeMixin` must have a
+       ``position`` attribute.
     """
     #: The width of the sprite.
     width: int = 1
@@ -199,7 +199,7 @@ class RectangleShapeMixin:
     @property
     def left(self) -> float:
         """
-        The left side side of the object.
+        The x-axis position of the left side of the object.
 
         Can be set to a number.
         """
@@ -212,7 +212,7 @@ class RectangleShapeMixin:
     @property
     def right(self) -> float:
         """
-        The right side of the object.
+        The x-axis position of the right side of the object.
 
         Can be set to a number.
         """
@@ -225,7 +225,7 @@ class RectangleShapeMixin:
     @property
     def top(self) -> float:
         """
-        The top of the object.
+        The y-axis position of the top of the object.
 
         Can be set to a number.
         """
@@ -238,7 +238,7 @@ class RectangleShapeMixin:
     @property
     def bottom(self) -> float:
         """
-        The bottom of the object.
+        The y-axis position of the bottom of the object.
 
         Can be set to a number.
         """
@@ -251,7 +251,7 @@ class RectangleShapeMixin:
     @property
     def top_left(self) -> Vector:
         """
-        The top left corner of the object.
+        The coordinates of the top left corner of the object.
 
         Can be set to a :class:`ppb_vector.Vector`.
         """
@@ -267,7 +267,7 @@ class RectangleShapeMixin:
     @property
     def top_right(self) -> Vector:
         """
-        The top right corner of the object.
+        The coordinates of the top right corner of the object.
 
         Can be set to a :class:`ppb_vector.Vector`.
         """
@@ -283,7 +283,7 @@ class RectangleShapeMixin:
     @property
     def bottom_left(self) -> Vector:
         """
-        The bottom left corner of the object.
+        The coordinates of the bottom left corner of the object.
 
         Can be set to a :class:`ppb_vector.Vector`.
         """
@@ -303,7 +303,7 @@ class RectangleShapeMixin:
     @bottom_right.setter
     def bottom_right(self, vector: Vector):
         """
-        The bottom right corner of the object.
+        The coordinates of the bottom right corner of the object.
 
         Can be set to a :class:`ppb_vector.Vector`.
         """
@@ -315,7 +315,7 @@ class RectangleShapeMixin:
     @property
     def bottom_middle(self) -> Vector:
         """
-        The midpoint of the bottom of the object.
+        The coordinates of the midpoint of the bottom of the object.
 
         Can be set to a :class:`ppb_vector.Vector`.
         """
@@ -329,7 +329,7 @@ class RectangleShapeMixin:
     @property
     def left_middle(self) -> Vector:
         """
-        The midpoint of the left side of the object.
+        The coordinates of the midpoint of the left side of the object.
 
         Can be set to a :class:`ppb_vector.Vector`.
         """
@@ -343,7 +343,7 @@ class RectangleShapeMixin:
     @property
     def right_middle(self) -> Vector:
         """
-        The midpoint of the right side of the object.
+        The coordinates of the midpoint of the right side of the object.
 
         Can be set to a :class:`ppb_vector.Vector`.
         """
@@ -357,7 +357,7 @@ class RectangleShapeMixin:
     @property
     def top_middle(self) -> Vector:
         """
-        The midpoint of the top of the object.
+        The coordinates of the midpoint of the top of the object.
 
         Can be set to a :class:`ppb_vector.Vector`.
         """
@@ -371,7 +371,7 @@ class RectangleShapeMixin:
     @property
     def center(self) -> Vector:
         """
-        The center point of the object. Equivalent to the
+        The coordinates of the center point of the object. Equivalent to the
         :attr:`~BaseSprite.position`.
 
         Can be set to a :class:`ppb_vector.Vector`.
@@ -456,6 +456,6 @@ class RectangleSprite(RectangleShapeMixin, RenderableMixin, RotatableMixin, Base
 
     Similarly to :class:`~ppb.Sprite`, :class:`RectangleSprite` does not
     introduce any new methods or attributes. It's made up of :class:`BaseSprite`
-    with the mixins: :class:`RotatableMixin`, :class:`RenderableMixin`, and
+    with the mixins :class:`RotatableMixin`, :class:`RenderableMixin`, and
     :class:`RectangleShapeMixin`.
     """
