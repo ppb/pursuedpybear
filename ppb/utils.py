@@ -2,9 +2,12 @@ import logging
 import re
 import sys
 from time import perf_counter
+import typing
 
-__all__ = 'LoggingMixin', 'camel_to_snake', 'get_time'
+__all__ = 'LoggingMixin', 'camel_to_snake', 'get_time', 'Color'
 
+
+Color = typing.Tuple[int, int, int]
 
 # Dictionary mapping file names -> module names
 _module_file_index = {}

@@ -40,7 +40,8 @@ docs_task:
 
   script:
     - make -C docs/ linkcheck
-    - make -C docs/ html
+    # TODO: Add -n (nit-picky mode, warn about all missing references)
+    - make -C docs/ "SPHINXOPTS=-W" html
 
 task:
   name: "Linux $IMAGE"

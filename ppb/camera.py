@@ -133,7 +133,7 @@ class Camera(RectangleShapeMixin):
         exists in the visible space.
 
         A sprite without area (size=0 or lacking width, height, or any of the
-        sides accessors) behave as :method:`point_is_visible`.
+        sides accessors) behave as :meth:`point_is_visible`.
 
         :param sprite: The sprite to check
         :type: Sprite

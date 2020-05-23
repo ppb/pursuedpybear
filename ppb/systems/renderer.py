@@ -2,6 +2,7 @@ import ctypes
 import io
 import logging
 import random
+from typing import Tuple
 
 import sdl2
 import sdl2.ext
@@ -25,6 +26,13 @@ from sdl2 import (
     SDL_QueryTexture,  # https://wiki.libsdl.org/SDL_QueryTexture
     SDL_RenderCopyEx,  # https://wiki.libsdl.org/SDL_RenderCopyEx
     SDL_CreateRGBSurface,  # https://wiki.libsdl.org/SDL_CreateRGBSurface
+    SDL_BLENDMODE_ADD,
+    SDL_BLENDMODE_BLEND,
+    SDL_BLENDMODE_MOD,
+    SDL_BLENDMODE_NONE,
+    SDL_SetTextureAlphaMod,
+    SDL_SetTextureBlendMode,
+    SDL_SetTextureColorMod,
 )
 
 from sdl2.sdlimage import (
@@ -51,6 +59,13 @@ logger = logging.getLogger(__name__)
 
 
 DEFAULT_RESOLUTION = 800, 600
+
+OPACITY_MODES = {
+    flags.BlendModeAdd: SDL_BLENDMODE_ADD,
+    flags.BlendModeBlend: SDL_BLENDMODE_BLEND,
+    flags.BlendModeMod: SDL_BLENDMODE_MOD,
+    flags.BlendModeNone: SDL_BLENDMODE_NONE,
+}
 
 
 # TODO: Move Image out of the renderer so sprites can type hint appropriately.
@@ -228,19 +243,40 @@ class Renderer(SdlSubSystem):
             return
 
         image = game_object.__image__()
-        if image is flags.DoNotRender or image is None:
+        if image is None:
             return None
 
         surface = image.load()
         try:
-            return self._texture_cache[surface]
+            texture = self._texture_cache[surface]
         except KeyError:
             texture = SmartPointer(sdl_call(
                 SDL_CreateTextureFromSurface, self.renderer, surface,
                 _check_error=lambda rv: not rv
             ), SDL_DestroyTexture)
             self._texture_cache[surface] = texture
-            return texture
+
+        opacity = getattr(game_object, 'opacity', 255)
+        opacity_mode = getattr(game_object, 'opacity_mode', flags.BlendModeBlend)
+        opacity_mode = OPACITY_MODES[opacity_mode]
+        tint = getattr(game_object, 'tint', (255, 255, 255))
+
+        sdl_call(
+            SDL_SetTextureAlphaMod, texture.inner, opacity,
+            _check_error=lambda rv: rv < 0
+        )
+
+        sdl_call(
+            SDL_SetTextureBlendMode, texture.inner, opacity_mode,
+            _check_error=lambda rv: rv < 0
+        )
+
+        sdl_call(
+            SDL_SetTextureColorMod, texture.inner, tint[0], tint[1], tint[2],
+            _check_error=lambda rv: rv < 0
+        )
+
+        return texture
 
     def compute_rectangles(self, texture, game_object, camera):
         flags = sdl2.stdinc.Uint32()
