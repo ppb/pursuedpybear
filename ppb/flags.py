@@ -56,3 +56,34 @@ class DoNotRender(Flag):
     """
     Inform the renderer to ignore this object.
     """
+
+
+class BlendMode(Flag, abstract=True):
+    """
+    A flag indicating a blend mode, changing how translucent sprites are drawn
+    over top of other sprites.
+    """
+
+
+class BlendModeAdd(BlendMode):
+    """
+    Indicate a sprite, if translucent, should be rendered in ADD mode.
+    """
+
+
+class BlendModeBlend(BlendMode):
+    """
+    Indicate a sprite, if translucent, should be rendered in BLEND mode.
+    """
+
+
+class BlendModeMod(BlendMode):
+    """
+    Indicate a sprite, if translucent, should be rendered in MOD mode.
+    """
+
+
+class BlendModeNone(BlendMode):
+    """
+    Indicate a sprite, if translucent, should be rendered in NONE mode.
+    """
