@@ -106,7 +106,7 @@ class RenderableMixin:
     :mod:`ppb.assets`.
     """
     #: (:py:class:`ppb.Image`): The image asset
-    image = None  # TODO: Type hint appropriately
+    image = ...  # TODO: Type hint appropriately
     size = 1
     blend_mode: 'ppb.flags.BlendMode' # One of four blending modes
     opacity: int # An opacity value from 0-255
@@ -117,7 +117,7 @@ class RenderableMixin:
         Returns the sprite's image attribute if provided, or sets a default
         one.
         """
-        if self.image is None:
+        if self.image is ...:
             klass = type(self)
             prefix = Path(klass.__module__.replace('.', '/'))
             try:
