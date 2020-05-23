@@ -10,7 +10,7 @@ into a sprite animation, like so:
    import ppb
    from ppb.features.animation import Animation
 
-   class MySprite(ppb.BaseSprite):
+   class MySprite(ppb.Sprite):
        image = Animation("sprite_{1..10}.png", 4)
 
 
@@ -27,7 +27,7 @@ level", where multiple calls to :py:meth:`pause` cause the animation to become
    import ppb
    from ppb.features.animation import Animation
 
-   class MySprite(ppb.BaseSprite):
+   class MySprite(ppb.Sprite):
        image = Animation("sprite_{1..10}.png", 4)
 
        def on_scene_paused(self, event, signal):

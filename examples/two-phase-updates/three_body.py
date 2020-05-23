@@ -8,11 +8,11 @@ perfect mathematical solution, and must be solved through simulations.
 """
 
 import ppb
-from ppb import BaseSprite, Vector
+from ppb import Sprite, Vector
 from ppb.features.twophase import TwoPhaseMixin, TwoPhaseSystem
 
 
-class Planet(BaseSprite, TwoPhaseMixin):
+class Planet(Sprite, TwoPhaseMixin):
     #: A constant to apply to gravity
     G_CONST = 1
 

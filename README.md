@@ -86,7 +86,7 @@ run it.
 import ppb
 
 
-class Ship(ppb.BaseSprite):
+class Ship(ppb.Sprite):
 
     def on_update(self, update_event, signal):
         self.position += 0, -(4 * update_event.time_delta)

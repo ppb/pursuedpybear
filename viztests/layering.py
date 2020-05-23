@@ -9,7 +9,7 @@ from itertools import cycle
 import ppb
 
 
-class Mover(ppb.BaseSprite):
+class Mover(ppb.Sprite):
     image = ppb.Image("resources/mover.png")
     position = ppb.Vector(0, -4)
     velocity = ppb.Vector(0, 3)
@@ -20,12 +20,12 @@ class Mover(ppb.BaseSprite):
             self.velocity *= -1
 
 
-class TravelOver(ppb.BaseSprite):
+class TravelOver(ppb.Sprite):
     image = ppb.Image("resources/travel_over.png")
     layer = -1
 
 
-class TravelUnder(ppb.BaseSprite):
+class TravelUnder(ppb.Sprite):
     image = ppb.Image("resources/travel_under.png")
     layer = 1
 
