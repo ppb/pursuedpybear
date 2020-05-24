@@ -7,7 +7,7 @@ from ppb.systemslib import System
 
 class Updater(System):
 
-    def __init__(self, time_step=0.016, **kwargs):
+    def __init__(self, time_step=0.1, **kwargs):
         self.accumulated_time = 0
         self.last_tick = None
         self.start_time = None
