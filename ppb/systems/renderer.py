@@ -11,7 +11,8 @@ from sdl2 import (
     rw_from_object,  # https://pysdl2.readthedocs.io/en/latest/modules/sdl2.html#sdl2.sdl2.rw_from_object
     SDL_Window, SDL_Renderer,
     SDL_Rect,  # https://wiki.libsdl.org/SDL_Rect
-    SDL_INIT_VIDEO, SDL_BLENDMODE_BLEND, SDL_FLIP_NONE,
+    SDL_INIT_VIDEO, SDL_BLENDMODE_BLEND,
+    SDL_FLIP_NONE, SDL_FLIP_HORIZONTAL, SDL_FLIP_VERTICAL,
     SDL_CreateWindowAndRenderer,  # https://wiki.libsdl.org/SDL_CreateWindowAndRenderer
     SDL_DestroyRenderer,  # https://wiki.libsdl.org/SDL_DestroyRenderer
     SDL_DestroyWindow,  # https://wiki.libsdl.org/SDL_DestroyWindow
@@ -65,6 +66,13 @@ OPACITY_MODES = {
     flags.BlendModeBlend: SDL_BLENDMODE_BLEND,
     flags.BlendModeMod: SDL_BLENDMODE_MOD,
     flags.BlendModeNone: SDL_BLENDMODE_NONE,
+}
+
+FLIP = {
+    flags.FlipNone: SDL_FLIP_NONE,
+    flags.FlipVertical: SDL_FLIP_VERTICAL,
+    flags.FlipHorizontal: SDL_FLIP_HORIZONTAL,
+    flags.FlipBoth: SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL,
 }
 
 
@@ -201,10 +209,11 @@ class Renderer(SdlSubSystem):
             src_rect, dest_rect, angle = self.compute_rectangles(
                 texture.inner, game_object, camera
             )
+            flip = FLIP[getattr(game_object, 'flip', flags.FlipNone)]
             sdl_call(
                 SDL_RenderCopyEx, self.renderer, texture.inner,
                 ctypes.byref(src_rect), ctypes.byref(dest_rect),
-                angle, None, SDL_FLIP_NONE,
+                angle, None, flip,
                 _check_error=lambda rv: rv < 0
             )
         sdl_call(SDL_RenderPresent, self.renderer)
