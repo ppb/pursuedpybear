@@ -108,3 +108,4 @@ venv.bak/
 # Environment created by upload scripts.
 
 .upload-venv/*
+.venv*/
