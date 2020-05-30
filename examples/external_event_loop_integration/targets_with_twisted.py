@@ -68,14 +68,14 @@ class TargetCounter(object):
 
 
 class Bullet(MoverMixin, ppb.Sprite):
-    velocity = Vector(0, 2)
+    velocity = Vector(0, -2)
 
     def on_update(self, update, signal):
         super().on_update(update, signal)  # Execute movement
 
         scene = update.scene
         
-        if self.position.y > scene.main_camera.frame_bottom:
+        if self.position.y > scene.main_camera.top:
             scene.remove(self)
         else:
             for target in scene.get(tag='target'):
@@ -99,7 +99,7 @@ class GameScene(ppb.BaseScene):
 
         # 5 targets in x = -3.75 -> 3.75, with margin
         for x in (-3, -1.5, 0, 1.5, 3):
-            self.add(Target(pos=Vector(x, 1.875)), tags=['target'])
+            self.add(Target(pos=Vector(x, -1.875)), tags=['target'])
 
 
 ######### This is "non-game-specific code" ###########
