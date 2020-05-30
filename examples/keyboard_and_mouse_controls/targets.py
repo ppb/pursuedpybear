@@ -57,7 +57,7 @@ class Bullet(MoverMixin, ppb.Sprite):
 
         scene = update.scene
 
-        if self.position.y > scene.main_camera.frame_top:
+        if self.position.y > scene.main_camera.top:
             scene.remove(self)
         else:
             for target in scene.get(tag='target'):
