@@ -19,7 +19,7 @@ the primary classes you subclass when building game objects.
    :members:
    :inherited-members:
 
-.. autoclass:: ppb.sprites.RectangleSprite
+.. autoclass:: ppb.RectangleSprite
    :members:
    :inherited-members:
 
