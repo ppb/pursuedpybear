@@ -33,3 +33,4 @@ Halle Jones|HJones@aliacy.com||
 [Sanket Dasgupta](https://github.com/SanketDG) | [sanketdasgupta@gmail.com](sanketdasgupta@gmail.com) | [@SanketDG](https://twitter.com/SanketDG)
 [Serin Delaunay](https://github.com/serin-delaunay) | | [SerinDelaunay](https://twitter.com/SerinDelaunay)
 [Nils Müller](https://github.com/shimst3r) | [shimst3r@gmail.com](mailto:shimst3r@gmail.com) | [@shimst3r](https://twitter.com/shimst3r)
+[Aly Sivji](https://github.com/alysivji) |  | [@CaiusSivjus](https://twitter.com/CaiusSivjus)

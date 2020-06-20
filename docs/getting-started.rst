@@ -236,16 +236,16 @@ First, we need a new class. We'll put it under ``Player``, but above ``setup``.
 ``main.py``::
 
    class Projectile(ppb.Sprite):
-      size = 0.25
-      direction = ppb.Vector(0, 1)
-      speed = 6
+       size = 0.25
+       direction = ppb.Vector(0, 1)
+       speed = 6
 
-      def on_update(self, update_event, signal):
-          if self.direction:
-              direction = self.direction.normalize()
-          else:
-              direction = self.direction
-          self.position += direction * self.speed * update_event.time_delta
+       def on_update(self, update_event, signal):
+           if self.direction:
+               direction = self.direction.normalize()
+           else:
+               direction = self.direction
+           self.position += direction * self.speed * update_event.time_delta
 
 If we wanted to, we could pull out this ``on_update`` function into a mixin that
 we could use with either of these classes, but I'm going to leave that as an
