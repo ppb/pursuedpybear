@@ -212,9 +212,13 @@ class BackgroundMixin:
         Will block until the data is loaded.
         """
         # NOTE: This is called by FreeingMixin.__del__()
-        if not self.is_loaded() and not _executor.running():
-            logger.warning(f"Waited on {self!r} outside of the engine")
-        return self._future.result(timeout)
+        try:
+            return self._cached_result
+        except AttributeError:
+            if not self.is_loaded() and not _executor.running():
+                logger.warning(f"Waited on {self!r} outside of the engine")
+            self._cached_result = self._future.result(timeout)
+            return self._cached_result
 
 
 class ChainingMixin(BackgroundMixin):

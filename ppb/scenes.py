@@ -11,6 +11,9 @@ from typing import Type
 from ppb.camera import Camera
 
 
+get_layer = lambda s: getattr(s, "layer", 0)
+
+
 class GameObjectCollection(Collection):
     """A container for game objects."""
 
@@ -111,6 +114,7 @@ class BaseScene:
             setattr(self, k, v)
 
         self.game_objects = self.container_class()
+        self.event_handler_cache = {}
 
         if set_up is not None:
             set_up(self)
@@ -120,6 +124,18 @@ class BaseScene:
 
     def __iter__(self) -> Iterator:
         return (x for x in self.game_objects)
+    
+    def get_objects_for_handler(self, event_handler_name):
+        try:
+            return self.event_handler_cache[event_handler_name]
+        except:
+            results = []
+            for obj in self:
+                method = getattr(obj, event_handler_name, None)
+                if callable(method):
+                    results.append(obj)
+            self.event_handler_cache[event_handler_name] = results
+            return results
 
     @property
     def kinds(self):
@@ -158,6 +174,7 @@ class BaseScene:
             scene.add(MyGameObject(), tags=("red", "blue")
         """
         self.game_objects.add(game_object, tags)
+        self.event_handler_cache = {}
 
     def get(self, *, kind: Type=None, tag: Hashable=None, **kwargs) -> Iterator:
         """
@@ -192,6 +209,7 @@ class BaseScene:
             scene.remove(my_game_object)
         """
         self.game_objects.remove(game_object)
+        self.event_handler_cache = {}
 
     def sprite_layers(self) -> Iterator:
         """
@@ -205,4 +223,4 @@ class BaseScene:
         This function exists primarily to assist the Renderer subsystem,
         but will be left public for other creative uses.
         """
-        return sorted(self, key=lambda s: getattr(s, "layer", 0))
+        return sorted(self, key=get_layer)

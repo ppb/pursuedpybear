@@ -226,7 +226,7 @@ class GameEngine(LoggingMixin):
             callback(event)
 
         event_handler_name = _get_handler_name(type(event).__name__)
-        for obj in self.walk():
+        for obj in self.get_objects_for_handler(event_handler_name):
             method = getattr(obj, event_handler_name, None)
             if callable(method):
                 try:
@@ -333,9 +333,9 @@ class GameEngine(LoggingMixin):
         """
         self.events = deque()
 
-    def walk(self):
+    def get_objects_for_handler(self, event_handler_name):
         """
-        Walk the object tree.
+        Walk the object tree for a specific event handler name.
 
         Publication order: The :class:`GameEngine`, the
         :class:`~ppb.systemslib.System` list, the current
@@ -346,4 +346,4 @@ class GameEngine(LoggingMixin):
         yield from self.systems
         yield self.current_scene
         if self.current_scene is not None:
-            yield from self.current_scene
+            yield from self.current_scene.get_objects_for_handler(event_handler_name)

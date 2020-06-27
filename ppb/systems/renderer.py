@@ -1,4 +1,5 @@
 import ctypes
+from functools import lru_cache
 import io
 import logging
 import random
@@ -139,6 +140,9 @@ class Renderer(SdlSubSystem):
         self.target_frame_rate = target_frame_rate
         self.target_frame_length = 1 / self.target_frame_rate
         self.target_clock = get_time() + self.target_frame_length
+        self.last_opacity = 255
+        self.last_opacity_mode = OPACITY_MODES[flags.BlendModeNone]
+        self.last_tint = (255, 255, 255)
 
         self._texture_cache = ObjectSideData()
 
@@ -240,12 +244,17 @@ class Renderer(SdlSubSystem):
             return None
 
         if not hasattr(game_object, '__image__'):
-            return
-
-        image = game_object.__image__()
-        if image is None:
             return None
 
+        try:
+            image = game_object.__image__()
+        except AttributeError:
+            return None
+        else:
+            if image is flags.DoNotRender or image is None:
+                return None
+
+        # Can change for animated objects, cannot reliable cache
         surface = image.load()
         try:
             texture = self._texture_cache[surface]
@@ -261,24 +270,56 @@ class Renderer(SdlSubSystem):
         opacity_mode = OPACITY_MODES[opacity_mode]
         tint = getattr(game_object, 'tint', (255, 255, 255))
 
-        sdl_call(
-            SDL_SetTextureAlphaMod, texture.inner, opacity,
-            _check_error=lambda rv: rv < 0
-        )
+        if self.last_opacity != opacity:
+            self.last_opacity = opacity
+            sdl_call(
+                SDL_SetTextureAlphaMod, texture.inner, opacity,
+                _check_error=lambda rv: rv < 0
+            )
 
-        sdl_call(
-            SDL_SetTextureBlendMode, texture.inner, opacity_mode,
-            _check_error=lambda rv: rv < 0
-        )
+        if self.last_opacity_mode != opacity_mode:
+            self.last_opacity_mode = opacity_mode
+            sdl_call(
+                SDL_SetTextureBlendMode, texture.inner, opacity_mode,
+                _check_error=lambda rv: rv < 0
+            )
 
-        sdl_call(
-            SDL_SetTextureColorMod, texture.inner, tint[0], tint[1], tint[2],
-            _check_error=lambda rv: rv < 0
-        )
+        if self.last_tint != tint:
+            self.last_tine = tint
+            sdl_call(
+                SDL_SetTextureColorMod, texture.inner, tint[0], tint[1], tint[2],
+                _check_error=lambda rv: rv < 0
+            )
 
         return texture
 
+    _compute_cache = {}
     def compute_rectangles(self, texture, game_object, camera):
+        if hasattr(game_object, 'width'):
+            obj_w = game_object.width
+            obj_h = game_object.height
+        else:
+            obj_w, obj_h = game_object.size
+
+        rect = getattr(game_object, 'rect', None)
+        key = (rect, id(texture), tuple(game_object.position), obj_w, obj_h, camera.pixel_ratio,)
+
+        try:
+            win_w, win_h, src_rect, dest_rect = self._compute_cache[key]
+        except KeyError:    
+            self._compute_cache[key] = self._compute_rectangles(
+                rect,
+                texture,
+                game_object.position,
+                obj_w, obj_h, camera.pixel_ratio,
+                camera,
+            )
+            win_w, win_h, src_rect, dest_rect = self._compute_cache[key]
+
+        return src_rect, dest_rect, ctypes.c_double(-game_object.rotation)
+    
+    @staticmethod
+    def _compute_rectangles(rect, texture, position, obj_width, obj_height, pixel_ratio, camera):
         flags = sdl2.stdinc.Uint32()
         access = ctypes.c_int()
         img_w = ctypes.c_int()
@@ -289,17 +330,27 @@ class Renderer(SdlSubSystem):
             _check_error=lambda rv: rv < 0
         )
 
-        src_rect = SDL_Rect(x=0, y=0, w=img_w, h=img_h)
-
-        if hasattr(game_object, 'width'):
-            obj_w = game_object.width
-            obj_h = game_object.height
+        if rect:
+            src_rect = SDL_Rect(*rect)
+            win_w = int(rect[2] * obj_width)
+            win_h = int(rect[3] * obj_height)
         else:
-            obj_w, obj_h = game_object.size
+            src_rect = SDL_Rect(x=0, y=0, w=img_w, h=img_h)
 
-        win_w, win_h = self.target_resolution(img_w.value, img_h.value, obj_w, obj_h, camera.pixel_ratio)
+            if not obj_width:
+                print("no width")
+                ratio = img_h / (pixel_ratio * obj_height)
+            elif not obj_height:
+                print("no height")
+                ratio = img_w.value / (pixel_ratio * obj_width)
+            else:
+                ratio_w = img_w.value / (pixel_ratio * obj_width)
+                ratio_h = img_h.value / (pixel_ratio * obj_height)
+                ratio = min(ratio_w, ratio_h)  # smaller value -> less reduction
+            
+            win_w, win_h = round(img_w.value / ratio), round(img_h.value / ratio)
 
-        center = camera.translate_point_to_screen(game_object.position)
+        center = camera.translate_point_to_screen(position)
         dest_rect = SDL_Rect(
             x=int(center.x - win_w / 2),
             y=int(center.y - win_h / 2),
@@ -307,18 +358,4 @@ class Renderer(SdlSubSystem):
             h=win_h,
         )
 
-        return src_rect, dest_rect, ctypes.c_double(-game_object.rotation)
-
-    @staticmethod
-    def target_resolution(img_width, img_height, obj_width, obj_height, pixel_ratio):
-        if not obj_width:
-            print("no width")
-            ratio = img_height / (pixel_ratio * obj_height)
-        elif not obj_height:
-            print("no height")
-            ratio = img_width / (pixel_ratio * obj_width)
-        else:
-            ratio_w = img_width / (pixel_ratio * obj_width)
-            ratio_h = img_height / (pixel_ratio * obj_height)
-            ratio = min(ratio_w, ratio_h)  # smaller value -> less reduction
-        return round(img_width / ratio), round(img_height / ratio)
+        return win_w, win_h, src_rect, dest_rect
