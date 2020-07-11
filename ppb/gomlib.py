@@ -31,7 +31,7 @@ class Children(Collection):
     def __len__(self) -> int:
         return len(self.all)
 
-    def add(self, child: Hashable, tags: Iterable[Hashable] = ()) -> None:
+    def add(self, child: Hashable, tags: Iterable[Hashable] = ()) -> Hashable:
         """
         Add a child.
 
@@ -53,6 +53,8 @@ class Children(Collection):
             self.kinds[kind].add(child)
         for tag in tags:
             self.tags[tag].add(child)
+
+        return child
 
     def get(self, *, kind: Type = None, tag: Hashable = None, **_) -> Iterator:
         """
@@ -84,7 +86,7 @@ class Children(Collection):
             tags = self.tags[tag]
         return (x for x in kinds.intersection(tags))
 
-    def remove(self, child: Hashable) -> None:
+    def remove(self, child: Hashable) -> Hashable:
         """
         Remove the given object from the container.
 
@@ -99,6 +101,8 @@ class Children(Collection):
             self.kinds[kind].remove(child)
         for s in self.tags.values():
             s.discard(child)
+
+        return child
 
 
 class GameObject:
@@ -129,7 +133,7 @@ class GameObject:
         """
         Shorthand for :meth:`Children.add()`
         """
-        self.children.add(child, tags)
+        return self.children.add(child, tags)
 
     def get(self, *, kind: Type=None, tag: Hashable=None, **kwargs) -> Iterator:
         """
@@ -141,7 +145,7 @@ class GameObject:
         """
         Shorthand for :meth:`Children.remove()`
         """
-        self.children.remove(child)
+        return self.children.remove(child)
 
 
     @property
