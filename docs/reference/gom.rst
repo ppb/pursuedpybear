@@ -5,3 +5,4 @@ Game Object Model
 =================
 
 .. automodule:: ppb.gomlib
+   :members:
