@@ -23,6 +23,7 @@ from typing import Union
 from ppb_vector import Vector, VectorLike
 
 import ppb
+import ppb.gomlib
 
 __all__ = (
     "BaseSprite",
@@ -35,7 +36,7 @@ __all__ = (
 )
 
 
-class BaseSprite:
+class BaseSprite(ppb.gomlib.GameObject):
     """
     The base Sprite class. All sprites should inherit from this (directly or
     indirectly).
@@ -53,7 +54,7 @@ class BaseSprite:
     #: The layer a sprite exists on.
     layer: int = 0
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, pos=None, **props):
         """
         :class:`BaseSprite` does not accept any positional arguments, and uses
         keyword arguments to set arbitrary state to the :class:`BaseSprite`
@@ -78,19 +79,16 @@ class BaseSprite:
               def on_update(self, update_event, signal):
                   self.position += self.velocity * update_event.time_delta
         """
-        super().__init__()
+        # Appreviations
+        if pos is not None:
+            if 'position' in props:
+                raise TypeError("pos and position were both given to Sprite")
+            props['position'] = pos
 
+        super().__init__(**props)
+
+        # Type coercion
         self.position = Vector(self.position)
-
-        # Initialize things
-        for k, v in kwargs.items():
-            # Abbreviations
-            if k == 'pos':
-                k = 'position'
-            # Castings
-            if k == 'position':
-                v = Vector(v)
-            setattr(self, k, v)
 
 
 class RenderableMixin:
