@@ -57,9 +57,27 @@ class Children(Collection):
 
         return child
 
+    def remove(self, child: Hashable) -> Hashable:
+        """
+        Remove the given object from the container.
+
+        :param child: A hashable contained by container.
+
+        Example: ::
+
+            container.remove(myObject)
+        """
+        self._all.remove(child)
+        for kind in type(child).mro():
+            self._kinds[kind].remove(child)
+        for s in self._tags.values():
+            s.discard(child)
+
+        return child
+
     def get(self, *, kind: Type = None, tag: Hashable = None, **_) -> Iterator:
         """
-        Get an iterator of objects by kind or tag.
+        Iterate over the objects by kind or tag.
 
         :param kind: Any type. Pass to get a subset of contained items with the given
               type.
@@ -87,23 +105,14 @@ class Children(Collection):
             tags = self._tags[tag]
         return (x for x in kinds.intersection(tags))
 
-    def remove(self, child: Hashable) -> Hashable:
+    def walk(self):
         """
-        Remove the given object from the container.
-
-        :param child: A hashable contained by container.
-
-        Example: ::
-
-            container.remove(myObject)
+        Iterate over the children and their children.
         """
-        self._all.remove(child)
-        for kind in type(child).mro():
-            self._kinds[kind].remove(child)
-        for s in self._tags.values():
-            s.discard(child)
-
-        return child
+        for child in self._all:
+            yield child
+            if hasattr(child, 'children') and hasattr(child.children.walk):
+                yield from child.children.walk()
 
     def tags(self):
         """
