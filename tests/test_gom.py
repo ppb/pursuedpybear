@@ -1,6 +1,6 @@
 import pytest
 
-from ppb.gomlib import GameObject, GameObjectCollection
+from ppb.gomlib import GameObject, Children
 
 
 
@@ -102,7 +102,7 @@ def test_remove_methods(container, player, enemies):
 
 @pytest.mark.parametrize("player", players())
 def test_collection_methods(player, enemies):
-    container = GameObjectCollection()
+    container = Children()
     container.add(player)
     container.add(enemies[0])
 

@@ -20,16 +20,16 @@ class BaseScene(GameObject):
     @property
     def main_camera(self) -> Camera:
         try:
-            camera = next(self.game_objects.get(tag="main_camera"))
+            camera = next(self.children.get(tag="main_camera"))
         except StopIteration:
             camera = None
         return camera
 
     @main_camera.setter
     def main_camera(self, value: Camera):
-        for camera in self.game_objects.get(tag="main_camera"):
-            self.game_objects.remove(camera)
-        self.game_objects.add(value, tags=["main_camera"])
+        for camera in self.children.get(tag="main_camera"):
+            self.children.remove(camera)
+        self.children.add(value, tags=["main_camera"])
 
     def sprite_layers(self) -> Iterator:
         """
