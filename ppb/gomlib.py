@@ -8,6 +8,7 @@ from typing import Hashable
 from typing import Iterable
 from typing import Iterator
 from typing import Type
+import warnings
 
 
 class Children(Collection):
@@ -18,18 +19,18 @@ class Children(Collection):
     """
 
     def __init__(self):
-        self.all = set()
-        self.kinds = defaultdict(set)
-        self.tags = defaultdict(set)
+        self._all = set()
+        self._kinds = defaultdict(set)
+        self._tags = defaultdict(set)
 
     def __contains__(self, item: Hashable) -> bool:
-        return item in self.all
+        return item in self._all
 
     def __iter__(self) -> Iterator[Hashable]:
-        return (x for x in list(self.all))
+        return (x for x in list(self._all))
 
     def __len__(self) -> int:
-        return len(self.all)
+        return len(self._all)
 
     def add(self, child: Hashable, tags: Iterable[Hashable] = ()) -> Hashable:
         """
@@ -47,12 +48,12 @@ class Children(Collection):
         """
         if isinstance(tags, (str, bytes)):
             raise TypeError("You passed a string instead of an iterable, this probably isn't what you intended.\n\nTry making it a tuple.")
-        self.all.add(child)
+        self._all.add(child)
 
         for kind in type(child).mro():
-            self.kinds[kind].add(child)
+            self._kinds[kind].add(child)
         for tag in tags:
-            self.tags[tag].add(child)
+            self._tags[tag].add(child)
 
         return child
 
@@ -78,12 +79,12 @@ class Children(Collection):
         """
         if kind is None and tag is None:
             raise TypeError("get() takes at least one keyword-only argument. 'kind' or 'tag'.")
-        kinds = self.all
-        tags = self.all
+        kinds = self._all
+        tags = self._all
         if kind is not None:
-            kinds = self.kinds[kind]
+            kinds = self._kinds[kind]
         if tag is not None:
-            tags = self.tags[tag]
+            tags = self._tags[tag]
         return (x for x in kinds.intersection(tags))
 
     def remove(self, child: Hashable) -> Hashable:
@@ -96,13 +97,25 @@ class Children(Collection):
 
             container.remove(myObject)
         """
-        self.all.remove(child)
+        self._all.remove(child)
         for kind in type(child).mro():
-            self.kinds[kind].remove(child)
-        for s in self.tags.values():
+            self._kinds[kind].remove(child)
+        for s in self._tags.values():
             s.discard(child)
 
         return child
+
+    def tags(self):
+        """
+        Generates all of the tags currently in the collections
+        """
+        yield from self._tags
+
+    def kinds(self):
+        """
+        Generates all types of the children (including super types)
+        """
+        yield from self._kinds
 
 
 class GameObject:
@@ -151,13 +164,23 @@ class GameObject:
     @property
     def kinds(self):
         """
-        Short hand for :prop:`Children.kinds`
+        Shorthand for :meth:`Children.kinds()`
+
+        .. deprecated:: 0.10
+           Use ``.children.kinds()`` instead.
         """
+        # Deprecated in 0.10
+        warnings.warn(".kinds is deprecated, use .children.kinds()", DeprecationWarning)
         return self.children.kinds
 
     @property
     def tags(self):
         """
-        Short hand for :prop:`Children.tags`
+        Shorthand for :meth:`Children.tags()`
+
+        .. deprecated:: 0.10
+           Use ``.children.tags()`` instead.
         """
+        # Deprecated in 0.10
+        warnings.warn(".tags is deprecated, use .children.tags()", DeprecationWarning)
         return self.children.tags
