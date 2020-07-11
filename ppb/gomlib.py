@@ -1,0 +1,3 @@
+"""
+The Game Object Model.
+"""

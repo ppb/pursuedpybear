@@ -20,6 +20,7 @@ decisions are made, see the :doc:`/discussion/index` section.
    events
    clocks
    assets
+   gom
    scenes
    sprites
    text
