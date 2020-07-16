@@ -33,6 +33,7 @@ import logging
 import warnings
 from typing import Callable
 
+from ppb import contexts
 from ppb import directions
 from ppb import events
 from ppb_vector import Vector
@@ -53,6 +54,7 @@ __all__ = (
     # Shortcuts
     'Vector', 'BaseScene', 'Circle', 'Image', 'Sprite', 'RectangleSprite',
     'Square', 'Sound', 'Triangle', 'events', 'Font', 'Text', 'directions',
+    'contexts',
     # Local stuff
     'run', 'make_engine',
 )
