@@ -23,6 +23,7 @@ from typing import Union
 from ppb_vector import Vector, VectorLike
 
 import ppb
+from ppb import flags
 
 __all__ = (
     "BaseSprite",
@@ -111,13 +112,17 @@ class RenderableMixin:
     blend_mode: 'ppb.flags.BlendMode' # One of four blending modes
     opacity: int # An opacity value from 0-255
     color: 'ppb.utils.Color' # A 3-tuple color with values 0-255
+    render_info: ppb.contexts.RenderInfo = ppb.contexts.RenderInfo()
 
-    def __image__(self):
+    def __image__(self):  # This might go away as I work on this.
         """
         Returns the sprite's image attribute if provided, or sets a default
         one.
         """
-        if self.image is ...:
+        if self.render_info.image is None:
+            self.render_info.image = self.image
+
+        if self.render_info.image is ...:
             klass = type(self)
             prefix = Path(klass.__module__.replace('.', '/'))
             try:
@@ -128,10 +133,10 @@ class RenderableMixin:
                 if Path(klassfile).name != '__init__.py':
                     prefix = prefix.parent
             if prefix == Path('.'):
-                self.image = ppb.Image(f"{klass.__name__.lower()}.png")
+                self.render_info.image = ppb.Image(f"{klass.__name__.lower()}.png")
             else:
-                self.image = ppb.Image(f"{prefix!s}/{klass.__name__.lower()}.png")
-        return self.image
+                self.render_info.image = ppb.Image(f"{prefix!s}/{klass.__name__.lower()}.png")
+        return self.render_info.image
 
 
 class RotatableMixin:
