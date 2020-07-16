@@ -2,7 +2,6 @@ import ctypes
 import io
 import logging
 import random
-from typing import Tuple
 
 import sdl2
 import sdl2.ext
@@ -51,6 +50,7 @@ import ppb.events as events
 import ppb.flags as flags
 
 from ppb.camera import Camera
+from ppb.contexts import RenderInfo
 from ppb.systems._sdl_utils import SdlSubSystem, sdl_call, img_call, ttf_call
 from ppb.systems._utils import ObjectSideData
 from ppb.utils import get_time
@@ -239,14 +239,24 @@ class Renderer(SdlSubSystem):
         if not self._object_has_dimension(game_object):
             return None
 
-        if not hasattr(game_object, '__image__'):
-            return
+        render_info: RenderInfo = getattr(game_object, "render_info", None)
+        if render_info is None:
+            if not hasattr(game_object, '__image__'):
+                return
 
-        image = game_object.__image__()
-        if image is None:
+            image = game_object.__image__()
+            if image is None:
+                return
+            opacity = getattr(game_object, 'opacity', 255)
+            opacity_mode = getattr(game_object, 'blend_mode', flags.BlendModeBlend)
+            tint = getattr(game_object, 'tint', (255, 255, 255))
+            render_info = RenderInfo(image, opacity_mode, opacity, tint)
+            game_object.render_info = render_info
+
+        if render_info.image is None:
             return None
 
-        surface = image.load()
+        surface = render_info.image.load()
         try:
             texture = self._texture_cache[surface]
         except KeyError:
@@ -256,13 +266,10 @@ class Renderer(SdlSubSystem):
             ), SDL_DestroyTexture)
             self._texture_cache[surface] = texture
 
-        opacity = getattr(game_object, 'opacity', 255)
-        opacity_mode = getattr(game_object, 'opacity_mode', flags.BlendModeBlend)
-        opacity_mode = OPACITY_MODES[opacity_mode]
-        tint = getattr(game_object, 'tint', (255, 255, 255))
+        opacity_mode = OPACITY_MODES[render_info.blend_mode]
 
         sdl_call(
-            SDL_SetTextureAlphaMod, texture.inner, opacity,
+            SDL_SetTextureAlphaMod, texture.inner, render_info.opacity,
             _check_error=lambda rv: rv < 0
         )
 
@@ -272,7 +279,7 @@ class Renderer(SdlSubSystem):
         )
 
         sdl_call(
-            SDL_SetTextureColorMod, texture.inner, tint[0], tint[1], tint[2],
+            SDL_SetTextureColorMod, texture.inner, *render_info.tint,
             _check_error=lambda rv: rv < 0
         )
 

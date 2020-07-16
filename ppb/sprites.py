@@ -112,14 +112,15 @@ class RenderableMixin:
     blend_mode: 'ppb.flags.BlendMode' # One of four blending modes
     opacity: int # An opacity value from 0-255
     color: 'ppb.utils.Color' # A 3-tuple color with values 0-255
-    render_info: ppb.contexts.RenderInfo = ppb.contexts.RenderInfo()
+    render_info: ppb.contexts.RenderInfo = None
 
     def __image__(self):  # This might go away as I work on this.
         """
         Returns the sprite's image attribute if provided, or sets a default
         one.
         """
-        if self.render_info.image is None:
+        if self.render_info is None:
+            self.render_info = ppb.contexts.RenderInfo()
             self.render_info.image = self.image
 
         if self.render_info.image is ...:
