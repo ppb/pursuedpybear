@@ -1,7 +1,7 @@
-class System:
+import ppb.gomlib
 
-    def __init__(self, **_):
-        pass
+
+class System(ppb.gomlib.GameObject):
 
     def __enter__(self):
         pass
