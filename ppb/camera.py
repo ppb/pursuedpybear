@@ -12,6 +12,7 @@ from numbers import Real
 
 from ppb_vector import Vector
 
+from ppb.gomlib import GameObject
 from ppb.sprites import RectangleShapeMixin
 from ppb.sprites import Sprite
 
@@ -30,7 +31,7 @@ def _sprite_has_rectangular_region(sprite):
     )
 
 
-class Camera(RectangleShapeMixin):
+class Camera(RectangleShapeMixin, GameObject):
     """
     A simple Camera.
 
