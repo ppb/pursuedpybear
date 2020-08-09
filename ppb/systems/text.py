@@ -20,7 +20,7 @@ from sdl2.sdlttf import (
 )
 
 from ppb.assetlib import Asset, ChainingMixin, AbstractAsset, FreeingMixin
-from ppb.systems._sdl_utils import ttf_call
+from ppb.systems.sdl_utils import ttf_call
 
 # From https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html:
 # [Since 2.5.6] In multi-threaded applications it is easiest to use one
