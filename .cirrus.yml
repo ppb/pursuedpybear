@@ -28,7 +28,7 @@ build_task:
 docs_task:
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
   container:
-    image: python:3.7-slim
+    image: python:3-slim
 
   depends_on:
     - build

@@ -347,7 +347,7 @@ class PlaySound:
 
        signal(PlaySound(my_sound))
     """
-    sound: 'ppb.assets.Asset'  #: A :class:`~ppb.systems.sound.Sound` asset.
+    sound: 'ppb.assetlib.Asset'  #: A :class:`~ppb.systems.sound.Sound` asset.
 
 
 @dataclass
@@ -355,6 +355,6 @@ class AssetLoaded:
     """
     An asset has finished loading.
     """
-    asset: 'ppb.assets.Asset'  #: A :class:`~ppb.assetlib.Asset`
+    asset: 'ppb.assetlib.Asset'  #: A :class:`~ppb.assetlib.Asset`
     total_loaded: int  #: The total count of loaded assets.
     total_queued: int  #: The number of requested assets still waiting.
