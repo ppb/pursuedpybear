@@ -51,7 +51,7 @@ import ppb.events as events
 import ppb.flags as flags
 
 from ppb.camera import Camera
-from ppb.systems._sdl_utils import SdlSubSystem, sdl_call, img_call, ttf_call
+from ppb.systems.sdl_utils import SdlSubSystem, sdl_call, img_call, ttf_call
 from ppb.systems._utils import ObjectSideData
 from ppb.utils import get_time
 
