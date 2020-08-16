@@ -26,6 +26,7 @@ from sdl2 import (
     SDL_QueryTexture,  # https://wiki.libsdl.org/SDL_QueryTexture
     SDL_RenderCopyEx,  # https://wiki.libsdl.org/SDL_RenderCopyEx
     SDL_CreateRGBSurface,  # https://wiki.libsdl.org/SDL_CreateRGBSurface
+    SDL_ShowCursor,  # https://wiki.libsdl.org/SDL_ShowCursor
     SDL_BLENDMODE_ADD,
     SDL_BLENDMODE_BLEND,
     SDL_BLENDMODE_MOD,
@@ -179,13 +180,20 @@ class Renderer(SdlSubSystem):
 
     def on_scene_started(self, scene_started, signal):
         scene = scene_started.scene
-        camera_class = getattr(scene_started.scene, "camera_class", Camera)
+
+        # Initialize cameras
+        camera_class = getattr(scene, "camera_class", Camera)
         # For future: This is basically the pattern we'd use to define
         # multiple cameras. We'd just need to have the scene tell us the
         # regions they should render to.
         camera = camera_class(self, self.target_camera_width, self.resolution)
         scene.main_camera = camera
         self.scene_cameras[scene] = [camera]
+
+        self.set_cursor(scene)
+
+    def on_scene_continued(self, scene_continued: events.SceneContinued, signal):
+        self.set_cursor(scene_continued.scene)
 
     def on_scene_stopped(self, scene_stopped, signal):
         """We don't need to hold onto references for scenes that stopped."""
@@ -310,6 +318,10 @@ class Renderer(SdlSubSystem):
         )
 
         return src_rect, dest_rect, ctypes.c_double(-game_object.rotation)
+
+    def set_cursor(self, scene):
+        show_cursor = int(bool(getattr(scene, "show_cursor", True)))
+        sdl_call(SDL_ShowCursor, show_cursor)
 
     @staticmethod
     def target_resolution(img_width, img_height, obj_width, obj_height, pixel_ratio):

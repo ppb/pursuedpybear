@@ -10,6 +10,7 @@ class BaseScene(GameObject):
     # Background color, in RGB, each channel is 0-255
     background_color: Sequence[int] = (0, 0, 100)
     camera_class = Camera
+    show_cursor = True
 
     def __init__(self, *, set_up: Callable = None, **props):
         super().__init__(**props)
