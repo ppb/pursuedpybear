@@ -1,5 +1,11 @@
 """
 Testing show_cursor
+
+The scene order:
+   1. Black background, visible cursor. (This scene explicitly sets cursor to visible.)
+   2. Blue background, visible cursor. (This is a default scene with only enough code to set the click handler.)
+   3. Grey background, no cursor.
+   4. Black background, visible cursor. (When this scene continues, it sets itself to end the program on click.)
 """
 
 import ppb
