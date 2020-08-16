@@ -13,7 +13,7 @@ cursor = "Cursor should be visible."
 class RootScene(ppb.BaseScene):
     cursor = [no_cursor, cursor]
     _continue = "Click to continue."
-    next_scene = None
+    click_event = ppb.events.StopScene()
 
     def on_scene_started(self, _, __):
         cursor_state = getattr(self, "show_cursor", True)
@@ -28,10 +28,8 @@ class RootScene(ppb.BaseScene):
         )
 
     def on_button_pressed(self, event:ppb.events.ButtonPressed, signal):
-        if self.next_scene is not None:
-            signal(ppb.events.ReplaceScene(self.next_scene))
-            return
-        signal(ppb.events.StopScene())
+        signal(self.click_event)
+
 
 
 class NoCursorScene(RootScene):
@@ -40,12 +38,15 @@ class NoCursorScene(RootScene):
 
 
 class DefaultScene(RootScene):
-    next_scene=NoCursorScene
+    click_event = ppb.events.ReplaceScene(NoCursorScene)
 
 
 class ExplicitVisibleCursor(RootScene):
     background_color = (0, 0, 0)
-    next_scene=DefaultScene
+    show_cursor = True
+    click_event = ppb.events.StartScene(DefaultScene)
 
+    def on_scene_continued(self, _, __):
+        self.click_event = ppb.events.StopScene()
 
 ppb.run(None, starting_scene=ExplicitVisibleCursor)

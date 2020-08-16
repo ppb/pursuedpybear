@@ -188,8 +188,10 @@ class Renderer(SdlSubSystem):
         scene.main_camera = camera
         self.scene_cameras[scene] = [camera]
 
-        show_cursor = int(bool(getattr(scene, "show_cursor", True)))
-        sdl_call(SDL_ShowCursor, show_cursor)
+        self.set_cursor(scene)
+
+    def on_scene_continued(self, scene_continued: events.SceneContinued, signal):
+        self.set_cursor(scene_continued.scene)
 
     def on_scene_stopped(self, scene_stopped, signal):
         """We don't need to hold onto references for scenes that stopped."""
@@ -314,6 +316,10 @@ class Renderer(SdlSubSystem):
         )
 
         return src_rect, dest_rect, ctypes.c_double(-game_object.rotation)
+
+    def set_cursor(self, scene):
+        show_cursor = int(bool(getattr(scene, "show_cursor", True)))
+        sdl_call(SDL_ShowCursor, show_cursor)
 
     @staticmethod
     def target_resolution(img_width, img_height, obj_width, obj_height, pixel_ratio):
