@@ -164,6 +164,7 @@ class PreRender:
     strictly for display purposes (like the text of a score board or the
     position of the camera) should happen ``on_pre_render``.
     """
+    time_delta: float  #: Seconds since last PreRender.
     scene: BaseScene = None  #: The currently running scene.
 
 

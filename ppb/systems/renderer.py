@@ -139,6 +139,7 @@ class Renderer(SdlSubSystem):
         self.target_frame_rate = target_frame_rate
         self.target_frame_length = 1 / self.target_frame_rate
         self.target_clock = get_time() + self.target_frame_length
+        self.last_frame = get_time()
 
         self._texture_cache = ObjectSideData()
 
@@ -171,9 +172,10 @@ class Renderer(SdlSubSystem):
     def on_idle(self, idle_event: events.Idle, signal):
         t = get_time()
         if t >= self.target_clock:
-            signal(events.PreRender())
+            signal(events.PreRender(t - self.last_frame))
             signal(events.Render())
             self.target_clock = t + self.target_frame_length
+            self.last_frame = t
 
     def on_scene_started(self, scene_started, signal):
         scene = scene_started.scene
