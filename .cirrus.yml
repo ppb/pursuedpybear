@@ -47,12 +47,13 @@ task:
   name: "Linux $IMAGE"
   alias: Tests
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
-  allow_failures: $IMAGE =~ '.*-rc-.*'
+  allow_failures: $IMAGE =~ '.*[-:]rc-.*'
   env:
     matrix:
       - IMAGE: python:3.6-slim
       - IMAGE: python:3.7-slim
       - IMAGE: python:3.8-slim
+      - IMAGE: python:rc-slim
       - IMAGE: pypy:3.6-slim
 
   container:
@@ -121,7 +122,7 @@ task:
   name: "Windows $IMAGE"
   alias: Tests
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
-  allow_failures: $IMAGE =~ '.*-rc-.*'
+  allow_failures: $IMAGE =~ '.*[-:]rc-.*'
   windows_container:
     os_version: 2019
     image: $IMAGE
@@ -131,6 +132,7 @@ task:
       - IMAGE: python:3.6-windowsservercore
       - IMAGE: python:3.7-windowsservercore
       - IMAGE: python:3.8-windowsservercore
+      - IMAGE: python:rc-windowsservercore
 
   install_script:
     - C:\Python\python.exe -m pip install --upgrade-strategy eager -U -r requirements-tests.txt
