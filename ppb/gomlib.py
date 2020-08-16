@@ -193,3 +193,20 @@ class GameObject:
         # Deprecated in 0.10
         warnings.warn(".tags is deprecated, use .children.tags()", DeprecationWarning)
         return self.children.tags
+
+
+def walk(root):
+    """
+    Conducts a walk of the GOM tree from the root.
+
+    Includes the root.
+
+    Is non-recursive.
+    """
+    q = [root]
+    while q:
+        cur = q.pop(0)
+        yield cur
+        if hasattr(cur, 'children'):
+            q.extend(cur.children)
+

@@ -12,6 +12,7 @@ from typing import Union
 
 from ppb import events
 from ppb.assetlib import AssetLoadingSystem
+from ppb.gomlib import walk
 from ppb.errors import BadEventHandlerException
 from ppb.systems import EventPoller
 from ppb.systems import Renderer
@@ -241,6 +242,21 @@ class GameEngine(LoggingMixin):
                     else:
                         raise
 
+    def walk(self):
+        """
+        Walk the object tree.
+
+        Publication order: The :class:`GameEngine`, the
+        :class:`~ppb.systemslib.System` list, the current
+        :class:`~ppb.BaseScene`, then finally the :class:`~ppb.Sprite` objects
+        in the current scene.
+        """
+        yield self
+        for sys in self.systems:
+            yield from walk(sys)
+        if self.current_scene is not None:
+            yield from walk(self.current_scene)
+
     def on_start_scene(self, event: events.StartScene, signal: Callable[[Any], None]):
         """
         Start a new scene. The current scene pauses.
@@ -332,18 +348,3 @@ class GameEngine(LoggingMixin):
         the wrong scene.
         """
         self.events = deque()
-
-    def walk(self):
-        """
-        Walk the object tree.
-
-        Publication order: The :class:`GameEngine`, the
-        :class:`~ppb.systemslib.System` list, the current
-        :class:`~ppb.BaseScene`, then finally the :class:`~ppb.Sprite` objects
-        in the current scene.
-        """
-        yield self
-        yield from self.systems
-        yield self.current_scene
-        if self.current_scene is not None:
-            yield from self.current_scene

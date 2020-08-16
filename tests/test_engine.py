@@ -7,6 +7,7 @@ from ppb.systemslib import System
 from ppb.systems import Updater
 from ppb.testutils import Failer
 from ppb.testutils import Quitter
+from ppb.gomlib import GameObject
 
 CONTINUE = True
 STOP = False
@@ -285,9 +286,39 @@ def test_idle():
     class TestSystem(System):
 
         def on_idle(self, event: events.Idle, signal):
-            global was_called
+            nonlocal was_called
             was_called = True
             signal(events.Quit())
 
     with GameEngine(BaseScene, basic_systems=[Failer], systems=[TestSystem], fail=lambda x: False, message="Can only time out.") as ge:
         ge.run()
+
+
+def test_tree():
+    """Tests deep trees"""
+    call_count = 0
+
+    class TestSystem(System):
+        def __init__(self, **props):
+            super().__init__(**props)
+            o = Agent()
+            self.add(o)
+            for _ in range(5):
+                c = Agent()
+                o.add(c)
+                o = c
+
+        def on_idle(self, event: events.Idle, signal):
+            nonlocal call_count
+            call_count += 1
+            signal(events.Quit())
+
+    class Agent(GameObject):
+        def on_idle(self, event: events.Idle, signal):
+            nonlocal call_count
+            call_count += 1
+
+    with GameEngine(BaseScene, basic_systems=[Failer], systems=[TestSystem], fail=lambda x: False, message="Can only time out.") as ge:
+        ge.run()
+
+    assert call_count == 7
