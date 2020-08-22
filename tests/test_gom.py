@@ -1,5 +1,6 @@
 import pytest
 
+from ppb.errors import BadChildException
 from ppb.gomlib import GameObject, Children
 
 
@@ -48,6 +49,12 @@ def test_add_methods(container, player, enemies):
     assert player in container
     for enemy in enemies:
         assert enemy in container
+
+
+@pytest.mark.parametrize("container", containers())
+def test_add_type_to_game_object(container):
+    with pytest.raises(BadChildException):
+        container.add(TestSprite)
 
 
 @pytest.mark.parametrize("player, container", players_and_containers())
