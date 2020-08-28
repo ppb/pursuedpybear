@@ -10,6 +10,8 @@ from typing import Iterator
 from typing import Type
 import warnings
 
+from ppb.errors import BadChildException
+
 
 class Children(Collection):
     """
@@ -46,6 +48,9 @@ class Children(Collection):
 
             children.add(MyObject(), tags=("red", "blue")
         """
+        if isinstance(child, type):
+            raise BadChildException(child)
+
         if isinstance(tags, (str, bytes)):
             raise TypeError("You passed a string instead of an iterable, this probably isn't what you intended.\n\nTry making it a tuple.")
         self._all.add(child)
