@@ -70,7 +70,7 @@ Debian, Ubuntu::
 
 Fedora, CentOS, RHEL ::
 
-    sudo dnf install SDL2 SDL2_ttf SDL2_image SDL2_gfx SDL2_mixer
+    sudo dnf install SDL2 SDL2_ttf SDL2_image SDL2_gfx SDL2_mixer libmodplug
 
 You should see a few libraries get put together in your terminal, and when
 you have a prompt again, we're ready to go!
