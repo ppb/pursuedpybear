@@ -219,7 +219,7 @@ class GameEngine(GameObject, LoggingMixin):
        with GameEngine(BaseScene, **kwargs) as ge:
            ge.run()
     """
-    def __init__(self, first_scene: Union[Type, BaseScene], *,
+    def __init__(self, *, first_scene: Union[Type, BaseScene] = BaseScene,
                  basic_systems=(Renderer, Updater, EventPoller, SoundController, AssetLoadingSystem),
                  systems=(), scene_kwargs=None, **kwargs):
         """

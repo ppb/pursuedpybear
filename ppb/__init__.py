@@ -146,4 +146,4 @@ def make_engine(setup: Callable[[BaseScene], None] = None, *,
        :class:`~ppb.engine.GameEngine`
     :return: A GameEngine instance.
     """
-    return GameEngine(starting_scene, **_make_kwargs(setup, title, engine_opts))
+    return GameEngine(starting_scene=starting_scene, **_make_kwargs(setup, title, engine_opts))
