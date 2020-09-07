@@ -6,13 +6,20 @@ from itertools import chain
 from typing import Any
 from typing import Callable
 from typing import DefaultDict
+from typing import Hashable
+from typing import Iterable
+from typing import Iterator
 from typing import List
 from typing import Type
 from typing import Union
 
+import ppb
+import ppb.systemslib
 from ppb import events
 from ppb.assetlib import AssetLoadingSystem
+from ppb.gomlib import Children, GameObject
 from ppb.gomlib import walk
+from ppb.errors import BadChildException
 from ppb.errors import BadEventHandlerException
 from ppb.systems import EventPoller
 from ppb.systems import Renderer
@@ -39,7 +46,170 @@ for x in events.__all__:
     _get_handler_name(x)
 
 
-class GameEngine(LoggingMixin):
+class EngineChildren(Children):
+    """
+    Acts as a Children collection for engines:
+
+    * Scenes are managed in their own stack
+    * Systems have context managers
+    * Manipulating Scenes must be through pushing and popping
+    * Manipulating Systems is disallowed while the engine is running.
+    * Only the active (topmost) Scene is exposed as a child
+    * The iteration order is defined as: Systems, Current Scene, anything else
+    """
+    entered: bool
+
+    def __init__(self):
+        super().__init__()
+        self._scenes = []
+        self._systems = set()
+
+        self._stack = ExitStack()
+        self.entered = False
+
+    def __contains__(self, item: Hashable) -> bool:
+        return (
+            item in self._all or
+            item in self._scenes or
+            item in self._systems
+        )
+
+    def __iter__(self) -> Iterator[Hashable]:
+        yield from self._systems
+        if self._scenes:
+            yield self._scenes[-1]
+        yield from self._all
+
+    def __len__(self) -> int:
+        return len(self._all)
+
+    @property
+    def current_scene(self):
+        """
+        The top of the scene stack.
+
+        :return: The currently running scene.
+        :rtype: ppb.BaseScene
+        """
+        try:
+            return self._scenes[-1]
+        except IndexError:
+            return None
+
+    def add(self, child: Hashable, tags: Iterable[Hashable] = ()) -> Hashable:
+        """
+        Add a child.
+
+        :param child: Any Hashable object. The item to be added.
+        :param tags: An iterable of Hashable objects. Values that can be used to
+              retrieve a group containing the child.
+
+        Note that Scenes and Systems have special restrictions.
+
+        Examples: ::
+
+            children.add(MyObject())
+
+            children.add(MyObject(), tags=("red", "blue")
+        """
+        # Ugh, this is a copy of the implementation in Children.
+        if isinstance(child, type):
+            raise BadChildException(child)
+
+        if isinstance(tags, (str, bytes)):
+            raise TypeError("You passed a string instead of an iterable, this probably isn't what you intended.\n\nTry making it a tuple.")
+
+        if isinstance(child, ppb.BaseScene):
+            raise TypeError("Scenes must be pushed, not added. You probably want the StartScene or ReplaceScene events.")
+        elif isinstance(child, ppb.systemslib.System):
+            if self.entered:
+                raise RuntimeError("Systems cannot be added while the engine is running")
+            self._systems.add(child)
+        else:
+            self._all.add(child)
+
+        for kind in type(child).mro():
+            self._kinds[kind].add(child)
+        for tag in tags:
+            self._tags[tag].add(child)
+
+        return child
+
+    def remove(self, child: Hashable) -> Hashable:
+        """
+        Remove the given object from the container.
+
+        Note that Scenes and Systems have special restrictions.
+
+        :param child: A hashable contained by container.
+
+        Example: ::
+
+            container.remove(myObject)
+        """
+        # Ugh, this is a copy of the implementation in Children.
+        if isinstance(child, ppb.BaseScene):
+            raise TypeError("Scenes must be popped, not removed. You probably want the StopScene event.")
+        elif isinstance(child, ppb.systemslib.System):
+            if self.entered:
+                raise RuntimeError("Systems cannot be removed while the engine is running")
+            self._systems.remove(child)
+        else:
+            self._all.remove(child)
+
+        for kind in type(child).mro():
+            self._kinds[kind].remove(child)
+        for s in self._tags.values():
+            s.discard(child)
+
+        return child
+
+    def push_scene(self, scene):
+        """
+        Push a scene onto the scene stack.
+
+        If you are not an Engine, you probably don't want to call this.
+        """
+        self._scenes.append(scene)
+
+        for kind in type(scene).mro():
+            self._kinds[kind].add(scene)
+
+    def pop_scene(self):
+        """
+        Pop a scene from the scene stack.
+
+        If you are not an Engine, you probably don't want to call this.
+        """
+        child = self._scenes.pop()
+        for kind in type(child).mro():
+            self._kinds[kind].remove(child)
+        for s in self._tags.values():
+            s.discard(child)
+
+    def __enter__(self):
+        assert not self.entered
+        self.entered = True
+        try:
+            for system in self._systems:
+                self._stack.enter_context(system)
+        except:  # noqa
+            self._stack.close()
+            self.entered = False
+            raise
+
+    def __exit__(self, *exc):
+        self._stack.close()
+        self.entered = False
+
+    def has_systems(self):
+        """
+        Shortcut for Engines to know if they've added any Systems.
+        """
+        return bool(self._systems)
+
+
+class GameEngine(GameObject, LoggingMixin):
     """
     The core component of :mod:`ppb`.
 
@@ -70,7 +240,8 @@ class GameEngine(LoggingMixin):
            consequences. Consider passing via systems parameter instead.
         """
 
-        super(GameEngine, self).__init__()
+        super().__init__()  # FIXME: This is breaking the GameObject protocol
+        self.children = EngineChildren()
 
         # Engine Configuration
         self.first_scene = first_scene
@@ -78,17 +249,14 @@ class GameEngine(LoggingMixin):
         self.kwargs = kwargs
 
         # Engine State
-        self.scenes = []
         self.events = deque()
         self.event_extensions: DefaultDict[Union[Type, _ellipsis], List[Callable[[Any], None]]] = defaultdict(list)
-        self.running = False
         self.entered = False
+        self.running = False
         self._last_idle_time = None
 
         # Systems
         self.systems_classes = list(chain(basic_systems, systems))
-        self.systems = []
-        self.exit_stack = ExitStack()
 
     @property
     def current_scene(self):
@@ -98,31 +266,28 @@ class GameEngine(LoggingMixin):
         :return: The currently running scene.
         :rtype: ppb.BaseScene
         """
-        try:
-            return self.scenes[-1]
-        except IndexError:
-            return None
+        return self.children.current_scene
 
     def __enter__(self):
         self.logger.info("Entering context")
         self.start_systems()
+        self.children.__enter__()
         self.entered = True
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, *exc):
         self.logger.info("Exiting context")
         self.entered = False
-        self.exit_stack.close()
+        self.children.__exit__(*exc)
 
     def start_systems(self):
-        """Initialize and enter the systems."""
-        if self.systems:
+        """Initialize the systems."""
+        if self.children.has_systems():
             return
         for system in self.systems_classes:
             if isinstance(system, type):
                 system = system(engine=self, **self.kwargs)
-            self.systems.append(system)
-            self.exit_stack.enter_context(system)
+            self.children.add(system)
 
     def run(self):
         """
@@ -154,8 +319,7 @@ class GameEngine(LoggingMixin):
         """
         self.running = True
         self._last_idle_time = get_time()
-        self.activate({"scene_class": self.first_scene,
-                       "kwargs": self.scene_kwargs})
+        self._start_scene(self.first_scene(**self.scene_kwargs), None)
 
     def main_loop(self):
         """
@@ -184,35 +348,6 @@ class GameEngine(LoggingMixin):
         while self.events:
             self.publish()
 
-    def activate(self, next_scene: dict):
-        """
-        Instantiates and sets up a new scene.
-
-        :param next_scene: A dictionary with the keys:
-
-           * "scene_class": A :class:`~ppb.BaseScene` type.
-           * "args": A :class:`list` of positional arguments.
-           * "kwargs": A :class:`dict` of keyword arguments.
-        """
-        scene = next_scene["scene_class"]
-        if scene is None:
-            return
-        args = next_scene.get("args", [])
-        kwargs = next_scene.get("kwargs", {})
-        self._start_scene(scene(*args, **kwargs), None)
-
-    def signal(self, event):
-        """
-        Add an event to the event queue.
-
-        Thread-safe.
-
-        You will rarely call this directly from a :class:`GameEngine` instance.
-        The current :class:`GameEngine` instance will pass it's signal method
-        as part of publishing an event.
-        """
-        self.events.append(event)
-
     def publish(self):
         """
         Publish the next event to every object in the tree.
@@ -227,7 +362,7 @@ class GameEngine(LoggingMixin):
             callback(event)
 
         event_handler_name = _get_handler_name(type(event).__name__)
-        for obj in self.walk():
+        for obj in walk(self):
             method = getattr(obj, event_handler_name, None)
             if callable(method):
                 try:
@@ -242,20 +377,26 @@ class GameEngine(LoggingMixin):
                     else:
                         raise
 
-    def walk(self):
+    def signal(self, event):
         """
-        Walk the object tree.
+        Add an event to the event queue.
 
-        Publication order: The :class:`GameEngine`, the
-        :class:`~ppb.systemslib.System` list, the current
-        :class:`~ppb.BaseScene`, then finally the :class:`~ppb.Sprite` objects
-        in the current scene.
+        Thread-safe.
+
+        You will rarely call this directly from a :class:`GameEngine` instance.
+        The current :class:`GameEngine` instance will pass it's signal method
+        as part of publishing an event.
         """
-        yield self
-        for sys in self.systems:
-            yield from walk(sys)
-        if self.current_scene is not None:
-            yield from walk(self.current_scene)
+        self.events.append(event)
+
+    def _flush_events(self):
+        """
+        Flush the event queue.
+
+        Call before doing anything that will cause signals to be delivered to
+        the wrong scene.
+        """
+        self.events = deque()
 
     def on_start_scene(self, event: events.StartScene, signal: Callable[[Any], None]):
         """
@@ -312,13 +453,13 @@ class GameEngine(LoggingMixin):
         self._flush_events()
         self.signal(events.SceneStopped())
         self.publish()
-        self.scenes.pop()
+        self.children.pop_scene()
 
     def _start_scene(self, scene, kwargs):
         """Start a scene."""
         if isinstance(scene, type):
             scene = scene(**(kwargs or {}))
-        self.scenes.append(scene)
+        self.children.push_scene(scene)
         self.signal(events.SceneStarted())
 
     def register(self, event_type: Union[Type, _ellipsis], callback: Callable[[], Any]):
@@ -339,12 +480,3 @@ class GameEngine(LoggingMixin):
         if not callable(callback):
             raise TypeError(f"{type(self)}.register requires callback to be callable.")
         self.event_extensions[event_type].append(callback)
-
-    def _flush_events(self):
-        """
-        Flush the event queue.
-
-        Call before doing anything that will cause signals to be delivered to
-        the wrong scene.
-        """
-        self.events = deque()

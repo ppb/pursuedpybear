@@ -53,7 +53,7 @@ def test_contexts():
 
     engine = GameEngine(BaseScene, basic_systems=[FakeRenderer, Quitter])
     engine.run()
-    for system in engine.systems:
+    for system in engine.children._systems:
         if isinstance(system, FakeRenderer):
             break
     else:
@@ -178,7 +178,7 @@ def test_replace_scene_event():
 
         def fail(self, engine) -> bool:
             if self.first_scene_ended:
-                assert len(engine.scenes) == 1, "Too many scenes on stack."
+                assert len(engine.children._scenes) == 1, "Too many scenes on stack."
                 assert isinstance(engine.current_scene, SecondScene), "Wrong current scene."
                 engine.signal(events.Quit())
             return False

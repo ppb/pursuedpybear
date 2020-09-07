@@ -3,7 +3,6 @@ The Game Object Model.
 """
 from collections import defaultdict
 from collections.abc import Collection
-from numbers import Number
 from typing import Hashable
 from typing import Iterable
 from typing import Iterator
@@ -48,11 +47,13 @@ class Children(Collection):
 
             children.add(MyObject(), tags=("red", "blue")
         """
+        # Ugh, this is copied in EngineChildren
         if isinstance(child, type):
             raise BadChildException(child)
 
         if isinstance(tags, (str, bytes)):
             raise TypeError("You passed a string instead of an iterable, this probably isn't what you intended.\n\nTry making it a tuple.")
+
         self._all.add(child)
 
         for kind in type(child).mro():
@@ -72,6 +73,7 @@ class Children(Collection):
 
             container.remove(myObject)
         """
+        # Ugh, this is copied in EngineChildren
         self._all.remove(child)
         for kind in type(child).mro():
             self._kinds[kind].remove(child)
@@ -149,20 +151,19 @@ class GameObject:
         for k, v in props.items():
             setattr(self, k, v)
 
-
     def __iter__(self) -> Iterator:
         """
         Shorthand for :meth:`Children.__iter__()`
         """
         yield from self.children
 
-    def add(self, child: Hashable, tags: Iterable=())-> None:
+    def add(self, child: Hashable, tags: Iterable = ()) -> None:
         """
         Shorthand for :meth:`Children.add()`
         """
         return self.children.add(child, tags)
 
-    def get(self, *, kind: Type=None, tag: Hashable=None, **kwargs) -> Iterator:
+    def get(self, *, kind: Type = None, tag: Hashable = None, **kwargs) -> Iterator:
         """
         Shorthand for :meth:`Children.get()`
         """
@@ -173,7 +174,6 @@ class GameObject:
         Shorthand for :meth:`Children.remove()`
         """
         return self.children.remove(child)
-
 
     @property
     def kinds(self):
@@ -214,4 +214,3 @@ def walk(root):
         yield cur
         if hasattr(cur, 'children'):
             q.extend(cur.children)
-
