@@ -14,6 +14,7 @@ from ppb import events
 from ppb.assetlib import AssetLoadingSystem
 from ppb.gomlib import walk
 from ppb.errors import BadEventHandlerException
+from ppb.scenes import BaseScene
 from ppb.systems import EventPoller
 from ppb.systems import Renderer
 from ppb.systems import SoundController
@@ -48,12 +49,12 @@ class GameEngine(LoggingMixin):
        with GameEngine(BaseScene, **kwargs) as ge:
            ge.run()
     """
-    def __init__(self, first_scene: Type, *,
+    def __init__(self, first_scene: Union[Type, BaseScene], *,
                  basic_systems=(Renderer, Updater, EventPoller, SoundController, AssetLoadingSystem),
                  systems=(), scene_kwargs=None, **kwargs):
         """
         :param first_scene: A :class:`~ppb.BaseScene` type.
-        :type first_scene: Type
+        :type first_scene: Union[Type, scenes.BaseScene]
         :param basic_systems: :class:systemslib.Systems that are considered
            the "default". Includes: :class:`~systems.Renderer`,
            :class:`~systems.Updater`, :class:`~systems.EventPoller`,
@@ -197,9 +198,13 @@ class GameEngine(LoggingMixin):
         scene = next_scene["scene_class"]
         if scene is None:
             return
-        args = next_scene.get("args", [])
-        kwargs = next_scene.get("kwargs", {})
-        self._start_scene(scene(*args, **kwargs), None)
+
+        if isinstance(scene, type):
+            args = next_scene.get("args", [])
+            kwargs = next_scene.get("kwargs", {})
+            scene = scene(*args, **kwargs)
+
+        self._start_scene(scene, None)
 
     def signal(self, event):
         """
