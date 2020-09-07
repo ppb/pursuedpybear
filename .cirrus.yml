@@ -15,10 +15,9 @@ pep517_task:
 
 build_task:
   container:
-    image: python:3
+    image: duckinator/bork
   setup_script:
     - git fetch --tags
-    - pip install bork
   script:
     - bork build
   dist_artifacts:
