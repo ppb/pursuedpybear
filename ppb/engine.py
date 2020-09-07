@@ -219,7 +219,9 @@ class GameEngine(GameObject, LoggingMixin):
        with GameEngine(BaseScene, **kwargs) as ge:
            ge.run()
     """
-    def __init__(self, *, first_scene: Union[Type, BaseScene] = BaseScene,
+    def __init__(self, first_scene: Union[Type, BaseScene] = BaseScene,
+                 # Would prefer to make all of these keyword only, but need
+                 # to support positional for two releases (expected March 2020)
                  basic_systems=(Renderer, Updater, EventPoller, SoundController, AssetLoadingSystem),
                  systems=(), scene_kwargs=None, **kwargs):
         """
