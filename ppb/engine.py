@@ -21,6 +21,7 @@ from ppb.gomlib import Children, GameObject
 from ppb.gomlib import walk
 from ppb.errors import BadChildException
 from ppb.errors import BadEventHandlerException
+from ppb.scenes import BaseScene
 from ppb.systems import EventPoller
 from ppb.systems import Renderer
 from ppb.systems import SoundController
@@ -218,12 +219,12 @@ class GameEngine(GameObject, LoggingMixin):
        with GameEngine(BaseScene, **kwargs) as ge:
            ge.run()
     """
-    def __init__(self, first_scene: Type, *,
+    def __init__(self, first_scene: Union[Type, BaseScene], *,
                  basic_systems=(Renderer, Updater, EventPoller, SoundController, AssetLoadingSystem),
                  systems=(), scene_kwargs=None, **kwargs):
         """
         :param first_scene: A :class:`~ppb.BaseScene` type.
-        :type first_scene: Type
+        :type first_scene: Union[Type, scenes.BaseScene]
         :param basic_systems: :class:systemslib.Systems that are considered
            the "default". Includes: :class:`~systems.Renderer`,
            :class:`~systems.Updater`, :class:`~systems.EventPoller`,
@@ -319,7 +320,12 @@ class GameEngine(GameObject, LoggingMixin):
         """
         self.running = True
         self._last_idle_time = get_time()
-        self._start_scene(self.first_scene(**self.scene_kwargs), None)
+        if isinstance(self.first_scene, type):
+            scene = self.first_scene(**self.scene_kwargs)
+        else:
+            scene = self.first_scene
+
+        self._start_scene(scene, None)
 
     def main_loop(self):
         """

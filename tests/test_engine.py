@@ -1,6 +1,8 @@
 import dataclasses
 from unittest import mock
 
+import pytest
+
 from ppb import GameEngine, BaseScene, Vector
 from ppb import events
 from ppb.systemslib import System
@@ -13,13 +15,39 @@ CONTINUE = True
 STOP = False
 
 
-def test_engine_initial_scene():
-    mock_scene = mock.Mock(spec=BaseScene)
-    mock_scene.background_color = (0, 0, 0)
-    mock_scene_class = mock.Mock(spec=BaseScene, return_value=mock_scene)
-    engine = GameEngine(mock_scene_class)
+def scenes():
+    yield BaseScene
+    yield BaseScene()
+    yield BaseScene(background_color=(0, 0, 0))
+
+
+@pytest.mark.parametrize("scene", scenes())
+def test_engine_initial_scene(scene):
+    engine = GameEngine(scene)
+    assert len(engine.children._scenes) == 0
     engine.start()
-    assert engine.current_scene is mock_scene
+    assert len(engine.children._scenes) == 1
+
+
+def test_game_engine_with_scene_class():
+    props = {
+        "background_color": (69, 69, 69),
+        "show_cursor": False
+    }
+    with GameEngine(BaseScene, basic_systems=[Quitter], scene_kwargs=props) as ge:
+        ge.run()
+
+        assert ge.current_scene.background_color == props["background_color"]
+        assert ge.current_scene.show_cursor == props["show_cursor"]
+
+
+def test_game_engine_with_instantiated_scene():
+    scene = BaseScene()
+
+    with GameEngine(scene, basic_systems=[Quitter]) as ge:
+        ge.run()
+
+        assert ge.current_scene == scene
 
 
 def test_signal():
