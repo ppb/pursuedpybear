@@ -32,6 +32,7 @@ Exports:
 import logging
 import warnings
 from typing import Callable
+from typing import Union
 
 from ppb import directions
 from ppb import events
@@ -58,20 +59,18 @@ __all__ = (
 )
 
 
-def _make_kwargs(setup, title, engine_opts):
+def _make_kwargs(starting_scene, title, engine_opts):
     kwargs = {
         "resolution": (800, 600),
-        "scene_kwargs": {
-            "set_up": setup,
-        },
+        "first_scene": starting_scene,
         "window_title": title,
         **engine_opts
     }
     return kwargs
 
 
-def run(setup: Callable[[BaseScene], None] = None, *, log_level=logging.WARNING,
-        starting_scene=BaseScene, title="PursuedPyBear", **engine_opts):
+def run(setup: Union[Callable[[BaseScene], None], BaseScene] = lambda scene: None, *, log_level=logging.WARNING,
+        starting_scene=None, scene_class=None, title="PursuedPyBear", **engine_opts):
     """
     Run a game.
 
@@ -104,13 +103,14 @@ def run(setup: Callable[[BaseScene], None] = None, *, log_level=logging.WARNING,
 
     All parameters are optional.
 
-    :param setup: Called with the first scene to allow initialization of
-       your game.
-    :type setup: Callable[[BaseScene], None]
+    :param setup: Either a function which is called with the starting scene
+       class as its only parameter, or an initalized scene ready to be
+       handed to the engine.
+    :type setup: Union[Callable[[BaseScene], None], BaseScene]
     :param log_level: The logging level from :func:`logging` to send to the
        console.
-    :param starting_scene: A scene class to use. Defaults to
-       :class:`~ppb.scenes.BaseScene`
+    :param starting_scene: Deprecated, use scene_class instead. Due for
+       removal in ppb 0.12
     :type starting_scene: type
     :param title: The title of the rendered window.
     :type title: str
@@ -119,12 +119,27 @@ def run(setup: Callable[[BaseScene], None] = None, *, log_level=logging.WARNING,
     """
     logging.basicConfig(level=log_level)
 
-    with make_engine(setup, starting_scene=starting_scene, title=title, **engine_opts) as eng:
+    if starting_scene is not None:
+        warnings.warn("starting_scene parameter to ppb.run is deprecated and will be removed in version 0.12")
+        if starting_scene and scene_class:
+            raise ValueError("You cannot use starting_scene and scene_class together. Remove starting_scene.")
+        scene_class = starting_scene
+    if scene_class is None:
+        scene_class = BaseScene
+
+    if isinstance(setup, type):
+        raise ValueError("setup must be either a function with one parameter `scene` or an instance of `BaseScene`.")
+    elif callable(setup):
+        starting_scene = scene_class()
+        setup(starting_scene)
+    else:
+        starting_scene = setup
+
+    with make_engine(starting_scene=starting_scene, title=title, **engine_opts) as eng:
         eng.run()
 
 
-def make_engine(setup: Callable[[BaseScene], None] = None, *,
-                starting_scene=BaseScene, title="PursedPyBear",
+def make_engine(starting_scene=BaseScene, title="PursedPyBear",
                 **engine_opts):
     """
     Setup a :class:`GameEngine`.
@@ -146,4 +161,4 @@ def make_engine(setup: Callable[[BaseScene], None] = None, *,
        :class:`~ppb.engine.GameEngine`
     :return: A GameEngine instance.
     """
-    return GameEngine(starting_scene=starting_scene, **_make_kwargs(setup, title, engine_opts))
+    return GameEngine(**_make_kwargs(starting_scene, title, engine_opts))

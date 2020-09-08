@@ -55,4 +55,5 @@ class ExplicitVisibleCursor(RootScene):
     def on_scene_continued(self, _, __):
         self.click_event = ppb.events.StopScene()
 
-ppb.run(None, starting_scene=ExplicitVisibleCursor)
+
+ppb.run(starting_scene=ExplicitVisibleCursor)
