@@ -84,6 +84,9 @@ task:
     - pip list
     - pytest
 
+  use_compute_credits: $CIRRUS_BRANCH == 'staging'
+
+
 macOS_task:
   alias: Tests
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
