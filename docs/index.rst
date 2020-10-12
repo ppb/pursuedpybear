@@ -1,57 +1,20 @@
-.. raw:: html
+Welcome to PursuedPyBear's documentation!
+=========================================
 
-   <div style="text-align:center;">
-   <h1> Welcome to PursuedPyBear's documentation! </h1>
-   <p> PursuedPyBear, also known as <code>ppb</code>, is a game engine that exists to be an educational resource. </p>
-   <h2>A Game Engine</h2>
-   <p> The core features provided by PPB are perfect for making games! The <code>GameEngine</code> itself provides a pluggable subsystem architecture where adding new features is as simple as subclassing and extending <code>System</code>. Additionally, it contains a state stack of <code>Scenes</code> simple containers that let you organize game scenes and UI screens in a simple way. </p>
-    <h2> Guiding Priciples </h2>
-    <style type="text/css">
-    .tg  {border-collapse:collapse;border-spacing:0;margin:0px auto;}
-    .tg td{border-bottom-width:1px;border-color:black;border-style:solid;border-top-width:1px;border-width:0px;
-      overflow:hidden;padding:10px 5px;word-break:normal;}
-    .tg th{border-bottom-width:1px;border-color:black;border-style:solid;border-top-width:1px;border-width:0px;
-      font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
-    .tg .tg-baqh{text-align:center;vertical-align:top}
-    .tg .tg-0lax{text-align:left;vertical-align:top}
-    @media screen and (max-width: 767px) {.tg {width: auto !important;}.tg col {width: auto !important;}.tg-wrap {overflow-x: auto;-webkit-overflow-scrolling: touch;margin: auto 0px;}}</style>
-    <div class="tg-wrap"><table class="tg">
-    <tbody>
-      <tr>
-        <td class="tg-baqh"><span><h3>Education Friendly</h3></span></td>
-        <td class="tg-baqh"><span><h3>Idiomatic Python</h3></span></td>
-      </tr>
-      <tr>
-        <td class="tg-0lax">Non-technical educators should feel comfortable after very little training. While some programming knowledge is required, the ability to think in objects and responses to events allows educators to only focus on their lessons.</td>
-        <td class="tg-0lax">A project built on ppb should look like idiomatic Python. It also should look like modern Python. As such, we often add new language features as soon as they’re available, letting a new user always know ppb runs on the latest Python.</td>
-      </tr>
-      <tr>
-        <td class="tg-baqh"><span><h3>Object Oriented and Event Driven</h3></span></td>
-        <td class="tg-baqh"><span><h3>Extensible &amp; Hardware Library Agnostic</h3></span></td>
-      </tr>
-      <tr>
-        <td class="tg-0lax">ppb games are built out of instances of objects. Each object only has enough information to respond to the event provided, which always includes the current BaseScene. Because ppb doesn’t have a master list of events, you can provide new ones simply to add more granular control over your game.</td>
-        <td class="tg-0lax">Because ppb strongly tries to be extensible and pluggable, each hardware extension can provide its own hooks to ppb, and you can nearly seamlessly switch between various Python libraries.</td>
-      </tr>
-      <tr>
-        <td class="tg-baqh" colspan="2"><span><h3>Fun</h3></span></td>
-      </tr>
-      <tr>
-        <td class="tg-baqh" colspan="2">One of the maintainers put it best:&nbsp;&nbsp;"If it’s not fun to use, we should redo it."  ppb is about filing off the rough edges so that the joy of creation and discovery are both emphasized. A new user should be able to build their first game in a few hours and continue exploring beyond that.</td>
-      </tr>
-      <tr>
-        <td class="tg-0lax"></td>
-        <td class="tg-0lax"></td>
-      </tr>
-      <tr>
-        <td class="tg-0lax"></td>
-        <td class="tg-0lax"></td>
-      </tr>
-    </tbody>
-    </table></div>
-   </div>
+PursuedPyBear, also known as :code:`ppb`, exists to be an educational resource. Most obviously used to teach computer science, it can be a useful tool for any topic that a simulation can be helpful. At its core, :code:`ppb` provides a number of features that make it perfect for video games. The :code:`GameEngine` itself provides a pluggable subsystem architecture where adding new features is as simple as subclassing and extending :code:`System`. 
 
+Using these docs
+----------------
+Our documentation is seperated into practical steps and theroretical knowledge. The docs are made up of Tutorials, which allow you to learn quickly, and guides which bring you to a specific goal. We also have a standard API reference.
 
+As a New User
+^^^^^^^^^^^^^
+
+We recommend that new users start with the :doc:`getting-started` Guide. This document assumes that you have basic programming knowledge. If you don't, check out the Python docs at https://docs.python.org. 
+
+As an Experienced User
+^^^^^^^^^^^^^^^^^^^^^
+Experienced users will likely want to start with our :doc:`reference/index` or our :doc:`howto/index`
 
 .. toctree::
   :maxdepth: 2
