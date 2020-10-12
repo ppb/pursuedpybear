@@ -3,6 +3,8 @@ Welcome to PursuedPyBear's documentation!
 
 PursuedPyBear, also known as :code:`ppb`, exists to be an educational resource. Most obviously used to teach computer science, it can be a useful tool for any topic that a simulation can be helpful. At its core, :code:`ppb` provides a number of features that make it perfect for video games. The :code:`GameEngine` itself provides a pluggable subsystem architecture where adding new features is as simple as subclassing and extending :code:`System`. 
 
+.. note :: This document explains the practical and technical details of :code:`ppb`. If you want to know more about what it is, its goals, or why you should use it, check out this page.
+
 Using these docs
 ----------------
 Our documentation is seperated into practical steps and theroretical knowledge. The docs are made up of Tutorials, which allow you to learn quickly, and guides which bring you to a specific goal. We also have a standard API reference.
