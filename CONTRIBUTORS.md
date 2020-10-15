@@ -35,3 +35,4 @@ Halle Jones|HJones@aliacy.com||
 [Nils Müller](https://github.com/shimst3r) | [shimst3r@gmail.com](mailto:shimst3r@gmail.com) | [@shimst3r](https://twitter.com/shimst3r)
 [Aly Sivji](https://github.com/alysivji) |  | [@CaiusSivjus](https://twitter.com/CaiusSivjus)
 [Mfon Eti-mfon](https://github.com/mfonism) | [mfon@etimfon.com](mfon@etimfon.com) | [mfonism](https://twitter.com/mfonism)
+[Regina Reynolds](https://github.com/reginareynolds) | [regina.c.reynolds@gmail.com](regina.c.reynolds@gmail.com)
