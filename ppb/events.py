@@ -149,7 +149,6 @@ class MouseMotion:
     If something should be tracking the mouse, this is the event to listen to.
     """
     position: Vector  #: The game-world location of the mouse cursor.
-    screen_position: Vector  #: The screen space location of the mouse cursor.
     delta: Vector  #: The change in position since the last :class:`MouseMotion` event.
     buttons: Collection[MouseButton]  #: The state of the mouse buttons.
     scene: BaseScene = None  #: The currently running scene.
