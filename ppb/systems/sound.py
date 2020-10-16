@@ -22,7 +22,7 @@ from ppb.gomlib import GameObject
 from ppb.systems.sdl_utils import SdlSubSystem, mix_call, SdlMixerError
 from ppb.utils import LoggingMixin
 
-__all__ = ('SoundController', 'Sound')
+__all__ = ('SoundController', 'Sound', 'SoundManager')
 
 
 class Sound(assetlib.Asset):
