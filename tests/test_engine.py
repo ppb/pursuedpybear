@@ -350,3 +350,32 @@ def test_tree():
         ge.run()
 
     assert call_count == 7
+
+
+def test_target_events():
+    class Test: pass
+
+    call_count = 0
+
+    class Targetted(GameObject):
+        def on_test(self, event, signal):
+            nonlocal call_count
+            call_count += 1
+
+    class Untargetted(GameObject):
+        def on_test(self, event, signal):
+            assert False
+
+    target = Targetted()
+
+    def setup(scene):
+
+        scene.add(target)
+        scene.add(Untargetted())
+
+    with GameEngine(setup, basic_systems=[Failer], systems=[], fail=lambda x: False, message="Can only time out.") as ge:
+        ge.signal(Test(), targets=[target])
+        ge.signal(events.Quit())
+        ge.run()
+
+    assert call_count == 1
