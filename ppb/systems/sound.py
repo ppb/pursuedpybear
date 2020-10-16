@@ -13,6 +13,7 @@ from sdl2.sdlmixer import (
     Mix_LoadWAV_RW, Mix_FreeChunk, Mix_VolumeChunk,
     # Channels https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_25.html#SEC25
     Mix_AllocateChannels, Mix_PlayChannel, Mix_ChannelFinished, channel_finished,
+    Mix_Volume, Mix_HaltChannel, Mix_Pause, Mix_Resume,
     # Other
     MIX_MAX_VOLUME,
 )
@@ -68,39 +69,59 @@ class SoundManager(GameObject):
     """
     Allows dynamic manipulation of a sound
     """
+    __channel = None
+
+    def _set_channel(self, channel_num):
+        """
+        Called by SoundController to give the manager the SDL mixer channel
+        number, or None if this manager is no longer managing a channel
+        """
+        if channel_num is None:
+            del self.__channel
+        else:
+            self.__channel = channel_num
 
     @property
     def volume(self):
         """
         How load to play the sound, from 0 to 1
         """
-        ...
+        if self.__channel is not None:
+            raw_value = mix_call(Mix_Volume, self.__channel, -1)
+            return raw_value / MIX_MAX_VOLUME
 
     @volume.setter
     def volume(self, value):
-        ...
+        if self.__channel is not None:
+            raw_value = int(value * MIX_MAX_VOLUME)
+            mix_call(Mix_Volume, self.__channel, raw_value)
 
     def stop(self):
         """
-        Stop playback completely, as if the sound had ended
+        Stop playback completely, as if the sound had ended.
+
+        Does nothing if already stopped.
         """
-        ...
+        if self.__channel is not None:
+            mix_call(Mix_HaltChannel, self.__channel)
 
     def pause(self):
         """
         Pause playback to be continued later.
 
-        If alreayd paused, does nothing.
+        If already paused, does nothing.
         """
-        ...
+        if self.__channel is not None:
+            mix_call(Mix_Pause, self.__channel)
 
-    def play(self):
+    def resume(self):
         """
         Continue playback.
 
         If already playing, does nothing.
         """
-        ...
+        if self.__channel is not None:
+            mix_call(Mix_Pause, self.__channel)
 
     def on_finished(self, event, signal):
         """
@@ -188,12 +209,16 @@ class SoundController(SdlSubSystem, LoggingMixin):
             self._currently_playing[channel] = sound  # Keep reference of playing asset
             self._managers[channel] = manager
             self.children.add(manager)
+            if manager is not None:
+                manager._set_channel(channel)
 
     def _on_channel_finished(self, channel_num):
         # "NEVER call SDL_Mixer functions, nor SDL_LockAudio, from a callback function."
         self._currently_playing[channel_num] = None  # Release the asset that was playing
         if self._managers[channel_num]:
             manager = self._managers[channel_num]
+            if manager is not None:
+                manager._set_channel(None)
             self._managers[channel_num] = None
             self._managers_to_evict.append(manager)
             self.children.remove(manager)
@@ -201,7 +226,7 @@ class SoundController(SdlSubSystem, LoggingMixin):
 
     def on_idle(self, event, signal):
         # Any previously triggered Finished events should have been dispatched,
-        # So we're free to discard these managers
+        # so we're free to discard these managers
         if self._managers_to_evict:
             self._managers_to_evict = []
             # Well, that was easy
