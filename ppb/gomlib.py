@@ -1,7 +1,7 @@
 """
 The Game Object Model.
 """
-from collections import defaultdict
+from collections import defaultdict, deque
 from collections.abc import Collection
 from typing import Hashable
 from typing import Iterable
@@ -208,9 +208,9 @@ def walk(root):
 
     Is non-recursive.
     """
-    q = [root]
+    q = deque(root)
     while q:
-        cur = q.pop(0)
+        cur = q.pop()
         yield cur
         if hasattr(cur, 'children'):
             q.extend(cur.children)
