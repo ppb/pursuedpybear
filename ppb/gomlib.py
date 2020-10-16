@@ -210,7 +210,7 @@ def walk(root):
     """
     q = deque(root)
     while q:
-        cur = q.pop()
+        cur = q.popleft()
         yield cur
         if hasattr(cur, 'children'):
             q.extend(cur.children)
