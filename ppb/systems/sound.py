@@ -102,6 +102,19 @@ class SoundManager(GameObject):
         """
         ...
 
+    def on_finished(self, event, signal):
+        """
+        Called when this sound has finished playing. The event is empty.
+
+        Override me.
+        """
+
+
+class Finished:
+    """
+    An empty event bag
+    """
+
 
 class SoundController(SdlSubSystem, LoggingMixin):
     _finished_callback = None
@@ -109,6 +122,8 @@ class SoundController(SdlSubSystem, LoggingMixin):
     def __init__(self, **kw):
         super().__init__(**kw)
         self._currently_playing = {}  # Track sound assets so they don't get freed early
+        self._managers = {}  # The managers for the various tracks
+        self._managers_to_evict = []  # Keeps managers around
 
     @property
     def allocated_channels(self):
@@ -128,7 +143,7 @@ class SoundController(SdlSubSystem, LoggingMixin):
         mix_call(
             Mix_OpenAudio,
             44100,  # Sample frequency, 44.1 kHz is CD quality
-            AUDIO_S16SYS,  # Audio, 16-bit, system byte order. IDK is signed makes a difference
+            AUDIO_S16SYS,  # Audio, 16-bit, system byte order. IDK if signed makes a difference
             2,  # Number of output channels, 2=stereo
             4096,  # Chunk size. TBH, this is a magic knob number.
             # ^^^^ Smaller is more CPU, larger is less responsive.
@@ -155,6 +170,7 @@ class SoundController(SdlSubSystem, LoggingMixin):
     def on_play_sound(self, event, signal):
         sound = event.sound
         chunk = event.sound.load()
+        manager = event.manager
 
         try:
             channel = mix_call(
@@ -170,7 +186,22 @@ class SoundController(SdlSubSystem, LoggingMixin):
             self.logger.warn("Attempted to play sound, but there were no available channels.")
         else:
             self._currently_playing[channel] = sound  # Keep reference of playing asset
+            self._managers[channel] = manager
+            self.children.add(manager)
 
     def _on_channel_finished(self, channel_num):
         # "NEVER call SDL_Mixer functions, nor SDL_LockAudio, from a callback function."
         self._currently_playing[channel_num] = None  # Release the asset that was playing
+        if self._managers[channel_num]:
+            manager = self._managers[channel_num]
+            self._managers[channel_num] = None
+            self._managers_to_evict.append(manager)
+            self.children.remove(manager)
+            self.engine.signal(Finished(), targets=[manager])
+
+    def on_idle(self, event, signal):
+        # Any previously triggered Finished events should have been dispatched,
+        # So we're free to discard these managers
+        if self._managers_to_evict:
+            self._managers_to_evict = []
+            # Well, that was easy

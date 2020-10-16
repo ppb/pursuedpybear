@@ -348,6 +348,7 @@ class PlaySound:
        signal(PlaySound(my_sound))
     """
     sound: 'ppb.assetlib.Asset'  #: A :class:`~ppb.systems.sound.Sound` asset.
+    manager: 'ppb.SoundManager' = None
 
 
 @dataclass
