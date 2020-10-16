@@ -18,6 +18,7 @@ from sdl2.sdlmixer import (
 )
 
 from ppb import assetlib
+from ppb.gomlib import GameObject
 from ppb.systems.sdl_utils import SdlSubSystem, mix_call, SdlMixerError
 from ppb.utils import LoggingMixin
 
@@ -61,6 +62,45 @@ class Sound(assetlib.Asset):
 @channel_finished
 def _filler_channel_finished(channel):
     pass
+
+
+class SoundManager(GameObject):
+    """
+    Allows dynamic manipulation of a sound
+    """
+
+    @property
+    def volume(self):
+        """
+        How load to play the sound, from 0 to 1
+        """
+        ...
+
+    @volume.setter
+    def volume(self, value):
+        ...
+
+    def stop(self):
+        """
+        Stop playback completely, as if the sound had ended
+        """
+        ...
+
+    def pause(self):
+        """
+        Pause playback to be continued later.
+
+        If alreayd paused, does nothing.
+        """
+        ...
+
+    def play(self):
+        """
+        Continue playback.
+
+        If already playing, does nothing.
+        """
+        ...
 
 
 class SoundController(SdlSubSystem, LoggingMixin):
