@@ -185,7 +185,6 @@ class EventPoller(SdlSubSystem):
         }
         return events.MouseMotion(
             position=scene_position,
-            screen_position=screen_position,
             delta=delta,
             buttons=buttons,
             # timestamp=motion.timestamp
