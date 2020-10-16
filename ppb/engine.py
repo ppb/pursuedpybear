@@ -12,6 +12,7 @@ from typing import Iterator
 from typing import List
 from typing import Type
 from typing import Union
+import weakref
 
 import ppb
 import ppb.systemslib
@@ -368,7 +369,13 @@ class GameEngine(GameObject, LoggingMixin):
             callback(event)
 
         event_handler_name = _get_handler_name(type(event).__name__)
-        for obj in walk(self):
+        if event.__targets__ is not None:
+            # A targetted event
+            targets = list(event.__targets__)  # Reify the WeakSet for consistency
+        else:
+            # A general broadcast event
+            targets = walk(self)
+        for obj in targets:
             method = getattr(obj, event_handler_name, None)
             if callable(method):
                 try:
@@ -383,7 +390,7 @@ class GameEngine(GameObject, LoggingMixin):
                     else:
                         raise
 
-    def signal(self, event):
+    def signal(self, event, *, targets=None):
         """
         Add an event to the event queue.
 
@@ -392,7 +399,15 @@ class GameEngine(GameObject, LoggingMixin):
         You will rarely call this directly from a :class:`GameEngine` instance.
         The current :class:`GameEngine` instance will pass it's signal method
         as part of publishing an event.
+
+        Events can be targetted--they will only be delivered to specific objects
+        instead of the whole tree. Note that this might cause objects to receive
+        an event if they are no longer part of the object tree.
         """
+        if targets is not None:
+            event.__targets__ = weakref.WeakSet(targets)
+        else:
+            event.__targets__ = None
         self.events.append(event)
 
     def _flush_events(self):
