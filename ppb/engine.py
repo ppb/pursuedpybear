@@ -399,6 +399,10 @@ class GameEngine(GameObject, LoggingMixin):
         You will rarely call this directly from a :class:`GameEngine` instance.
         The current :class:`GameEngine` instance will pass it's signal method
         as part of publishing an event.
+
+        Events can be targetted--they will only be delivered to specific objects
+        instead of the whole tree. Note that this might cause objects to receive
+        an event if they are no longer part of the object tree.
         """
         if targets is not None:
             event.__targets__ = weakref.WeakSet(targets)
