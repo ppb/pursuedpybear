@@ -54,7 +54,7 @@ class BaseSprite(ppb.gomlib.GameObject):
     #: The layer a sprite exists on.
     layer: int = 0
 
-    def __init__(self, *, pos=None, **props):
+    def __init__(self, **props):
         """
         :class:`BaseSprite` does not accept any positional arguments, and uses
         keyword arguments to set arbitrary state to the :class:`BaseSprite`
@@ -79,11 +79,6 @@ class BaseSprite(ppb.gomlib.GameObject):
               def on_update(self, update_event, signal):
                   self.position += self.velocity * update_event.time_delta
         """
-        # Appreviations
-        if pos is not None:
-            if 'position' in props:
-                raise TypeError("pos and position were both given to Sprite")
-            props['position'] = pos
 
         super().__init__(**props)
 
