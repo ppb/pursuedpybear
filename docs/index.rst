@@ -10,7 +10,7 @@ Using these docs
 Our documentation is seperated into practical steps and theroretical knowledge. The docs are made up of Tutorials, which allow you to learn quickly, and guides which bring you to a specific goal. We also have a standard API reference.
 
 As a New User
-^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 We recommend that new users start with the :doc:`getting-started` Guide. This document assumes that you have basic programming knowledge. If you don't, check out the Python docs at https://docs.python.org. 
 
