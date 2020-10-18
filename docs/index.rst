@@ -15,7 +15,7 @@ As a New User
 We recommend that new users start with the :doc:`getting-started` Guide. This document assumes that you have basic programming knowledge. If you don't, check out the Python docs at https://docs.python.org. 
 
 As an Experienced User
-^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Experienced users will likely want to start with our :doc:`reference/index` or our :doc:`howto/index`
 
 .. toctree::
