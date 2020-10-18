@@ -7,7 +7,7 @@ PursuedPyBear, also known as :code:`ppb`, exists to be an educational resource. 
 
 Using these docs
 ----------------
-Our documentation is seperated into practical steps and theroretical knowledge. The docs are made up of Tutorials, which allow you to learn quickly, and guides which bring you to a specific goal. We also have a standard API reference.
+Our documentation is separated into practical steps and theoretical knowledge. The docs are made up of Tutorials, which allow you to learn quickly, and guides which bring you to a specific goal. We also have a standard API reference.
 
 As a New User
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
