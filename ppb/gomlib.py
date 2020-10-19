@@ -208,7 +208,7 @@ def walk(root):
 
     Is non-recursive.
     """
-    q = deque(root)
+    q = deque([root])
     while q:
         cur = q.popleft()
         yield cur
