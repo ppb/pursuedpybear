@@ -26,13 +26,13 @@ Release Schedules
 PursuedPyBear targets four releases a year, based on the solstices and
 equinoxes:
 
-* Around the Northward equinox, which is about March 20.
-* Around the Northern Solstice, which is about June 20.
-* Around the Southward equinox, which is about September 20.
-* Around the Southern Solstice, which is about December 21st.
+* Around the northward equinox, which is about March 20.
+* Around the northern solstice, which is about June 20.
+* Around the southward equinox, which is about September 20.
+* Around the southern solstice, which is about December 21st.
 
-We prefer to use the directional names of the solstices as we support a
-global community. Naming them after their seasons would leave out
+We prefer to use the directional names of the solstices and equinoxes as we
+support a global community. Naming them after their seasons would leave out
 portions of the world.
 
 About four weeks before the target release date, we freeze any new feature
