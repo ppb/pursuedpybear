@@ -8,7 +8,7 @@ a git uri to the ppb canon branch or use a dev release from test.pypi.org.
 With pip Directly
 ----------------------------------------
 
-To install with git via pip, enter the following command into your shell::
+To install with pip directly from github, enter the following command into your shell::
 
    pip install git+https://github.com/ppb/pursuedpybear.git
 
@@ -29,4 +29,3 @@ To install from test.pypi.org with a requirements file, put ``ppb`` in your
 requirements file as normal, then invoke pip as so::
 
    pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple --pre -r requirements.txt
-
