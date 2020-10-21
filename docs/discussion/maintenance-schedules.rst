@@ -15,10 +15,12 @@ We tend to start testing new versions of cPython when they reach the release
 candidate stage, but don't guarantee compatibility until at least one ppb
 release after the latest Python release.
 
-We drop older versions of Python when we begin using newer features. This
-means the oldest version of Python ppb will support may be older than the
-previous minor version of Python. This is especially true because of our
-support for pypy.
+We drop older versions of Python when we begin using features from a newer
+version of Python. A future example of this would be dropping Python 3.7
+when we start using
+`assignment operators <https://www.python.org/dev/peps/pep-0572/>`_. This
+means the oldest version of Python ppb supports may be older than the two
+versions we promise to support.
 
 Release Schedules
 ------------------------------------------------------------
