@@ -36,7 +36,7 @@ global community. Naming them after their seasons would leave out
 portions of the world.
 
 About four weeks before the target release date, we freeze any new feature
-deploys. This means any PR that is a feature or enhancement (not a bug fix,
+merges. This means any PR that is a feature or enhancement (not a bug fix,
 documentation change, or examples) may be approved, but held until after the
 release.
 
