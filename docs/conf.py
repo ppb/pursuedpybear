@@ -28,11 +28,6 @@ version = ''
 # The full version, including alpha/beta/rc tags
 release = ''
 
-html_theme_options = {
-    'logo': 'bearlogo-270.png',
-    'github_user': 'ppb',
-    'github_repo': 'pursuedpybear',
-}
 
 # -- General configuration ---------------------------------------------------
 
@@ -44,7 +39,6 @@ html_theme_options = {
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'alabaster',
     'sphinx.ext.autodoc',
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
@@ -53,7 +47,6 @@ extensions = [
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
-html_theme = 'alabaster'
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
