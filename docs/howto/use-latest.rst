@@ -25,7 +25,17 @@ then invoke pip as normal::
 
    pip install -r requirements.txt
 
-To install from test.pypi.org with a requirements file, put ``ppb`` in your
-requirements file as normal, then invoke pip as so::
+To install from test.pypi.org with a requirements file, put the following in
+your requirements.txt::
 
-   pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple --pre -r requirements.txt
+   --index-url https://test.pypi.org/simple/
+   --extra-index-url https://pypi.org/simple
+   --pre
+   ppb
+
+These options download ppb from `test.pypi.org`_ and the remaining
+dependencies from PyPI as normal.
+
+Now you need to invoke pip as so::
+
+   pip install -r requirements.txt
