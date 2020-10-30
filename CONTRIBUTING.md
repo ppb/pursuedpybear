@@ -72,7 +72,7 @@ are a good starting place for those that are unfamiliar with the code base.
 
 Now you need to [fork ppb][fork]. Once you've done that, go through
 either column and find a ticket you like. Create a branch from the HEAD of
-the ``canon`` branch, add your name to the [CONTRIBUTORS file][contributors],
+the `canon` branch, add your name to the [CONTRIBUTORS file][contributors],
 commit that change and open a PR:
 
 * Include "WIP" in the title or make a [draft pull request][draftpr]
