@@ -71,8 +71,9 @@ You are welcome to work on any issue you would like, we just think those
 are a good starting place for those that are unfamiliar with the code base.
 
 Now you need to [fork ppb][fork]. Once you've done that, go through
-either column and find a ticket you like. Start a branch, add your name
-to the [CONTRIBUTORS file][contributors], commit that change and open a PR:
+either column and find a ticket you like. Create a branch from the HEAD of
+the `canon` branch, add your name to the [CONTRIBUTORS file][contributors],
+commit that change and open a PR:
 
 * Include "WIP" in the title or make a [draft pull request][draftpr]
 * Reference the issue you want to work on in the body of the PR.
@@ -121,16 +122,16 @@ available to be added to. Our test suite could use some love. In the
 end you contribute to `ppb` by being part of its community.
 
 [auto]: https://automatetheboringstuff.com "Automate the Boring Stuff"
-[coc]: https://github.com/ppb/.github/blob/master/CODE_OF_CONDUCT.md "Code of Conduct"
-[contributors]: https://github.com/ppb/pursuedpybear/blob/master/CONTRIBUTORS.md "Contributors"
+[coc]: https://github.com/ppb/.github/blob/canon/CODE_OF_CONDUCT.md "Code of Conduct"
+[contributors]: https://github.com/ppb/pursuedpybear/blob/canon/CONTRIBUTORS.md "Contributors"
 [covenant]: http://contributor-covenant.org/ "Contributor's Covenant"
 [discuss]: https://github.com/ppb/pursuedpybear/issues?q=is%3Aissue+is%3Aopen+label%3Adiscussion "PPB Discussions"
-[docs]: https://github.com/ppb/pursuedpybear/tree/master/docs "PPB Docs"
+[docs]: https://github.com/ppb/pursuedpybear/tree/canon/docs "PPB Docs"
 [draftpr]: https://github.blog/2019-02-14-introducing-draft-pull-requests/ "Introducing draft pull requests"
 [fork]: https://help.github.com/articles/fork-a-repo/ "Fork a repo"
 [goals]: https://ppb.dev/#guiding-principles "PPB Goals"
 [issues]: https://github.com/ppb/pursuedpybear/issues "PPB Issues"
 [new contributor]: https://github.com/ppb/pursuedpybear/labels/new%20contributor "Issues labeld New Contributor"
 [projects]: https://github.com/orgs/ppb/projects "PPB Projects"
-[readme]: https://github.com/ppb/pursuedpybear/blob/master/README.md "PPB README"
+[readme]: https://github.com/ppb/pursuedpybear/blob/canon/README.md "PPB README"
 [tutorial]: https://github.com/ppb/tutorials "PPB Tutorials"
