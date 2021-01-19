@@ -48,7 +48,7 @@ use the right command.
 
 Windows::
 
-   .venv/bin/activate.bat
+   .venv\Scripts\activate.bat
 
 Linux and Mac::
 
