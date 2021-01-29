@@ -37,3 +37,4 @@ Halle Jones|HJones@aliacy.com||
 [Mfon Eti-mfon](https://github.com/mfonism) | [mfon@etimfon.com](mfon@etimfon.com) | [mfonism](https://twitter.com/mfonism)
 [Regina Reynolds](https://github.com/reginareynolds) | [regina.c.reynolds@gmail.com](regina.c.reynolds@gmail.com)
 [Ian Clark](https://github.com/ace510) | [ianhclark510@gmail.com] | [ianhclark510](https://twitter.com/ianhclark510)
+[Casey Faist](https://github.com/caseyfaist) | [cfactoid](https://twitter.com/cfactoid)
