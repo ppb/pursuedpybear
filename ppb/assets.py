@@ -1,3 +1,5 @@
+from typing import NamedTuple, Tuple, Union
+
 import sdl2.ext
 from sdl2 import (
     SDL_Point,  # https://wiki.libsdl.org/SDL_Point
@@ -29,12 +31,25 @@ MAGENTA = 255, 71, 182
 DEFAULT_SPRITE_SIZE = 64
 
 
-def _create_surface(color):
+class AspectRatio(NamedTuple):
+    width: Union[int, float]
+    height: Union[int, float]
+
+
+def _create_surface(color, aspect_ratio: AspectRatio = AspectRatio(1, 1)):
     """
     Creates a surface for assets and sets the color key.
     """
+    width = height = DEFAULT_SPRITE_SIZE
+    if aspect_ratio.width > aspect_ratio.height:
+        height *= aspect_ratio.height / aspect_ratio.width
+        height = int(height)
+    elif aspect_ratio.height > aspect_ratio.width:
+        width *= aspect_ratio.width / aspect_ratio.height
+        width = int(width)
+
     surface = sdl_call(
-        SDL_CreateRGBSurface, 0, DEFAULT_SPRITE_SIZE, DEFAULT_SPRITE_SIZE, 32, 0, 0, 0, 0,
+        SDL_CreateRGBSurface, 0, width, height, 32, 0, 0, 0, 0,
         _check_error=lambda rv: not rv
     )
     color_key = BLACK if color != BLACK else MAGENTA
@@ -47,14 +62,18 @@ def _create_surface(color):
     return surface
 
 
+aspect_ratio_type = Union[AspectRatio, Tuple[Union[float, int], Union[float, int]]]
+
+
 class Shape(BackgroundMixin, FreeingMixin, AbstractAsset):
     """Shapes are drawing primitives that are good for rapid prototyping."""
-    def __init__(self, red: int, green: int, blue: int):
+    def __init__(self, red: int, green: int, blue: int, aspect_ratio: aspect_ratio_type = AspectRatio(1, 2)):
         self.color = red, green, blue
+        self.aspect_ratio = AspectRatio(*aspect_ratio)
         self._start()
 
     def _background(self):
-        surface = _create_surface(self.color)
+        surface = _create_surface(self.color, self.aspect_ratio)
 
         renderer = sdl_call(
             SDL_CreateSoftwareRenderer, surface,
@@ -64,7 +83,6 @@ class Shape(BackgroundMixin, FreeingMixin, AbstractAsset):
             self._draw_shape(renderer, rgb=self.color)
         finally:
             sdl_call(SDL_DestroyRenderer, renderer)
-
         return surface
 
     def free(self, surface, _SDL_FreeSurface=SDL_FreeSurface):
