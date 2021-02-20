@@ -1,3 +1,4 @@
+from ctypes import byref, c_int
 from typing import NamedTuple, Tuple, Union
 
 import sdl2.ext
@@ -10,6 +11,7 @@ from sdl2 import (
     SDL_DestroyRenderer,  # https://wiki.libsdl.org/SDL_DestroyRenderer
     SDL_SetRenderDrawColor,  # https://wiki.libsdl.org/SDL_SetRenderDrawColor
     SDL_RenderFillRect,  # https://wiki.libsdl.org/SDL_RenderFillRect
+    SDL_GetRendererOutputSize,  # https://wiki.libsdl.org/SDL_GetRendererOutputSize
 )
 
 from sdl2.sdlgfx import (
@@ -116,11 +118,16 @@ class Triangle(Shape):
     """
 
     def _draw_shape(self, renderer, rgb, **_):
+        w = c_int()
+        h = c_int()
+        sdl_call(SDL_GetRendererOutputSize, renderer, byref(w), byref(h))
+        height = h.value
+        width = w.value
         sdl_call(
             filledTrigonRGBA, renderer,
-            0, DEFAULT_SPRITE_SIZE,
-            int(DEFAULT_SPRITE_SIZE / 2), 0,
-            DEFAULT_SPRITE_SIZE, DEFAULT_SPRITE_SIZE,
+            0, height,
+            int(width / 2), 0,
+            width, height,
             *rgb, 255,
             _check_error=lambda rv: rv < 0
         )
