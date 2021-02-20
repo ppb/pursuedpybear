@@ -117,7 +117,7 @@ class Rectangle(Shape):
 
 def Square(r, g, b):
     """
-    A constructor for `assets.Rectangle` that produces a square image.
+    A constructor for :class:`~ppb.Rectangle` that produces a square image.
     """
     return Rectangle(r, g, b, AspectRatio(1, 1))
 
@@ -162,5 +162,5 @@ class Ellipse(Shape):
 
 
 def Circle(r, g, b):
-    """A convenience constructor for Ellipse that is a perfect circle."""
+    """A convenience constructor for :class:`~ppb.Ellipse` that is a perfect circle."""
     return Ellipse(r, g, b)

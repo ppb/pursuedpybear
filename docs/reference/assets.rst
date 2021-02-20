@@ -97,11 +97,16 @@ delegates to actual :py:class:`ppb.Image` instances.
 .. autoclass:: ppb.assetlib.AbstractAsset
     :members:
 
-.. autoclass:: ppb.Circle
+.. autoclass:: ppb.Rectangle
 
 
-.. autoclass:: ppb.Square
+.. autoclass:: ppb.Ellipse
 
 
 .. autoclass:: ppb.Triangle
 
+
+.. autoclass:: ppb.Circle
+
+
+.. autoclass:: ppb.Square
