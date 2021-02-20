@@ -23,6 +23,7 @@ from ppb.assetlib import BackgroundMixin, FreeingMixin, AbstractAsset
 from ppb.systems.sdl_utils import sdl_call
 
 __all__ = (
+    "Rectangle",
     "Square",
     "Triangle",
     "Circle",
@@ -69,7 +70,7 @@ aspect_ratio_type = Union[AspectRatio, Tuple[Union[float, int], Union[float, int
 
 class Shape(BackgroundMixin, FreeingMixin, AbstractAsset):
     """Shapes are drawing primitives that are good for rapid prototyping."""
-    def __init__(self, red: int, green: int, blue: int, aspect_ratio: aspect_ratio_type = AspectRatio(1, 2)):
+    def __init__(self, red: int, green: int, blue: int, aspect_ratio: aspect_ratio_type = AspectRatio(1, 1)):
         self.color = red, green, blue
         self.aspect_ratio = AspectRatio(*aspect_ratio)
         self._start()
@@ -96,9 +97,9 @@ class Shape(BackgroundMixin, FreeingMixin, AbstractAsset):
         """
 
 
-class Square(Shape):
+class Rectangle(Shape):
     """
-    A square image of a single color.
+    A rectangle image of a single color.
     """
 
     def _draw_shape(self, renderer, rgb, **_):
@@ -110,6 +111,13 @@ class Square(Shape):
             SDL_RenderFillRect, renderer, None,
             _check_error=lambda rv: rv < 0
         )
+
+
+def Square(r, g, b):
+    """
+    A constructor for `assets.Rectangle` that produces a square image.
+    """
+    return Rectangle(r, g, b, AspectRatio(1, 1))
 
 
 class Triangle(Shape):

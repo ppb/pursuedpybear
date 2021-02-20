@@ -1,20 +1,25 @@
 import ppb
 
 
-tall_rectangle = ppb.Square(200, 0, 0, (1, 2))
-wide_rectangle = ppb.Square(100, 200, 0, (2, 1))
+tall_rectangle = ppb.assets.Rectangle(200, 0, 0, (1, 2))
+wide_rectangle = ppb.assets.Rectangle(100, 200, 0, (2, 1))
+square = ppb.Square(200, 200, 100)
 tall_triangle = ppb.Triangle(0, 200, 0, (1, 2))
 wide_triangle = ppb.Triangle(0, 200, 100, (2, 1))
+square_triangle = ppb.Triangle(50, 200, 150)
 tall_ellipse = ppb.Circle(0, 0, 200, (1, 2))
 wide_ellipse = ppb.Circle(100, 0, 200, (2, 1))
+circle = ppb.Circle(150, 50, 200)
 
 
 def setup(scene):
     scene.background_color = (0, 0, 0)
-    scene.add(ppb.RectangleSprite(width=0.5, height=1, image=tall_rectangle, position=(-1, 2)))
-    scene.add(ppb.RectangleSprite(width=1, height=0.5, image=wide_rectangle, position=(1, 2)))
-    scene.add(ppb.RectangleSprite(width=0.5, height=1, image=tall_triangle, position=(-1, 0)))
-    scene.add(ppb.RectangleSprite(width=1, height=0.5, image=wide_triangle, position=(1, 0)))
+    scene.add(ppb.RectangleSprite(width=0.5, height=1, image=tall_rectangle, position=(-2, 2)))
+    scene.add(ppb.RectangleSprite(width=1, height=0.5, image=wide_rectangle, position=(0, 2)))
+    scene.add(ppb.Sprite(size=1, image=square, position=(2, 2)))
+    scene.add(ppb.RectangleSprite(width=0.5, height=1, image=tall_triangle, position=(-2, 0)))
+    scene.add(ppb.RectangleSprite(width=1, height=0.5, image=wide_triangle, position=(0, 0)))
+    scene.add(ppb.Sprite(image=square_triangle, position=(2, 0)))
     scene.add(ppb.RectangleSprite(width=0.5, height=1, image=tall_ellipse, position=(-1, -2)))
     scene.add(ppb.RectangleSprite(width=1, height=0.5, image=wide_ellipse, position=(1, -2)))
 

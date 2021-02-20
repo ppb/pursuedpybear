@@ -30,13 +30,13 @@ Exports:
 """
 
 import logging
-import warnings
 from typing import Callable
 
 from ppb import directions
 from ppb import events
 from ppb_vector import Vector
 from ppb.assets import Circle
+from ppb.assets import Rectangle
 from ppb.assets import Square
 from ppb.assets import Triangle
 from ppb.engine import GameEngine
@@ -53,6 +53,7 @@ __all__ = (
     # Shortcuts
     'Vector', 'BaseScene', 'Circle', 'Image', 'Sprite', 'RectangleSprite',
     'Square', 'Sound', 'Triangle', 'events', 'Font', 'Text', 'directions',
+    'Rectangle',
     # Local stuff
     'run', 'make_engine',
 )
