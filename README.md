@@ -109,5 +109,5 @@ discussions.](https://github.com/ppb/pursuedpybear/issues?q=is%3Aissue+is%3Aopen
 If you're already using `ppb` feel free to report bugs, suggest
 enhancements, or ask for new features.
 
-If you want to contribute code, definitely read the relavant portions
+If you want to contribute code, definitely read the relevant portions
 of Contributing.MD

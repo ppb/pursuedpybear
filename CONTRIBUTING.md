@@ -131,7 +131,7 @@ end you contribute to `ppb` by being part of its community.
 [fork]: https://help.github.com/articles/fork-a-repo/ "Fork a repo"
 [goals]: https://ppb.dev/#guiding-principles "PPB Goals"
 [issues]: https://github.com/ppb/pursuedpybear/issues "PPB Issues"
-[new contributor]: https://github.com/ppb/pursuedpybear/labels/new%20contributor "Issues labeld New Contributor"
+[new contributor]: https://github.com/ppb/pursuedpybear/labels/new%20contributor "Issues labeled New Contributor"
 [projects]: https://github.com/orgs/ppb/projects "PPB Projects"
 [readme]: https://github.com/ppb/pursuedpybear/blob/canon/README.md "PPB README"
 [tutorial]: https://github.com/ppb/tutorials "PPB Tutorials"

@@ -123,7 +123,7 @@ _executor = DelayedThreadExecutor()
 
 class MockFuture(concurrent.futures.Future):
     """
-    Acts as a Future's understudy until the real future is availalble.
+    Acts as a Future's understudy until the real future is available.
     """
     _handed_off = False
 

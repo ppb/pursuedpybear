@@ -3,7 +3,7 @@ A simple rendition of the three-body problem. Also demonstrates the use of
 two-phase updates.
 
 The three body problem comes from astrophysics. Basically, applying the
-gravitaional to three celestial bodies produces a problem that does not have a
+gravitational to three celestial bodies produces a problem that does not have a
 perfect mathematical solution, and must be solved through simulations.
 """
 
