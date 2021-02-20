@@ -17,6 +17,7 @@ from sdl2 import (
 from sdl2.sdlgfx import (
     filledTrigonRGBA,  # https://www.ferzkopp.net/Software/SDL2_gfx/Docs/html/_s_d_l2__gfx_primitives_8h.html#a273cf4a88abf6c6a5e019b2c58ee2423
     filledCircleRGBA,  # https://www.ferzkopp.net/Software/SDL2_gfx/Docs/html/_s_d_l2__gfx_primitives_8h.html#a666bd764e2fe962656e5829d0aad5ba6
+    filledEllipseRGBA,  # https://www.ferzkopp.net/Software/SDL2_gfx/Docs/html/_s_d_l2__gfx_primitives_8h.html#a5240918c243c3e60dd8ae1cef50dd529
 )
 
 from ppb.assetlib import BackgroundMixin, FreeingMixin, AbstractAsset
@@ -27,6 +28,7 @@ __all__ = (
     "Square",
     "Triangle",
     "Circle",
+    "Ellipse"
 )
 
 BLACK = 0, 0, 0
@@ -126,11 +128,10 @@ class Triangle(Shape):
     """
 
     def _draw_shape(self, renderer, rgb, **_):
-        w = c_int()
-        h = c_int()
+        w, h = c_int(), c_int()
         sdl_call(SDL_GetRendererOutputSize, renderer, byref(w), byref(h))
-        height = h.value
-        width = w.value
+        width, height = w.value, h.value
+
         sdl_call(
             filledTrigonRGBA, renderer,
             0, height,
@@ -141,17 +142,25 @@ class Triangle(Shape):
         )
 
 
-class Circle(Shape):
+class Ellipse(Shape):
     """
-    A circle image of a single color.
+    An ellipse image of a single color.
     """
 
     def _draw_shape(self, renderer, rgb, **_):
-        half = int(DEFAULT_SPRITE_SIZE / 2)
+        w, h = c_int(), c_int()
+        sdl_call(SDL_GetRendererOutputSize, renderer, byref(w), byref(h))
+        half_width, half_height = int(w.value / 2), int(h.value / 2)
+
         sdl_call(
-            filledCircleRGBA, renderer,
-            half, half,  # Center
-            half,  # Radius
+            filledEllipseRGBA, renderer,
+            half_width, half_height,  # Center
+            half_width, half_height,  # Radius
             *rgb, 255,
             _check_error=lambda rv: rv < 0
         )
+
+
+def Circle(r, g, b):
+    """A convenience constructor for Ellipse that is a perfect circle."""
+    return Ellipse(r, g, b)

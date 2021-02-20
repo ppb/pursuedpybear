@@ -36,6 +36,7 @@ from ppb import directions
 from ppb import events
 from ppb_vector import Vector
 from ppb.assets import Circle
+from ppb.assets import Ellipse
 from ppb.assets import Rectangle
 from ppb.assets import Square
 from ppb.assets import Triangle
@@ -53,7 +54,7 @@ __all__ = (
     # Shortcuts
     'Vector', 'BaseScene', 'Circle', 'Image', 'Sprite', 'RectangleSprite',
     'Square', 'Sound', 'Triangle', 'events', 'Font', 'Text', 'directions',
-    'Rectangle',
+    'Rectangle', 'Ellipse',
     # Local stuff
     'run', 'make_engine',
 )
