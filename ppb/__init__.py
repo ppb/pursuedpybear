@@ -41,6 +41,7 @@ from ppb.assets import Rectangle
 from ppb.assets import Square
 from ppb.assets import Triangle
 from ppb.engine import GameEngine
+from ppb.scenes import BaseScene
 from ppb.scenes import Scene
 from ppb.sprites import RectangleSprite
 from ppb.sprites import Sprite
@@ -52,7 +53,7 @@ from ppb.utils import get_time
 
 __all__ = (
     # Shortcuts
-    'Vector', 'Scene', 'Circle', 'Image', 'Sprite', 'RectangleSprite',
+    'Vector', 'BaseScene', 'Scene', 'Circle', 'Image', 'Sprite', 'RectangleSprite',
     'Square', 'Sound', 'Triangle', 'events', 'Font', 'Text', 'directions',
     'Rectangle', 'Ellipse',
     # Local stuff
