@@ -1,10 +1,8 @@
-from unittest.mock import Mock
-
 from pytest import fixture
-from pytest import mark
-from pytest import raises
+from pytest import deprecated_call
 
 from ppb.scenes import Scene
+from ppb.scenes import BaseScene
 from ppb.camera import Camera
 
 
@@ -33,3 +31,8 @@ def test_class_attrs():
 
     scene = BackgroundScene(background_color=(2, 4, 0))
     assert scene.background_color == (2, 4, 0)
+
+
+def test_base_scene_deprecated():
+    with deprecated_call():
+        BaseScene()
