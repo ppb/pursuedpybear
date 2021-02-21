@@ -9,12 +9,12 @@ import ppb
 __all__ = 'BaseLoadingScene', 'ProgressBarLoadingScene'
 
 
-class BaseLoadingScene(ppb.BaseScene):
+class BaseLoadingScene(ppb.Scene):
     """
     Handles the basics of a loading screen.
     """
     #: The scene to transition to when loading is complete. May be a type or an instance.
-    next_scene: "ppb.BaseScene"
+    next_scene: "ppb.Scene"
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
