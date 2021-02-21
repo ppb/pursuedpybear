@@ -290,7 +290,7 @@ class Asset(BackgroundMixin, FreeingMixin, AbstractAsset):
             file = vfs.open(self.name)
         except FileNotFoundError:
             if hasattr(self, 'file_missing'):
-                logger.warning("File not found: %r", self.name)
+                logger.warning("File not found. This may not be a problem, you can stop this warning by explicitly setting Sprite.image): %r", self.name)
                 return self.file_missing()
             else:
                 raise
