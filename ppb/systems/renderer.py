@@ -72,6 +72,8 @@ OPACITY_MODES = {
 # TODO: Move Image out of the renderer so sprites can type hint appropriately.
 class Image(assets.Asset):
     # Wraps POINTER(SDL_Surface)
+    not_found_message = "This may not be a problem, you can stop this warning by explicitly " \
+                        "setting Sprite.image."
 
     def background_parse(self, data):
         file = rw_from_object(io.BytesIO(data))

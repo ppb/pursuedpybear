@@ -165,6 +165,10 @@ class AbstractAsset(abc.ABC):
     This defines the common interface for virtual assets, proxy assets, and
     real/file assets.
     """
+    # Can be overridden on child classes to add an additional message to show after "File not
+    # found: %r.". See Image.not_found_message for an example.
+    not_found_message = ""
+
     @abc.abstractmethod
     def load(self, timeout: float = None):
         """
@@ -290,7 +294,7 @@ class Asset(BackgroundMixin, FreeingMixin, AbstractAsset):
             file = vfs.open(self.name)
         except FileNotFoundError:
             if hasattr(self, 'file_missing'):
-                logger.warning("File not found. This may not be a problem, you can stop this warning by explicitly setting Sprite.image): %r", self.name)
+                logger.warning("File not found: %r. %s", self.name, self.not_found_message)
                 return self.file_missing()
             else:
                 raise
