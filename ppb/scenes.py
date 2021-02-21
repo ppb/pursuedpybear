@@ -50,6 +50,5 @@ class Scene(GameObject):
 
 class BaseScene(Scene):
     def __init__(self, *args, **kwargs):
-        # to be removed in 0.14 or 1.0
-        warnings.warn("BaseScene is deprecated, use Scene instead", DeprecationWarning)
+        warnings.warn("BaseScene will be deprecated in 0.14 or 1.0, use Scene instead", DeprecationWarning)
         super().__init__(*args, **kwargs)
