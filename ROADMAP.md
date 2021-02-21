@@ -33,7 +33,7 @@ working better.
 
 To really make this a teaching tool, it's going to require a visual editor.
 Because this is Python and I can do it, I'd like to make the editor using the 
-engine. As such, it's going to be built in in conjunction to the engine itself.
+engine. As such, it's going to be built in conjunction to the engine itself.
 
 ### Object editor
 
@@ -51,7 +51,7 @@ The primary workflow should give an idea of how scenes are being used.
 
 Introduce a concept of a sub-scene (outside the context of code)
 
-## Packagine System
+## Packaging System
 
 This is the nice to have, but I'd like to make it possible for a person to 
 build the entire game via the visual editor and output functional python that
