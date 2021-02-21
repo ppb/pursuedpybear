@@ -121,6 +121,7 @@ class Square(Rectangle):
     """
 
     def __init__(self, r, g, b):
+        # This cuts out the aspect_ratio parameter
         super().__init__(r, g, b)
 
 
@@ -167,4 +168,5 @@ class Circle(Ellipse):
     """A convenience constructor for :class:`~ppb.Ellipse` that is a perfect circle."""
 
     def __init__(self, r, g, b):
+        # This cuts out the aspect_ratio parameter
         super().__init__(r, g, b)
