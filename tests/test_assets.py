@@ -4,7 +4,7 @@ import time
 
 import pytest
 
-from ppb import GameEngine, BaseScene
+from ppb import GameEngine, Scene
 import ppb.events
 import ppb.assetlib
 from ppb.assetlib import (
@@ -25,7 +25,7 @@ def clean_assets():
     ppb.assetlib._executor = DelayedThreadExecutor()
 
 
-class AssetTestScene(BaseScene):
+class AssetTestScene(Scene):
     def on_asset_loaded(self, event, signal):
         self.ale = event
         signal(ppb.events.Quit())
@@ -71,7 +71,7 @@ def test_loading(clean_assets):
 
 # def test_loading_root():
 #     a = Asset(...)  # TODO: find a cross-platform target in $VENV/bin
-#     engine = GameEngine(BaseScene, basic_systems=[AssetLoadingSystem])
+#     engine = GameEngine(Scene, basic_systems=[AssetLoadingSystem])
 #     with engine:
 #         engine.start()
 

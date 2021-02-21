@@ -3,7 +3,7 @@ from unittest import mock
 
 import pytest
 
-from ppb import GameEngine, BaseScene, Vector
+from ppb import GameEngine, Scene, Vector
 from ppb import events
 from ppb.systemslib import System
 from ppb.systems import Updater
@@ -16,9 +16,9 @@ STOP = False
 
 
 def scenes():
-    yield BaseScene
-    yield BaseScene()
-    yield BaseScene(background_color=(0, 0, 0))
+    yield Scene
+    yield Scene()
+    yield Scene(background_color=(0, 0, 0))
 
 
 @pytest.mark.parametrize("scene", scenes())
@@ -34,7 +34,7 @@ def test_game_engine_with_scene_class():
         "background_color": (69, 69, 69),
         "show_cursor": False
     }
-    with GameEngine(BaseScene, basic_systems=[Quitter], scene_kwargs=props) as ge:
+    with GameEngine(Scene, basic_systems=[Quitter], scene_kwargs=props) as ge:
         ge.run()
 
         assert ge.current_scene.background_color == props["background_color"]
@@ -42,7 +42,7 @@ def test_game_engine_with_scene_class():
 
 
 def test_game_engine_with_instantiated_scene():
-    scene = BaseScene()
+    scene = Scene()
 
     with GameEngine(scene, basic_systems=[Quitter]) as ge:
         ge.run()
@@ -52,14 +52,14 @@ def test_game_engine_with_instantiated_scene():
 
 def test_signal():
 
-    engine = GameEngine(BaseScene, basic_systems=[Quitter])
+    engine = GameEngine(Scene, basic_systems=[Quitter])
     engine.run()
     assert not engine.running
 
 
 def test_signal_once():
 
-    engine = GameEngine(BaseScene, basic_systems=[Quitter])
+    engine = GameEngine(Scene, basic_systems=[Quitter])
     with engine:
         engine.start()
         engine.loop_once()
@@ -79,7 +79,7 @@ def test_contexts():
         def __exit__(self, exc_type, exc_val, exc_tb):
             self.exited = True
 
-    engine = GameEngine(BaseScene, basic_systems=[FakeRenderer, Quitter])
+    engine = GameEngine(Scene, basic_systems=[FakeRenderer, Quitter])
     engine.run()
     for system in engine.children._systems:
         if isinstance(system, FakeRenderer):
@@ -96,7 +96,7 @@ def test_change_scene_event():
     pause_was_run = mock.Mock()
     scene_start_called = mock.Mock()
 
-    class FirstScene(BaseScene):
+    class FirstScene(Scene):
 
         def on_update(self, event, signal):
             signal(events.StartScene(new_scene=SecondScene()))
@@ -105,7 +105,7 @@ def test_change_scene_event():
             assert event.scene is self
             pause_was_run()
 
-    class SecondScene(BaseScene):
+    class SecondScene(Scene):
 
         def on_scene_started(self, event, signal):
             assert event.scene == self
@@ -140,7 +140,7 @@ def test_change_scene_event_no_kwargs():
     pause_was_run = mock.Mock()
     scene_start_called = mock.Mock()
 
-    class FirstScene(BaseScene):
+    class FirstScene(Scene):
 
         def on_update(self, event, signal):
             signal(events.StartScene(new_scene=SecondScene))
@@ -149,7 +149,7 @@ def test_change_scene_event_no_kwargs():
             assert event.scene is self
             pause_was_run()
 
-    class SecondScene(BaseScene):
+    class SecondScene(Scene):
 
         def on_scene_started(self, event, signal):
             assert event.scene == self
@@ -181,7 +181,7 @@ def test_change_scene_event_no_kwargs():
 
 def test_replace_scene_event():
 
-    class FirstScene(BaseScene):
+    class FirstScene(Scene):
 
         def on_update(self, event, signal):
             signal(events.ReplaceScene(new_scene=SecondScene()))
@@ -189,7 +189,7 @@ def test_replace_scene_event():
         def on_scene_stopped(self, event, signal):
             assert event.scene is self
 
-    class SecondScene(BaseScene):
+    class SecondScene(Scene):
 
         def on_scene_started(self, event, signal):
             assert event.scene is self
@@ -219,7 +219,7 @@ def test_stop_scene_event():
 
     test_function = mock.Mock()
 
-    class TestScene(BaseScene):
+    class TestScene(Scene):
 
         def on_update(self, event, signal):
             signal(events.StopScene())
@@ -236,7 +236,7 @@ def test_stop_scene_event():
 
 def test_flush_events():
 
-    ge = GameEngine(BaseScene)
+    ge = GameEngine(Scene)
     ge.signal(events.SceneStopped())
     ge.signal(events.Quit())
 
@@ -269,7 +269,7 @@ def test_event_extension():
         def event_extension(self, event):
             event.test_value = "Red"
 
-    with GameEngine(BaseScene, basic_systems=[TestSystem, Updater, Failer], message="Will only time out.", fail=lambda x: False) as ge:
+    with GameEngine(Scene, basic_systems=[TestSystem, Updater, Failer], message="Will only time out.", fail=lambda x: False) as ge:
         ge.run()
 
 
@@ -282,7 +282,7 @@ def test_extending_all_events():
     class TestEvent:
         pass
 
-    class TestScene(BaseScene):
+    class TestScene(Scene):
 
         def on_update(self, event, signal):
             assert event.test_value == "pursuedpybear"
@@ -318,7 +318,7 @@ def test_idle():
             was_called = True
             signal(events.Quit())
 
-    with GameEngine(BaseScene, basic_systems=[Failer], systems=[TestSystem], fail=lambda x: False, message="Can only time out.") as ge:
+    with GameEngine(Scene, basic_systems=[Failer], systems=[TestSystem], fail=lambda x: False, message="Can only time out.") as ge:
         ge.run()
 
 
@@ -346,7 +346,7 @@ def test_tree():
             nonlocal call_count
             call_count += 1
 
-    with GameEngine(BaseScene, basic_systems=[Failer], systems=[TestSystem], fail=lambda x: False, message="Can only time out.") as ge:
+    with GameEngine(Scene, basic_systems=[Failer], systems=[TestSystem], fail=lambda x: False, message="Can only time out.") as ge:
         ge.run()
 
     assert call_count == 7

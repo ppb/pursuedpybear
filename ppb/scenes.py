@@ -6,7 +6,7 @@ from ppb.camera import Camera
 from ppb.gomlib import GameObject
 
 
-class BaseScene(GameObject):
+class Scene(GameObject):
     # Background color, in RGB, each channel is 0-255
     background_color: Sequence[int] = (0, 0, 100)
     camera_class = Camera

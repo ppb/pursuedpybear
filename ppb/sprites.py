@@ -1,7 +1,7 @@
 """
 Sprites are game objects.
 
-To use a sprite you use :meth:`BaseScene.add <ppb.BaseScene.add>` to add it
+To use a sprite you use :meth:`Scene.add <ppb.Scene.add>` to add it
 to a scene. When contained in an active scene, the engine will call the various
 :mod:`event <ppb.events>` handlers on the sprite.
 
