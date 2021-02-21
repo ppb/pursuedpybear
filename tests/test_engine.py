@@ -125,7 +125,8 @@ def test_change_scene_event():
         def on_scene_paused(self, event, signal):
             self.listening = True
 
-    with GameEngine(FirstScene, basic_systems=[Updater, Tester]) as ge:
+    with GameEngine(FirstScene, basic_systems=[Updater, Tester, Failer],
+                    fail=lambda x: False, message=None) as ge:
         def extend(event):
             event.engine = ge
         ge.register(events.Idle, extend)
