@@ -1,12 +1,13 @@
 from typing import Callable
 from typing import Iterator
 from typing import Sequence
+import warnings
 
 from ppb.camera import Camera
 from ppb.gomlib import GameObject
 
 
-class BaseScene(GameObject):
+class Scene(GameObject):
     # Background color, in RGB, each channel is 0-255
     background_color: Sequence[int] = (0, 0, 100)
     camera_class = Camera
@@ -45,3 +46,9 @@ class BaseScene(GameObject):
         but will be left public for other creative uses.
         """
         return sorted(self, key=lambda s: getattr(s, "layer", 0))
+
+
+class BaseScene(Scene):
+    def __init__(self, *args, **kwargs):
+        warnings.warn("BaseScene will be deprecated in 0.14 or 1.0, use Scene instead", DeprecationWarning)
+        super().__init__(*args, **kwargs)
