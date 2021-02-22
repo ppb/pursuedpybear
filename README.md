@@ -98,6 +98,11 @@ def setup(scene):
 ppb.run(setup=setup)
 ```
 
+Depending on your operating system,
+you may need to install additional packages
+(see [installation guide](https://ppb.readthedocs.io/en/stable/getting-started.html#installing-ppb)).
+
+
 ## Compatibility
 
 `ppb` is guaranteed compatible with Python 3.6 or later.
