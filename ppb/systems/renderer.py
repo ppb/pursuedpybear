@@ -73,7 +73,7 @@ OPACITY_MODES = {
 class Image(assets.Asset):
     # Wraps POINTER(SDL_Surface)
     not_found_message = "This may not be a problem, you can stop this warning by explicitly " \
-                        "setting Sprite.image."
+                        "setting the `image` attribute on your Sprite subclass to an Image object."
 
     def background_parse(self, data):
         file = rw_from_object(io.BytesIO(data))
