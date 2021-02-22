@@ -6,7 +6,7 @@ NOTE: Does not open a window.
 import ppb
 
 
-class Scene(ppb.BaseScene):
+class Scene(ppb.Scene):
     sound = ppb.Sound("laser1.ogg")
     running = 0
     lifespan = 2

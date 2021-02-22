@@ -1,4 +1,4 @@
-from ppb import GameEngine, BaseScene
+from ppb import GameEngine, Scene
 from ppb.testutils import Quitter
 from ppb.events import Update
 from ppb.features.twophase import TwoPhaseMixin, TwoPhaseSystem, Commit
@@ -7,7 +7,7 @@ from ppb.features.twophase import TwoPhaseMixin, TwoPhaseSystem, Commit
 def test_twophase():
     events = []
 
-    class TestScene(BaseScene, TwoPhaseMixin):
+    class TestScene(Scene, TwoPhaseMixin):
         flag = False
 
         def on_update(self, event, signal):

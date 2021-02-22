@@ -11,7 +11,7 @@ import time
 import ppb
 
 
-class TestScene(ppb.BaseScene):
+class TestScene(ppb.Scene):
     """
     A view that prints a test line in place of rendering frames.
     """
