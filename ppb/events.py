@@ -47,7 +47,7 @@ __all__ = (
 
 # Remember to define scene at the end so the pargs version of __init__() still works
 
-from ppb.scenes import BaseScene
+from ppb.scenes import Scene
 from ppb.buttons import MouseButton
 from ppb.keycodes import KeyCode
 from ppb_vector import Vector
@@ -66,7 +66,7 @@ class ButtonPressed:
     """
     button: MouseButton
     position: Vector  # Scene position
-    scene: BaseScene = None
+    scene: Scene = None
 
 
 @dataclass
@@ -81,7 +81,7 @@ class ButtonReleased:
     """
     button: MouseButton  #: A mouse button: Primary, Secondary, or Tertiary
     position: Vector  #: The game-world position of the event.
-    scene: BaseScene = None  #: The currently running scene.
+    scene: Scene = None  #: The currently running scene.
 
 
 @dataclass
@@ -106,9 +106,9 @@ class StartScene:
        In general, you should not respond to :class:`StartScene`, if you want to respond to
        a new scene, see :class:`SceneStarted`.
     """
-    new_scene: Union[BaseScene, Type[BaseScene]]  #: A :class:`~ppb.scenes.BaseScene` class or instance
+    new_scene: Union[Scene, Type[Scene]]  #: A :class:`~ppb.scenes.Scene` class or instance
     kwargs: Dict[str, Any] = None  #: Keyword arguments to be passed to a scene type.
-    scene: BaseScene = None  #: The currently running scene.
+    scene: Scene = None  #: The currently running scene.
 
 
 @dataclass
@@ -123,7 +123,7 @@ class KeyPressed:
     """
     key: KeyCode  #: A :class:`~ppb.keycodes.KeyCode` flag.
     mods: Set[KeyCode]  #: A set of :class:`KeyCodes <ppb.keycodes.KeyCode>`
-    scene: BaseScene = None  #: The currently running scene
+    scene: Scene = None  #: The currently running scene
 
 
 @dataclass
@@ -138,7 +138,7 @@ class KeyReleased:
     """
     key: KeyCode  #: A :class:`~ppb.keycodes.KeyCode` flag.
     mods: Set[KeyCode]  #: A set of :class:`KeyCodes <ppb.keycodes.KeyCode>`
-    scene: BaseScene = None  #: The currently running scene
+    scene: Scene = None  #: The currently running scene
 
 
 @dataclass
@@ -151,7 +151,7 @@ class MouseMotion:
     position: Vector  #: The game-world location of the mouse cursor.
     delta: Vector  #: The change in position since the last :class:`MouseMotion` event.
     buttons: Collection[MouseButton]  #: The state of the mouse buttons.
-    scene: BaseScene = None  #: The currently running scene.
+    scene: Scene = None  #: The currently running scene.
 
 
 @dataclass
@@ -164,7 +164,7 @@ class PreRender:
     position of the camera) should happen ``on_pre_render``.
     """
     time_delta: float  #: Seconds since last PreRender.
-    scene: BaseScene = None  #: The currently running scene.
+    scene: Scene = None  #: The currently running scene.
 
 
 @dataclass
@@ -184,7 +184,7 @@ class Quit:
 
     Respond with ``on_quit`` to perform any shut down tasks (like saving data.)
     """
-    scene: BaseScene = None  #: The currently running scene.
+    scene: Scene = None  #: The currently running scene.
 
 
 @dataclass
@@ -197,7 +197,7 @@ class Render:
        render pass. If you want changes to effect this frame, see
        :class:`PreRender`
     """
-    scene: BaseScene = None  #: The currently running scene.
+    scene: Scene = None  #: The currently running scene.
 
 
 @dataclass
@@ -222,9 +222,9 @@ class ReplaceScene:
        In general, you should not respond to :class:`ReplaceScene`, if you want to
        respond to a new scene, see :class:`SceneStarted`.
     """
-    new_scene: Union[BaseScene, Type[BaseScene]]  #: A :class:`~ppb.scenes.BaseScene` class or instance
+    new_scene: Union[Scene, Type[Scene]]  #: A :class:`~ppb.scenes.Scene` class or instance
     kwargs: Dict[str, Any] = None  #: Keyword arguments to be passed to a scene type.
-    scene: BaseScene = None  #: The currently running scene.
+    scene: Scene = None  #: The currently running scene.
 
 
 @dataclass
@@ -238,7 +238,7 @@ class SceneContinued:
     From the middle of the event lifetime that begins with
     :class:`SceneStarted`.
     """
-    scene: BaseScene = None  #: The scene that is resuming.
+    scene: Scene = None  #: The scene that is resuming.
 
 
 @dataclass
@@ -259,7 +259,7 @@ class SceneStarted:
     3. Optionally, Repeatable: :class:`SceneContinued`
     4. Optionally: :class:`SceneStopped`
     """
-    scene: BaseScene = None  #: The scene that is starting.
+    scene: Scene = None  #: The scene that is starting.
 
 
 @dataclass
@@ -275,7 +275,7 @@ class SceneStopped:
 
     This is the end of the scene lifetime, see :class:`SceneStarted`.
     """
-    scene: BaseScene = None  #: The scene that is stopping.
+    scene: Scene = None  #: The scene that is stopping.
 
 
 @dataclass
@@ -289,7 +289,7 @@ class ScenePaused:
 
     A middle event in the scene lifetime, started with :class:`SceneStarted`.
     """
-    scene: BaseScene = None  #: The scene that has paused.
+    scene: Scene = None  #: The scene that has paused.
 
 
 @dataclass
@@ -308,7 +308,7 @@ class StopScene:
        In general, you should not respond to :class:`StopScene`, if you want to respond
        to a scene ending, see :class:`SceneStopped`.
     """
-    scene: BaseScene = None  #: The scene that is stopping.
+    scene: Scene = None  #: The scene that is stopping.
 
 
 @dataclass
@@ -320,7 +320,7 @@ class Idle:
     This is an engine plumbing event to pump timing information to subsystems.
     """
     time_delta: float  #: Seconds since last Idle.
-    scene: BaseScene = None  #: The currently running scene.
+    scene: Scene = None  #: The currently running scene.
 
 
 @dataclass
@@ -333,7 +333,7 @@ class Update:
     your on_update methods.
     """
     time_delta: float  #: Seconds since last Update
-    scene: BaseScene = None  #: The currently running scene.
+    scene: Scene = None  #: The currently running scene.
 
 
 @dataclass

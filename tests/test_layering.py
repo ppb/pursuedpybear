@@ -16,7 +16,7 @@ class NoLayer:
 
 def test_layering_attribute():
 
-    class LayeredScene(scenes.BaseScene):
+    class LayeredScene(scenes.Scene):
 
         def __init__(self):
             super().__init__()
@@ -35,7 +35,7 @@ def test_change_layer():
     test_sprite = LayeredSprite(0)
     ones = tuple(LayeredSprite(1) for _ in range(3))
 
-    scene = scenes.BaseScene()
+    scene = scenes.Scene()
     scene.add(test_sprite)
     for sprite in ones:
         scene.add(sprite)
@@ -50,7 +50,7 @@ def test_change_layer():
 def test_layering_without_layer_attribute():
 
     test_sprite = NoLayer()
-    scene = scenes.BaseScene()
+    scene = scenes.Scene()
 
     scene.add(test_sprite)
     for x in range(1, 6):

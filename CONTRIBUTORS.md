@@ -39,4 +39,5 @@ Halle Jones|HJones@aliacy.com||
 [Ian Clark](https://github.com/ace510) | [ianhclark510@gmail.com] | [ianhclark510](https://twitter.com/ianhclark510)
 [Casey Faist](https://github.com/caseyfaist) |  | [cfactoid](https://twitter.com/cfactoid)
 [Jürgen Gmach](https://jugmac00.github.io/) | [juergen.gmach@googlemail.com](juergen.gmach@googlemail.com) | [@jugmac00](https://twitter.com/jugmac00)
+[Morisa Manzella](https://github.com/mgmanzella) | |
 [Mark J Cameron](https://github.come/kcalmwinds) |  | [LuminariWeekly](https://twitter.com/LuminariWeekly)
