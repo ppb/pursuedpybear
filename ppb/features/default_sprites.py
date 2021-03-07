@@ -1,3 +1,11 @@
+"""
+Theme: sprites with common default behaviours (motion)
+
+Types of motion include: relative to the motion of other sprites, moving 
+towards another object. 
+
+"""
+
 import ppb
 import math
 
