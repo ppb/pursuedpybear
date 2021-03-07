@@ -8,3 +8,4 @@ This section is for direct how tos to solve specific problems with ppb.
    :caption: Contents:
 
    use-latest
+   keywordconfig
