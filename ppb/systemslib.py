@@ -1,3 +1,8 @@
+"""
+Systemslib is the core class for new subsystems. Systems add new features to 
+the core ppb engine.
+"""
+
 import ppb.gomlib
 
 
