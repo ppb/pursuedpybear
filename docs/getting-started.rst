@@ -13,7 +13,7 @@ classes extensively in ppb, and you should be comfortable with them. Consider
 the `Python.org tutorial <https://docs.python.org/3/tutorial/index.html>`_ or
 `automate the boring stuff <http://automatetheboringstuff.com/>`_ to get started.
 
-Additionally, you need to have Python 3.6 or later on your machine. You can
+Additionally, you need to have Python 3.7 or later on your machine. You can
 install this via `Python.org <https://www.python.org/downloads/>`_ or
 `Anaconda <https://www.anaconda.com/python-3-7-package-build-out-miniconda-release/>`_
 whichever is more comfortable for you.
