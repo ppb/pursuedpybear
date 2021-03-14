@@ -109,7 +109,7 @@ review will take your comments into consideration. If you actively
 provide reviews, you'll be told to add your name to
 [CONTRIBUTORS][contributors] as a reviewer!
 
-## I want to teach
+## I Want to Teach
 
 There's a tutorial project! See the [tutorials repository's CONTRIBUTING
 file][tutorial] for more details.

@@ -21,7 +21,7 @@ class DelayedImage(ppb.Image):
         return super().background_parse(data)
 
 
-class Quitter(ppb.BaseScene):
+class Quitter(ppb.Scene):
     loop_count = 1
 
     def __init__(self, **kwargs):

@@ -47,7 +47,7 @@ ppb runs on the latest Python.
 
 `ppb` games are built out of instances of objects. Each object only has enough
 information to respond to the event provided, which always includes the current
-`BaseScene`. Because `ppb` doesn't have a master list of events, you can
+`Scene`. Because `ppb` doesn't have a master list of events, you can
 provide new ones simply to add more granular control over your game.
 
 ### Hardware Library Agnostic
@@ -97,6 +97,11 @@ def setup(scene):
 
 ppb.run(setup=setup)
 ```
+
+Depending on your operating system,
+you may need to install additional packages
+(see [installation guide](https://ppb.readthedocs.io/en/stable/getting-started.html#installing-ppb)).
+
 
 ## Compatibility
 

@@ -72,7 +72,7 @@ class Target(ppb.Sprite):
     radius = 0.5
 
 
-class GameScene(ppb.BaseScene):
+class GameScene(ppb.Scene):
     def __init__(self, *p, **kw):
         super().__init__(*p, **kw)
 
