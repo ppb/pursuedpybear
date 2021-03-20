@@ -97,9 +97,9 @@ def test_remove_methods(container, player, enemies):
     container.remove(player)
 
     assert player not in container
-    for kind in container.kinds():
+    for kind in container.children.kinds():
         assert player not in container.get(kind=kind)
-    for tag in container.tags():
+    for tag in container.children.tags():
         assert player not in container.get(tag=tag)
 
     assert enemies[0] in container
