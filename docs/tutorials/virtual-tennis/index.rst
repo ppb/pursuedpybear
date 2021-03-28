@@ -9,6 +9,7 @@ Virtual Tennis
 
    setup
    window
+   ball
 
 In this tutorial, we're going to build a game virtual tennis game in the vein
 of Pong_. We're going to go through the whole process: planning our approach,
@@ -63,7 +64,6 @@ our project.
 
 ( The following will be deleted before final publication.)
 
-1. A window
 2. A ball that bounces on the edges of the screen.
 3. A player paddle that can be moved.
 4. Collision between player paddle and ball.
