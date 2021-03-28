@@ -15,7 +15,7 @@ class Animation:
     An "image" that actually rotates through numbered files at the specified rate.
     """
     # Override this to change the clock used for frames.
-    clock = time.monotonic
+    clock = ppb.get_time
 
     def __init__(self, filename, frames_per_second):
         """

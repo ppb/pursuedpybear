@@ -20,7 +20,7 @@ New classes of flags (eg mouse buttons) can be defined as:
         "This is a flag to indicate a thing."
 """
 
-__all__ = 'Flag', 'DoNotRender'
+__all__ = 'Flag',
 
 
 class FlagMeta(type):
@@ -52,7 +52,32 @@ class Flag(metaclass=FlagMeta, abstract=True):
     """
 
 
-class DoNotRender(Flag):
+class BlendMode(Flag, abstract=True):
     """
-    Inform the renderer to ignore this object.
+    A flag indicating a blend mode, changing how translucent sprites are drawn
+    over top of other sprites.
+    """
+
+
+class BlendModeAdd(BlendMode):
+    """
+    Indicate a sprite, if translucent, should be rendered in ADD mode.
+    """
+
+
+class BlendModeBlend(BlendMode):
+    """
+    Indicate a sprite, if translucent, should be rendered in BLEND mode.
+    """
+
+
+class BlendModeMod(BlendMode):
+    """
+    Indicate a sprite, if translucent, should be rendered in MOD mode.
+    """
+
+
+class BlendModeNone(BlendMode):
+    """
+    Indicate a sprite, if translucent, should be rendered in NONE mode.
     """

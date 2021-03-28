@@ -12,8 +12,26 @@ from numbers import Real
 
 from ppb_vector import Vector
 
+from ppb.gomlib import GameObject
+from ppb.sprites import RectangleShapeMixin
+from ppb.sprites import Sprite
 
-class Camera:
+
+def _sprite_has_rectangular_region(sprite):
+    """
+    A replacement function for the ugly compound in sprite_in_view
+    """
+    return (
+        hasattr(sprite, "width")
+        and hasattr(sprite, "height")
+        and hasattr(sprite, "left")
+        and hasattr(sprite, "right")
+        and hasattr(sprite, "top")
+        and hasattr(sprite, "bottom")
+    )
+
+
+class Camera(RectangleShapeMixin, GameObject):
     """
     A simple Camera.
 
@@ -108,6 +126,31 @@ class Camera:
             and self.bottom <= point.y <= self.top
         )
 
+    def sprite_in_view(self, sprite: Sprite) -> bool:
+        """
+        Determine if a given sprite is in view of the camera.
+
+        Does not guarantee that the sprite will be rendered, only that it
+        exists in the visible space.
+
+        A sprite without area (size=0 or lacking width, height, or any of the
+        sides accessors) behave as :meth:`point_is_visible`.
+
+        :param sprite: The sprite to check
+        :type: Sprite
+        :return: Whether the sprite is in the space in view of the camera.
+        :rtype: bool
+        """
+        if not _sprite_has_rectangular_region(sprite):
+            return self.point_is_visible(sprite.position)
+
+        width = max(self.right, sprite.right) - min(self.left, sprite.left)
+        height = max(self.top, sprite.top) - min(self.bottom, sprite.bottom)
+        max_width = self.width + sprite.width
+        max_height = self.height + sprite.height
+        print(f"W: {width}, H: {height}, MW: {max_width}, MH: {max_height}")
+        return width < max_width and height < max_height
+
     def translate_point_to_screen(self, point: Vector) -> Vector:
         """
         Convert a vector from game position to screen position.
@@ -131,38 +174,6 @@ class Camera:
         scaled = point / self.pixel_ratio
         return Vector(self.left + scaled.x, self.top - scaled.y)
 
-    @property
-    def bottom(self):
-        return self.position.y - (self.height / 2)
-
-    @property
-    def left(self):
-        return self.position.x - (self.width / 2)
-
-    @property
-    def right(self):
-        return self.position.x + (self.width / 2)
-
-    @property
-    def top(self):
-        return self.position.y + (self.height / 2)
-
-    @property
-    def top_left(self):
-        return Vector(self.left, self.top)
-
-    @property
-    def top_right(self):
-        return Vector(self.right, self.top)
-
-    @property
-    def bottom_left(self):
-        return Vector(self.left, self.bottom)
-
-    @property
-    def bottom_right(self):
-        return Vector(self.right, self.bottom)
-
     def _set_dimensions(self, target_width=None, target_height=None):
         # Set new pixel ratio
         viewport_width, viewport_height = self.viewport_dimensions
@@ -176,6 +187,6 @@ class Camera:
             pixel_value = viewport_height
         else:
             raise ValueError("Must set target_width or target_height")
-        self.pixel_ratio = int(pixel_value / game_unit_target)
+        self.pixel_ratio = pixel_value / game_unit_target
         self._width = viewport_width / self.pixel_ratio
         self._height = viewport_height / self.pixel_ratio

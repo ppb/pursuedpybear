@@ -18,7 +18,7 @@ from sdl2.sdlmixer import (
 )
 
 from ppb import assetlib
-from ppb.systems._sdl_utils import SdlSubSystem, mix_call, SdlMixerError
+from ppb.systems.sdl_utils import SdlSubSystem, mix_call, SdlMixerError
 from ppb.utils import LoggingMixin
 
 __all__ = ('SoundController', 'Sound')
@@ -85,7 +85,6 @@ class SoundController(SdlSubSystem, LoggingMixin):
 
     def __enter__(self):
         super().__enter__()
-        mix_call(Mix_Init, MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG)
         mix_call(
             Mix_OpenAudio,
             44100,  # Sample frequency, 44.1 kHz is CD quality
@@ -97,6 +96,7 @@ class SoundController(SdlSubSystem, LoggingMixin):
             # not sure how much difference it makes.
             _check_error=lambda rv: rv == -1
         )
+        mix_call(Mix_Init, MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG)
         self.allocated_channels = 16
 
         # Register callback, keeping reference for later cleanup

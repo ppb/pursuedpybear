@@ -1,34 +1,21 @@
+.. py:currentmodule:: ppb.events
+
 ======
 Events
 ======
 
-All game objects (the engine, scenes, sprites, systems, etc) receive events.
-Handlers are methods that start with ``on_``, eg ``on_update``,
-``on_button_pressed``.
+.. automodule:: ppb.events
 
-The signature of these handlers are the same: ``(event, signal)``:
+Basic Events
+==================
 
-* ``event``: An object containing all the properties of the event, such as the
-  button pressed, the position of the mouse, the current scene
-* ``signal``: A callable that accepts an object, which will be raised as an
-  event: ``signal(StartScene(new_scene=OtherScene()))``
-
-
-Engine Events
-=============
-
-These are core events from hardware and the engine itself.
+These events are the basic events you'll want to build your games. You can make
+a variety of games using just them.
 
 .. autoclass:: ppb.events.Update
    :members:
 
 .. autoclass:: ppb.events.PreRender
-   :members:
-
-.. autoclass:: ppb.events.Idle
-   :members:
-
-.. autoclass:: ppb.events.Render
    :members:
 
 .. autoclass:: ppb.events.ButtonPressed
@@ -46,10 +33,10 @@ These are core events from hardware and the engine itself.
 .. autoclass:: ppb.events.MouseMotion
    :members:
 
-API Events
-==========
+Command Events
+===================
 
-These "events" are more for code to call into the engine.
+These events are used in your code to achieve certain effects.
 
 .. autoclass:: ppb.events.Quit
    :members:
@@ -66,24 +53,37 @@ These "events" are more for code to call into the engine.
 .. autoclass:: ppb.events.PlaySound
    :members:
 
-
 Scene Transition Events
 =======================
 
-These are events triggered about the lifetime of a scene: it starting, stopping,
+These are events triggered during the lifetime of a scene: it starting, stopping,
 etc.
 
 The ``scene`` property on these events always refers to the scene these are
-about--``ScenePaused.scene`` is the scene that is being paused.
+about---``ScenePaused.scene`` is the scene that is being paused.
 
 .. autoclass:: ppb.events.SceneStarted
-   :members:
-
-.. autoclass:: ppb.events.SceneStopped
    :members:
 
 .. autoclass:: ppb.events.ScenePaused
    :members:
 
 .. autoclass:: ppb.events.SceneContinued
+   :members:
+
+.. autoclass:: ppb.events.SceneStopped
+   :members:
+
+Engine Events
+=============
+
+These are additional events from the engine mostly for advanced purposes.
+
+.. autoclass:: ppb.events.Idle
+   :members:
+
+.. autoclass:: ppb.events.Render
+   :members:
+
+.. autoclass:: ppb.events.AssetLoaded
    :members:

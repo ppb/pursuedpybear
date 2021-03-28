@@ -23,3 +23,17 @@ def {method}({e_name.lower()}_event: {e_name}, signal_function):
     (Your code goes here.)
 """
         super().__init__(message)
+
+
+class BadChildException(Exception):
+    """Raised when a type (as opposed to an instance object) is used as a child."""
+
+    def __init__(self, child):
+        type_name = child.__name__
+        message = (
+            f"Argument child must be an instance object"
+            f" -- you passed in a type, {type_name}, instead."
+            f"\nThis probably isn't what you intended."
+            f"\n\nTry instantiating it, like: {type_name}()"
+        )
+        super().__init__(message)

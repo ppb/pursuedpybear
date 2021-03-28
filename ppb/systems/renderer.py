@@ -2,7 +2,7 @@ import ctypes
 import io
 import logging
 import random
-from time import monotonic
+from typing import Tuple
 
 import sdl2
 import sdl2.ext
@@ -26,6 +26,14 @@ from sdl2 import (
     SDL_QueryTexture,  # https://wiki.libsdl.org/SDL_QueryTexture
     SDL_RenderCopyEx,  # https://wiki.libsdl.org/SDL_RenderCopyEx
     SDL_CreateRGBSurface,  # https://wiki.libsdl.org/SDL_CreateRGBSurface
+    SDL_ShowCursor,  # https://wiki.libsdl.org/SDL_ShowCursor
+    SDL_BLENDMODE_ADD,
+    SDL_BLENDMODE_BLEND,
+    SDL_BLENDMODE_MOD,
+    SDL_BLENDMODE_NONE,
+    SDL_SetTextureAlphaMod,
+    SDL_SetTextureBlendMode,
+    SDL_SetTextureColorMod,
 )
 
 from sdl2.sdlimage import (
@@ -44,13 +52,21 @@ import ppb.events as events
 import ppb.flags as flags
 
 from ppb.camera import Camera
-from ppb.systems._sdl_utils import SdlSubSystem, sdl_call, img_call, ttf_call
+from ppb.systems.sdl_utils import SdlSubSystem, sdl_call, img_call, ttf_call
 from ppb.systems._utils import ObjectSideData
+from ppb.utils import get_time
 
 logger = logging.getLogger(__name__)
 
 
 DEFAULT_RESOLUTION = 800, 600
+
+OPACITY_MODES = {
+    flags.BlendModeAdd: SDL_BLENDMODE_ADD,
+    flags.BlendModeBlend: SDL_BLENDMODE_BLEND,
+    flags.BlendModeMod: SDL_BLENDMODE_MOD,
+    flags.BlendModeNone: SDL_BLENDMODE_NONE,
+}
 
 
 # TODO: Move Image out of the renderer so sprites can type hint appropriately.
@@ -123,7 +139,8 @@ class Renderer(SdlSubSystem):
         self.target_camera_width = target_camera_width
         self.target_frame_rate = target_frame_rate
         self.target_frame_length = 1 / self.target_frame_rate
-        self.target_clock = monotonic() + self.target_frame_length
+        self.target_clock = get_time() + self.target_frame_length
+        self.last_frame = get_time()
 
         self._texture_cache = ObjectSideData()
 
@@ -154,21 +171,29 @@ class Renderer(SdlSubSystem):
         super().__exit__(*exc)
 
     def on_idle(self, idle_event: events.Idle, signal):
-        t = monotonic()
+        t = get_time()
         if t >= self.target_clock:
-            signal(events.PreRender())
+            signal(events.PreRender(t - self.last_frame))
             signal(events.Render())
             self.target_clock = t + self.target_frame_length
+            self.last_frame = t
 
     def on_scene_started(self, scene_started, signal):
         scene = scene_started.scene
-        camera_class = getattr(scene_started.scene, "camera_class", Camera)
+
+        # Initialize cameras
+        camera_class = getattr(scene, "camera_class", Camera)
         # For future: This is basically the pattern we'd use to define
         # multiple cameras. We'd just need to have the scene tell us the
         # regions they should render to.
         camera = camera_class(self, self.target_camera_width, self.resolution)
         scene.main_camera = camera
         self.scene_cameras[scene] = [camera]
+
+        self.set_cursor(scene)
+
+    def on_scene_continued(self, scene_continued: events.SceneContinued, signal):
+        self.set_cursor(scene_continued.scene)
 
     def on_scene_stopped(self, scene_stopped, signal):
         """We don't need to hold onto references for scenes that stopped."""
@@ -202,24 +227,66 @@ class Renderer(SdlSubSystem):
         )
         sdl_call(SDL_RenderClear, self.renderer, _check_error=lambda rv: rv < 0)
 
+    def _object_has_dimension(self, game_object):
+        """
+        Tests that an object has dimensionality and they're >0.
+        """
+        if hasattr(game_object, 'width') and game_object.width <= 0:
+            return False
+        elif hasattr(game_object, 'height') and game_object.height <= 0:
+            return False
+        elif hasattr(game_object, 'size') and game_object.size <= 0:
+            return False
+        elif not (hasattr(game_object, 'width') or hasattr(game_object, 'height') or hasattr(game_object, 'size')):
+            return False
+        else:
+            return True
+
     def prepare_resource(self, game_object):
-        if game_object.size <= 0:
+        """
+        Get the SDL Texture for an object.
+        """
+        if not self._object_has_dimension(game_object):
             return None
 
+        if not hasattr(game_object, '__image__'):
+            return
+
         image = game_object.__image__()
-        if image is flags.DoNotRender or image is None:
+        if image is None:
             return None
 
         surface = image.load()
         try:
-            return self._texture_cache[surface]
+            texture = self._texture_cache[surface]
         except KeyError:
             texture = SmartPointer(sdl_call(
                 SDL_CreateTextureFromSurface, self.renderer, surface,
                 _check_error=lambda rv: not rv
             ), SDL_DestroyTexture)
             self._texture_cache[surface] = texture
-            return texture
+
+        opacity = getattr(game_object, 'opacity', 255)
+        opacity_mode = getattr(game_object, 'opacity_mode', flags.BlendModeBlend)
+        opacity_mode = OPACITY_MODES[opacity_mode]
+        tint = getattr(game_object, 'tint', (255, 255, 255))
+
+        sdl_call(
+            SDL_SetTextureAlphaMod, texture.inner, opacity,
+            _check_error=lambda rv: rv < 0
+        )
+
+        sdl_call(
+            SDL_SetTextureBlendMode, texture.inner, opacity_mode,
+            _check_error=lambda rv: rv < 0
+        )
+
+        sdl_call(
+            SDL_SetTextureColorMod, texture.inner, tint[0], tint[1], tint[2],
+            _check_error=lambda rv: rv < 0
+        )
+
+        return texture
 
     def compute_rectangles(self, texture, game_object, camera):
         flags = sdl2.stdinc.Uint32()
@@ -234,7 +301,13 @@ class Renderer(SdlSubSystem):
 
         src_rect = SDL_Rect(x=0, y=0, w=img_w, h=img_h)
 
-        win_w, win_h = self.target_resolution(img_w.value, img_h.value, game_object.size, camera.pixel_ratio)
+        if hasattr(game_object, 'width'):
+            obj_w = game_object.width
+            obj_h = game_object.height
+        else:
+            obj_w, obj_h = game_object.size
+
+        win_w, win_h = self.target_resolution(img_w.value, img_h.value, obj_w, obj_h, camera.pixel_ratio)
 
         center = camera.translate_point_to_screen(game_object.position)
         dest_rect = SDL_Rect(
@@ -246,10 +319,20 @@ class Renderer(SdlSubSystem):
 
         return src_rect, dest_rect, ctypes.c_double(-game_object.rotation)
 
+    def set_cursor(self, scene):
+        show_cursor = int(bool(getattr(scene, "show_cursor", True)))
+        sdl_call(SDL_ShowCursor, show_cursor)
+
     @staticmethod
-    def target_resolution(width, height, game_object_size, pixel_ratio):
-        values = [width, height]
-        short_side_index = width > height
-        target = pixel_ratio * game_object_size
-        ratio = values[short_side_index] / target
-        return tuple(round(value / ratio) for value in values)
+    def target_resolution(img_width, img_height, obj_width, obj_height, pixel_ratio):
+        if not obj_width:
+            print("no width")
+            ratio = img_height / (pixel_ratio * obj_height)
+        elif not obj_height:
+            print("no height")
+            ratio = img_width / (pixel_ratio * obj_width)
+        else:
+            ratio_w = img_width / (pixel_ratio * obj_width)
+            ratio_h = img_height / (pixel_ratio * obj_height)
+            ratio = min(ratio_w, ratio_h)  # smaller value -> less reduction
+        return round(img_width / ratio), round(img_height / ratio)

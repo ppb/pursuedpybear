@@ -7,6 +7,7 @@ import pytest
 from ppb import Sprite
 from ppb import Vector
 from ppb.camera import Camera
+from ppb.sprites import BaseSprite
 from .utils import vectors
 
 
@@ -23,25 +24,36 @@ def test_camera_move(cam):
     assert cam.position == Vector(600, 600)
 
 
-def test_setting_in_game_dimensions(camera):
+@pytest.mark.parametrize("input_width, expected_width, expected_height", [
+    [10, 10, 7.5],
+    [25, 25, 18.75],
+    [34, 34, 25.5],
+    [133, 133, 100]
+])
+def test_setting_in_game_dimensions_width(camera, input_width, expected_width, expected_height):
     """
     Proves setting the width and height affect each other and matches
     the calculated ratio to the viewport.
     """
-    assert camera.width == 10
-    assert camera.height == 7.5
+    camera.width = input_width
+    assert isclose(camera.width, expected_width, rel_tol=0.01)
+    assert isclose(camera.height, expected_height, rel_tol=0.01)
 
-    camera.width = 25
-    assert camera.width == 25
-    assert camera.height == 18.75
 
-    camera.width = 34
-    assert isclose(camera.width, 34.7826, rel_tol=0.01)
-    assert isclose(camera.height, 26.08695, rel_tol=0.01)
-
-    camera.height = 100
-    assert isclose(camera.width, 133.33333, rel_tol=0.01)
-    assert camera.height == 100
+@pytest.mark.parametrize("input_height, expected_width, expected_height", [
+    [7.5, 10, 7.5],
+    [18.75, 25, 18.75],
+    [25.5, 34, 25.5],
+    [100, 133.33333, 100]
+])
+def test_setting_in_game_dimensions_height(camera, input_height, expected_width, expected_height):
+    """
+    Proves setting the width and height affect each other and matches
+    the calculated ratio to the viewport.
+    """
+    camera.height = input_height
+    assert isclose(camera.width, expected_width, rel_tol=0.01)
+    assert isclose(camera.height, expected_height, rel_tol=0.01)
 
 
 @pytest.mark.parametrize("position, expected", [
@@ -104,62 +116,67 @@ def test_camera_translate_point_to_game_space(camera, position, point, expected)
     assert camera.translate_point_to_game_space(point) == expected
 
 
-# @pytest.mark.skip(reason="Test for old camera. Will want to restore this functionality in new camera.")
-# def test_sprite_in_viewport():
-#     # Added the expected pixel ratio due to change in default breaking this test.
-#     # 80 is the legacy value.
-#     cam = OldCamera(viewport=(0, 0, 800, 600), pixel_ratio=80)
-#
-#     class Thing(Sprite):
-#         def __init__(self, position=Vector(2, 2)):
-#             super().__init__()
-#             self.size = 2
-#             self.position = position
-#
-#     sprite_in = Thing(Vector(-3, -1))
-#     sprite_half_in = Thing(Vector(5, -2))
-#     sprite_out = Thing(Vector(2, 5))
-#
-#     assert not cam.in_frame(sprite_out)
-#     assert cam.in_frame(sprite_in)
-#     assert cam.in_frame(sprite_half_in)
-#
-#
-# @pytest.mark.skip("Old camera test. Will probably want to rewrite this in the future to support new camera.")
-# @given(
-#     vp_width=st.integers(min_value=1),
-#     vp_height=st.integers(min_value=1),
-#     pixel_ratio=st.floats(min_value=1, max_value=1e5, allow_nan=False, allow_infinity=False),
-#     cam_pos=vectors(1e15),  # Set low to prevent loss-of-precision problems about frame size
-#     point=vectors(),
-# )
-# @example(vp_width=2, vp_height=2, pixel_ratio=1.0, cam_pos=Vector(0.0, 0.0), point=Vector(0.0, 0.0))
-# def test_transfromation_roundtrip(vp_width, vp_height, pixel_ratio, cam_pos, point):
-#     cam = OldCamera(
-#         viewport=(0, 0, vp_width, vp_height),
-#         pixel_ratio=pixel_ratio,
-#     )
-#     cam.position = cam_pos
-#
-#     note(f"frame: ({cam.frame_left}, {cam.frame_bottom}) -> ({cam.frame_right}, {cam.frame_top})")
-#
-#     # Some underflow/loss of precision problems
-#     assume(cam.frame_left != cam.frame_right)
-#     assume(cam.frame_top != cam.frame_bottom)
-#
-#     note(f"point: {point}")
-#
-#     point_frame = cam.translate_to_frame(point)
-#     note(f"point->frame: {point_frame}")
-#     point_viewport = cam.translate_to_viewport(point_frame)
-#     note(f"point->frame->viewport: {point_viewport}")
-#     assert point_viewport.isclose(point, rel_tol=1e-5, rel_to=[cam.position])
-#
-#     point_viewport = cam.translate_to_viewport(point)
-#     note(f"point->viewport: {point_viewport}")
-#     point_frame = cam.translate_to_frame(point_viewport)
-#     note(f"point->viewport->frame: {point_frame}")
-#     assert point_frame.isclose(point, rel_tol=1e-5, rel_to=[cam.position])
+@pytest.mark.parametrize("input_position, expected", [
+    [Vector(-3, 1), True],  # Fully inside the camera's view
+    [Vector(5, -2), True],  # partially inside the camera's view
+    [Vector(2, 6), False],  # well outside the Camera's view.
+    [Vector(6, 0), False],  # Outside with edges touching (horizontal)
+    [Vector(0, 4.75), False],  # Outside with edges touching (vertical)
+])
+def test_sprite_in_view(camera, input_position, expected):
+
+    class Thing(Sprite):
+        size = 2
+        position = input_position
+
+    test_sprite = Thing()
+    assert camera.sprite_in_view(test_sprite) == expected
+
+
+@pytest.mark.parametrize("input_position, expected", [
+    [Vector(0, 0), True],
+    [Vector(5, 0), True],
+    [Vector(0, 3.75), True],
+    [Vector(10, 10), False]
+])
+def test_sprite_in_view_no_dimensions(camera, input_position, expected):
+    test_sprite = BaseSprite(position=input_position)
+
+    assert camera.sprite_in_view(test_sprite) == expected
+
+
+@given(
+    vp_width=st.integers(min_value=1),
+    vp_height=st.integers(min_value=1),
+    target_width=st.floats(min_value=1, max_value=1e5, allow_nan=False, allow_infinity=False),
+    cam_pos=vectors(1e15),  # Set low to prevent loss-of-precision problems about frame size
+    point=vectors(),
+)
+@example(vp_width=2, vp_height=2, target_width=1.0, cam_pos=Vector(0.0, 0.0), point=Vector(0.0, 0.0))
+@example(vp_width=1, vp_height=1, target_width=1.0000000000222042, cam_pos=Vector(0.0, 0.0), point=Vector(0.0, 0.0))
+def test_transformation_roundtrip(vp_width, vp_height, target_width, cam_pos, point):
+    cam = Camera(None, target_width, (vp_width, vp_height))
+    cam.position = cam_pos
+
+    note(f"frame: ({cam.left}, {cam.bottom}) -> ({cam.right}, {cam.top})")
+
+    # Some underflow/loss of precision problems
+    assume(cam.left != cam.right)
+    assume(cam.top != cam.bottom)
+
+    note(f"point: {point}")
+
+    point_frame = cam.translate_point_to_screen(point)
+    note(f"point->frame: {point_frame}")
+    point_viewport = cam.translate_point_to_game_space(point_frame)
+    note(f"point->frame->viewport: {point_viewport}")
+    assert point_viewport.isclose(point, rel_tol=1e-5, rel_to=[cam.position])
+
+    point_viewport = cam.translate_point_to_game_space(point)
+    note(f"point->viewport: {point_viewport}")
+    point_frame = cam.translate_point_to_screen(point_viewport)
+    note(f"point->viewport->frame: {point_frame}")
+    assert point_frame.isclose(point, rel_tol=1e-5, rel_to=[cam.position])
 
 
 # @given(

@@ -11,3 +11,5 @@ advanced users.
 
    values/index
    assets
+   maintenance-schedules
+   default-branch

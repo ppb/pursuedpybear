@@ -1,5 +1,5 @@
 """
-Tests the sound system without initializating anything else.
+Tests the sound system without initializing anything else.
 
 NOTE: Does not open a window.
 """

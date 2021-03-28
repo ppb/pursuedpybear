@@ -20,7 +20,7 @@ from sdl2.sdlttf import (
 )
 
 from ppb.assetlib import Asset, ChainingMixin, AbstractAsset, FreeingMixin
-from ppb.systems._sdl_utils import ttf_call
+from ppb.systems.sdl_utils import ttf_call
 
 # From https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html:
 # [Since 2.5.6] In multi-threaded applications it is easiest to use one
@@ -29,6 +29,9 @@ from ppb.systems._sdl_utils import ttf_call
 # used around FT_New_Face and FT_Done_Face.
 #
 # I assume this translates to TTF_OpenFont* and TTF_CloseFont
+# SDL_ttf manages a single global FT_Library, so we need to use the lock
+# for threaded calls into it, like in Asset._background.
+
 _freetype_lock = threading.RLock()
 
 
@@ -122,11 +125,12 @@ class Text(ChainingMixin, FreeingMixin, AbstractAsset):
         return f"<{type(self).__name__} txt={self.txt!r} font={self.font!r} color={self.color!r}{' loaded' if self.is_loaded() else ''} at 0x{id(self):x}>"
 
     def _background(self):
-        return ttf_call(
-            TTF_RenderUTF8_Blended, self.font.load(), self.txt.encode('utf-8'),
-            SDL_Color(*self.color),
-            _check_error=lambda rv: not rv
-        )
+        with _freetype_lock:
+            return ttf_call(
+                TTF_RenderUTF8_Blended, self.font.load(), self.txt.encode('utf-8'),
+                SDL_Color(*self.color),
+                _check_error=lambda rv: not rv
+            )
 
     def free(self, object, _SDL_FreeSurface=SDL_FreeSurface):
         # ^^^ is a way to keep required functions during interpreter cleanup

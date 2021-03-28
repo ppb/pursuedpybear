@@ -15,10 +15,9 @@ pep517_task:
 
 build_task:
   container:
-    image: python:3
+    image: duckinator/bork
   setup_script:
     - git fetch --tags
-    - pip install bork
   script:
     - bork build
   dist_artifacts:
@@ -28,7 +27,7 @@ build_task:
 docs_task:
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
   container:
-    image: python:3.7-slim
+    image: python:3-slim
 
   depends_on:
     - build
@@ -40,18 +39,20 @@ docs_task:
 
   script:
     - make -C docs/ linkcheck
-    - make -C docs/ html
+    # TODO: Add -n (nit-picky mode, warn about all missing references)
+    - make -C docs/ "SPHINXOPTS=-W" html
 
 task:
   name: "Linux $IMAGE"
   alias: Tests
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
-  allow_failures: $IMAGE =~ '.*-rc-.*'
+  allow_failures: $IMAGE =~ '.*[-:]rc-.*'
   env:
     matrix:
       - IMAGE: python:3.6-slim
       - IMAGE: python:3.7-slim
       - IMAGE: python:3.8-slim
+      - IMAGE: python:rc-slim
       - IMAGE: pypy:3.6-slim
 
   container:
@@ -82,6 +83,9 @@ task:
     - ${PY-python3} --version
     - pip list
     - pytest
+
+  use_compute_credits: $CIRRUS_BRANCH == 'staging'
+
 
 macOS_task:
   alias: Tests
@@ -120,7 +124,7 @@ task:
   name: "Windows $IMAGE"
   alias: Tests
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
-  allow_failures: $IMAGE =~ '.*-rc-.*'
+  allow_failures: $IMAGE =~ '.*[-:]rc-.*'
   windows_container:
     os_version: 2019
     image: $IMAGE
@@ -130,6 +134,7 @@ task:
       - IMAGE: python:3.6-windowsservercore
       - IMAGE: python:3.7-windowsservercore
       - IMAGE: python:3.8-windowsservercore
+      - IMAGE: python:rc-windowsservercore
 
   install_script:
     - C:\Python\python.exe -m pip install --upgrade-strategy eager -U -r requirements-tests.txt

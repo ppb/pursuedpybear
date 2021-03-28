@@ -7,7 +7,7 @@ Name | Email | Twitter |
 -----|-------|---------|
 [Piper Thunstrom](https://github.com/pathunstrom) | [pathunstrom@gmail.com](mailto:pathunstrom@gmail.com) | [pathunstrom](https://twitter.com/pathunstrom)
 [Luna Lunapiena](https://github.com/lunacodes) | [lunacodes@gmail.com](lunacodes@gmail.com) | [lunacodess](https://twitter.com/lunacodess)
-[Jamie Bliss](https://github.com/astronouth7303/) | [jamie@ivyleav.es](jamie@ivyleav.es) | [AstraLuma](https://twitter.com/AstraLuma)
+[Jamie Bliss](https://github.com/AstraLuma/) | [jamie@ivyleav.es](jamie@ivyleav.es) | [AstraLuma](https://twitter.com/AstraLuma)
 
 Thank you to everyone below for your contributions **(No matter how big or small)!**
 
@@ -32,3 +32,10 @@ Halle Jones|HJones@aliacy.com||
 [Calvin Spealman](https://github.com/ironfroggy) | [ironfroggy@gmail.com](ironfroggy@gmail.com) | [@ironfroggy](https://twitter.com/ironfroggy)
 [Sanket Dasgupta](https://github.com/SanketDG) | [sanketdasgupta@gmail.com](sanketdasgupta@gmail.com) | [@SanketDG](https://twitter.com/SanketDG)
 [Serin Delaunay](https://github.com/serin-delaunay) | | [SerinDelaunay](https://twitter.com/SerinDelaunay)
+[Nils Müller](https://github.com/shimst3r) | [shimst3r@gmail.com](mailto:shimst3r@gmail.com) | [@shimst3r](https://twitter.com/shimst3r)
+[Aly Sivji](https://github.com/alysivji) |  | [@CaiusSivjus](https://twitter.com/CaiusSivjus)
+[Mfon Eti-mfon](https://github.com/mfonism) | [mfon@etimfon.com](mfon@etimfon.com) | [mfonism](https://twitter.com/mfonism)
+[Regina Reynolds](https://github.com/reginareynolds) | [regina.c.reynolds@gmail.com](regina.c.reynolds@gmail.com)
+[Ian Clark](https://github.com/ace510) | [ianhclark510@gmail.com] | [ianhclark510](https://twitter.com/ianhclark510)
+[Casey Faist](https://github.com/caseyfaist) |  | [cfactoid](https://twitter.com/cfactoid)
+[Jürgen Gmach](https://jugmac00.github.io/) | [juergen.gmach@googlemail.com](juergen.gmach@googlemail.com) | [@jugmac00](https://twitter.com/jugmac00)

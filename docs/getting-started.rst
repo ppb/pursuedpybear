@@ -48,7 +48,7 @@ use the right command.
 
 Windows::
 
-   .venv/bin/activate.bat
+   .venv\Scripts\activate.bat
 
 Linux and Mac::
 
@@ -70,7 +70,7 @@ Debian, Ubuntu::
 
 Fedora, CentOS, RHEL ::
 
-    sudo dnf install SDL2 SDL2_ttf SDL2_image SDL2_gfx SDL2_mixer
+    sudo dnf install SDL2 SDL2_ttf SDL2_image SDL2_gfx SDL2_mixer libmodplug
 
 You should see a few libraries get put together in your terminal, and when
 you have a prompt again, we're ready to go!
@@ -113,7 +113,7 @@ drawn to the screen. Add the following code after your ``import``. Note that
    import ppb
 
 
-   class Player(ppb.BaseSprite):
+   class Player(ppb.Sprite):
        pass
 
 
@@ -135,7 +135,7 @@ class, we're going to add a function and some class attributes.
 
 ``main.py``::
 
-   class Player(ppb.BaseSprite):
+   class Player(ppb.Sprite):
        velocity = ppb.Vector(0, 1)
 
        def on_update(self, update_event, signal):
@@ -163,7 +163,7 @@ it, and put this in its place:
 
 ``main.py``::
 
-   class Player(ppb.BaseSprite):
+   class Player(ppb.Sprite):
        position = ppb.Vector(0, -3)
        direction = ppb.Vector(0, 0)
        speed = 4
@@ -187,7 +187,7 @@ set as class variables so we can change them later:
 
 ``main.py``::
 
-   class Player(ppb.BaseSprite):
+   class Player(ppb.Sprite):
        position = ppb.Vector(0, -3)
        direction = ppb.Vector(0, 0)
        speed = 4
@@ -205,7 +205,7 @@ don't worry, just add the new methods at the end of the class, beneath your
 
 ``main.py``::
 
-   class Player(ppb.BaseSprite):
+   class Player(ppb.Sprite):
 
 
        def on_key_pressed(self, key_event: KeyPressed, signal):
@@ -235,17 +235,17 @@ First, we need a new class. We'll put it under ``Player``, but above ``setup``.
 
 ``main.py``::
 
-   class Projectile(ppb.BaseSprite):
-      size = 0.25
-      direction = ppb.Vector(0, 1)
-      speed = 6
+   class Projectile(ppb.Sprite):
+       size = 0.25
+       direction = ppb.Vector(0, 1)
+       speed = 6
 
-      def on_update(self, update_event, signal):
-          if self.direction:
-              direction = self.direction.normalize()
-          else:
-              direction = self.direction
-          self.position += direction * self.speed * update_event.time_delta
+       def on_update(self, update_event, signal):
+           if self.direction:
+               direction = self.direction.normalize()
+           else:
+               direction = self.direction
+           self.position += direction * self.speed * update_event.time_delta
 
 If we wanted to, we could pull out this ``on_update`` function into a mixin that
 we could use with either of these classes, but I'm going to leave that as an
@@ -262,7 +262,7 @@ after the line about ``speed`` and the ``new elif`` will go inside your
 
 ``main.py``::
 
-   class Player(ppb.BaseSprite):
+   class Player(ppb.Sprite):
 
        right = keycodes.Right
        projector = keycodes.Space
@@ -287,7 +287,7 @@ class, add
 
 ``main.py``::
 
-   class Target(ppb.BaseSprite):
+   class Target(ppb.Sprite):
 
        def on_update(self, update_event, signal):
            for p in update_event.scene.get(kind=Projectile):

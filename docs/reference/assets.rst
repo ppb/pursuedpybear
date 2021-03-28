@@ -1,4 +1,4 @@
-.. py:currentmodule:: ppb.assets
+.. py:module:: ppb.assets
 
 Assets
 ======
@@ -56,7 +56,7 @@ You should really only implement three methods:
   needed to turn a pile of bytes into a useful data structure.
 
 * :py:meth:`file_missing()`: This is called if the asset is not found. Defining
-  this method surpresses :py:meth:`load()` from raising a
+  this method suppresses :py:meth:`load()` from raising a
   :py:exc:`FileNotFoundError` and will instead call this, and
   :py:meth:`load()` will return what this returns.
 
@@ -97,11 +97,16 @@ delegates to actual :py:class:`ppb.Image` instances.
 .. autoclass:: ppb.assetlib.AbstractAsset
     :members:
 
-.. autoclass:: ppb.Circle
+.. autoclass:: ppb.Rectangle
 
 
-.. autoclass:: ppb.Square
+.. autoclass:: ppb.Ellipse
 
 
 .. autoclass:: ppb.Triangle
 
+
+.. autoclass:: ppb.Circle
+
+
+.. autoclass:: ppb.Square

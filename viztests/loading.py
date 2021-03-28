@@ -54,7 +54,7 @@ class LoadingScene(ProgressBarLoadingScene):
 
     def get_progress_sprites(self):
         for x in range(-2, 3):
-            yield ppb.BaseSprite(pos=ppb.Vector(x, 0))
+            yield ppb.Sprite(pos=ppb.Vector(x, 0))
 
 
 ppb.run(starting_scene=LoadingScene)

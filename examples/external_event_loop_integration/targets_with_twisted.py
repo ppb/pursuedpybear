@@ -11,14 +11,14 @@ from dataclasses import dataclass
 from typing import Any
 
 
-class MoverMixin(ppb.BaseSprite):
+class MoverMixin(ppb.Sprite):
     velocity = Vector(0, 0)
 
     def on_update(self, update, signal):
         self.position += self.velocity * update.time_delta
 
 
-class Player(MoverMixin, ppb.BaseSprite):
+class Player(MoverMixin, ppb.Sprite):
     # We handle movement by mapping each key to a velocity vector
     # and adding it on press and subtracting it on release.
     left_vector = Vector(-1, 0)
@@ -44,7 +44,7 @@ class Player(MoverMixin, ppb.BaseSprite):
 
     def _fire_bullet(self, scene):
         scene.add(
-            Bullet(pos=self.position),
+            Bullet(position=self.position),
             tags=['bullet']
         )
 
@@ -67,15 +67,15 @@ class TargetCounter(object):
         return ep.listen(Site(counter.app.resource()))
 
 
-class Bullet(MoverMixin, ppb.BaseSprite):
-    velocity = Vector(0, 2)
+class Bullet(MoverMixin, ppb.Sprite):
+    velocity = Vector(0, -2)
 
     def on_update(self, update, signal):
         super().on_update(update, signal)  # Execute movement
 
         scene = update.scene
         
-        if self.position.y > scene.main_camera.frame_bottom:
+        if self.position.y > scene.main_camera.top:
             scene.remove(self)
         else:
             for target in scene.get(tag='target'):
@@ -86,7 +86,7 @@ class Bullet(MoverMixin, ppb.BaseSprite):
                     break
 
 
-class Target(ppb.BaseSprite):
+class Target(ppb.Sprite):
     radius = 0.5
 
 
@@ -95,11 +95,11 @@ class GameScene(ppb.BaseScene):
         super().__init__(*p, **kw)
 
         # Set up sprites
-        self.add(Player(pos=Vector(0, 0)), tags=['player'])
+        self.add(Player(position=Vector(0, 0)), tags=['player'])
 
         # 5 targets in x = -3.75 -> 3.75, with margin
         for x in (-3, -1.5, 0, 1.5, 3):
-            self.add(Target(pos=Vector(x, 1.875)), tags=['target'])
+            self.add(Target(position=Vector(x, -1.875)), tags=['target'])
 
 
 ######### This is "non-game-specific code" ###########

@@ -1,24 +1,27 @@
-.. py:currentmodule:: ppb.sprites
+.. py:module:: ppb.sprites
 
 =================
-All About Sprites
+Sprites
 =================
 
 .. automodule:: ppb.sprites
+   :noindex:
 
 ------------------
-Default Sprite
+Concrete Sprites
 ------------------
 
-This is the class you should instantiate or subclass for your games unless
-you are changing the defaults.
+Concrete sprites are a combination of :class:`BaseSprite` and various mixins.
+They implement a number of useful features for game development and should be
+the primary classes you subclass when building game objects.
 
 .. autoclass:: ppb.Sprite
    :members:
    :inherited-members:
 
-Note that ``ppb.BaseSprite`` is deprecated in favor of ppb.Sprite. Scheduled
-for removal in ppb v0.8.0.
+.. autoclass:: ppb.RectangleSprite
+   :members:
+   :inherited-members:
 
 -------------------
 Feature Mixins
@@ -31,6 +34,9 @@ complete documentation.
    :members:
 
 .. autoclass:: ppb.sprites.RotatableMixin
+   :members:
+
+.. autoclass:: ppb.sprites.RectangleShapeMixin
    :members:
 
 .. autoclass:: ppb.sprites.SquareShapeMixin
@@ -46,13 +52,3 @@ expectations.
 .. autoclass:: ppb.sprites.BaseSprite
    :members:
    :inherited-members:
-
-
--------------------
-Internals
--------------------
-
-These classes are internals for various APIs included with mixins.
-
-.. autoclass:: ppb.sprites.Side
-   :members:

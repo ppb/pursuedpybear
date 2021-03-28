@@ -3,7 +3,7 @@ from ppb import keycodes
 from ppb.events import KeyPressed, KeyReleased
 
 
-class Player(ppb.BaseSprite):
+class Player(ppb.Sprite):
     direction = ppb.Vector(0, 0)
     speed = 4
     position = ppb.Vector(0, -3)
@@ -33,7 +33,7 @@ class Player(ppb.BaseSprite):
             self.direction += ppb.Vector(-1, 0)
 
 
-class Projectile(ppb.BaseSprite):
+class Projectile(ppb.Sprite):
     size = 0.25
     direction = ppb.Vector(0, 1)
     speed = 6
@@ -46,7 +46,7 @@ class Projectile(ppb.BaseSprite):
         self.position += direction * self.speed * update_event.time_delta
 
 
-class Target(ppb.BaseSprite):
+class Target(ppb.Sprite):
 
     def on_update(self, update_event, signal):
         for p in update_event.scene.get(kind=Projectile):

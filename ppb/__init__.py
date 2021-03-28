@@ -12,49 +12,52 @@ are based on their names.
 The classes, modules, and methods exported directly are the most used parts of
 the library and intended to be used by users at all levels (barring
 make_engine). Advanced features tend to be in their own modules and subpackages.
+
+Exports:
+
+* :class:`~ppb_vector.Vector`
+* :class:`BaseScene`
+* :class:`Circle`
+* :class:`Image`
+* :class:`Sprite`
+* :class:`Square`
+* :class:`Sound`
+* :class:`Triangle`
+* :mod:`events`
+* :class:`Font`
+* :class:`Text`
+* :mod:`directions`
 """
 
 import logging
-import warnings
 from typing import Callable
 
+from ppb import directions
 from ppb import events
 from ppb_vector import Vector
 from ppb.assets import Circle
+from ppb.assets import Ellipse
+from ppb.assets import Rectangle
 from ppb.assets import Square
 from ppb.assets import Triangle
 from ppb.engine import GameEngine
 from ppb.scenes import BaseScene
+from ppb.sprites import RectangleSprite
 from ppb.sprites import Sprite
 from ppb.systems import Image
 from ppb.systems import Sound
 from ppb.systems import Font
 from ppb.systems import Text
+from ppb.utils import get_time
 
 __all__ = (
     # Shortcuts
-    'Vector', 'BaseScene', 'BaseSprite', 'Circle', 'Image', 'Sprite',
-    'Square', 'Sound', 'Triangle', 'events', 'Font', 'Text',
+    'Vector', 'BaseScene', 'Circle', 'Image', 'Sprite', 'RectangleSprite',
+    'Square', 'Sound', 'Triangle', 'events', 'Font', 'Text', 'directions',
+    'Rectangle', 'Ellipse',
     # Local stuff
     'run', 'make_engine',
 )
-
-
-class BaseSprite(Sprite):
-    """
-    A stub that raises a deprecation warning when a user uses
-    ``ppb.BaseSprite.``
-    """
-    __warning = """Using ppb.BaseSprite is deprecated.
-
-    You probably want ppb.Sprite. If you're wanting to use BaseSprite and
-    mixins to change what features your sprites have, import
-    ppb.sprites.BaseSprite.
-    """
-
-    def __init__(self, **kwargs):
-        warnings.warn(self.__warning, DeprecationWarning)
-        super().__init__(**kwargs)
 
 
 def _make_kwargs(setup, title, engine_opts):
@@ -78,6 +81,7 @@ def run(setup: Callable[[BaseScene], None] = None, *, log_level=logging.WARNING,
 
     Sample usage:
     ::
+
        import ppb
 
        def setup(scene):
@@ -87,6 +91,7 @@ def run(setup: Callable[[BaseScene], None] = None, *, log_level=logging.WARNING,
 
     Alternatively:
     ::
+
        import ppb
 
        class Game(ppb.BaseScene):

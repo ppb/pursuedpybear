@@ -3,16 +3,16 @@ A simple rendition of the three-body problem. Also demonstrates the use of
 two-phase updates.
 
 The three body problem comes from astrophysics. Basically, applying the
-gravitaional to three celestial bodies produces a problem that does not have a
+gravitational to three celestial bodies produces a problem that does not have a
 perfect mathematical solution, and must be solved through simulations.
 """
 
 import ppb
-from ppb import BaseSprite, Vector
+from ppb import Sprite, Vector
 from ppb.features.twophase import TwoPhaseMixin, TwoPhaseSystem
 
 
-class Planet(BaseSprite, TwoPhaseMixin):
+class Planet(Sprite, TwoPhaseMixin):
     #: A constant to apply to gravity
     G_CONST = 1
 
@@ -40,9 +40,9 @@ class Planet(BaseSprite, TwoPhaseMixin):
 
 
 def setup(scene):
-    scene.add(Planet(position=(3, 0), velocity=Vector(0, 1)))
-    scene.add(Planet(position=(-3, 3), velocity=Vector(1, -1)))
-    scene.add(Planet(position=(-3, -3), velocity=Vector(-1, 0)))
+    scene.add(Planet(position=(3, 0), velocity=Vector(0, 1), image=ppb.Circle(40, 200, 150)))
+    scene.add(Planet(position=(-3, 3), velocity=Vector(1, -1), image=ppb.Circle(200, 150, 40)))
+    scene.add(Planet(position=(-3, -3), velocity=Vector(-1, 0), image=ppb.Circle(150, 40, 200)))
 
 
 if __name__ == "__main__":
