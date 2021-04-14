@@ -14,7 +14,7 @@ class Rotating(ppb.Sprite):
     degrees_per_second = 90
 
     def on_update(self, event: ppb.events.Update, signal):
-        self.rotation += event.time_delta * self.degrees_per_second
+        self.rotate(event.time_delta * self.degrees_per_second)
 
 
 class Square(Rotating):

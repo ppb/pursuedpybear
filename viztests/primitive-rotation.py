@@ -10,7 +10,7 @@ class Square(ppb.Sprite):
     degrees_per_second = 180
 
     def on_update(self, update: ppb.events.Update, signal):
-        self.rotation += self.degrees_per_second * update.time_delta
+        self.rotate(self.degrees_per_second * update.time_delta)
 
 
 def setup(scene):

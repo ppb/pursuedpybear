@@ -134,7 +134,7 @@ class RotatableMixin:
     .. warning:: rotation does not affect underlying shape (the corners are still in the same place), it only rotates
        the sprites image and provides a facing.
     """
-    _rotation = 0
+    rotation = 0
     # This is necessary to make facing do the thing while also being adjustable.
     #: The baseline vector, representing the "front" of the sprite
     basis = Vector(0, -1)
@@ -154,22 +154,11 @@ class RotatableMixin:
     def facing(self, value):
         self.rotation = self.basis.angle(value)
 
-    @property
-    def rotation(self):
-        """
-        The amount the sprite is rotated, in degrees
-        """
-        return self._rotation
-
-    @rotation.setter
-    def rotation(self, value):
-        self._rotation = value % 360
-
     def rotate(self, degrees):
         """
         Rotate the sprite by a given angle (in degrees).
         """
-        self.rotation += degrees
+        self.rotation = (self.rotation + degrees) % 360
 
 
 class RectangleShapeMixin:

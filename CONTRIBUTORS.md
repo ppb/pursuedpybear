@@ -43,3 +43,4 @@ Halle Jones|HJones@aliacy.com||
 [Morisa Manzella](https://github.com/mgmanzella) | |
 [Mark J Cameron](https://github.come/kcalmwinds) |  | [LuminariWeekly](https://twitter.com/LuminariWeekly) |
 [Laura G. Funderburk](https://github.com/lfunderburk) |[lgutierrwr@gmail.com](lgutierrwr@gmail.com) | [@lgfunderburk](https://twitter.com/lgfunderburk)| 
+[Mark Boer](https://github.com/mark-boer) |

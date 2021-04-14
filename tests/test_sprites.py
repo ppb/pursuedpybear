@@ -52,19 +52,12 @@ def test_rotatable_instatiation():
 def test_rotatable_subclass():
 
     class TestRotatableMixin(RotatableMixin):
-        _rotation = 180
+        rotation = 180
         basis = Vector(0, 1)
 
     rotatable = TestRotatableMixin()
     assert rotatable.rotation == 180
     assert rotatable.facing == Vector(0, -1)
-
-
-def test_rotatable_rotation_setter():
-    rotatable = RotatableMixin()
-
-    rotatable.rotation = 405
-    assert rotatable.rotation == 45
 
 
 def test_rotatable_rotate():

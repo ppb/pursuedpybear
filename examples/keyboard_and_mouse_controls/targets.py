@@ -18,7 +18,7 @@ class Player(MoverMixin, ppb.Sprite):
     # and adding it on press and subtracting it on release.
     left_vector = Vector(-1, 0)
     right_vector = Vector(1, 0)
-    _rotation = 180
+    rotation = 180
 
     fire_sound = Sound('laser1.ogg')
 
@@ -50,7 +50,7 @@ class Player(MoverMixin, ppb.Sprite):
 
 class Bullet(MoverMixin, ppb.Sprite):
     velocity = Vector(0, 2)
-    _rotation = 180
+    rotation = 180
 
     def on_update(self, update, signal):
         super().on_update(update, signal)  # Execute movement
