@@ -42,5 +42,5 @@ Halle Jones|HJones@aliacy.com||
 [Bernard Sanders](https://github.com/bernardthered) | | [@BernardCBolt](https://twitter.com/BernardCBolt)
 [Morisa Manzella](https://github.com/mgmanzella) | |
 [Mark J Cameron](https://github.come/kcalmwinds) |  | [LuminariWeekly](https://twitter.com/LuminariWeekly) |
-[Laura G. Funderburk](https://github.com/lfunderburk) |[lgutierrwr@gmail.com](lgutierrwr@gmail.com) | [@lgfunderburk](https://twitter.com/lgfunderburk)| 
+[Laura G. Funderburk](https://github.com/lfunderburk) | | [@lgfunderburk](https://twitter.com/lgfunderburk)| 
 [Mark Boer](https://github.com/mark-boer) |
