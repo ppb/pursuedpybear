@@ -4,7 +4,7 @@
 pep517_task:
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
   container:
-    image: python:3.7
+    image: python:3
 
   install_script:
     - pip install --upgrade-strategy eager -U pep517
@@ -42,6 +42,7 @@ docs_task:
     # TODO: Add -n (nit-picky mode, warn about all missing references)
     - make -C docs/ "SPHINXOPTS=-W" html
 
+
 task:
   name: "Linux $IMAGE"
   alias: Tests
@@ -52,8 +53,10 @@ task:
       - IMAGE: python:3.6-slim
       - IMAGE: python:3.7-slim
       - IMAGE: python:3.8-slim
+      - IMAGE: python:3.9-slim
       - IMAGE: python:rc-slim
       - IMAGE: pypy:3.6-slim
+      - IMAGE: pypy:3.7-slim
 
   container:
     image: $IMAGE
@@ -95,13 +98,11 @@ macOS_task:
   env:
     PATH: ${HOME}/.pyenv/shims:${PATH}
     matrix:
-      # To update:
-      # Get the current version of pyenv from https://formulae.brew.sh/formula/pyenv
-      # Look that up on https://github.com/pyenv/pyenv/tree/master/plugins/python-build/share/python-build
-      # Also update bors.toml
-      - PYTHON: 3.6.9
-      - PYTHON: 3.7.5
-      - PYTHON: 3.8.1
+      # To update: check the output of the most recent macOS_version job
+      - PYTHON: 3.6.12
+      - PYTHON: 3.7.9
+      - PYTHON: 3.8.6
+      - PYTHON: 3.9.0
   depends_on:
     - build
   install_script:
@@ -120,6 +121,21 @@ macOS_task:
     - pip list
     - pytest
 
+
+macOS_version_task:
+  skip: $CIRRUS_BRANCH =~ '.*\.tmp'
+  osx_instance:
+    image: catalina-xcode
+
+  install_script:
+    # Per the pyenv homebrew recommendations.
+    # https://github.com/pyenv/pyenv/wiki#suggested-build-environment
+    - brew install openssl readline pyenv
+
+  script:
+    - pyenv install --list
+
+
 task:
   name: "Windows $IMAGE"
   alias: Tests
@@ -134,6 +150,7 @@ task:
       - IMAGE: python:3.6-windowsservercore
       - IMAGE: python:3.7-windowsservercore
       - IMAGE: python:3.8-windowsservercore
+      - IMAGE: python:3.9-windowsservercore
       - IMAGE: python:rc-windowsservercore
 
   install_script:
@@ -144,7 +161,6 @@ task:
     - C:\Python\python.exe --version
     - C:\Python\python.exe -m pip list
     - C:\Python\python.exe -m pytest
-
 
 
 upload_task:
