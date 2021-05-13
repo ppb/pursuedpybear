@@ -1,7 +1,6 @@
 from typing import Callable
 from typing import Iterator
 from typing import Sequence
-import warnings
 
 from ppb.camera import Camera
 from ppb.gomlib import GameObject
@@ -46,9 +45,3 @@ class Scene(GameObject):
         but will be left public for other creative uses.
         """
         return sorted(self, key=lambda s: getattr(s, "layer", 0))
-
-
-class BaseScene(Scene):
-    def __init__(self, *args, **kwargs):
-        warnings.warn("BaseScene will be deprecated in 0.14 or 1.0, use Scene instead", DeprecationWarning)
-        super().__init__(*args, **kwargs)

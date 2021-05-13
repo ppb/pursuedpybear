@@ -175,30 +175,6 @@ class GameObject:
         """
         return self.children.remove(child)
 
-    @property
-    def kinds(self):
-        """
-        Shorthand for :meth:`Children.kinds()`
-
-        .. deprecated:: 0.10
-           Use ``.children.kinds()`` instead.
-        """
-        # Deprecated in 0.10
-        warnings.warn(".kinds is deprecated, use .children.kinds()", DeprecationWarning)
-        return self.children.kinds
-
-    @property
-    def tags(self):
-        """
-        Shorthand for :meth:`Children.tags()`
-
-        .. deprecated:: 0.10
-           Use ``.children.tags()`` instead.
-        """
-        # Deprecated in 0.10
-        warnings.warn(".tags is deprecated, use .children.tags()", DeprecationWarning)
-        return self.children.tags
-
 
 def walk(root):
     """
