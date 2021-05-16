@@ -1,3 +1,8 @@
+"""
+The core engine of PPB. This manages systems, the scene stack, initialization,
+the event loop, the Idle event, and other aspects.
+"""
+
 import time
 from collections import defaultdict
 from collections import deque
