@@ -92,7 +92,7 @@ class Ship(TargetSprite):
 
 
 def setup(scene):
-    scene.add(Ship(pos=(0, -7)))
+    scene.add(Ship(position=(0, -7)))
 
 
 ppb.run(setup=setup)
