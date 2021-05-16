@@ -84,6 +84,16 @@ When an API change becomes necessary we will follow the following steps:
    replaced in the next major (x.0) release. These releases take place in the
    Northern Solstice release each year.
 
+Some examples:
+
+If a feature gets deprecated during a major release like 1.0, it will need to
+be deprecated for the next three releases: 1.1, 1.2, and 1.3. It could then be
+removed in 2.0
+
+Alternatively, if a feature is deprecated in 1.1, it will stay deprecated in
+1.2, 1.3, and 2.0. This meets the deprecated for one year step, but we cannot
+remove the feature in 2.1, 2.2, or 2.3. It would need to be removed in 3.0.
+
 Regarding DeprecationWarnings
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
