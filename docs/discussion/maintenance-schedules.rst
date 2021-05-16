@@ -7,20 +7,15 @@ and dependency support.
 Python Version Support
 -----------------------------------------------------------
 
-PursuedPyBear projects will support at least the latest version of
-`pypy <https://www.pypy.org/download.html>`_ and the latest two versions of
-`C Python <https://www.python.org/downloads/>`_
+PursuedPyBear supports all `CPython <https://www.python.org/downloads/>`_
+versions supported by the PSF at any level.
 
 We tend to start testing new versions of cPython when they reach the release
 candidate stage, but don't guarantee compatibility until at least one ppb
-release after the latest Python release.
+release after the formal release of a Python version.
 
-We drop older versions of Python when we begin using features from a newer
-version of Python. A future example of this would be dropping Python 3.7
-when we start using
-`assignment operators <https://www.python.org/dev/peps/pep-0572/>`_. This
-means the oldest version of Python ppb supports may be older than the two
-versions we promise to support.
+We drop old versions of Python during the breaking release each year (see next
+section) to prevent breaking mid year for school environments.
 
 Release Schedules
 ------------------------------------------------------------
@@ -28,9 +23,10 @@ Release Schedules
 PursuedPyBear targets four releases a year, based on the solstices and
 equinoxes:
 
-* Around the northward equinox, which is about March 20.
-* Around the northern solstice, which is about June 20.
-* Around the southward equinox, which is about September 20.
+* Around the northward equinox, which is about March 20th.
+* Around the northern solstice, which is about June 20th.
+  (This will always be a x.0 release.)
+* Around the southward equinox, which is about September 20th.
 * Around the southern solstice, which is about December 21st.
 
 We prefer to use the directional names of the solstices and equinoxes as we
@@ -54,27 +50,56 @@ we see fit over the following two weeks.
 
 On or around the expected release date, we will cut a final release.
 
+On Versioning
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+You may recognized from the note on the Northern Solstice release that ``ppb``
+uses a form of Calendar Versions or calver. Given a release version like
+``y.m.p``:
+
+The ``y`` is a year tag. Version 1.0 is the June 2021 release of ``ppb``.
+
+The ``m`` is a minor version. We will bump this during the three other releases
+of the year. It starts at 0 and should never be higher than 3.
+
+The ``p`` is a patch. For the most part this will be excluded from the
+version string. If it is present, it represents a bug fix release outside of the
+above release cadence.
+
 Deprecations and API Breakages
 -----------------------------------------------------------
 
-PursuedPyBear is currently in a pre-release state. Many of its APIs have
-proven effective and long lasting. Other portions are still highly
-experimental as we find the correct developer experience.
+PursuedPyBear as a project seeks to minimize how much we break existing users
+experiences. While we want to be able to continue to experiment and evolve the
+APIs for performance, we need strict rules about how we implement and deliver
+them.
 
-Because of this, we have come to support deprecating APIs as best we can.
-Some APIs cannot be deprecated cleanly, and we will make note that in
-change logs.
+When an API change becomes necessary we will follow the following steps:
 
-In general, we seek to provide a deprecation warning under an existing name
-for at least two releases. For example, if we deprecate or
-significantly change an API in v0.10 it will also be available under a
-deprecation warning in v0.11 and is likely to be, but not guaranteed to be,
-available in v0.12.
+1. In the next ppb release the existing behavior and name will throw a
+   DeprecationWarning.
+2. We will continue to support the existing behavior for at least one calendar
+   year.
+3. Following this period, the deprecated behavior and name will be removed or
+   replaced in the next major (x.0) release. These releases take place in the
+   Northern Solstice release each year.
 
-After freeze, we will reexamine this deprecation policy in light of major
-version changes.
+Some examples:
 
-While it is not true now, it has been requested by a number of educators to
-limit major version changes to the Northern Solstice release. If you have an
-opinion on this, please join one of the discussion channels to add to this
-understanding.
+If a feature gets deprecated during a major release like 1.0, it will need to
+be deprecated for the next three releases: 1.1, 1.2, and 1.3. It could then be
+removed in 2.0
+
+Alternatively, if a feature is deprecated in 1.1, it will stay deprecated in
+1.2, 1.3, and 2.0. This meets the deprecated for one year step, but we cannot
+remove the feature in 2.1, 2.2, or 2.3. It would need to be removed in 3.0.
+
+Regarding DeprecationWarnings
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+A :py:class:`~builtins.DeprecationWarning` is considered a minor change in ppb.
+This means they can happen in any release where the minor version (The x in 1.x)
+is changed.
+
+We will do our best to include instructions in the warning on how to update your
+code to avoid the DeprecationWarning going forward.
