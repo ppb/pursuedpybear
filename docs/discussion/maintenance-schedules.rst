@@ -7,7 +7,7 @@ and dependency support.
 Python Version Support
 -----------------------------------------------------------
 
-PursuedPyBear supports all `C Python <https://www.python.org/downloads/>`_
+PursuedPyBear supports all `CPython <https://www.python.org/downloads/>`_
 versions supported by the PSF at any level.
 
 We tend to start testing new versions of cPython when they reach the release
@@ -55,14 +55,14 @@ On Versioning
 
 You may recognized from the note on the Northern Solstice release that ``ppb``
 uses a form of Calendar Versions or calver. Given a release version like
-``vy.m.p``:
+``y.m.p``:
 
-The ``y`` is a year tag. Version 1.0.0 is the 2021 release of ``ppb``.
+The ``y`` is a year tag. Version 1.0 is the June 2021 release of ``ppb``.
 
 The ``m`` is a minor version. We will bump this during the three other releases
 of the year. It starts at 0 and should never be higher than 3.
 
-The ``p`` is a patch. For the most part this will either be excluded from the
+The ``p`` is a patch. For the most part this will be excluded from the
 version string. If it is present, it represents a bug fix release outside of the
 above release cadence.
 
