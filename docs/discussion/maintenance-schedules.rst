@@ -1,3 +1,5 @@
+.. _maintenance-schedules:
+
 Maintenance Schedules
 ===========================================================
 
