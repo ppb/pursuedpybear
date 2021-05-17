@@ -7,9 +7,9 @@ from typing import Hashable
 from typing import Iterable
 from typing import Iterator
 from typing import Type
-import warnings
 
 from ppb.errors import BadChildException
+from ppb.errors import NotMyChildError
 
 
 class Children(Collection):
@@ -74,7 +74,10 @@ class Children(Collection):
             container.remove(myObject)
         """
         # Ugh, this is copied in EngineChildren
-        self._all.remove(child)
+        try:
+            self._all.remove(child)
+        except KeyError as exc:
+            raise NotMyChildError() from exc
         for kind in type(child).mro():
             self._kinds[kind].remove(child)
         for s in self._tags.values():
