@@ -183,3 +183,6 @@ upload_task:
 
   script:
     - xonsh .ci/upload.xsh
+
+  examples_artifacts:
+    path: "examples.zip"
