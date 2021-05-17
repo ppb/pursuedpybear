@@ -37,3 +37,9 @@ class BadChildException(Exception):
             f"\n\nTry instantiating it, like: {type_name}()"
         )
         super().__init__(message)
+
+
+class NotMyChildError(Exception):
+    """
+    Tried to remove an object that isn't that parent's child.
+    """

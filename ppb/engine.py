@@ -26,6 +26,7 @@ from ppb.assetlib import AssetLoadingSystem
 from ppb.gomlib import Children, GameObject
 from ppb.gomlib import walk
 from ppb.errors import BadChildException
+from ppb.errors import NotMyChildError
 from ppb.errors import BadEventHandlerException
 from ppb.scenes import Scene
 from ppb.systems import EventPoller
@@ -160,9 +161,15 @@ class EngineChildren(Children):
         elif isinstance(child, ppb.systemslib.System):
             if self.entered:
                 raise RuntimeError("Systems cannot be removed while the engine is running")
-            self._systems.remove(child)
+            try:
+                self._systems.remove(child)
+            except KeyError as exc:
+                raise NotMyChildError() from exc
         else:
-            self._all.remove(child)
+            try:
+                self._all.remove(child)
+            except KeyError as exc:
+                raise NotMyChildError() from exc
 
         for kind in type(child).mro():
             self._kinds[kind].remove(child)
