@@ -52,7 +52,7 @@ def test_game_engine_with_instantiated_scene():
 
 def test_signal():
 
-    engine = GameEngine(Scene, basic_systems=[Quitter])
+    engine = GameEngine(Scene, basic_systems=[Quitter, Failer], message=None, fail=lambda x: False)
     engine.run()
     assert not engine.running
 
