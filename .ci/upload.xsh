@@ -25,6 +25,10 @@ with tempfile.TemporaryDirectory() as td:
 
     dists = [f for f in pg`**` if '+' not in f.name and f.is_file()]
 
+    print("Bundling examples...")
+    with zipfile.ZipFile(td / 'examples.zip', 'w', compression=zipfile.ZIP_LZMA) as examples:
+        examples.write('examples')
+
     if not dists:
         print("No uploadable dists found, skipping upload")
         sys.exit(0)
@@ -38,8 +42,9 @@ with tempfile.TemporaryDirectory() as td:
     print("")
 
     if 'CIRRUS_RELEASE' in ${...}:
+
         print("Uploading to GitHub...")
-        for dist in dists:
+        for dist in dists + [td / 'examples.zip']:
             print(f"\t{dist.name}...")
             dest_url = f"https://uploads.github.com/repos/{$CIRRUS_REPO_FULL_NAME}/releases/{$CIRRUS_RELEASE}/assets?name={dist.name}"
             with dist.open('rb') as fobj:
