@@ -20,7 +20,7 @@ def renamed(old: str, new: typing.Any, *, version: str, **kwargs):
         Reason message which documents the rename.
 
     :param str version:
-        Version of your project which modifies this feature.
+        Version in which this rename occurred.
     """
 
     if isinstance(new, type):
