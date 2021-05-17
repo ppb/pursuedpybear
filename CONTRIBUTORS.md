@@ -45,3 +45,4 @@ Halle Jones|HJones@aliacy.com||
 [Laura G. Funderburk](https://github.com/lfunderburk) | | [@lgfunderburk](https://twitter.com/lgfunderburk)| 
 [Mark Boer](https://github.com/mark-boer) | |
 [Anthony Plunkett](https://github.com/doobeh) | |
+[Mateus Denucci Garcia Seabra Resende](https://github.com/MateusDenucci) | |
