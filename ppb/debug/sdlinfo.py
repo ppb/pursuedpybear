@@ -4,7 +4,7 @@ Interrogates SDL and tells us about it.
 import ctypes
 
 import sdl2
-from sdl2 import SDL_Init, SDL_Quit
+from sdl2 import sdlimage
 from sdl2 import sdlmixer
 
 from ppb.systems.sdl_utils import sdl_call
@@ -84,7 +84,7 @@ def check_audio_driver(name):
 
 
 def check_audio_codecs():
-    SDL_Init(sdl2.SDL_INIT_AUDIO)
+    sdl2.SDL_Init(sdl2.SDL_INIT_AUDIO)
     try:
         libs = {
             'FLAC': sdlmixer.MIX_INIT_FLAC,
@@ -106,7 +106,31 @@ def check_audio_codecs():
                 yield lib, True
             sdlmixer.Mix_Quit()
     finally:
-        SDL_Quit()
+        sdl2.SDL_Quit()
+
+
+def check_image_codecs():
+    sdl2.SDL_Init(0)
+    try:
+        libs = {
+            'JPEG': sdlimage.IMG_INIT_JPG,
+            'PNG': sdlimage.IMG_INIT_PNG,
+            'TIFF': sdlimage.IMG_INIT_TIF,
+            'WEBP': sdlimage.IMG_INIT_WEBP
+        }
+        for lib, flags in libs.items():
+            sdlimage.IMG_SetError(b"")
+            ret = sdlimage.IMG_Init(flags)
+            err = sdlimage.IMG_GetError()
+            if err:
+                yield lib, err.decode('utf-8')
+            if ret & flags == flags:
+                yield lib, None
+            else:
+                yield lib, True
+            sdlimage.IMG_Quit()
+    finally:
+        sdl2.SDL_Quit()
 
 
 def main():
@@ -130,12 +154,23 @@ def main():
         else:
             print(f" n {name}")
 
-    print("Audio Codecs:")
-    for name, loadable in check_audio_codecs():
-        if loadable:
+    print("Image Codecs:")
+    for name, err in check_image_codecs():
+        if err is None:
             print(f" y {name}")
-        else:
+        elif err is True:
             print(f" n {name}")
+        else:
+            print(f" n {name} ({err})")
+
+    print("Audio Codecs:")
+    for name, err in check_audio_codecs():
+        if err is None:
+            print(f" y {name}")
+        elif err is True:
+            print(f" n {name}")
+        else:
+            print(f" n {name} ({err})")
 
 
 if __name__ == '__main__':
