@@ -136,6 +136,19 @@ def check_image_codecs():
         sdl2.SDL_Quit()
 
 
+def iter_joysticks():
+    num_sticks = sdl_call(
+        sdl2.SDL_NumJoysticks,
+        _check_error=lambda rv: rv < 0,
+    )
+    for i in range(num_sticks):
+        name = sdl_call(
+            sdl2.SDL_JoystickNameForIndex, i,
+            _check_error=lambda rv: rv is None,
+        )
+        yield name.decode('utf-8')
+
+
 def main():
     print(f"SDL Version: {sdl_version()} ({sdl_revision()})")
 
@@ -174,6 +187,10 @@ def main():
             print(f" n {name}")
         else:
             print(f" n {name} ({err})")
+
+    print("Joysticks:")
+    for name in iter_joysticks():
+        print(f" * {name}")
 
 
 if __name__ == '__main__':
