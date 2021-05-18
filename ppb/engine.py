@@ -42,6 +42,10 @@ _ellipsis = type(...)
 _cached_handler_names = {}
 
 
+Signal = Callable[[Any], None]
+# Handler[T] = Callable[[T, Signal], None]
+
+
 def _get_handler_name(txt):
     result = _cached_handler_names.get(txt)
     if result is None:
