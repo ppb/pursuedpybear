@@ -15,8 +15,11 @@ def sdl_version():
     sdl_call(
         sdl2.SDL_GetVersion, ctypes.byref(ver)
     )
-    rev = sdl_call(sdl2.SDL_GetRevision).decode('utf-8')
-    return f"{ver.major}.{ver.minor}.{ver.patch}+{rev}"
+    return f"{ver.major}.{ver.minor}.{ver.patch}"
+
+
+def sdl_revision():
+    return sdl_call(sdl2.SDL_GetRevision).decode('utf-8')
 
 
 def iter_video_drivers():
@@ -134,7 +137,7 @@ def check_image_codecs():
 
 
 def main():
-    print("SDL Version:", sdl_version())
+    print(f"SDL Version: {sdl_version()} ({sdl_revision()})")
 
     print("Video Drivers:")
     for name in iter_video_drivers():
