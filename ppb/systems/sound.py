@@ -1,5 +1,6 @@
 import ctypes
 import io
+import time
 
 from sdl2 import (
     AUDIO_S16SYS, rw_from_object,
@@ -27,10 +28,31 @@ from ppb.utils import LoggingMixin
 __all__ = ('SoundController', 'Sound')
 
 
+def query_spec():
+    """
+    Helpful wrapper around Mix_QuerySpec()
+    """
+    frequency = ctypes.c_int()
+    format = ctypes.c_uint16()
+    channels = ctypes.c_int()
+    count = mix_call(
+        Mix_QuerySpec,
+        ctypes.byref(frequency),
+        ctypes.byref(format),
+        ctypes.byref(channels),
+        _check_error=lambda rv: rv == 0 and Mix_GetError(),
+    )
+    return count, frequency, format, channels
+
+
 class Sound(assetlib.Asset):
     # This is wrapping a ctypes.POINTER(Mix_Chunk)
 
     def background_parse(self, data):
+        # Band-aid over some synchronization issues
+        # https://github.com/ppb/pursuedpybear/issues/619
+        while not any(query_spec()):
+            time.sleep(0)
         file = rw_from_object(io.BytesIO(data))
         # ^^^^ is a pure-python emulation, does not need cleanup.
         return mix_call(
@@ -64,20 +86,6 @@ class Sound(assetlib.Asset):
 @channel_finished
 def _filler_channel_finished(channel):
     pass
-
-
-def query_spec():
-    frequency = ctypes.c_int()
-    format = ctypes.c_uint16()
-    channels = ctypes.c_int()
-    count = mix_call(
-        Mix_QuerySpec,
-        ctypes.byref(frequency),
-        ctypes.byref(format),
-        ctypes.byref(channels),
-        _check_error=lambda rv: rv == 0 and Mix_GetError(),
-    )
-    return count, frequency, format, channels
 
 
 class SoundController(SdlSubSystem, LoggingMixin):
@@ -114,6 +122,9 @@ class SoundController(SdlSubSystem, LoggingMixin):
             _check_error=lambda rv: rv == -1
         )
         mix_call(Mix_Init, MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG)
+
+        print("SoundController", query_spec(), flush=True)
+
         self.allocated_channels = 16
 
         # Register callback, keeping reference for later cleanup
