@@ -75,14 +75,14 @@ class EngineChildren(Children):
         self._stack = ExitStack()
         self.entered = False
 
-    def __contains__(self, item: Hashable) -> bool:
+    def __contains__(self, item: GameObject) -> bool:
         return (
             item in self._all or
             item in self._scenes or
             item in self._systems
         )
 
-    def __iter__(self) -> Iterator[Hashable]:
+    def __iter__(self) -> Iterator[GameObject]:
         yield from self._systems
         if self._scenes:
             yield self._scenes[-1]
@@ -104,11 +104,11 @@ class EngineChildren(Children):
         except IndexError:
             return None
 
-    def add(self, child: Hashable, tags: Iterable[Hashable] = ()) -> Hashable:
+    def add(self, child: GameObject, tags: Iterable[Hashable] = ()) -> GameObject:
         """
         Add a child.
 
-        :param child: Any Hashable object. The item to be added.
+        :param child: Any Game Object. The item to be added.
         :param tags: An iterable of Hashable objects. Values that can be used to
               retrieve a group containing the child.
 
@@ -143,7 +143,7 @@ class EngineChildren(Children):
 
         return child
 
-    def remove(self, child: Hashable) -> Hashable:
+    def remove(self, child: GameObject) -> GameObject:
         """
         Remove the given object from the container.
 
@@ -178,7 +178,7 @@ class EngineChildren(Children):
 
         return child
 
-    def push_scene(self, scene):
+    def push_scene(self, scene: Scene):
         """
         Push a scene onto the scene stack.
 
