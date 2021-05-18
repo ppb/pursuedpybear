@@ -43,6 +43,20 @@ def check_video_driver(name):
         return True
 
 
+def iter_render_drivers():
+    num_drivers = sdl_call(
+        sdl2.SDL_GetNumRenderDrivers,
+        _check_error=lambda rv: rv <= 0
+    )
+    for i in range(num_drivers):
+        info = sdl2.SDL_RendererInfo()
+        sdl_call(
+            sdl2.SDL_GetRenderDriverInfo, i, ctypes.byref(info),
+            _check_error=lambda rv: rv < 0
+        )
+        yield info.name.decode('utf-8'), info
+
+
 def iter_audio_drivers():
     num_drivers = sdl_call(
         sdl2.SDL_GetNumAudioDrivers,
@@ -69,9 +83,34 @@ def check_audio_driver(name):
         return True
 
 
+def check_audio_codecs():
+    SDL_Init(sdl2.SDL_INIT_AUDIO)
+    try:
+        libs = {
+            'FLAC': sdlmixer.MIX_INIT_FLAC,
+            'MOD': sdlmixer.MIX_INIT_MOD,
+            'MP3': sdlmixer.MIX_INIT_MP3,
+            'OGG': sdlmixer.MIX_INIT_OGG,
+            'MIDI': sdlmixer.MIX_INIT_MID,
+            'OPUS': sdlmixer.MIX_INIT_OPUS
+        }
+        for lib, flags in libs.items():
+            sdlmixer.Mix_SetError(b"")
+            ret = sdlmixer.Mix_Init(flags)
+            err = sdlmixer.Mix_GetError()
+            if err:
+                yield lib, err.decode('utf-8')
+            if ret & flags == flags:
+                yield lib, None
+            else:
+                yield lib, True
+            sdlmixer.Mix_Quit()
+    finally:
+        SDL_Quit()
+
+
 def main():
     print("SDL Version:", sdl_version())
-
 
     print("Video Drivers:")
     for name in iter_video_drivers():
@@ -80,6 +119,9 @@ def main():
         else:
             print(f" n {name}")
 
+    print("Renderers:")
+    for name, _ in iter_render_drivers():
+        print(f" * {name}")
 
     print("Audio Drivers:")
     for name in iter_audio_drivers():
@@ -88,29 +130,12 @@ def main():
         else:
             print(f" n {name}")
 
-
-# SDL_Init(sdl2.SDL_INIT_AUDIO)
-# supported = []
-# libs = {
-#     'FLAC': sdlmixer.MIX_INIT_FLAC,
-#     'MOD': sdlmixer.MIX_INIT_MOD,
-#     'MP3': sdlmixer.MIX_INIT_MP3,
-#     'OGG': sdlmixer.MIX_INIT_OGG,
-#     'MID': sdlmixer.MIX_INIT_MID,
-#     'OPUS': sdlmixer.MIX_INIT_OPUS
-# }
-# for lib in libs.keys():
-#     flags = libs[lib]
-#     ret = sdlmixer.Mix_Init(flags)
-#     err = sdlmixer.Mix_GetError()
-#     if err:
-#         print("Error for {0}: {1}".format(lib, err))
-#     if ret & flags == flags:
-#         supported.append(lib)
-#     sdlmixer.Mix_Quit()
-# print("Supported formats:")
-# print(supported)
-# SDL_Quit()
+    print("Audio Codecs:")
+    for name, loadable in check_audio_codecs():
+        if loadable:
+            print(f" y {name}")
+        else:
+            print(f" n {name}")
 
 
 if __name__ == '__main__':
