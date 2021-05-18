@@ -1,3 +1,4 @@
+import ctypes
 import io
 
 from sdl2 import (
@@ -5,10 +6,12 @@ from sdl2 import (
 )
 
 from sdl2.sdlmixer import (
+    # Errors, https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_7.html#SEC7
+    Mix_GetError,
     # Support library loading https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_7.html#SEC7
     Mix_Init, Mix_Quit, MIX_INIT_FLAC, MIX_INIT_MOD, MIX_INIT_MP3, MIX_INIT_OGG,
     # Mixer init https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_7.html#SEC7
-    Mix_OpenAudio, Mix_CloseAudio,
+    Mix_OpenAudio, Mix_CloseAudio, Mix_QuerySpec,
     # Samples https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_16.html#SEC16
     Mix_LoadWAV_RW, Mix_FreeChunk, Mix_VolumeChunk,
     # Channels https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_25.html#SEC25
@@ -61,6 +64,20 @@ class Sound(assetlib.Asset):
 @channel_finished
 def _filler_channel_finished(channel):
     pass
+
+
+def query_spec():
+    frequency = ctypes.c_int()
+    format = ctypes.c_uint16()
+    channels = ctypes.c_int()
+    count = mix_call(
+        Mix_QuerySpec,
+        ctypes.byref(frequency),
+        ctypes.byref(format),
+        ctypes.byref(channels),
+        _check_error=lambda rv: rv == 0 and Mix_GetError(),
+    )
+    return count, frequency, format, channels
 
 
 class SoundController(SdlSubSystem, LoggingMixin):
