@@ -28,6 +28,7 @@ class Sound(assetlib.Asset):
     # This is wrapping a ctypes.POINTER(Mix_Chunk)
 
     def background_parse(self, data):
+        print("Sound.background_parse", repr(self), flush=True)
         file = rw_from_object(io.BytesIO(data))
         # ^^^^ is a pure-python emulation, does not need cleanup.
         return mix_call(
@@ -84,6 +85,7 @@ class SoundController(SdlSubSystem, LoggingMixin):
         mix_call(Mix_AllocateChannels, value)
 
     def __enter__(self):
+        print("SoundController.__enter__", repr(self), flush=True)
         super().__enter__()
         mix_call(
             Mix_OpenAudio,

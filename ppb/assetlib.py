@@ -277,13 +277,11 @@ class Asset(BackgroundMixin, FreeingMixin, AbstractAsset):
         try:
             return _asset_cache[(clsname, name)]
         except KeyError:
-            inst = super().__new__(cls)
-            _asset_cache[(clsname, name)] = inst
-            return inst
-
-    def __init__(self, name):
-        self.name = str(name)
-        self._start()
+            self = super().__new__(cls)
+            self.name = str(name)
+            _asset_cache[(clsname, name)] = self
+            self._start()
+            return self
 
     def __repr__(self):
         return f"<{type(self).__name__} name={self.name!r}{' loaded' if self.is_loaded() else ''} at 0x{id(self):x}>"
