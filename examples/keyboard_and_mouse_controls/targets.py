@@ -43,7 +43,7 @@ class Player(MoverMixin, ppb.Sprite):
     def _fire_bullet(self, scene, signal):
         signal(PlaySound(self.fire_sound))
         scene.add(
-            Bullet(pos=self.position),
+            Bullet(position=self.position),
             tags=['bullet']
         )
 
@@ -77,11 +77,11 @@ class GameScene(ppb.Scene):
         super().__init__(*p, **kw)
 
         # Set up sprites
-        self.add(Player(pos=Vector(0, 0)), tags=['player'])
+        self.add(Player(position=Vector(0, 0)), tags=['player'])
 
         # 5 targets in x = -3.75 -> 3.75, with margin
         for x in (-3, -1.5, 0, 1.5, 3):
-            self.add(Target(pos=Vector(x, 1.875)), tags=['target'])
+            self.add(Target(position=Vector(x, 1.875)), tags=['target'])
 
 
 if __name__ == "__main__":
