@@ -52,7 +52,7 @@ with tempfile.TemporaryDirectory() as td:
     if 'CIRRUS_RELEASE' in ${...}:
 
         print("Uploading to GitHub...")
-        for dist in dists + [f"{td}/examples.zip"]:
+        for dist in dists + [pf"{td}/examples.zip"]:
             print(f"\t{dist.name}...")
             dest_url = f"https://uploads.github.com/repos/{$CIRRUS_REPO_FULL_NAME}/releases/{$CIRRUS_RELEASE}/assets?name={dist.name}"
             with dist.open('rb') as fobj:
