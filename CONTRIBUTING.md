@@ -109,11 +109,6 @@ review will take your comments into consideration. If you actively
 provide reviews, you'll be told to add your name to
 [CONTRIBUTORS][contributors] as a reviewer!
 
-## I Want to Teach
-
-There's a tutorial project! See the [tutorials repository's CONTRIBUTING
-file][tutorial] for more details.
-
 ## Can I Contribute Without Code?
 
 There's so much else that needs to be done besides fixing `ppb`'s code.
@@ -134,4 +129,3 @@ end you contribute to `ppb` by being part of its community.
 [new contributor]: https://github.com/ppb/pursuedpybear/labels/new%20contributor "Issues labeled New Contributor"
 [projects]: https://github.com/orgs/ppb/projects "PPB Projects"
 [readme]: https://github.com/ppb/pursuedpybear/blob/canon/README.md "PPB README"
-[tutorial]: https://github.com/ppb/tutorials "PPB Tutorials"
