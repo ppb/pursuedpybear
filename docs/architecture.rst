@@ -1,4 +1,4 @@
-How ppb Fits Together
+ How ppb Fits Together
 ===========================================================
 
 This document is an overall reference of what ppb is, how it's organized, and
@@ -8,9 +8,46 @@ The Conceptual Necessities
 -----------------------------------------------------------
 .. _arch-the-basics:
 
-1. A basic outline of the core elements of using ppb:
-    1. The GameEngine
-    2. Scenes
+Put some introduction here.
+
+It is conceptually useful to consider PursuedPyBear applications as a tree of
+nodes. In :code:`ppb` parlance, we refer to nodes as
+:py:class:`GameObjects <ppb.gomlib.GameObject>`. A game object can have any
+number of children and are allowed to organize their internal children however
+the developer likes. Each :py:class:`~ppb.gomlib.GameObject` is capable of
+responding to :ref:`events <arch-events>`, which is the primary messaging
+utility in :code:`ppb`. Ultimately, though, a :py:class:`~ppb.gomlib.GameObject`
+is of little use in a vacuum. As such, :code:`ppb` provides a number of semantic
+:py:class:`GameObjects <ppb.gomlib.GameObject>` with focused roles.
+
+The expected root of the :py:class:`~ppb.gomlib.GameObject` tree is the
+:py:class:`~ppb.GameEngine`. It is important that you use
+:py:class:`~ppb.GameEngine`, either directly or indirectly, for this object
+because all other assumptions in :code:`ppb` are built on how
+:ref:`the engine interacts with its children <arch-game-engine>`.
+
+The children of the :py:class:`~ppb.GameEngine` come in two flavors:
+:py:class:`Scenes <ppb.Scene>` and :py:class:`Systems <ppb.systemslib.System>`.
+
+The :py:class:`Systems <ppb.systemslib.System>` are how :code:`ppb` developers
+add new features to the engine. They also allow you to add code that crosses
+:py:class:`~ppb.Scene` boundaries, or interacts with external software or
+systems. They are Python context managers to allow for setup and teardown of
+external resources, and include their own children like any
+:py:class:`~ppb.gomlib.GameObject`.
+
+.. todo::
+
+   Need a link to the Systems section. Might need to add language?
+
+:py:class:`Scenes <ppb.Scene>` allow you to break up your applications into
+discreet parts. Most of the time, :py:class:`Scenes <ppb.Scene>` need little
+more than an initialization function as they're ultimately there to hold
+together the pieces that make up a section of a game, but like other
+:py:class:`GameObjects <ppb.gomlib.GameObject>` they can respond to events. The
+Scene's children are usually :py:class:`Sprites <ppb.Sprite>`.
+
+A basic outline of the core elements of using ppb:
     3. Sprites
     4. Events, EventTypes, Event Handlers
     5. Flags?
@@ -22,8 +59,6 @@ further in this document.
 
 Things not included in this list but will be important to document:
 
-1. Systems and Systemslib
-2. GameObject
 3. Time?
 4. Camera
 
