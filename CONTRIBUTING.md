@@ -129,4 +129,3 @@ end you contribute to `ppb` by being part of its community.
 [new contributor]: https://github.com/ppb/pursuedpybear/labels/new%20contributor "Issues labeled New Contributor"
 [projects]: https://github.com/orgs/ppb/projects "PPB Projects"
 [readme]: https://github.com/ppb/pursuedpybear/blob/canon/README.md "PPB README"
-[tutorial]: https://github.com/ppb/tutorials "PPB Tutorials"
