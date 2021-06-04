@@ -47,3 +47,4 @@ Halle Jones|HJones@aliacy.com||
 [Anthony Plunkett](https://github.com/doobeh) | |
 [Mateus Denucci Garcia Seabra Resende](https://github.com/MateusDenucci) | |
 [Victor Hart](https://github.com/vicohart) | [vicohart@gmail.com](vicohart@gmail.com) |
+[nilamo](https://github.com/nilamo) | [7nilamo@gmail.com](7nilamo@gmail.com) | 
