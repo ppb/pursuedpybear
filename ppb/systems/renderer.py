@@ -328,10 +328,8 @@ class Renderer(SdlSubSystem):
     @staticmethod
     def target_resolution(img_width, img_height, obj_width, obj_height, pixel_ratio):
         if not obj_width:
-            print("no width")
             ratio = img_height / (pixel_ratio * obj_height)
         elif not obj_height:
-            print("no height")
             ratio = img_width / (pixel_ratio * obj_width)
         else:
             ratio_w = img_width / (pixel_ratio * obj_width)

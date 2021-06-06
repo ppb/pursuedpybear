@@ -1,5 +1,6 @@
 import ctypes
 import io
+import logging
 import time
 
 from sdl2 import (
@@ -26,6 +27,8 @@ from ppb.systems.sdl_utils import SdlSubSystem, mix_call, SdlMixerError
 from ppb.utils import LoggingMixin
 
 __all__ = ('SoundController', 'Sound')
+
+logger = logging.getLogger(__name__)
 
 
 def query_spec():
@@ -123,7 +126,8 @@ class SoundController(SdlSubSystem, LoggingMixin):
         )
         mix_call(Mix_Init, MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG)
 
-        print("SoundController", query_spec(), flush=True)
+        logger.debug("SoundController")
+        logger.debug(query_spec())
 
         self.allocated_channels = 16
 
