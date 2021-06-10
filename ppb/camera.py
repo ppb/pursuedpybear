@@ -7,6 +7,7 @@ visible.
 The :class:`~ppb.systems.Renderer` inserts a :class:`Camera` into the current
 scene in response to the :class:`~ppb.events.SceneStarted`.
 """
+import logging
 from typing import Tuple
 from numbers import Real
 
@@ -15,6 +16,8 @@ from ppb_vector import Vector
 from ppb.gomlib import GameObject
 from ppb.sprites import RectangleShapeMixin
 from ppb.sprites import Sprite
+
+logger = logging.getLogger(__name__)
 
 
 def _sprite_has_rectangular_region(sprite):
@@ -148,7 +151,7 @@ class Camera(RectangleShapeMixin, GameObject):
         height = max(self.top, sprite.top) - min(self.bottom, sprite.bottom)
         max_width = self.width + sprite.width
         max_height = self.height + sprite.height
-        print(f"W: {width}, H: {height}, MW: {max_width}, MH: {max_height}")
+        logger.debug(f"W: {width}, H: {height}, MW: {max_width}, MH: {max_height}")
         return width < max_width and height < max_height
 
     def translate_point_to_screen(self, point: Vector) -> Vector:
