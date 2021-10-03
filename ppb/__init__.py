@@ -94,8 +94,8 @@ def _validate_python_support(required_version='3.7', ppb_release='2.0',
                               f"Python {version_info[0]}.{version_info[1]} " \
                               f"once released around {release_date}. Please " \
                               f"update to Python {required_version} or newer."
-        logger = logging.getLogger(__name__)
-        logger.warning(f"Deprecation Warning: {deprecation_message}")
+        warnings.filterwarnings('default')
+        warnings.warn(deprecation_message, DeprecationWarning)
 
 
 def run(setup: Callable[[Scene], None] = None, *, log_level=logging.WARNING,
