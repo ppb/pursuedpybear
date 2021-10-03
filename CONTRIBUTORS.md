@@ -49,4 +49,4 @@ Halle Jones|HJones@aliacy.com||
 [Victor Hart](https://github.com/vicohart) | [vicohart@gmail.com](vicohart@gmail.com) |
 [nilamo](https://github.com/nilamo) | [7nilamo@gmail.com](7nilamo@gmail.com) | 
 [Abhijeet](https://github.com/abhijeetgupto) |[abhigupta7b@gmail.com](abhigupta7b@gmail.com) | [@abhijeetgupto](https://twitter.com/abhijeetgupto)|
-[Andy Tran](https://github.com/tran-dy) |
+[Andy Tran](https://github.com/tran-dy) | | |
