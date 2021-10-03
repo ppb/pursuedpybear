@@ -84,7 +84,7 @@ def _validate_python_support(required_version='3.7', ppb_release='2.0',
     :param required_version: Minimum Python Version Supported by PPB
     :type required_version: str
     :param ppb_release: PPB release version deprecation will occur
-    :type ppb_relase: str
+    :type ppb_release: str
     :param release_date: Estimated release month for PPB Version
     :type release_date: str
     """
