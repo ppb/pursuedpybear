@@ -85,7 +85,7 @@ The editable installation mode implies that the source code of PursuedPyBear bei
     cd ppb-venv
     git clone https://github.com/ppb/pursuedpybear.git
     cd pursuedpybear
-    pip install --upgrade -r requirements.txt
+    pip install --upgrade -r requirements-test.txt
     pip install --editable .
 
 Now get to work! Some tickets have detailed instructions: A maintainer
