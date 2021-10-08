@@ -6,7 +6,10 @@
 # full list see the documentation:
 # http://www.sphinx-doc.org/en/master/config
 
-import importlib.metadata
+try:
+    import importlib.metadata as metadata
+except ImportError:
+    import importlib_metadata as metadata
 import re
 
 # -- Path setup --------------------------------------------------------------
@@ -27,7 +30,7 @@ copyright = '2018-2021, The PPB Community'
 author = 'The PPB Community'
 
 # The full version, including alpha/beta/rc tags
-release = importlib.metadata.version('ppb')
+release = metadata.version('ppb')
 # The short X.Y version
 version = re.match(r"(\d+\.\d+).*", release).group(1)
 

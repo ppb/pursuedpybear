@@ -1,18 +1,18 @@
 # Get Involved
 
 The goal of PPB is to be a learning tool. Building games can be complex, and
-PPB should make that complexity approachable for new developers. It is also 
+PPB should make that complexity approachable for new developers. It is also
 open to developers of all skill levels for contribution and improvement.
 
-This guide will include steps experienced developers may not need explanation 
+This guide will include steps experienced developers may not need explanation
 for, it's target audience is new developers not used to contribution.
 
 ## Before You Begin
 
 1. Read the [README][readme].
 2. Read the [Code of Conduct][coc].
-    * All contributors must abide by the current code of conduct.
-    * The current code of conduct is the [Contributor's Covenant][covenant].
+   - All contributors must abide by the current code of conduct.
+   - The current code of conduct is the [Contributor's Covenant][covenant].
 3. Familiarize yourself with this guide!
 
 ## I've Never Coded Before
@@ -47,8 +47,7 @@ How did you expect it to work?
 
 In addition to that, we'll want to know how you got there: A link to
 your code, any packages you used with ppb, and a stack trace if there is
-one! Definitely remember to get the python version with `python
---version`.
+one! Definitely remember to get the python version with `python --version`.
 
 Label it with the label `bug` and one of the contributors will get to it
 soon!
@@ -75,8 +74,19 @@ either column and find a ticket you like. Create a branch from the HEAD of
 the `canon` branch, add your name to the [CONTRIBUTORS file][contributors],
 commit that change and open a PR:
 
-* Include "WIP" in the title or make a [draft pull request][draftpr]
-* Reference the issue you want to work on in the body of the PR.
+- Include "WIP" in the title or make a [draft pull request][draftpr]
+- Reference the issue you want to work on in the body of the PR.
+
+The editable installation mode implies that the source code of PursuedPyBear being installed is available in a local directory. Once PursuedPyBear is installed in editable mode, users expect that changes to the PursuedPyBear python code in the local source tree become effective without the need of a new installation step. To do an editable installation:
+
+    mkdir ppb
+    python3 -m venv ppb-venv
+    source ppb-venv/bin/activate
+    cd ppb-venv
+    git clone https://github.com/ppb/pursuedpybear.git
+    cd pursuedpybear
+    pip install --upgrade -r requirements-test.txt
+    pip install --editable .
 
 Now get to work! Some tickets have detailed instructions: A maintainer
 mapped out the needs and wrote some instructions. Others are more open.
