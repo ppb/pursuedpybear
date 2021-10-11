@@ -57,6 +57,7 @@ task:
       - IMAGE: python:rc-slim
       - IMAGE: pypy:3.6-slim
       - IMAGE: pypy:3.7-slim
+      - IMAGE: python:3.10-slim
 
   container:
     image: $IMAGE
@@ -103,12 +104,14 @@ macOS_task:
       - PYTHON: 3.7.9
       - PYTHON: 3.8.6
       - PYTHON: 3.9.0
+      - PYTHON: 3.10.0
   depends_on:
     - build
   install_script:
     # Per the pyenv homebrew recommendations.
     # https://github.com/pyenv/pyenv/wiki#suggested-build-environment
     # - xcode-select --install  # Unnecessary on Cirrus
+    - brew update    
     - brew install openssl readline sqlite3 xz zlib pyenv
     - pyenv install ${PYTHON}
     - pyenv global ${PYTHON}
@@ -151,6 +154,7 @@ task:
       - IMAGE: python:3.7-windowsservercore
       - IMAGE: python:3.8-windowsservercore
       - IMAGE: python:3.9-windowsservercore
+      - IMAGE: python:3.10-windowsservercore
       - IMAGE: python:rc-windowsservercore
 
   install_script:
