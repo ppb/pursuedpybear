@@ -24,22 +24,22 @@ class Children(Collection):
         self._kinds = defaultdict(set)
         self._tags = defaultdict(set)
 
-    def __contains__(self, item: Hashable) -> bool:
+    def __contains__(self, item: 'GameObject') -> bool:
         return item in self._all
 
-    def __iter__(self) -> Iterator[Hashable]:
+    def __iter__(self) -> Iterator['GameObject']:
         return (x for x in list(self._all))
 
     def __len__(self) -> int:
         return len(self._all)
 
-    def add(self, child: Hashable, tags: Iterable[Hashable] = ()) -> Hashable:
+    def add(self, child: 'GameObject', tags: Iterable[Hashable] = ()) -> 'GameObject':
         """
         Add a child.
 
-        :param child: Any Hashable object. The item to be added.
-        :param tags: An iterable of Hashable objects. Values that can be used to
-              retrieve a group containing the child.
+        :param child: Any Game Object. The item to be added.
+        :param tags: An iterable of Hashable objects. (Probably strings.) Values
+              that can be used to retrieve a group containing the child.
 
         Examples: ::
 
@@ -63,7 +63,7 @@ class Children(Collection):
 
         return child
 
-    def remove(self, child: Hashable) -> Hashable:
+    def remove(self, child: 'GameObject') -> 'GameObject':
         """
         Remove the given object from the container.
 
@@ -85,14 +85,14 @@ class Children(Collection):
 
         return child
 
-    def get(self, *, kind: Type = None, tag: Hashable = None, **_) -> Iterator:
+    def get(self, *, kind: Type = None, tag: 'GameObject' = None, **_) -> Iterator:
         """
         Iterate over the objects by kind or tag.
 
         :param kind: Any type. Pass to get a subset of contained items with the given
               type.
-        :param tag: Any Hashable object. Pass to get a subset of contained items with
-             the given tag.
+        :param tag: Any Hashable object. (Probably strings.) Pass to get a
+             subset of contained items with the given tag.
 
         Pass both kind and tag to get objects that are both that type and that
         tag.
@@ -160,7 +160,7 @@ class GameObject:
         """
         yield from self.children
 
-    def add(self, child: Hashable, tags: Iterable = ()) -> None:
+    def add(self, child: 'GameObject', tags: Iterable = ()) -> None:
         """
         Shorthand for :meth:`Children.add()`
         """
@@ -172,14 +172,14 @@ class GameObject:
         """
         return self.children.get(kind=kind, tag=tag, **kwargs)
 
-    def remove(self, child: Hashable) -> None:
+    def remove(self, child: 'GameObject') -> 'GameObject':
         """
         Shorthand for :meth:`Children.remove()`
         """
         return self.children.remove(child)
 
 
-def walk(root):
+def walk(root) -> Iterable[GameObject]:
     """
     Conducts a walk of the GOM tree from the root.
 
