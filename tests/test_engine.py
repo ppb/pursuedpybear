@@ -81,7 +81,7 @@ def test_contexts():
         def __exit__(self, exc_type, exc_val, exc_tb):
             self.exited = True
 
-    engine = GameEngine(Scene, basic_systems=[FakeRenderer, Quitter])
+    engine = GameEngine(Scene, basic_systems=[FakeRenderer, Quitter, Failer], message="Will only time out.", fail=lambda x: False)
     engine.run()
     for system in engine.children._systems:
         if isinstance(system, FakeRenderer):

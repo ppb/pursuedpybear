@@ -34,9 +34,12 @@ system and the data logistics.
 
         Called in the background thread.
 
+    .. automethod:: free()
+
     .. automethod:: load(timeout: float = None)
 
     .. automethod:: is_loaded()
+
 
 
 Subclassing
