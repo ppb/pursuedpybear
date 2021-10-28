@@ -149,24 +149,17 @@ def iter_joysticks():
         yield name.decode('utf-8')
 
 
-def iter_haptics():
-    sdl_call(
-        sdl2.SDL_InitSubSystem, sdl2.SDL_INIT_HAPTIC,
-        _check_error=lambda rv: rv < 0
-    )
-    try:
-        num_sticks = sdl_call(
-            sdl2.SDL_NumHaptics,
-            _check_error=lambda rv: rv < 0,
-        )
-        for i in range(num_sticks):
-            name = sdl_call(
-                sdl2.SDL_HapticName, i,
-                _check_error=lambda rv: rv is None,
-            )
-            yield name.decode('utf-8')
-    finally:
-        sdl2.SDL_QuitSubSystem(sdl2.SDL_INIT_HAPTIC)
+# def iter_haptics():
+#     num_sticks = sdl_call(
+#         sdl2.SDL_NumHaptics,
+#         _check_error=lambda rv: rv < 0,
+#     )
+#     for i in range(num_sticks):
+#         name = sdl_call(
+#             sdl2.SDL_HapticName, i,
+#             _check_error=lambda rv: rv is None,
+#         )
+#         yield name.decode('utf-8')
 
 
 def main():
@@ -212,9 +205,9 @@ def main():
     for name in iter_joysticks():
         print(f" * {name}")
 
-    print("Haptics:")
-    for name in iter_haptics():
-        print(f" * {name}")
+    # print("Haptics:")
+    # for name in iter_haptics():
+    #     print(f" * {name}")
 
 
 if __name__ == '__main__':
