@@ -31,18 +31,24 @@ from typing import Union
 
 
 __all__ = (
-    'StartScene',
+    'AssetLoaded',
+    'ButtonPressed',
+    'ButtonReleased',
+    'KeyPressed',
+    'MouseMotion',
+    'PlaySound',
     'PreRender',
     'Quit',
     'Render',
     'ReplaceScene',
+    'StartScene',
     'SceneContinued',
     'ScenePaused',
     'SceneStarted',
     'SceneStopped',
     'StopScene',
     'Update',
-    'AssetLoaded',
+    
 )
 
 # Remember to define scene at the end so the pargs version of __init__() still works
