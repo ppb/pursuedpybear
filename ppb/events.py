@@ -35,6 +35,7 @@ __all__ = (
     'ButtonPressed',
     'ButtonReleased',
     'KeyPressed',
+    'KeyReleased',
     'MouseMotion',
     'PlaySound',
     'PreRender',
