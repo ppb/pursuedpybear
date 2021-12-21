@@ -54,3 +54,4 @@ Halle Jones|HJones@aliacy.com||
 [Michael duBois](https://github.com/MichaelCduBois) |  | 
 [Stephen James](https://github.com/sjames1958gm) | [sajames1958@gmail.com](sajames1958@gmail.com) |
 [Sergio Gavilán](https://github.com/sgavil) | [ssjsrgx@gmail.com](ssjsrgx@gmail.com) | [@sgavil01](https://twitter.com/sgavil01)
+[Avarice M](https://github.com/avarice-m) | | |
