@@ -163,7 +163,11 @@ class Camera(RectangleShapeMixin, GameObject):
         :return: A vector in pixels.
         :rtype: Vector
         """
-        return Vector(point.x - self.left, self.top - point.y) * self.pixel_ratio
+
+        try:
+          return Vector(point.x - self.left, self.top - point.y) * self.pixel_ratio
+        except AttributeError as error:
+          raise TypeError("Expected Vector")
 
     def translate_point_to_game_space(self, point: Vector) -> Vector:
         """

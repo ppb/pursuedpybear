@@ -311,7 +311,18 @@ class Renderer(SdlSubSystem):
 
         win_w, win_h = self.target_resolution(img_w.value, img_h.value, obj_w, obj_h, camera.pixel_ratio)
 
-        center = camera.translate_point_to_screen(game_object.position)
+        try:
+            center = camera.translate_point_to_screen(game_object.position)
+        except TypeError as error:
+            raise TypeError(f"""{type(game_object).__name__}.position was set to a tuple: 
+
+            (number, number)
+
+            Expected a vector:
+
+            Vector(number, number)
+            """)
+
         dest_rect = SDL_Rect(
             x=int(center.x - win_w / 2),
             y=int(center.y - win_h / 2),
