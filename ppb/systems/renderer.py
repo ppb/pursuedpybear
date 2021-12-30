@@ -321,7 +321,7 @@ class Renderer(SdlSubSystem):
             Expected a vector:
 
             Vector(number, number)
-            """)
+            """) from error
 
         dest_rect = SDL_Rect(
             x=int(center.x - win_w / 2),
