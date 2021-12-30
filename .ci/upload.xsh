@@ -16,7 +16,7 @@ PROJECT = os.getcwd()
 
 with tempfile.TemporaryDirectory() as td:
     print("Bundling examples...")
-    with zipfile.ZipFile(f"{PROJECT}/examples.zip", 'w', compression=zipfile.ZIP_LZMA) as examples:
+    with zipfile.ZipFile(f"{td}/examples.zip", 'w', compression=zipfile.ZIP_LZMA) as examples:
         for name, _, files in os.walk('examples'):
             if '__pycache__' in name:
                 continue
