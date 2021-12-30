@@ -35,7 +35,7 @@ with tempfile.TemporaryDirectory() as td:
         # print(f"Found {len(nl)} files from build:", *nl)
         zf.extractall()
 
-    dists = [f for f in pg`**` if '+' not in f.name and f.is_file()]
+    dists = [f for f in pg`**` if '+' not in f.name and f.name != 'examples.zip' and f.is_file()]
 
     if not dists:
         print("No uploadable dists found, skipping upload")
