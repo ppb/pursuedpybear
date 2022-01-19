@@ -47,9 +47,10 @@ environment. This is different on Windows than anywhere else, so make sure to
 use the right command.
 
 Windows::
-   *Note:* If you are installing ppb on WSL2 please refer to the Ubuntu section, below.
 
    .venv\Scripts\activate.bat
+
+.. note:: If you are installing ppb on WSL2 please refer to the Ubuntu section, below.
 
 Linux and Mac::
 
