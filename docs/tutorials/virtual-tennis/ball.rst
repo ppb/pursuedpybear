@@ -14,7 +14,7 @@ lets us initialize this first scene.
 .. code-block::
    :caption: main.py
    :lineno-start: 3
-   :emphasize-lines: 4-8
+   :emphasize-lines: 4-7
 
    RESOLUTION = (1200, 900)
 
