@@ -187,6 +187,7 @@ epub_exclude_files = ['search.html']
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
+    'miniconda': ('https://docs.conda.io/en/latest/', None),
 }
 
 # -- Options for todo extension ----------------------------------------------
