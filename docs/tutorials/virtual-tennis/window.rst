@@ -6,7 +6,7 @@ So we've installed everything we need, but it's always a good idea to make
 sure our environment is right before moving on. A good first step for any video
 game is to make sure you can make an empty window.
 
-Inside your `project directory`_ we need to create a file. Do so using your
+Inside your :doc:`project directory <setup>` we need to create a file. Do so using your
 code editor, and call it ``main.py``. Make sure to open it so we can add code
 to it.
 
@@ -32,7 +32,7 @@ following command to run your game.
 .. code-block::
    :caption: Terminal
 
-   > python main.py
+   python main.py
 
 You should have a window open that looks like this:
 
@@ -45,7 +45,8 @@ other options, but this is all you need to know so far.
 Before we continue, we're going to do one more thing. The default resolution of
 800x600 is great, but you might want a bigger (or smaller) window. We're going
 to add a constant value and give that to ppb to tell it how big of a window we
-want.
+want. We'll also add a title to our game, which shows up in the title bar of
+the window we create.
 
 .. code-block::
    :caption: main.py
@@ -56,9 +57,10 @@ want.
 
    RESOLUTION = (1200, 900)
 
-   ppb.run(resolution=RESOLUTION)
+   ppb.run(resolution=RESOLUTION, title="Hello Window!")
 
-Save this and rerun it and the screen should be bigger this time.
+Save this and rerun it and the screen should be bigger this time and say
+"Hello Window!" on the top.
 
 The reason ``RESOLUTION`` is spelled with all caps is because this is a what
 programmers call a constant. As a community, Python developers use `special
@@ -82,5 +84,4 @@ value, you should use ``python main.py`` again to see the result. Keep experimen
 Once you've found a screen size and shape you like, we can move on to putting
 something on screen.
 
-.. _project directory: ../setup
 .. _special capitalization rules: https://www.python.org/dev/peps/pep-0008/
