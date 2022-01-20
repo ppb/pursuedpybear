@@ -1,3 +1,8 @@
+"""
+The core engine of PPB. This manages systems, the scene stack, initialization,
+the event loop, the Idle event, and other aspects.
+"""
+
 import time
 from collections import defaultdict
 from collections import deque
@@ -21,8 +26,9 @@ from ppb.assetlib import AssetLoadingSystem
 from ppb.gomlib import Children, GameObject
 from ppb.gomlib import walk
 from ppb.errors import BadChildException
+from ppb.errors import NotMyChildError
 from ppb.errors import BadEventHandlerException
-from ppb.scenes import BaseScene
+from ppb.scenes import Scene
 from ppb.systems import EventPoller
 from ppb.systems import Renderer
 from ppb.systems import SoundController
@@ -34,6 +40,10 @@ from ppb.utils import get_time
 _ellipsis = type(...)
 
 _cached_handler_names = {}
+
+
+Signal = Callable[[Any], None]
+# Handler[T] = Callable[[T, Signal], None]
 
 
 def _get_handler_name(txt):
@@ -69,14 +79,14 @@ class EngineChildren(Children):
         self._stack = ExitStack()
         self.entered = False
 
-    def __contains__(self, item: Hashable) -> bool:
+    def __contains__(self, item: GameObject) -> bool:
         return (
             item in self._all or
             item in self._scenes or
             item in self._systems
         )
 
-    def __iter__(self) -> Iterator[Hashable]:
+    def __iter__(self) -> Iterator[GameObject]:
         yield from self._systems
         if self._scenes:
             yield self._scenes[-1]
@@ -91,18 +101,18 @@ class EngineChildren(Children):
         The top of the scene stack.
 
         :return: The currently running scene.
-        :rtype: ppb.BaseScene
+        :rtype: ppb.Scene
         """
         try:
             return self._scenes[-1]
         except IndexError:
             return None
 
-    def add(self, child: Hashable, tags: Iterable[Hashable] = ()) -> Hashable:
+    def add(self, child: GameObject, tags: Iterable[Hashable] = ()) -> GameObject:
         """
         Add a child.
 
-        :param child: Any Hashable object. The item to be added.
+        :param child: Any Game Object. The item to be added.
         :param tags: An iterable of Hashable objects. Values that can be used to
               retrieve a group containing the child.
 
@@ -121,7 +131,7 @@ class EngineChildren(Children):
         if isinstance(tags, (str, bytes)):
             raise TypeError("You passed a string instead of an iterable, this probably isn't what you intended.\n\nTry making it a tuple.")
 
-        if isinstance(child, ppb.BaseScene):
+        if isinstance(child, ppb.Scene):
             raise TypeError("Scenes must be pushed, not added. You probably want the StartScene or ReplaceScene events.")
         elif isinstance(child, ppb.systemslib.System):
             if self.entered:
@@ -137,7 +147,7 @@ class EngineChildren(Children):
 
         return child
 
-    def remove(self, child: Hashable) -> Hashable:
+    def remove(self, child: GameObject) -> GameObject:
         """
         Remove the given object from the container.
 
@@ -150,14 +160,20 @@ class EngineChildren(Children):
             container.remove(myObject)
         """
         # Ugh, this is a copy of the implementation in Children.
-        if isinstance(child, ppb.BaseScene):
+        if isinstance(child, ppb.Scene):
             raise TypeError("Scenes must be popped, not removed. You probably want the StopScene event.")
         elif isinstance(child, ppb.systemslib.System):
             if self.entered:
                 raise RuntimeError("Systems cannot be removed while the engine is running")
-            self._systems.remove(child)
+            try:
+                self._systems.remove(child)
+            except KeyError as exc:
+                raise NotMyChildError() from exc
         else:
-            self._all.remove(child)
+            try:
+                self._all.remove(child)
+            except KeyError as exc:
+                raise NotMyChildError() from exc
 
         for kind in type(child).mro():
             self._kinds[kind].remove(child)
@@ -166,7 +182,7 @@ class EngineChildren(Children):
 
         return child
 
-    def push_scene(self, scene):
+    def push_scene(self, scene: Scene):
         """
         Push a scene onto the scene stack.
 
@@ -217,15 +233,15 @@ class GameEngine(GameObject, LoggingMixin):
 
     To use the engine directly, treat it as a context manager: ::
 
-       with GameEngine(BaseScene, **kwargs) as ge:
+       with GameEngine(Scene, **kwargs) as ge:
            ge.run()
     """
-    def __init__(self, first_scene: Union[Type, BaseScene], *,
+    def __init__(self, first_scene: Union[Type, Scene], *,
                  basic_systems=(Renderer, Updater, EventPoller, SoundController, AssetLoadingSystem),
                  systems=(), scene_kwargs=None, **kwargs):
         """
-        :param first_scene: A :class:`~ppb.BaseScene` type.
-        :type first_scene: Union[Type, scenes.BaseScene]
+        :param first_scene: A :class:`~ppb.Scene` type.
+        :type first_scene: Union[Type, scenes.Scene]
         :param basic_systems: :class:systemslib.Systems that are considered
            the "default". Includes: :class:`~systems.Renderer`,
            :class:`~systems.Updater`, :class:`~systems.EventPoller`,
@@ -266,7 +282,7 @@ class GameEngine(GameObject, LoggingMixin):
         The top of the scene stack.
 
         :return: The currently running scene.
-        :rtype: ppb.BaseScene
+        :rtype: ppb.Scene
         """
         return self.children.current_scene
 
@@ -300,7 +316,7 @@ class GameEngine(GameObject, LoggingMixin):
 
         Example: ::
 
-           GameEngine(BaseScene, **kwargs).run()
+           GameEngine(Scene, **kwargs).run()
         """
         if not self.entered:
             with self:

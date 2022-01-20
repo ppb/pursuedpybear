@@ -13,7 +13,7 @@ def hsv2rgb(h, s, v):
     return list(map(int, colorsys.hsv_to_rgb(h, s, v)))
 
 
-class TextScene(ppb.BaseScene):
+class TextScene(ppb.Scene):
     elapsed = 0
 
     def on_scene_started(self, event, signal):

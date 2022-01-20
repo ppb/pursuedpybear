@@ -1,16 +1,12 @@
-from unittest.mock import Mock
-
 from pytest import fixture
-from pytest import mark
-from pytest import raises
 
-from ppb.scenes import BaseScene
+from ppb.scenes import Scene
 from ppb.camera import Camera
 
 
 @fixture()
 def scene():
-    return BaseScene()
+    return Scene()
 
 
 def test_main_camera(scene):
@@ -25,7 +21,7 @@ def test_main_camera(scene):
 
 
 def test_class_attrs():
-    class BackgroundScene(BaseScene):
+    class BackgroundScene(Scene):
         background_color = (0, 4, 2)
 
     scene = BackgroundScene()

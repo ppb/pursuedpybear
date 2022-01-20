@@ -1,3 +1,5 @@
 sphinx
 sphinx_rtd_theme
 sphinx-tabs
+importlib_metadata; python_version < "3.8"
+doc-utils<0.18  # Fix for read the docs default sphinx version. If we update sphinx, test to see if we can remove this.

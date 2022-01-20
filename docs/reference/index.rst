@@ -28,4 +28,5 @@ decisions are made, see the :doc:`/discussion/index` section.
    sound
    camera
    directions
+   deprecations
    features/index

@@ -16,7 +16,7 @@ no_cursor = "No cursor should be visible."
 cursor = "Cursor should be visible."
 
 
-class RootScene(ppb.BaseScene):
+class RootScene(ppb.Scene):
     cursor = [no_cursor, cursor]
     _continue = "Click to continue."
     click_event = ppb.events.StopScene()

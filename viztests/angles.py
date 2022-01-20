@@ -13,7 +13,7 @@ class CenterSprite(ppb.Sprite):
     image = ppb.Image('player.png')
 
     def on_update(self, event, signal):
-        self.rotation += ROTATION_RATE * event.time_delta
+        self.rotate(ROTATION_RATE * event.time_delta)
 
 
 class OrbitSprite(ppb.Sprite):

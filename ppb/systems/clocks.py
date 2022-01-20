@@ -1,3 +1,7 @@
+"""
+This module performs time keeping of subsystems 
+"""
+
 import time
 
 import ppb

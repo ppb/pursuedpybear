@@ -1,6 +1,8 @@
 # PursuedPyBear
 
-[![Documentation Status](https://readthedocs.org/projects/ppb/badge/?version=stable)](https://ppb.readthedocs.io/en/stable/?badge=stable)
+stable: [![Documentation Status](https://readthedocs.org/projects/ppb/badge/?version=stable)](https://ppb.readthedocs.io/en/stable/?badge=stable)
+
+canon: [![Documentation Status](https://readthedocs.org/projects/ppb/badge/?version=canon)](https://ppb.readthedocs.io/en/stable/?badge=canon)
 
 PursuedPyBear, also known as `ppb`, exists to be an educational
 resource. Most obviously used to teach computer science, it can be a
@@ -47,7 +49,7 @@ ppb runs on the latest Python.
 
 `ppb` games are built out of instances of objects. Each object only has enough
 information to respond to the event provided, which always includes the current
-`BaseScene`. Because `ppb` doesn't have a master list of events, you can
+`Scene`. Because `ppb` doesn't have a master list of events, you can
 provide new ones simply to add more granular control over your game.
 
 ### Hardware Library Agnostic
@@ -92,11 +94,16 @@ class Ship(TargetSprite):
 
 
 def setup(scene):
-    scene.add(Ship(pos=(0, -7)))
+    scene.add(Ship(position=(0, -7)))
 
 
 ppb.run(setup=setup)
 ```
+
+Depending on your operating system,
+you may need to install additional packages
+(see [installation guide](https://ppb.readthedocs.io/en/stable/getting-started.html#installing-ppb)).
+
 
 ## Compatibility
 

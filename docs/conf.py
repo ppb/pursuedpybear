@@ -6,6 +6,12 @@
 # full list see the documentation:
 # http://www.sphinx-doc.org/en/master/config
 
+try:
+    import importlib.metadata as metadata
+except ImportError:
+    import importlib_metadata as metadata
+import re
+
 # -- Path setup --------------------------------------------------------------
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -20,14 +26,13 @@
 # -- Project information -----------------------------------------------------
 
 project = 'PursuedPyBear'
-copyright = '2018, Piper Thunstrom'
-author = 'Piper Thunstrom'
+copyright = '2018-2021, The PPB Community'
+author = 'The PPB Community'
 
-# The short X.Y version
-version = ''
 # The full version, including alpha/beta/rc tags
-release = ''
-
+release = metadata.version('ppb')
+# The short X.Y version
+version = re.match(r"(\d+\.\d+).*", release).group(1)
 
 # -- General configuration ---------------------------------------------------
 
@@ -134,7 +139,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'PursuedPyBear.tex', 'PursuedPyBear Documentation',
-     'Piper Thunstrom', 'manual'),
+     'The PPB Community', 'manual'),
 ]
 
 

@@ -14,7 +14,7 @@ class LoadingSprite(ppb.Sprite):
         self.image = self.waiting_image
 
 
-class Game(ppb.BaseScene):
+class Game(ppb.Scene):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

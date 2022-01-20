@@ -4,7 +4,7 @@
 pep517_task:
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
   container:
-    image: python:3.7
+    image: python:3
 
   install_script:
     - pip install --upgrade-strategy eager -U pep517
@@ -42,6 +42,7 @@ docs_task:
     # TODO: Add -n (nit-picky mode, warn about all missing references)
     - make -C docs/ "SPHINXOPTS=-W" html
 
+
 task:
   name: "Linux $IMAGE"
   alias: Tests
@@ -52,8 +53,11 @@ task:
       - IMAGE: python:3.6-slim
       - IMAGE: python:3.7-slim
       - IMAGE: python:3.8-slim
+      - IMAGE: python:3.9-slim
       - IMAGE: python:rc-slim
       - IMAGE: pypy:3.6-slim
+      - IMAGE: pypy:3.7-slim
+      - IMAGE: python:3.10-slim
 
   container:
     image: $IMAGE
@@ -95,19 +99,19 @@ macOS_task:
   env:
     PATH: ${HOME}/.pyenv/shims:${PATH}
     matrix:
-      # To update:
-      # Get the current version of pyenv from https://formulae.brew.sh/formula/pyenv
-      # Look that up on https://github.com/pyenv/pyenv/tree/master/plugins/python-build/share/python-build
-      # Also update bors.toml
-      - PYTHON: 3.6.9
-      - PYTHON: 3.7.5
-      - PYTHON: 3.8.1
+      # To update: check the output of the most recent macOS_version job
+      - PYTHON: 3.6.12
+      - PYTHON: 3.7.9
+      - PYTHON: 3.8.6
+      - PYTHON: 3.9.0
+      - PYTHON: 3.10.0
   depends_on:
     - build
   install_script:
     # Per the pyenv homebrew recommendations.
     # https://github.com/pyenv/pyenv/wiki#suggested-build-environment
     # - xcode-select --install  # Unnecessary on Cirrus
+    - brew update    
     - brew install openssl readline sqlite3 xz zlib pyenv
     - pyenv install ${PYTHON}
     - pyenv global ${PYTHON}
@@ -119,6 +123,21 @@ macOS_task:
     - python3 --version
     - pip list
     - pytest
+
+
+macOS_version_task:
+  skip: $CIRRUS_BRANCH =~ '.*\.tmp'
+  osx_instance:
+    image: catalina-xcode
+
+  install_script:
+    # Per the pyenv homebrew recommendations.
+    # https://github.com/pyenv/pyenv/wiki#suggested-build-environment
+    - brew install openssl readline pyenv
+
+  script:
+    - pyenv install --list
+
 
 task:
   name: "Windows $IMAGE"
@@ -134,6 +153,8 @@ task:
       - IMAGE: python:3.6-windowsservercore
       - IMAGE: python:3.7-windowsservercore
       - IMAGE: python:3.8-windowsservercore
+      - IMAGE: python:3.9-windowsservercore
+      - IMAGE: python:3.10-windowsservercore
       - IMAGE: python:rc-windowsservercore
 
   install_script:
@@ -146,7 +167,6 @@ task:
     - C:\Python\python.exe -m pytest
 
 
-
 upload_task:
   only_if: $CIRRUS_BRANCH == $CIRRUS_DEFAULT_BRANCH || $CIRRUS_RELEASE != ''
   depends_on:
@@ -157,7 +177,7 @@ upload_task:
   env:
     TWINE_TEST_TOKEN: "ENCRYPTED[4df6a9281bcbab67052d63d8ba4f5ee404d57fd95158e0e6e8693ac6b6ae0e2f2ec0ae8ac09a1fe9998b4675d6ccd7c2]"
     TWINE_PROD_TOKEN: "ENCRYPTED[7ea667df4087e85f59575b59f07b2ef8da992831d45e0a0c60869aed64be252e4373b45b6a9f323a6a6365337bac0a7e]"
-    GITHUB_TOKEN: "ENCRYPTED[42fb2ca52f26c65b254620ce05eea27925844c034a0f73ca96f3fd4c80530a595e3c7dccda51df22b144a16673393704]"
+    GITHUB_TOKEN: "ENCRYPTED[ccd4e010b92a6bdceff3ef970aa96283daf4a040b742bf608a25422f52c93c3513d6bee66c52672f6a6796de7d8b0b11]"
 
   container:
     image: xonsh/xonsh:slim
@@ -167,3 +187,6 @@ upload_task:
 
   script:
     - xonsh .ci/upload.xsh
+
+  examples_artifacts:
+    path: "examples.zip"

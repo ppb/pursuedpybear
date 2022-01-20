@@ -88,6 +88,12 @@ ENV/
 env.bak/
 venv.bak/
 
+# PyCharm Project config
+.idea/
+
+# VSCode Project Config
+.vscode/
+
 # Spyder project settings
 .spyderproject
 .spyproject

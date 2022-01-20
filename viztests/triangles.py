@@ -7,7 +7,7 @@ ______________________________________________________________
 |    shape  || tall         | wide         | square          |
 --------------------------------------------------------------
 | rectangle || tall_rect    | wide_rect    | square          |
-| triangle  || tall_tri     | wide_tri     | equilateral_tri |
+| triangle  || tall_tri     | wide_tri     | square_tri
 | ellipse   || tall_ellipse | wide_ellipse | circle          |
 ______________________________________________________________
 """

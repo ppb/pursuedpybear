@@ -3,7 +3,7 @@ Test Pre-Release Features
 
 Sometimes you want to try the latest features that have been developed for
 ppb before they have a formal release on pypi. You have two options: provide
-a git uri to the ppb canon branch or use a dev release from test.pypi.org.
+a git uri to the ppb canon branch or use a dev release from `test.pypi.org`_.
 
 With pip Directly
 ----------------------------------------
@@ -39,3 +39,6 @@ dependencies from PyPI as normal.
 Now you need to invoke pip as so::
 
    pip install -r requirements.txt
+
+
+.. _test.pypi.org: https://test.pypi.org/
