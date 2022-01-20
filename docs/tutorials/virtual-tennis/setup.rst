@@ -27,7 +27,8 @@ So the first thing you need to do is open your terminal.
 
    .. group-tab:: Ubuntu
 
-      (fill out later)
+      Your default terminal is likely called Terminal, but if you search
+      for your version of linux and terminal you will find a specific one.
 
 With your terminal open, you're going to want to navigate to the
 ``/path/to/src/``. After that, we'll set up a project directory, and then
@@ -80,7 +81,11 @@ change based on its name.
 
    .. group-tab:: Ubuntu
 
-      (add later)
+      .. code-block::
+
+         python3.8 -m venv .venv
+         source .venv/bin/activate
+         python -m pip install ppb
 
 The last step will depend on the code editor you've picked. If you're using an
 IDE (PyCharm, VSCode, or similar) you'll want to open your project in your IDE.
