@@ -1,6 +1,8 @@
 # PursuedPyBear
 
-[![Documentation Status](https://readthedocs.org/projects/ppb/badge/?version=stable)](https://ppb.readthedocs.io/en/stable/?badge=stable)
+stable: [![Documentation Status](https://readthedocs.org/projects/ppb/badge/?version=stable)](https://ppb.readthedocs.io/en/stable/?badge=stable)
+
+canon: [![Documentation Status](https://readthedocs.org/projects/ppb/badge/?version=canon)](https://ppb.readthedocs.io/en/stable/?badge=canon)
 
 PursuedPyBear, also known as `ppb`, exists to be an educational
 resource. Most obviously used to teach computer science, it can be a

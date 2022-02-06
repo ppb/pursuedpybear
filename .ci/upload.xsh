@@ -16,7 +16,7 @@ PROJECT = os.getcwd()
 
 with tempfile.TemporaryDirectory() as td:
     print("Bundling examples...")
-    with zipfile.ZipFile(f"{PROJECT}/examples.zip", 'w', compression=zipfile.ZIP_LZMA) as examples:
+    with zipfile.ZipFile(f"{td}/examples.zip", 'w', compression=zipfile.ZIP_LZMA) as examples:
         for name, _, files in os.walk('examples'):
             if '__pycache__' in name:
                 continue
@@ -35,7 +35,7 @@ with tempfile.TemporaryDirectory() as td:
         # print(f"Found {len(nl)} files from build:", *nl)
         zf.extractall()
 
-    dists = [f for f in pg`**` if '+' not in f.name and f.is_file()]
+    dists = [f for f in pg`**` if '+' not in f.name and f.name != 'examples.zip' and f.is_file()]
 
     if not dists:
         print("No uploadable dists found, skipping upload")
@@ -52,7 +52,7 @@ with tempfile.TemporaryDirectory() as td:
     if 'CIRRUS_RELEASE' in ${...}:
 
         print("Uploading to GitHub...")
-        for dist in dists + [f"{td}/examples.zip"]:
+        for dist in dists + [pf"{td}/examples.zip"]:
             print(f"\t{dist.name}...")
             dest_url = f"https://uploads.github.com/repos/{$CIRRUS_REPO_FULL_NAME}/releases/{$CIRRUS_RELEASE}/assets?name={dist.name}"
             with dist.open('rb') as fobj:

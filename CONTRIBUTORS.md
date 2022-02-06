@@ -1,7 +1,7 @@
 # PursuedPyBear Contributors
 
-
 ## Maintainers
+
 
 Name | Email | Twitter |
 -----|-------|---------|
@@ -15,6 +15,7 @@ Thank you to everyone below for your contributions **(No matter how big or small
 
 Name | Email | Twitter |
 ---- | ----- | ------- |
+[Elena Perez](https://github.com/elenajp) | [elena@elenaperez.com](elena@elenaperez.com) | 
 [Laura Hampton](https://github.com/lgh2) | [laura@laura-hampton.com](laura@laura-hampton.com) | [incunabulista](https://twitter.com/incunabulista)
 [Dimitris Maroulidis](https://github.com/dmaroulidis) | [dimitris@dimitrismaroulidis.com](mailto:dimitris@dimitrismaroulidis.com) | [dmaroulidis](https://twitter.com/dmaroulidis)
 [Jenny Li](https://github.com/imjennyli) |
@@ -48,3 +49,10 @@ Halle Jones|HJones@aliacy.com||
 [Mateus Denucci Garcia Seabra Resende](https://github.com/MateusDenucci) | |
 [Victor Hart](https://github.com/vicohart) | [vicohart@gmail.com](vicohart@gmail.com) |
 [Aaron Mak](https://github.com/aaronmak) | [im@arnmk.com](mailto:im@arnmk.com) |
+[nilamo](https://github.com/nilamo) | [7nilamo@gmail.com](7nilamo@gmail.com) | 
+[Abhijeet](https://github.com/abhijeetgupto) |[abhigupta7b@gmail.com](abhigupta7b@gmail.com) | [@abhijeetgupto](https://twitter.com/abhijeetgupto)|
+[Andy Tran](https://github.com/tran-dy) | | |
+[Michael duBois](https://github.com/MichaelCduBois) |  | 
+[Stephen James](https://github.com/sjames1958gm) | [sajames1958@gmail.com](sajames1958@gmail.com) |
+[Sergio Gavilán](https://github.com/sgavil) | [ssjsrgx@gmail.com](ssjsrgx@gmail.com) | [@sgavil01](https://twitter.com/sgavil01)
+[Avarice M](https://github.com/avarice-m) | | |

@@ -11,12 +11,9 @@ from ppb.features.loadingscene import ProgressBarLoadingScene
 
 
 class DelayedImage(ppb.Image):
-    def __init__(self, name):
-        self.delay_time = random.uniform(1, 7)  # This needs to happen before hinting
-        print(name, self.delay_time)
-        super().__init__(name)
-
     def background_parse(self, data):
+        self.delay_time = random.uniform(1, 7)  # This needs to happen before hinting
+        print(self.name, self.delay_time)
         time.sleep(self.delay_time)
         return super().background_parse(data)
 
@@ -54,7 +51,7 @@ class LoadingScene(ProgressBarLoadingScene):
 
     def get_progress_sprites(self):
         for x in range(-2, 3):
-            yield ppb.Sprite(pos=ppb.Vector(x, 0))
+            yield ppb.Sprite(position=ppb.Vector(x, 0))
 
 
 ppb.run(starting_scene=LoadingScene)

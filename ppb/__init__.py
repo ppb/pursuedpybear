@@ -30,6 +30,7 @@ Exports:
 """
 
 import logging
+from sys import version_info
 from typing import Callable
 
 from ppb import directions
@@ -41,6 +42,7 @@ from ppb.assets import Rectangle
 from ppb.assets import Square
 from ppb.assets import Triangle
 from ppb.engine import GameEngine
+from ppb.engine import Signal
 from ppb.scenes import Scene
 from ppb.sprites import RectangleSprite
 from ppb.sprites import Sprite
@@ -54,7 +56,7 @@ __all__ = (
     # Shortcuts
     'Vector', 'Scene', 'Circle', 'Image', 'Sprite', 'RectangleSprite',
     'Square', 'Sound', 'Triangle', 'events', 'Font', 'Text', 'directions',
-    'Rectangle', 'Ellipse',
+    'Rectangle', 'Ellipse', 'Signal',
     # Local stuff
     'run', 'make_engine',
 )
@@ -70,6 +72,30 @@ def _make_kwargs(setup, title, engine_opts):
         **engine_opts
     }
     return kwargs
+
+
+def _validate_python_support(required_version='3.7', ppb_release='2.0',
+                             release_date='June 2022'):
+    """
+    Verifies Supported Python Version.
+
+    This function verifies ppb is running on a supported Python version.
+
+    :param required_version: Minimum Python Version Supported by PPB
+    :type required_version: str
+    :param ppb_release: PPB release version deprecation will occur
+    :type ppb_release: str
+    :param release_date: Estimated release month for PPB Version
+    :type release_date: str
+    """
+    # Creates (Major, Minor) version tuples for comparisson
+    if version_info[0:2] <= tuple(map(int, required_version.split('.'))):
+        deprecation_message = f"PPB v{ppb_release} will no longer support "\
+                              f"Python {version_info[0]}.{version_info[1]} " \
+                              f"once released around {release_date}. Please " \
+                              f"update to Python {required_version} or newer."
+        warnings.filterwarnings('default')
+        warnings.warn(deprecation_message, DeprecationWarning)
 
 
 def run(setup: Callable[[Scene], None] = None, *, log_level=logging.WARNING,
@@ -120,6 +146,8 @@ def run(setup: Callable[[Scene], None] = None, *, log_level=logging.WARNING,
        :class:`~ppb.engine.GameEngine`.
     """
     logging.basicConfig(level=log_level)
+
+    _validate_python_support()
 
     with make_engine(setup, starting_scene=starting_scene, title=title, **engine_opts) as eng:
         eng.run()

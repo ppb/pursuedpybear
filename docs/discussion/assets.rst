@@ -23,7 +23,7 @@ Out of this, we define a few high-level concepts:
 
 * Asset: Some kind of way data is loaded & parsed. Usually the result is some internal engine data type.
 * Real or File Asset: Loads data from the VFS (such as :py:class:`ppb.Image`)
-* Virtual Asset: Synthesizes data from nothing (such as :py:class:`ppb.assets.Circle`)
+* Virtual Asset: Synthesizes data from nothing (such as :py:class:`ppb.Ellipse`)
 * Proxy Asset: Wraps other asset types (such as :py:class:`ppb.features.animation.Animation`)
 
 The idea is that the place where the asset is used does not care what kind of asset is used, only that it produces the right kind of data--nothing in the world can make the renderer accept a :py:class:`ppb.Sound`.
@@ -64,4 +64,4 @@ Proxy Assets
 
 Proxy assets are simply assets that wrap other, more concrete assets. One example of this is :py:mod:`ppb.features.animation`, where :py:class:`Animation <ppb.features.animation>` wraps multiple :py:class:`Image <ppb.Image>` instances.
 
-Writing your own proxy asset just means returning the results of your inner asset's :py:meth:`load()` from your own.
+Writing your own proxy asset just means returning the results of your inner asset's :py:meth:`Asset.load()` from your own.
