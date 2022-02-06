@@ -101,9 +101,19 @@ def test_camera_point_is_visible(camera, position, point, expect):
     [Vector(0, 0), Vector(4, -3), Vector(720, 540)],
     [Vector(0, 0), Vector(-6, 4), Vector(-80, -20)]
 ])
-def test_camera_translate_point_to_screen(camera, position, point, expected):
+def test_camera_translate_point_to_screen_valid_vectors(camera, position, point, expected):
     camera.position = position
     assert camera.translate_point_to_screen(point) == expected
+
+@pytest.mark.parametrize("point", [
+  [(1.0, 1.0)],
+  [{"x": 1.0, "y": 1.0}],
+  [(1000000.0, -1.0)],
+  [[1.0, 1.0]],
+])
+def test_camera_translate_point_to_screen_invalid_vectors(camera, point):
+    with pytest.raises(TypeError) as excinfo:
+        camera.translate_point_to_screen(point)
 
 
 @pytest.mark.parametrize("position, point, expected", [
