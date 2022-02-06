@@ -55,6 +55,5 @@ Halle Jones|HJones@aliacy.com||
 [Stephen James](https://github.com/sjames1958gm) | [sajames1958@gmail.com](sajames1958@gmail.com) |
 [Sergio Gavilán](https://github.com/sgavil) | [ssjsrgx@gmail.com](ssjsrgx@gmail.com) | [@sgavil01](https://twitter.com/sgavil01)
 [Avarice M](https://github.com/avarice-m) | | |
-[Jami Schwarzwalder](https://github.com/jschwarzwalder) | | 
+[Jami Schwarzwalder](https://github.com/jschwarzwalder) | |
 [Jill Slind](https://github.com/jillslind) | [jill.slind@gmail.com](jill.slind@gmail.com) | |
-
