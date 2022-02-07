@@ -15,8 +15,7 @@ the `Python.org tutorial <https://docs.python.org/3/tutorial/index.html>`_ or
 
 Additionally, you need to have Python 3.7 or later on your machine. You can
 install this via `Python.org <https://www.python.org/downloads/>`_ or
-`Anaconda <https://www.anaconda.com/python-3-7-package-build-out-miniconda-release/>`_
-whichever is more comfortable for you.
+:doc:`Anaconda <miniconda:miniconda>` whichever is more comfortable for you.
 
 
 Installing ppb

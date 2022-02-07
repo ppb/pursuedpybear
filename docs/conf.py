@@ -48,6 +48,7 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
     'sphinx.ext.intersphinx',
+    'sphinx_tabs.tabs',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -186,6 +187,7 @@ epub_exclude_files = ['search.html']
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
+    'miniconda': ('https://docs.conda.io/en/latest/', None),
 }
 
 # -- Options for todo extension ----------------------------------------------
