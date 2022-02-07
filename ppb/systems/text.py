@@ -1,5 +1,6 @@
 import io
 import threading
+from typing import Tuple
 
 from sdl2 import rw_from_object
 
@@ -135,3 +136,7 @@ class Text(ChainingMixin, FreeingMixin, AbstractAsset):
     def free(self, object, _SDL_FreeSurface=SDL_FreeSurface):
         # ^^^ is a way to keep required functions during interpreter cleanup
         _SDL_FreeSurface(object)  # Can't fail
+
+    def resolution(self) -> Tuple[int, int]:
+        asset = self.load()
+        return asset.contents.w, asset.contents.h
