@@ -303,13 +303,19 @@ class Renderer(SdlSubSystem):
 
         src_rect = SDL_Rect(x=0, y=0, w=img_w, h=img_h)
 
-        if hasattr(game_object, 'width'):
-            obj_w = game_object.width
-            obj_h = game_object.height
-        else:
-            obj_w, obj_h = game_object.size
+        if hasattr(game_object, 'rect'):
+            rect = game_object.rect
+            src_rect = SDL_Rect(*rect)
+            win_w, win_h = self.target_resolution(rect[2], rect[3], game_object.size, game_object.size, camera.pixel_ratio)
 
-        win_w, win_h = self.target_resolution(img_w.value, img_h.value, obj_w, obj_h, camera.pixel_ratio)
+        else:
+            if hasattr(game_object, 'width'):
+                obj_w = game_object.width
+                obj_h = game_object.height
+            else:
+                obj_w, obj_h = game_object.size
+
+            win_w, win_h = self.target_resolution(img_w.value, img_h.value, obj_w, obj_h, camera.pixel_ratio)
 
         try:
             center = camera.translate_point_to_screen(game_object.position)
