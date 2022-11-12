@@ -81,3 +81,28 @@ class BlendModeNone(BlendMode):
     """
     Indicate a sprite, if translucent, should be rendered in NONE mode.
     """
+
+class Flip(Flag, abstract=True):
+    """
+    Indicate sprite flipping at render time.
+    """
+
+class FlipNone(Flip):
+    """
+    Do not flip the sprite.
+    """
+
+class FlipVertical(Flip):
+    """
+    Flip the sprite vertically.
+    """
+
+class FlipHorizontal(Flip):
+    """
+    Flip the sprite horizontally.
+    """
+
+class FlipBoth(Flip):
+    """
+    Flip the sprite both horizontally and vertically.
+    """
