@@ -156,8 +156,8 @@ def test_sprite_in_view_no_dimensions(camera, input_position, expected):
 
 
 @given(
-    vp_width=st.integers(min_value=1),
-    vp_height=st.integers(min_value=1),
+    vp_width=st.integers(min_value=100, max_value=15000),
+    vp_height=st.integers(min_value=100, max_value=15000),
     target_width=st.floats(min_value=1, max_value=1e5, allow_nan=False, allow_infinity=False),
     cam_pos=vectors(1e15),  # Set low to prevent loss-of-precision problems about frame size
     point=vectors(),

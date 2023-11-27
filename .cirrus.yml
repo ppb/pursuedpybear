@@ -126,7 +126,7 @@ macOS_task:
 macOS_version_task:
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
   osx_instance:
-    image: catalina-xcode
+    image: ghcr.io/cirruslabs/macos-ventura-base:latest
 
   install_script:
     # Per the pyenv homebrew recommendations.
