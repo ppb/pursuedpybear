@@ -50,14 +50,12 @@ task:
   allow_failures: $IMAGE =~ '.*[-:]rc-.*'
   env:
     matrix:
-      - IMAGE: python:3.6-slim
-      - IMAGE: python:3.7-slim
       - IMAGE: python:3.8-slim
       - IMAGE: python:3.9-slim
       - IMAGE: python:rc-slim
-      - IMAGE: pypy:3.6-slim
-      - IMAGE: pypy:3.7-slim
       - IMAGE: python:3.10-slim
+      - IMAGE: python:3.11-slim
+      - IMAGE: python:3.12-slim
 
   container:
     image: $IMAGE
@@ -94,17 +92,17 @@ task:
 macOS_task:
   alias: Tests
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
-  osx_instance:
-    image: catalina-base
+  macos_instance:
+    image: ghcr.io/cirruslabs/macos-ventura-base:latest
   env:
     PATH: ${HOME}/.pyenv/shims:${PATH}
     matrix:
       # To update: check the output of the most recent macOS_version job
-      - PYTHON: 3.6.12
-      - PYTHON: 3.7.9
-      - PYTHON: 3.8.6
-      - PYTHON: 3.9.0
-      - PYTHON: 3.10.0
+      - PYTHON: 3.8
+      - PYTHON: 3.9
+      - PYTHON: 3.10
+      - PYTHON: 3.11
+      - PYTHON: 3.12
   depends_on:
     - build
   install_script:
@@ -150,11 +148,11 @@ task:
 
   env:
     matrix:
-      - IMAGE: python:3.6-windowsservercore
-      - IMAGE: python:3.7-windowsservercore
       - IMAGE: python:3.8-windowsservercore
       - IMAGE: python:3.9-windowsservercore
       - IMAGE: python:3.10-windowsservercore
+      - IMAGE: python:3.11-windowsservercore
+      - IMAGE: python:3.12-windowsservercore
       - IMAGE: python:rc-windowsservercore
 
   install_script:
