@@ -1,7 +1,7 @@
 # !!NOTE!!
 # If any of the image names or python versions change, update bors.toml
 env:
-    LANG: "C.UTF-8"
+  LANG: "C.UTF-8"
 
 
 pep517_task:
