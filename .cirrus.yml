@@ -1,8 +1,5 @@
 # !!NOTE!!
 # If any of the image names or python versions change, update bors.toml
-env:
-  LANG: "C.UTF-8"
-
 
 pep517_task:
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
@@ -44,6 +41,9 @@ docs_task:
     - make -C docs/ linkcheck
     # TODO: Add -n (nit-picky mode, warn about all missing references)
     - make -C docs/ "SPHINXOPTS=-W" html
+
+  env:
+    LANG: "C.UTF-8"
 
 
 task:
