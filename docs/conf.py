@@ -26,7 +26,7 @@ import re
 # -- Project information -----------------------------------------------------
 
 project = 'PursuedPyBear'
-copyright = '2018-2021, The PPB Community'
+copyright = '2018-2023, The PPB Community'
 author = 'The PPB Community'
 
 # The full version, including alpha/beta/rc tags
