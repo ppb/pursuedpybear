@@ -16,8 +16,8 @@ of Pong_. We're going to go through the whole process: planning our approach,
 breaking out individual tasks, setting up our environment, and coding.
 
 Before you start writing code on a project, it's best to think about the game
-we're trying to make. For research, go try this implementation of
-`Pong <https://archive.org/details/PONGV2.11996DJTAction>`_ on the internet
+we're trying to make. For research, go try `this implementation of
+Pong <https://archive.org/details/PONGV2.11996DJTAction>`_ on the internet
 archive.
 
 Let's think about what's going on in this version:
