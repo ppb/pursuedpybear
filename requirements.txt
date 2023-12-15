@@ -1,6 +1,5 @@
 PySDL2
-pysdl2-dll; sys.platform == 'win32'
-pysdl2-dll; sys.platform == 'darwin'
+pysdl2-dll
 ppb-vector ~= 1.0
 Deprecated ~= 1.2.12 
 dataclasses; python_version < "3.7"
