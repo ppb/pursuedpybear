@@ -50,7 +50,7 @@ def sdl_call(func, *pargs, _check_error=None, **kwargs):
     SDL_ClearError()
     rv = func(*pargs, **kwargs)
     err = SDL_GetError()
-    if (_check_error(rv) if _check_error else err):
+    if _check_error is not None and _check_error(rv) :
         raise SdlError(f"Error calling {func.__name__}: {err.decode('utf-8')}")
     else:
         return rv
@@ -90,8 +90,8 @@ def mix_call(func, *pargs, _check_error=None, **kwargs):
     Mix_SetError(b"")
     rv = func(*pargs, **kwargs)
     err = Mix_GetError()
-    if (_check_error(rv) if _check_error else err):
-        raise SdlMixerError(f"Error calling {func.__name__}: {err.decode('utf-8')}")
+    if _check_error is not None and _check_error(rv) :
+       raise SdlMixerError(f"Error calling {func.__name__}: {err.decode('utf-8')}")
     else:
         return rv
 
@@ -113,7 +113,7 @@ def img_call(func, *pargs, _check_error=None, **kwargs):
     IMG_SetError(b"")
     rv = func(*pargs, **kwargs)
     err = IMG_GetError()
-    if (_check_error(rv) if _check_error else err):
+    if _check_error is not None and _check_error(rv) :
         raise SdlError(f"Error calling {func.__name__}: {err.decode('utf-8')}")
     else:
         return rv
@@ -136,7 +136,7 @@ def ttf_call(func, *pargs, _check_error=None, **kwargs):
     TTF_SetError(b"")
     rv = func(*pargs, **kwargs)
     err = TTF_GetError()
-    if (_check_error(rv) if _check_error else err):
+    if _check_error is not None and _check_error(rv) :
         raise SdlError(f"Error calling {func.__name__}: {err.decode('utf-8')}")
     else:
         return rv
