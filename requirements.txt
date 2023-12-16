@@ -1,6 +1,4 @@
 PySDL2
 pysdl2-dll
 ppb-vector ~= 1.0
-Deprecated ~= 1.2.12 
-dataclasses; python_version < "3.7"
-importlib_resources; python_version < "3.7"
+Deprecated ~= 1.2.12
