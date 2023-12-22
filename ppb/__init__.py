@@ -51,13 +51,14 @@ from ppb.systems import Image
 from ppb.systems import Sound
 from ppb.systems import Font
 from ppb.systems import Text
+from ppb.textsprite import TextSprite
 from ppb.utils import get_time
 
 __all__ = (
     # Shortcuts
     'Vector', 'Scene', 'Circle', 'Image', 'Sprite', 'RectangleSprite',
     'Square', 'Sound', 'Triangle', 'events', 'Font', 'Text', 'directions',
-    'Rectangle', 'Ellipse', 'Signal',
+    'Rectangle', 'Ellipse', 'Signal', 'TextSprite',
     # Local stuff
     'run', 'make_engine',
 )

@@ -17,15 +17,19 @@ class TextScene(ppb.Scene):
     elapsed = 0
 
     def on_scene_started(self, event, signal):
+        last = None
         for i, font in enumerate(('B', 'BI', 'C', 'L', 'LI', 'M', 'MI', 'R', 'RI', 'Th')):
-            self.add(ppb.Sprite(
-                image=ppb.Text(
-                    "Hello, PPB!",
-                    font=ppb.Font(f"resources/ubuntu_font/Ubuntu-{font}.ttf", size=72),
-                    color=hsv2rgb(i / 10, 1.0, 75)
-                ),
-                position=(0, i-4.5),
-            ))
+            text = ppb.TextSprite(
+                text="Hello, PPB!",
+                font=ppb.Font(f"resources/ubuntu_font/Ubuntu-{font}.ttf", size=72),
+                color=hsv2rgb(i / 10, 1.0, 75),
+                position=(0, 6.5),
+                height=0.75
+            )
+            if last is not None:
+                text.top = last.bottom
+            last = text
+            self.add(text)
 
     def on_update(self, event, signal):
         self.elapsed += event.time_delta
