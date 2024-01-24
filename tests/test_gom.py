@@ -1,8 +1,8 @@
 import pytest
 
+import ppb
 from ppb.errors import BadChildException
 from ppb.gomlib import GameObject, Children
-
 
 
 class TestEnemy:
@@ -123,3 +123,14 @@ def test_collection_methods(player, enemies):
     # Test __iter__
     for game_object in container:
         assert game_object is player or game_object is enemies[0]
+
+
+def test_walk_doesnt_explode():
+    scene = ppb.Scene()
+    containing_sprite = ppb.Sprite()
+    scene.add(containing_sprite)
+    for x in range(2):
+        containing_sprite.add(ppb.Sprite())
+
+    for o in scene.children.walk():
+        assert o

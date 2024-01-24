@@ -121,7 +121,7 @@ class Children(Collection):
         """
         for child in self._all:
             yield child
-            if hasattr(child, 'children') and hasattr(child.children.walk):
+            if hasattr(child, 'children') and hasattr(child.children, 'walk'):
                 yield from child.children.walk()
 
     def tags(self):
