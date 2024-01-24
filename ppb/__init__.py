@@ -34,8 +34,10 @@ import warnings
 from sys import version_info
 from typing import Callable
 
+from ppb import buttons
 from ppb import directions
 from ppb import events
+from ppb import keycodes
 from ppb_vector import Vector
 from ppb.assets import Circle
 from ppb.assets import Ellipse
@@ -57,7 +59,7 @@ __all__ = (
     # Shortcuts
     'Vector', 'Scene', 'Circle', 'Image', 'Sprite', 'RectangleSprite',
     'Square', 'Sound', 'Triangle', 'events', 'Font', 'Text', 'directions',
-    'Rectangle', 'Ellipse', 'Signal',
+    'Rectangle', 'Ellipse', 'Signal', 'buttons', 'keycodes',
     # Local stuff
     'run', 'make_engine',
 )
