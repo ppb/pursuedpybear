@@ -4,26 +4,26 @@ This module performs time keeping of subsystems
 
 import time
 
-import ppb
-import ppb.events as events
-from ppb.systemslib import System
-
+import ppb_core.events as events
+from ppb_core.systemslib import System
+from ppb_core import utils
 
 class Updater(System):
 
     def __init__(self, time_step=0.016, **kwargs):
+        super().__init__(**kwargs)
         self.accumulated_time = 0
         self.last_tick = None
         self.start_time = None
         self.time_step = time_step
 
     def __enter__(self):
-        self.start_time = ppb.get_time()
+        self.start_time = utils.get_time()
 
     def on_idle(self, idle_event: events.Idle, signal):
         if self.last_tick is None:
-            self.last_tick = ppb.get_time()
-        this_tick = ppb.get_time()
+            self.last_tick = utils.get_time()
+        this_tick = utils.get_time()
         self.accumulated_time += this_tick - self.last_tick
         self.last_tick = this_tick
         while self.accumulated_time >= self.time_step:

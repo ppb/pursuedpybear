@@ -10,9 +10,9 @@ import sys
 import threading
 import weakref
 
-import ppb.vfs as vfs
+import ppb_core.vfs as vfs
 import ppb.events as events
-from ppb.systemslib import System
+from ppb_core.systemslib import System
 
 __all__ = (
     'AssetLoadingSystem',

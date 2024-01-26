@@ -116,11 +116,11 @@ class RenderableMixin:
             try:
                 klassfile = getfile(klass)
             except TypeError:
-                prefix = Path('.')
+                prefix = Path('')
             else:
                 if Path(klassfile).name != '__init__.py':
                     prefix = prefix.parent
-            if prefix == Path('.'):
+            if prefix == Path(''):
                 self.image = ppb.Image(f"{klass.__name__.lower()}.png")
             else:
                 self.image = ppb.Image(f"{prefix!s}/{klass.__name__.lower()}.png")

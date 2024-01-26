@@ -3,10 +3,10 @@ Systemslib is the core class for new subsystems. Systems add new features to
 the core ppb engine.
 """
 
-import ppb.gomlib
+import ppb_core.gomlib
 
 
-class System(ppb.gomlib.GameObject):
+class System(ppb_core.gomlib.GameObject):
 
     def __enter__(self):
         pass
