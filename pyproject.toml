@@ -5,6 +5,49 @@ requires = ["setuptools>=30.3.0", "wheel", "setuptools_scm"]
 # Actually tell PEP517 tools to call setuptools
 build-backend = "setuptools.build_meta"
 
+[project]
+dynamic = ["version"]
+name = "ppb"
+authors = [
+    {name = "Piper Thunstrom", email="pathunstrom@gmail.com"}
+]
+maintainers = [
+    {name = "Piper Thunstrom", email="pathunstrom@gmail.com"}
+]
+description = "An Event Driven Python Game Engine"
+readme = "README.md"
+license = { "file" = "LICENSE.txt" }
+classifiers =[
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Education",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Artistic License",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Games/Entertainment",
+    "Topic :: Software Development :: Libraries",
+    "Operating System :: OS Independent"
+]
+requires-python = "> 3.8"
+dependencies = [
+    "PySDL2",
+    "pysdl2-dll",
+    "ppb-vector ~= 1.0",
+    "Deprecated ~= 1.2.12"
+]
+
+[project.urls]
+Homepage = "https://ppb.dev"
+Respository = "https://github.com/ppb/pursuedpybear"
+Issues = "https://github.com/ppb/pursuedpybear/issues"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
 
 [tool.setuptools_scm]
 local_scheme = "dirty-tag"

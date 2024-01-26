@@ -22,7 +22,7 @@ def clean_assets():
     """
     # Note that while AssetLoadingSystem cleans stuff up when it exits, this
     # makes sure that the tests start fresh.
-    ppb.assetlib._executor = DelayedThreadExecutor()
+    src.ppb.assetlib._executor = DelayedThreadExecutor()
 
 
 class AssetTestScene(Scene):
