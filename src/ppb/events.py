@@ -49,7 +49,6 @@ __all__ = (
     'SceneStopped',
     'StopScene',
     'Update',
-    
 )
 
 # Remember to define scene at the end so the pargs version of __init__() still works

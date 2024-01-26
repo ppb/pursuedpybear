@@ -8,8 +8,8 @@ from typing import Iterable
 from typing import Iterator
 from typing import Type
 
-from ppb.errors import BadChildException
-from ppb.errors import NotMyChildError
+from ppb_core.errors import BadChildException
+from ppb_core.errors import NotMyChildError
 
 
 class Children(Collection):

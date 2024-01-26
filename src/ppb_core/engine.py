@@ -19,23 +19,19 @@ from typing import Type
 from typing import Union
 import weakref
 
-import ppb
-import ppb.systemslib
-from ppb import events
-from ppb.assetlib import AssetLoadingSystem
-from ppb.gomlib import Children, GameObject
-from ppb.gomlib import walk
-from ppb.errors import BadChildException
-from ppb.errors import NotMyChildError
-from ppb.errors import BadEventHandlerException
-from ppb.scenes import Scene
-from ppb.systems import EventPoller
-from ppb.systems import Renderer
-from ppb.systems import SoundController
-from ppb.systems import Updater
-from ppb.utils import LoggingMixin
-from ppb.utils import camel_to_snake
-from ppb.utils import get_time
+# from ppb_core import events
+from ppb_core.assetlib import AssetLoadingSystem
+from ppb_core.gomlib import Children, GameObject
+from ppb_core.gomlib import walk
+from ppb_core.errors import BadChildException
+from ppb_core.errors import NotMyChildError
+from ppb_core.errors import BadEventHandlerException
+from ppb_core.scenes import Scene
+from ppb_core.clocks import Updater
+from ppb_core.systemslib import System
+from ppb_core.utils import LoggingMixin
+from ppb_core.utils import camel_to_snake
+from ppb_core.utils import get_time
 
 _ellipsis = type(...)
 
@@ -131,9 +127,9 @@ class EngineChildren(Children):
         if isinstance(tags, (str, bytes)):
             raise TypeError("You passed a string instead of an iterable, this probably isn't what you intended.\n\nTry making it a tuple.")
 
-        if isinstance(child, ppb.Scene):
+        if isinstance(child, Scene):
             raise TypeError("Scenes must be pushed, not added. You probably want the StartScene or ReplaceScene events.")
-        elif isinstance(child, ppb.systemslib.System):
+        elif isinstance(child, System):
             if self.entered:
                 raise RuntimeError("Systems cannot be added while the engine is running")
             self._systems.add(child)
@@ -160,9 +156,9 @@ class EngineChildren(Children):
             container.remove(myObject)
         """
         # Ugh, this is a copy of the implementation in Children.
-        if isinstance(child, ppb.Scene):
+        if isinstance(child, Scene):
             raise TypeError("Scenes must be popped, not removed. You probably want the StopScene event.")
-        elif isinstance(child, ppb.systemslib.System):
+        elif isinstance(child, System):
             if self.entered:
                 raise RuntimeError("Systems cannot be removed while the engine is running")
             try:
@@ -227,6 +223,8 @@ class EngineChildren(Children):
         return bool(self._systems)
 
 
+DEFAULT_SYSTEMS = [Updater, AssetLoadingSystem]
+
 class GameEngine(GameObject, LoggingMixin):
     """
     The core component of :mod:`ppb`.
@@ -237,8 +235,7 @@ class GameEngine(GameObject, LoggingMixin):
            ge.run()
     """
     def __init__(self, first_scene: Union[Type, Scene], *,
-                 basic_systems=(Renderer, Updater, EventPoller, SoundController, AssetLoadingSystem),
-                 systems=(), scene_kwargs=None, **kwargs):
+                 systems=tuple(DEFAULT_SYSTEMS), scene_kwargs=None, **kwargs):
         """
         :param first_scene: A :class:`~ppb.Scene` type.
         :type first_scene: Union[Type, scenes.Scene]
@@ -274,7 +271,7 @@ class GameEngine(GameObject, LoggingMixin):
         self._last_idle_time = None
 
         # Systems
-        self.systems_classes = list(chain(basic_systems, systems))
+        self.systems_classes = list(systems)
 
     @property
     def current_scene(self):
