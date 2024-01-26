@@ -1,4 +1,1 @@
-PySDL2
-pysdl2-dll
-ppb-vector ~= 1.0
-Deprecated ~= 1.2.12
+-e .

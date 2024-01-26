@@ -41,13 +41,27 @@ dependencies = [
     "Deprecated ~= 1.2.12"
 ]
 
+[project.optional-dependencies]
+docs = [
+    "sphinx",
+    "furo",
+    "doc-utils<0.18"
+]
+tests = [
+    "pytest",
+    "hypothesis",
+]
+upload = [
+    "setuptools >= 38.6.0",
+    "wheel >= 0.31.0",
+    "twine >= 1.11.0",
+    "pip >= 19"
+]
+
 [project.urls]
 Homepage = "https://ppb.dev"
 Respository = "https://github.com/ppb/pursuedpybear"
 Issues = "https://github.com/ppb/pursuedpybear/issues"
-
-[tool.setuptools]
-package-dir = {"" = "src"}
 
 [tool.setuptools_scm]
 local_scheme = "dirty-tag"
