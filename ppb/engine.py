@@ -499,7 +499,7 @@ class GameEngine(GameObject, LoggingMixin):
         self.children.push_scene(scene)
         self.signal(events.SceneStarted())
 
-    def register(self, event_type: Union[Type, _ellipsis], callback: Callable[[Any], Any]):
+    def register(self, event_type: Union[Type, _ellipsis], callback: Callable[[Any], None]):
         """
         Register a callback to be applied to an event at time of publishing.
 
