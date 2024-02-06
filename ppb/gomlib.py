@@ -24,7 +24,7 @@ class Children(Collection):
         self._kinds = defaultdict(set)
         self._tags = defaultdict(set)
 
-    def __contains__(self, item: 'GameObject') -> bool:
+    def __contains__(self, item: any) -> bool:
         return item in self._all
 
     def __iter__(self) -> Iterator['GameObject']:
@@ -52,7 +52,11 @@ class Children(Collection):
             raise BadChildException(child)
 
         if isinstance(tags, (str, bytes)):
-            raise TypeError("You passed a string instead of an iterable, this probably isn't what you intended.\n\nTry making it a tuple.")
+            raise TypeError(
+                """You passed a string instead of an iterable, this probably isn't what you intended.
+                
+                Try making it a tuple."""
+            )
 
         self._all.add(child)
 
@@ -85,7 +89,7 @@ class Children(Collection):
 
         return child
 
-    def get(self, *, kind: Type = None, tag: 'GameObject' = None, **_) -> Iterator:
+    def get(self, *, kind: Type = None, tag: Hashable = None, **_) -> Iterator:
         """
         Iterate over the objects by kind or tag.
 
@@ -121,12 +125,12 @@ class Children(Collection):
         """
         for child in self._all:
             yield child
-            if hasattr(child, 'children') and hasattr(child.children.walk):
+            if hasattr(child, 'children') and hasattr(child.children, 'walk'):
                 yield from child.children.walk()
 
     def tags(self):
         """
-        Generates all of the tags currently in the collections
+        Generates all the tags currently in the collections
         """
         yield from self._tags
 
@@ -160,7 +164,7 @@ class GameObject:
         """
         yield from self.children
 
-    def add(self, child: 'GameObject', tags: Iterable = ()) -> None:
+    def add(self, child: 'GameObject', tags: Iterable[Hashable] = ()) -> 'GameObject':
         """
         Shorthand for :meth:`Children.add()`
         """
