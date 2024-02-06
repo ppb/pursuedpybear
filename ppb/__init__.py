@@ -15,18 +15,25 @@ make_engine). Advanced features tend to be in their own modules and subpackages.
 
 Exports:
 
-* :class:`~ppb_vector.Vector`
 * :class:`Scene`
-* :class:`Circle`
-* :class:`Image`
 * :class:`Sprite`
+* :class:`RectangleSprite`
+* :class:`~ppb_vector.Vector`
+* :class:`Image`
+* :class:`Circle`
+* :class:`Ellipse`
 * :class:`Square`
-* :class:`Sound`
+* :class:`Rectangle`
 * :class:`Triangle`
-* :mod:`events`
 * :class:`Font`
 * :class:`Text`
+* :class:`Sound`
+* :mod:`events`
+* :mod:`buttons`
+* :mod:`keycodes`
+* :mod:`flags`
 * :mod:`directions`
+* :class:`Signal`
 """
 
 import logging
@@ -34,8 +41,6 @@ import warnings
 from sys import version_info
 from typing import Callable
 
-from ppb import directions
-from ppb import events
 from ppb_vector import Vector
 from ppb.assets import Circle
 from ppb.assets import Ellipse
@@ -55,9 +60,10 @@ from ppb.utils import get_time
 
 __all__ = (
     # Shortcuts
-    'Vector', 'Scene', 'Circle', 'Image', 'Sprite', 'RectangleSprite',
-    'Square', 'Sound', 'Triangle', 'events', 'Font', 'Text', 'directions',
-    'Rectangle', 'Ellipse', 'Signal',
+    'Scene', 'Sprite', 'RectangleSprite', 'Vector',
+    'Image', 'Circle', 'Ellipse', 'Square', 'Rectangle', 'Triangle',
+    'Font', 'Text', 'Sound',
+    'events', 'buttons', 'keycodes', 'flags', 'directions', 'Signal',
     # Local stuff
     'run', 'make_engine',
 )
