@@ -259,7 +259,7 @@ class GameEngine(GameObject, LoggingMixin):
         """
 
         super().__init__()  # FIXME: This is breaking the GameObject protocol
-        self.children = EngineChildren()
+        self.children: EngineChildren = EngineChildren()
 
         # Engine Configuration
         self.first_scene = first_scene
@@ -499,7 +499,7 @@ class GameEngine(GameObject, LoggingMixin):
         self.children.push_scene(scene)
         self.signal(events.SceneStarted())
 
-    def register(self, event_type: Union[Type, _ellipsis], callback: Callable[[], Any]):
+    def register(self, event_type: Union[Type, _ellipsis], callback: Callable[[Any], None]):
         """
         Register a callback to be applied to an event at time of publishing.
 
