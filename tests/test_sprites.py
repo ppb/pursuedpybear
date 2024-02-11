@@ -4,6 +4,7 @@ from typing import Union
 from unittest.mock import patch
 import warnings
 
+import ppb
 from hypothesis import given
 from hypothesis.strategies import floats
 from hypothesis.strategies import integers
@@ -47,17 +48,58 @@ def test_offset():
 def test_rotatable_instatiation():
     rotatable = RotatableMixin()
     assert rotatable.rotation == 0
+    assert rotatable.facing == ppb.Vector(0, 1)
 
 
-def test_rotatable_subclass():
+@pytest.mark.parametrize(
+    "facing,expected_rotation",
+    [
+        (ppb.Vector(0, 1), 0),
+        (ppb.Vector(-1, 1), 45),
+        (ppb.Vector(-1, 0), 90),
+        (ppb.Vector(-1, -1), 135),
+        (ppb.Vector(0, -1), 180),
+        (ppb.Vector(1, -1), -135),
+        (ppb.Vector(1, 0), -90),
+        (ppb.Vector(1, 1), -45)
+    ]
+)
+def test_setting_facing(facing: ppb.Vector, expected_rotation: Union[int, float]):
+    rotatable = RotatableMixin()
+    rotatable.facing = facing.normalize()
+    assert isclose(rotatable.rotation, expected_rotation)
+
+
+class RotatableSubclassCase(NamedTuple):
+    rotation: Union[int, float]
+    basis: ppb.Vector
+    expected_facing: ppb.Vector
+
+
+@pytest.mark.parametrize(
+    "_rotation, _basis, expected_facing",
+    [
+        RotatableSubclassCase(
+            rotation=180,
+            basis=ppb.Vector(0, 1),
+            expected_facing=ppb.Vector(0, -1)
+        ),
+        RotatableSubclassCase(
+            rotation=-45,
+            basis=ppb.Vector(0, 1),
+            expected_facing=ppb.Vector(1, 1).normalize()
+        )
+    ]
+)
+def test_rotatable_subclass(_rotation: Union[int, float], _basis: ppb.Vector, expected_facing: ppb.Vector):
 
     class TestRotatableMixin(RotatableMixin):
-        rotation = 180
-        basis = Vector(0, 1)
+        rotation = _rotation
+        basis = _basis
 
     rotatable = TestRotatableMixin()
-    assert rotatable.rotation == 180
-    assert rotatable.facing == Vector(0, -1)
+    assert rotatable.rotation == _rotation
+    assert expected_facing.isclose(rotatable.facing)
 
 
 def test_rotatable_rotate():
