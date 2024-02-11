@@ -99,8 +99,7 @@ def test_rotatable_subclass(_rotation: Union[int, float], _basis: ppb.Vector, ex
 
     rotatable = TestRotatableMixin()
     assert rotatable.rotation == _rotation
-    assert isclose(rotatable.facing.x, expected_facing.x)
-    assert isclose(rotatable.facing.y, expected_facing.y)
+    assert expected_facing.isclose(rotatable.facing)
 
 
 def test_rotatable_rotate():
