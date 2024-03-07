@@ -86,23 +86,23 @@ The editable installation mode implies that the source code of PursuedPyBear bei
 
 1. Clone the repository
 ```sh
-mkdir ppb
-cd ppb
-git clone https://github.com/ppb/pursuedpybear.git
-cd pursuedpybear
+$ mkdir ppb
+$ cd ppb
+$ git clone https://github.com/ppb/pursuedpybear.git
+$ cd pursuedpybear
 ```
-2. Create a virtual environment for Python to use
+2. Create a virtual environment for Python to use. [Windows Instructions][venvwin]
 ```sh
-python3 -m venv ppb-venv
-source ppb-venv/bin/activate
+$ python3 -m venv ppb-venv
+$ source ppb-venv/bin/activate
 ```
 3. Install the dependencies
 ```sh
-pip install --upgrade -r requirements-test.txt
+$ pip install --upgrade -r requirements-test.txt
 ```
 4. Finally do the editable install of PersuedPyBear
 ```sh
-pip install --editable .
+$ pip install --editable .
 ```
 > [!NOTE]
 > The dot is not a period, it is needed by the install to denote the current directory.
@@ -159,3 +159,5 @@ end you contribute to `ppb` by being part of its community.
 [projects]: https://github.com/orgs/ppb/projects "PPB Projects"
 [readme]: https://github.com/ppb/pursuedpybear/blob/canon/README.md "PPB README"
 [newpr]: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request "Pull Request"
+[git]: https://git-scm.com/downloads "Git Download"
+[venvwin]:https://docs.python.org/3/library/venv.html "Windows Instructions"
