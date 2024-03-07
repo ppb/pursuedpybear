@@ -69,24 +69,43 @@ is a collection of issues we believe are suitable for people new to PPB.
 You are welcome to work on any issue you would like, we just think those
 are a good starting place for those that are unfamiliar with the code base.
 
-Now you need to [fork ppb][fork]. Once you've done that, go through
-either column and find a ticket you like. Create a branch from the HEAD of
-the `canon` branch, add your name to the [CONTRIBUTORS file][contributors],
-commit that change and open a PR:
+### Get the code repository setup to work on
+First you need to [fork ppb][fork]. Once you've done that, go through
+list of [issues][new contributor] and find a ticket you would like to work on.
+> [!NOTE] 
+> Keep the issue number for later
+
+### Your first contribution
+Next, create a new branch on your machine from the `canon` branch.  Then edit the [CONTRIBUTORS.md file][contributors] and commit that change. Finally open a [Pull Request (PR)][newpr] to inform us that you want us to pull your changes into the main project.  The new PR should have the following information:
 
 - Include "WIP" in the title or make a [draft pull request][draftpr]
 - Reference the issue you want to work on in the body of the PR.
 
+### Setup the project code on your machine
 The editable installation mode implies that the source code of PursuedPyBear being installed is available in a local directory. Once PursuedPyBear is installed in editable mode, users expect that changes to the PursuedPyBear python code in the local source tree become effective without the need of a new installation step. To do an editable installation:
 
-    mkdir ppb
-    python3 -m venv ppb-venv
-    source ppb-venv/bin/activate
-    cd ppb-venv
-    git clone https://github.com/ppb/pursuedpybear.git
-    cd pursuedpybear
-    pip install --upgrade -r requirements-test.txt
-    pip install --editable .
+1. Clone the repository
+```sh
+mkdir ppb
+cd ppb
+git clone https://github.com/ppb/pursuedpybear.git
+cd pursuedpybear
+```
+2. Create a virtual environment for Python to use
+```sh
+python3 -m venv ppb-venv
+source ppb-venv/bin/activate
+```
+3. Install the dependencies
+```sh
+pip install --upgrade -r requirements-test.txt
+```
+4. Finally do the editable install of PersuedPyBear
+```sh
+pip install --editable .
+```
+> [!NOTE]
+> The dot is not a period, it is needed by the install to denote the current directory.
 
 Now get to work! Some tickets have detailed instructions: A maintainer
 mapped out the needs and wrote some instructions. Others are more open.
@@ -139,3 +158,4 @@ end you contribute to `ppb` by being part of its community.
 [new contributor]: https://github.com/ppb/pursuedpybear/labels/new%20contributor "Issues labeled New Contributor"
 [projects]: https://github.com/orgs/ppb/projects "PPB Projects"
 [readme]: https://github.com/ppb/pursuedpybear/blob/canon/README.md "PPB README"
+[newpr]: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request "Pull Request"
