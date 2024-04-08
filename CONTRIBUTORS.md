@@ -58,3 +58,4 @@ Halle Jones|HJones@aliacy.com||
 [Jami Schwarzwalder](https://github.com/jschwarzwalder) | |
 [Jill Slind](https://github.com/jillslind) | [jill.slind@gmail.com](jill.slind@gmail.com) | |
 [David Lord](https://github.com/davidism) | |
+[Quinn Redwoods](https://github.com/qredwoods) | |
