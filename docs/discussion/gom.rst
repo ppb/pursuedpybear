@@ -12,10 +12,10 @@ then :class:`Sprite`.
 Game Objects
 ============
 
-All of these are instances of :class:`GameObject`, which manages things like
+All of these are instances of :class:`.GameObject`, which manages things like
 tree operations and children searching and such.
 
-Other than the :class:`Engine` and its direct children, you may structure the
+Other than the :class:`.Engine` and its direct children, you may structure the
 tree however you want. You can define your own game objects and put them in your
 scenes (they won't render, but they'll receive events).
 
@@ -24,8 +24,8 @@ Event Dispatch
 ==============
 
 Events are dispatched breadth first: top to bottom, starting from the
-:class:`Engine`, and then the :class:`System`, and then the :class:`Scene`, and
-then their children.
+:class:`.Engine`, and then all of the :class:`.System` instances, and then the
+:class:`.Scene`, and then their children.
 
 In the above diagram, events would be dispatched in the following order:
 
