@@ -153,7 +153,7 @@ macOS_task:
   briefcase_script:
     - pip install briefcase
     - briefcase new --no-input -Q bootstrap=PursuedPyBear
-    - cd helloworld && briefcase package --no-input
+    - cd helloworld && briefcase package --no-input --adhoc-sign
 
 
 macOS_version_task:
@@ -197,9 +197,9 @@ task:
     - C:\Python\python.exe -m pytest
 
   briefcase_script:
-    - pip install briefcase
-    - briefcase new --no-input -Q bootstrap=PursuedPyBear
-    - cd helloworld && briefcase package --no-input
+    - C:\Python\python.exe -m pip install briefcase
+    - C:\Python\python.exe -m briefcase new --no-input -Q bootstrap=PursuedPyBear
+    - cd helloworld && C:\Python\python.exe -m briefcase package --no-input
 
 
 upload_task:
