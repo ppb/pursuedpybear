@@ -48,3 +48,7 @@ Issues = "https://github.com/ppb/pursuedpybear/issues"
 
 [tool.setuptools_scm]
 local_scheme = "dirty-tag"
+
+[project.entry-points."briefcase.bootstraps"]
+PursuedPyBear = "ppb.briefcase:PursuedPyBearGuiBootstrap"
+
