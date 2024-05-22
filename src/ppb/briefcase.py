@@ -1,4 +1,10 @@
-from briefcase.bootstraps.base import BaseGuiBootstrap
+try:
+    from briefcase.bootstraps.base import BaseGuiBootstrap
+except ImportError:
+    import warnings
+    warnings.warn("Briefcase not installed, briefcase integration unavailable")
+
+    class BaseGuiBootstrap: pass
 
 
 class PursuedPyBearGuiBootstrap(BaseGuiBootstrap):
