@@ -89,7 +89,7 @@ task:
 
   use_compute_credits: $CIRRUS_BRANCH == 'staging'
 
-task:
+linux_briefcase_task:
   name: "Linux Briefcase"
   alias: Tests
   skip: $CIRRUS_BRANCH =~ '.*\.tmp'
@@ -114,11 +114,9 @@ task:
 
   script:
     - /py/bin/briefcase new --no-input -Q bootstrap=PursuedPyBear
-    - cd helloworld && /py/bin/briefcase package
+    - cd helloworld && /py/bin/briefcase package --no-input
 
   use_compute_credits: $CIRRUS_BRANCH == 'staging'
-
-
 
 macOS_task:
   alias: Tests
@@ -155,7 +153,7 @@ macOS_task:
   briefcase_script:
     - pip install briefcase
     - briefcase new --no-input -Q bootstrap=PursuedPyBear
-    - cd helloworld && briefcase package
+    - cd helloworld && briefcase package --no-input
 
 
 macOS_version_task:
@@ -201,7 +199,7 @@ task:
   briefcase_script:
     - pip install briefcase
     - briefcase new --no-input -Q bootstrap=PursuedPyBear
-    - cd helloworld && briefcase package
+    - cd helloworld && briefcase package --no-input
 
 
 upload_task:
