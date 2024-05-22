@@ -87,13 +87,34 @@ task:
     - pip list
     - pytest
 
-  briefcase_script:
-    - apt-get install -qq -y git
+  use_compute_credits: $CIRRUS_BRANCH == 'staging'
+
+task:
+  name: "Linux Briefcase"
+  alias: Tests
+  skip: $CIRRUS_BRANCH =~ '.*\.tmp'
+
+  container:
+    image: debian:latest
+
+  depends_on:
+    - build
+
+  install_script:
+    - >-
+      apt-get update || true;
+      apt-get install -qq -y git python3 python3-pip
+    - python3 .ci/install-wheels.py
     - pip install briefcase
+
+  script:
+    - ${PY-python3} --version
+    - pip list
     - briefcase new --no-input -Q bootstrap=PursuedPyBear
     - cd helloworld && briefcase package
 
   use_compute_credits: $CIRRUS_BRANCH == 'staging'
+
 
 
 macOS_task:
