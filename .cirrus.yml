@@ -88,6 +88,11 @@ task:
     - pip list
     - pytest
 
+  briefcase_script:
+    - pip install briefcase
+    - briefcase new --no-input -Q bootstrap=PursuedPyBear
+    - cd helloworld && briefcase package
+
   use_compute_credits: $CIRRUS_BRANCH == 'staging'
 
 
@@ -122,6 +127,11 @@ macOS_task:
     - python3 --version
     - pip list
     - pytest
+
+  briefcase_script:
+    - pip install briefcase
+    - briefcase new --no-input -Q bootstrap=PursuedPyBear
+    - cd helloworld && briefcase package
 
 
 macOS_version_task:
@@ -163,6 +173,11 @@ task:
     - C:\Python\python.exe --version
     - C:\Python\python.exe -m pip list
     - C:\Python\python.exe -m pytest
+
+  briefcase_script:
+    - pip install briefcase
+    - briefcase new --no-input -Q bootstrap=PursuedPyBear
+    - cd helloworld && briefcase package
 
 
 upload_task:
