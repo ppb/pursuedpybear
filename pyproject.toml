@@ -12,7 +12,8 @@ authors = [
     {name = "Piper Thunstrom", email="pathunstrom@gmail.com"}
 ]
 maintainers = [
-    {name = "Piper Thunstrom", email="pathunstrom@gmail.com"}
+    {name = "Piper Thunstrom", email="pathunstrom@gmail.com"},
+    {name = "Jamie Bliss", email="jamie@ivyleav.es"}
 ]
 description = "An Event Driven Python Game Engine"
 readme = "README.md"
