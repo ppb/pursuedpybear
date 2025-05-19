@@ -12,7 +12,8 @@ authors = [
     {name = "Piper Thunstrom", email="pathunstrom@gmail.com"}
 ]
 maintainers = [
-    {name = "Piper Thunstrom", email="pathunstrom@gmail.com"}
+    {name = "Piper Thunstrom", email="pathunstrom@gmail.com"},
+    {name = "Jamie Bliss", email="jamie@ivyleav.es"}
 ]
 description = "An Event Driven Python Game Engine"
 readme = "README.md"
@@ -47,3 +48,7 @@ Issues = "https://github.com/ppb/pursuedpybear/issues"
 
 [tool.setuptools_scm]
 local_scheme = "dirty-tag"
+
+[project.entry-points."briefcase.bootstraps"]
+PursuedPyBear = "ppb.briefcase:PursuedPyBearGuiBootstrap"
+
