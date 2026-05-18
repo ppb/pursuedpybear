@@ -11,22 +11,22 @@ jobs:
     strategy:
       matrix:
         image:
-        - python:3.9-slim
-        - python:rc-slim
-        - python:3.10-slim
-        - python:3.11-slim
-        - python:3.12-slim
+        - python:3.9
+        - python:3.10
+        - python:3.11
+        - python:3.12
+        - python:rc
     runs-on: ubuntu-latest
     container:
       image: ${{ matrix.image }}
       env:
         POETRY_VIRTUALENVS_IN_PROJECT: "true"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: setup
         run: |
           python -m venv .venv
-          .venv/bin/pip -e . -r requirements-tests.txt
+          .venv/bin/pip install -r requirements.txt -r requirements-tests.txt
       - name: run tests
         run: |
           .venv/bin/pytest --verbose
