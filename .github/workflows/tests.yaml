@@ -19,13 +19,14 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ${{ matrix.image }}
+      env:
+        POETRY_VIRTUALENVS_IN_PROJECT: "true"
     steps:
       - uses: actions/checkout@v4
-      - name: install poetry
+      - name: setup
         run: |
           curl -sSL https://install.python-poetry.org | python3 -
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-      - run: poetry install
+          $HOME/.local/poetry install
       - name: run tests
         run: |
-          poetry run pytest --verbose
+          .venv/bin/pytest --verbose
