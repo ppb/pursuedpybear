@@ -1,0 +1,23 @@
+name: Docs
+
+on:
+  push:
+    branches: [ "canon" ]
+  pull_request:
+    branches: [ "canon" ]
+  workflow_dispatch:
+
+jobs:
+
+  linkcheck:
+    runs-on: ubuntu-latest
+    container:
+      image: docker.io/library/python:3
+    steps:
+      - uses: actions/checkout@v6
+      - name: setup
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install . -r requirements-docs.txt
+      - run: make linkcheck
+        working-directory: ./docs
