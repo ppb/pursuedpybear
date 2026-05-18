@@ -7,6 +7,20 @@ on:
   workflow_dispatch:
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: docker.io/duckinator/bork
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-tags: true
+      - run: bork build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels
+          path: ./dist
+
   linux:
     strategy:
       matrix:
@@ -16,6 +30,7 @@ jobs:
         - python:3.11
         - python:3.12
         - python:rc
+    needs: build
     runs-on: ubuntu-latest
     container:
       image: ${{ matrix.image }}
@@ -23,10 +38,14 @@ jobs:
         POETRY_VIRTUALENVS_IN_PROJECT: "true"
     steps:
       - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v4
+        with:
+          name: wheels
+          path: ./dist
       - name: setup
         run: |
           python -m venv .venv
-          .venv/bin/pip install -r requirements.txt -r requirements-tests.txt
+          .venv/bin/pip install dist/*.whl -r requirements.txt -r requirements-tests.txt
       - name: run tests
         run: |
           .venv/bin/pytest --verbose
