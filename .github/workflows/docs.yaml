@@ -17,6 +17,7 @@ jobs:
       - uses: actions/checkout@v6
       - name: setup
         run: |
+          git config --global --add safe.directory $PWD
           python -m venv .venv
           .venv/bin/pip install . -r requirements-docs.txt
       - run: make linkcheck
