@@ -27,11 +27,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image:
-        - python:3.9
-        - python:3.10
-        - python:3.11
-        - python:3.12
+        pyver:
+        - "3.9"
+        - "3.10"
+        - "3.11"
+        - "3.12"
         # Jamie: Not sure how ot get an actual warnings out of actions
         # can-fail: [false]
         # include:
@@ -40,7 +40,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     container:
-      image: ${{ matrix.image }}
+      image: docker.io/library/python:${{ matrix.pyver }}
     steps:
       - uses: actions/checkout@v6
       - uses: actions/download-artifact@v4
