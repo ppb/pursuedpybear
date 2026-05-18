@@ -1,0 +1,31 @@
+name: test
+
+on:
+  push:
+    branches: [ "canon" ]
+  pull_request:
+    branches: [ "canon" ]
+  workflow_dispatch:
+
+jobs:
+  linux:
+    strategy:
+      matrix:
+        image:
+        - python:3.9-slim
+        - python:rc-slim
+        - python:3.10-slim
+        - python:3.11-slim
+        - python:3.12-slim
+    container:
+      image: ${{ matrix.image }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: install poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - run: poetry install
+      - name: run tests
+        run: |
+          poetry run pytest --verbose
