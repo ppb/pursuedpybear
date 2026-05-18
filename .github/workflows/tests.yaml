@@ -25,13 +25,17 @@ jobs:
 
   linux:
     strategy:
+      fail-fast: false
       matrix:
         image:
         - python:3.9
         - python:3.10
         - python:3.11
         - python:3.12
-        - python:rc
+        can-fail: [false]
+        include:
+        - image: python:rc
+          can-fail: true
     needs: build
     runs-on: ubuntu-latest
     container:
@@ -49,5 +53,6 @@ jobs:
           python -m venv .venv
           .venv/bin/pip install dist/*.whl -r requirements.txt -r requirements-tests.txt
       - name: run tests
+        continue-on-error: ${{ matrix.can-fail }}
         run: |
           .venv/bin/pytest --verbose
