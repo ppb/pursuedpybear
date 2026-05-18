@@ -22,6 +22,5 @@ jobs:
           .venv/bin/pip install . -r requirements-docs.txt
       - name: linkcheck
         run: |
-          source .venv/bin/activate
-          make linkcheck
+          .venv/bin/sphinx-build -b linkcheck docs /tmp
         working-directory: ./docs
