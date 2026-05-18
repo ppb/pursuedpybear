@@ -11,7 +11,7 @@ Prerequisites
 Before you get started here, you should know the basics of Python. We use
 classes extensively in ppb, and you should be comfortable with them. Consider
 the `Python.org tutorial <https://docs.python.org/3/tutorial/index.html>`_ or
-`automate the boring stuff <http://automatetheboringstuff.com/>`_ to get started.
+`Automate the Boring Stuff <http://automatetheboringstuff.com/>`_ to get started.
 
 Additionally, you need to have Python 3.9 or later on your machine. You can
 install this via `Python.org <https://www.python.org/downloads/>`_ or
