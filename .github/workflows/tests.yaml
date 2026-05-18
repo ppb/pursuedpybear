@@ -15,8 +15,9 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-tags: true
-          set-safe-directory: true
-      - run: bork build
+      - run: |
+          git config --global --add safe.directory $PWD
+          bork build
       - uses: actions/upload-artifact@v4
         with:
           name: wheels
