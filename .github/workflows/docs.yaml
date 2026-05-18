@@ -20,5 +20,8 @@ jobs:
           git config --global --add safe.directory $PWD
           python -m venv .venv
           .venv/bin/pip install . -r requirements-docs.txt
-      - run: make linkcheck
+      - name: linkcheck
+        run: |
+          source .venv/bin/activate
+          make linkcheck
         working-directory: ./docs
