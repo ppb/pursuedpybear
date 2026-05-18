@@ -2,7 +2,6 @@ name: test
 
 on:
   push:
-    branches: [ "canon" ]
   pull_request:
     branches: [ "canon" ]
   workflow_dispatch:
