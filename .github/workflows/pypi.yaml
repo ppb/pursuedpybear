@@ -2,7 +2,7 @@ name: PyPI
 
 on:
   push:
-    branches: [ "canon" ]
+    # tags:
   workflow_dispatch:
 
 
