@@ -7,6 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
+
   build:
     runs-on: ubuntu-latest
     container:
@@ -18,10 +19,11 @@ jobs:
       - run: |
           git config --global --add safe.directory $PWD
           bork build
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: wheels
           path: ./dist
+
 
   linux:
     strategy:
@@ -43,7 +45,7 @@ jobs:
       image: docker.io/library/python:${{ matrix.pyver }}
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: wheels
           path: ./dist
@@ -74,7 +76,7 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.pyver }}
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: wheels
           path: ./dist
@@ -85,6 +87,7 @@ jobs:
       - name: run tests
         run: |
           .venv/Scripts/pytest --verbose
+
 
   mac:
     strategy:
@@ -104,7 +107,7 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.pyver }}
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: wheels
           path: ./dist
