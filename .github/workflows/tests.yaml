@@ -24,6 +24,10 @@ jobs:
         with:
           name: wheels
           path: ./dist
+      - name: pep517 check
+        run: |
+          pip install pep517
+          python3 -m pep517.check .
 
 
   linux:
