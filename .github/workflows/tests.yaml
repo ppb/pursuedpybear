@@ -41,10 +41,39 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ${{ matrix.image }}
-      env:
-        POETRY_VIRTUALENVS_IN_PROJECT: "true"
     steps:
       - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v4
+        with:
+          name: wheels
+          path: ./dist
+      - name: setup
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install dist/*.whl -r requirements.txt -r requirements-tests.txt
+      - name: run tests
+        run: |
+          .venv/bin/pytest --verbose
+
+
+  windows:
+    strategy:
+      fail-fast: false
+      matrix:
+        pyver:
+        - "3.9"
+        - "3.10"
+        - "3.11"
+        - "3.12"
+    needs: build
+    runs-on: windows-latest
+    container:
+      image: ${{ matrix.image }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.pyver }}
       - uses: actions/download-artifact@v4
         with:
           name: wheels
