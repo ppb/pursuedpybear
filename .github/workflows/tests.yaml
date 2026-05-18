@@ -81,7 +81,7 @@ jobs:
       - name: setup
         run: |
           python -m venv .venv
-          .venv/bin/pip install dist/*.whl -r requirements.txt -r requirements-tests.txt
+          .venv/Scripts/pip install dist/*.whl -r requirements-tests.txt
       - name: run tests
         run: |
-          .venv/bin/pytest --verbose
+          .venv/Scripts/pytest --verbose
