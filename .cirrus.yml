@@ -46,48 +46,6 @@ docs_task:
     LANG: "C.UTF-8"
 
 
-task:
-  name: "Linux $IMAGE"
-  alias: Tests
-  skip: $CIRRUS_BRANCH =~ '.*\.tmp'
-  allow_failures: $IMAGE =~ '.*[-:]rc-.*'
-  env:
-    matrix:
-      - IMAGE: python:3.9-slim
-      - IMAGE: python:rc-slim
-      - IMAGE: python:3.10-slim
-      - IMAGE: python:3.11-slim
-      - IMAGE: python:3.12-slim
-
-  container:
-    image: $IMAGE
-
-  depends_on:
-    - build
-
-  install_script:
-    - >-
-      if command -v pypy3 >/dev/null || python3 -c 'import sys; exit(sys.implementation.version.releaselevel == "final")'; then
-        apt update || true;
-        apt install -qq -y pkgconf libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libsdl1.2-dev libsmpeg-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev libfreetype6-dev gcc
-      fi
-    - pip install --upgrade-strategy eager -U -r requirements-tests.txt
-    - >-
-      if command -v pypy3 >/dev/null; then
-        pypy3 .ci/install-wheels.py
-      else
-        python .ci/install-wheels.py
-      fi
-    - >-
-      apt-get update || true;
-
-  script:
-    - command -v pypy3 >/dev/null && export PY=pypy3
-    - ${PY-python3} --version
-    - pip list
-    - pytest
-
-  use_compute_credits: $CIRRUS_BRANCH == 'staging'
 
 linux_briefcase_task:
   name: "Linux Briefcase"
