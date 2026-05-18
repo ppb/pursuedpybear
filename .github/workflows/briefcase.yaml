@@ -28,7 +28,6 @@ jobs:
           python-version: ${{ matrix.pyver }}
       - name: setup
         run: |
-          python -m venv .venv
-          .venv/Scripts/pip install . briefcase
+          pip install . briefcase
       - run: briefcase new --no-input -Q bootstrap=PursuedPyBear
       - run: cd helloworld && briefcase package --no-input --adhoc-sign
