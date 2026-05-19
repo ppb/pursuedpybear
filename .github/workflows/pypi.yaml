@@ -49,3 +49,5 @@ jobs:
         name: python-package-distributions
         path: dist/
     - uses: pypa/gh-action-pypi-publish@release/v1p
+
+# FIXME: Build & publish examples.zip

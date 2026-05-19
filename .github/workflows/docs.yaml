@@ -23,4 +23,3 @@ jobs:
       - name: linkcheck
         run: |
           .venv/bin/sphinx-build -b linkcheck docs /tmp
-        working-directory: ./docs
