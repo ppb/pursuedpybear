@@ -64,3 +64,4 @@ Halle Jones|HJones@aliacy.com||
 [Quinn Redwoods](https://github.com/qredwoods) | | |
 [Jeff Epler](https://github.com/jepler) | | |
 [Mary Clark](https://github.com/marymclark) | [me@maryclark.net](me@maryclark.net) | | 
+[Tracy Eliasson](...) | [tracy.eliasson@gmail.com](...) | 
