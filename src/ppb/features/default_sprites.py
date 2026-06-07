@@ -19,14 +19,14 @@ class TargetSprite(ppb.Sprite):
 
     :param target: Vector that the sprite moves towards.
     :param speed: Distance per second that the sprite travels with linear motion.
-    Negative values cause movement away from the target.
+        Negative values cause movement away from the target.
     :param exponential_speed: Fraction of the distance to the target that the sprite travels
-    per second with exponential motion. Must be less than 1.
-    Negative values cause movement away from the target.
+        per second with exponential motion. Must be less than 1.
+        Negative values cause movement away from the target.
     :param max_speed: Maximum distance per second that the sprite can travel towards the target.
-    Negative values cause movement away from the target.
+        Negative values cause movement away from the target.
     :param min_speed: Minimum distance per second that the sprite travels when not in range of the target.
-    Non-negative values prevent movement away from the target.
+        Non-negative values prevent movement away from the target.
     """
 
     target = ppb.Vector(0, 0)
@@ -100,9 +100,8 @@ class KeyBoardMovementSprite(ppb.Sprite):
     """Sprite that moves up, down, left, or right in response to keyboard input.
 
     :param speed: Distance per second that the sprite travels with linear motion.
-    Negative values cause movement in the opposite direction.
+        Negative values cause movement in the opposite direction.
     :param key_bindings: Key bindings for moving the sprite in a given direction. Instance of DirectionKeyBindings
-
     """
 
     direction = ppb.Vector(0, 0)
@@ -138,8 +137,9 @@ class KeyBoardMovementSprite(ppb.Sprite):
 class MouseTargetSprite(TargetSprite):
     """Sprite that treats your mouse as a moving target.
 
-    :param speed: Distance per second that the sprite travels with linear motion. 
-    If you set the speed to a high number (eg 100) then the sprite can act as a cursor. And if you set it to a lower number then it will chase the mouse menacingly 
+    :param speed: Distance per second that the sprite travels with linear motion.
+        If you set the speed to a high number (eg 100) then the sprite can act as a cursor.
+        If you set it to a lower number then it will chase the mouse menacingly.
     """
     def on_mouse_motion(self, event: events.MouseMotion, signal):
         self.target = event.position

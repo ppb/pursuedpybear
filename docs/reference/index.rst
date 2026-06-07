@@ -23,6 +23,7 @@ decisions are made, see the :doc:`/discussion/index` section.
    gom
    scenes
    sprites
+   default_sprites
    text
    engine
    sound
