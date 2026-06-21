@@ -1,0 +1,121 @@
+name: PyTest
+
+on:
+  push:
+    branches: [ "canon" ]
+  pull_request:
+    branches: [ "canon" ]
+  workflow_dispatch:
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: docker.io/duckinator/bork
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-tags: true
+      - run: |
+          git config --global --add safe.directory $PWD
+          bork build
+      - uses: actions/upload-artifact@v7
+        with:
+          name: wheels
+          path: ./dist
+      - name: pep517 check
+        run: |
+          pip install pep517
+          python3 -m pep517.check .
+
+
+  linux:
+    strategy:
+      fail-fast: false
+      matrix:
+        pyver:
+        - "3.9"
+        - "3.10"
+        - "3.11"
+        - "3.12"
+        # Jamie: Not sure how ot get an actual warnings out of actions
+        # can-fail: [false]
+        # include:
+        # - image: python:rc
+        #   can-fail: true
+    needs: build
+    runs-on: ubuntu-latest
+    container:
+      image: docker.io/library/python:${{ matrix.pyver }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v8
+        with:
+          name: wheels
+          path: ./dist
+      - name: setup
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install dist/*.whl -r requirements.txt -r requirements-tests.txt
+      - name: run tests
+        run: |
+          .venv/bin/pytest --verbose
+
+
+  windows:
+    strategy:
+      fail-fast: false
+      matrix:
+        pyver:
+        - "3.9"
+        - "3.10"
+        - "3.11"
+        - "3.12"
+    needs: build
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.pyver }}
+      - uses: actions/download-artifact@v8
+        with:
+          name: wheels
+          path: ./dist
+      - name: setup
+        run: |
+          python -m venv .venv
+          .venv/Scripts/pip install (get-item dist/*.whl) -r requirements-tests.txt
+      - name: run tests
+        run: |
+          .venv/Scripts/pytest --verbose
+
+
+  mac:
+    strategy:
+      fail-fast: false
+      matrix:
+        pyver:
+        - "3.9"
+        - "3.10"
+        - "3.11"
+        - "3.12"
+    needs: build
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.pyver }}
+      - uses: actions/download-artifact@v8
+        with:
+          name: wheels
+          path: ./dist
+      - name: setup
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install dist/*.whl -r requirements-tests.txt
+      - name: run tests
+        run: |
+          .venv/bin/pytest --verbose

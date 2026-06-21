@@ -1,0 +1,33 @@
+name: Briefcase
+
+on:
+  push:
+    branches: [ "canon" ]
+  pull_request:
+    branches: [ "canon" ]
+  workflow_dispatch:
+
+jobs:
+  briefcase:
+    strategy:
+      fail-fast: false
+      matrix:
+        pyver:
+        - "3.9"
+        - "3.10"
+        - "3.11"
+        - "3.12"
+        platform: ["ubuntu-latest", "windows-latest", "macos-latest"]
+
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.pyver }}
+      - name: setup
+        run: |
+          pip install . briefcase
+      - run: briefcase new --no-input -Q bootstrap=PursuedPyBear
+      - run: cd helloworld && briefcase package --no-input --adhoc-sign

@@ -1,0 +1,25 @@
+name: Docs
+
+on:
+  push:
+    branches: [ "canon" ]
+  pull_request:
+    branches: [ "canon" ]
+  workflow_dispatch:
+
+jobs:
+
+  linkcheck:
+    runs-on: ubuntu-latest
+    container:
+      image: docker.io/library/python:3
+    steps:
+      - uses: actions/checkout@v6
+      - name: setup
+        run: |
+          git config --global --add safe.directory $PWD
+          python -m venv .venv
+          .venv/bin/pip install . -r requirements-docs.txt
+      - name: linkcheck
+        run: |
+          .venv/bin/sphinx-build -b linkcheck docs /tmp
