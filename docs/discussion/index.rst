@@ -11,5 +11,6 @@ advanced users.
 
    values/index
    assets
+   gom
    maintenance-schedules
    default-branch
